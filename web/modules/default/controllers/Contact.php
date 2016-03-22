@@ -74,7 +74,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$messageContent = str_replace("[EMAIL]", $email, $messageContent);
 				$messageContent = str_replace("[MESSAGE]", nl2br($message), $messageContent);
 				
-				if (send_mail ("contact@cservichezvous.fr", "demande de contact", $messageContent)) {
+				if (send_mail ("contact@homemenus.fr", "demande de contact", $messageContent)) {
 					send_mail ($email, "confirmation demande de contact", $messageContent);
 					$request->mailSuccess = true;
 				} else {
@@ -138,7 +138,7 @@ class Controller_Contact extends Controller_Default_Template {
 			$messageContent = str_replace("[transport]", $transportContenu, $messageContent);
 			$messageContent = str_replace("[message]", nl2br($message), $messageContent);
 			
-			if (send_mail ("livreur@cservichezvous.fr", "demande de contact", $messageContent)) {
+			if (send_mail ("livreur@homemenus.fr", "demande de contact", $messageContent)) {
 				$request->mailSuccess = true;
 			} else {
 				$request->mailSuccess = false;
@@ -183,7 +183,7 @@ class Controller_Contact extends Controller_Default_Template {
 			$messageContent = str_replace("[fonction]", $fonction, $messageContent);
 			$messageContent = str_replace("[message]", nl2br($message), $messageContent);
 			
-			if (send_mail ("restaurant@cservichezvous.fr", "demande de contact", $messageContent)) {
+			if (send_mail ("restaurant@homemenus.fr", "demande de contact", $messageContent)) {
 				$request->mailSuccess = true;
 			} else {
 				$request->mailSuccess = false;
@@ -231,7 +231,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$messageContent = str_replace("[fonction]", $fonction, $messageContent);
 				$messageContent = str_replace("[message]", nl2br($message), $messageContent);
 				
-				if (send_mail ("restaurant@cservichezvous.fr", "demande de contact d'une entreprise", $messageContent)) {
+				if (send_mail ("restaurant@homemenus.fr", "demande de contact d'une entreprise", $messageContent)) {
 					$request->mailSuccess = true;
 				} else {
 					$request->mailSuccess = false;
@@ -254,7 +254,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$messageContent = str_replace("[fonction]", $fonction, $messageContent);
 				$messageContent = str_replace("[message]", nl2br($message), $messageContent);
 				
-				if (send_mail ("restaurant@cservichezvous.fr", "demande de contact d'un particulier", $messageContent)) {
+				if (send_mail ("restaurant@homemenus.fr", "demande de contact d'un particulier", $messageContent)) {
 					$request->mailSuccess = true;
 				} else {
 					$request->mailSuccess = false;

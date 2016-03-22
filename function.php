@@ -126,7 +126,7 @@ function writeLog ($type, $texte, $level = LOG_LEVEL_INFO, $message = null) {
 	fwrite($logfile, "[END_LOG]\n");
 	fclose($logfile);
 	if ($level == LOG_LEVEL_ERROR) {
-		send_mail ("informatique@cservichezvous.fr", "Erreur de type ".$type, $mailMessage);
+		send_mail ("informatique@homemenus.fr", "Erreur de type ".$type, $mailMessage);
 	}
 }
 
@@ -136,7 +136,7 @@ function send_mail ($to, $subject, $message, $from = false) {
     $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
 	
 	if (!$from) {
-		$headers .= "From: no-reply@cservichezvous.fr";
+		$headers .= "From: no-reply@homemenus.fr";
 	} else {
 		$headers .= "From: $from";
 	}
