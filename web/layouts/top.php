@@ -37,7 +37,7 @@
 					</li>
 				<?php else : ?>
 					<li><a href="?action=inscription">Inscription</a></li>
-					<li><a data-toggle="modal" data-target="#login-modal">Login</a></li>
+					<li><a data-toggle="modal" data-target="#login-modal">Connexion</a></li>
 					<li><a href="?controler=contact">Contact</a></li>
 				<?php endif; ?>
 			</ul>
