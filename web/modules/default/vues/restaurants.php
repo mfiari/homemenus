@@ -119,6 +119,7 @@
 </div>
 <script type="text/javascript">
 	$(function() {
+		enableAutocomplete("full_address");
 		$(".search-more a").click(function () {
 			if ($(".advence-search").is(":visible")) {
 				$(".advence-search").hide();
