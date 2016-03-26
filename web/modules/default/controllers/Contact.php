@@ -153,42 +153,88 @@ class Controller_Contact extends Controller_Default_Template {
 	
 	public function restaurant ($request) {
 		if ($request->request_method == "POST") {
+			$errorMessage = array();
 			$reCaptcha = new ReCaptcha(RECAPTCHA_SECRET_KEY);
-			if(isset($_POST["g-recaptcha-response"])) {
+			if(isset($_POST["g-recaptcha-response"]) && $_POST["g-recaptcha-response"] != '') {
 				$resp = $reCaptcha->verifyResponse(
 					$_SERVER["REMOTE_ADDR"],
 					$_POST["g-recaptcha-response"]	
 				);
-				if ($resp != null && $resp->success) {
-					echo "OK";
-				} else {
-					echo "CAPTCHA incorrect";
+				if ($resp == null || !$resp->success) {
+					$errorMessage["ERROR_CAPTCHA"] = "Une erreur est survenu, veuillez réessayer";
 				}
-			}
-			$restaurant = $_POST['restaurant'];
-			$code_postal = $_POST['code_postal'];
-			$ville = $_POST['ville'];
-			$nom = $_POST['nom'];
-			$prenom = $_POST['prenom'];
-			$telephone = $_POST['telephone'];
-			$fonction = $_POST['fonction'];
-			$message = $_POST['message'];
-			
-			$messageContent =  file_get_contents (ROOT_PATH.'mails/contact_restaurant.html');
-			
-			$messageContent = str_replace("[restaurant]", $restaurant, $messageContent);
-			$messageContent = str_replace("[ville]", $ville, $messageContent);
-			$messageContent = str_replace("[code_postal]", $code_postal, $messageContent);
-			$messageContent = str_replace("[nom]", $nom, $messageContent);
-			$messageContent = str_replace("[prenom]", $prenom, $messageContent);
-			$messageContent = str_replace("[telephone]", $telephone, $messageContent);
-			$messageContent = str_replace("[fonction]", $fonction, $messageContent);
-			$messageContent = str_replace("[message]", nl2br($message), $messageContent);
-			
-			if (send_mail ("restaurant@homemenus.fr", "demande de contact", $messageContent)) {
-				$request->mailSuccess = true;
 			} else {
-				$request->mailSuccess = false;
+				$errorMessage["NO_CAPTCHA"] = "Veuillez valider le reCAPTCHA afin de prouvez que vous n'êtes pas un robot";
+			}
+			if (!isset($_POST["restaurant"]) || trim($_POST["restaurant"]) == "") {
+				$errorMessage["EMPTY_RESTAURANT"] = "Veuillez renseigner le nom de votre restaurant";
+			} else {
+				$restaurant = $_POST["restaurant"];
+			}
+			if (!isset($_POST["code_postal"]) || trim($_POST["code_postal"]) == "") {
+				$errorMessage["EMPTY_CP"] = "Veuillez renseigner le code postal de votre restaurant";
+			} else {
+				$code_postal = $_POST["code_postal"];
+			}
+			if (!isset($_POST["ville"]) || trim($_POST["ville"]) == "") {
+				$errorMessage["EMPTY_VILLE"] = "Veuillez renseigner la ville de votre restaurant";
+			} else {
+				$ville = $_POST["ville"];
+			}
+			if (!isset($_POST["nom"]) || trim($_POST["nom"]) == "") {
+				$errorMessage["EMPTY_NOM"] = "Veuillez renseigner votre nom";
+			} else {
+				$nom = $_POST["nom"];
+			}
+			if (!isset($_POST["prenom"]) || trim($_POST["prenom"]) == "") {
+				$errorMessage["EMPTY_PRENOM"] = "Veuillez renseigner votre prénom";
+			} else {
+				$prenom = $_POST["prenom"];
+			}
+			if (!isset($_POST["telephone"]) || trim($_POST["telephone"]) == "") {
+				$errorMessage["EMPTY_TEL"] = "Veuillez renseigner votre telephone";
+			} else {
+				$telephone = $_POST["telephone"];
+			}
+			if (!isset($_POST["fonction"]) || trim($_POST["fonction"]) == "") {
+				$errorMessage["EMPTY_FONCTION"] = "Veuillez renseigner votre fonction";
+			} else {
+				$fonction = $_POST["fonction"];
+			}
+			if (!isset($_POST["message"]) || trim($_POST["message"]) == "") {
+				$message = '';
+			} else {
+				$message = $_POST['message'];
+			}
+			
+			if (count($errorMessage) == 0) {
+			
+				$messageContent =  file_get_contents (ROOT_PATH.'mails/contact_restaurant.html');
+				
+				$messageContent = str_replace("[restaurant]", $restaurant, $messageContent);
+				$messageContent = str_replace("[ville]", $ville, $messageContent);
+				$messageContent = str_replace("[code_postal]", $code_postal, $messageContent);
+				$messageContent = str_replace("[nom]", $nom, $messageContent);
+				$messageContent = str_replace("[prenom]", $prenom, $messageContent);
+				$messageContent = str_replace("[telephone]", $telephone, $messageContent);
+				$messageContent = str_replace("[fonction]", $fonction, $messageContent);
+				$messageContent = str_replace("[message]", nl2br($message), $messageContent);
+				
+				if (send_mail ("restaurant@homemenus.fr", "demande de contact", $messageContent)) {
+					$request->mailSuccess = true;
+				} else {
+					$request->mailSuccess = false;
+				}
+			} else {
+				$request->errorMessage = $errorMessage;
+				$request->fieldRestaurant = $restaurant;
+				$request->fieldCP = $code_postal;
+				$request->fieldVille = $ville;
+				$request->fieldNom = $nom;
+				$request->fieldPrenom = $prenom;
+				$request->fieldTelephone = $telephone;
+				$request->fieldFonction = $fonction;
+				$request->fieldMessage = $message;
 			}
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact.js", "https://www.google.com/recaptcha/api.js");
