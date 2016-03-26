@@ -317,6 +317,36 @@ class Model_User extends Model_Template {
 		return true;
 	}
 	
+	public function getById () {
+		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone
+		FROM users user
+		LEFT JOIN user_client uc ON uc.uid = user.uid
+		WHERE user.uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getById", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null ||$value == false) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getById", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$this->nom = $value["nom"];
+		$this->prenom = $value["prenom"];
+		$this->login = $value["login"];
+		$this->status = $value["status"];
+		$this->session = $session;
+		$this->rue = $value["rue"];
+		$this->ville = $value["ville"];
+		$this->code_postal = $value["code_postal"];
+		$this->telephone = $value["telephone"];
+		return $this;
+	}
+	
 	public function getBySession ($uid, $session) {
 		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone
 		FROM users user
