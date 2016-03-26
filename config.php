@@ -1,5 +1,7 @@
 <?php
 
+	DEFINE ("ENVIRONNEMENT", "DEV");
+
 	/* path config */
 	DEFINE ("ROOT_PATH", "D:/wamp/www/projets/homemenus/website/");
 	DEFINE ("MODEL_PATH", ROOT_PATH."models/");

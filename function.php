@@ -132,6 +132,10 @@ function writeLog ($type, $texte, $level = LOG_LEVEL_INFO, $message = null) {
 
 function send_mail ($to, $subject, $message, $from = false) {
 	
+	if (ENVIRONNEMENT != "PRODUCTION") {
+		return true;
+	}
+	
 	$headers  = 'MIME-Version: 1.0' . "\r\n";
     $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
 	

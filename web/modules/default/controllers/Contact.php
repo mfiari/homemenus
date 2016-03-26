@@ -38,14 +38,12 @@ class Controller_Contact extends Controller_Default_Template {
 		if ($request->request_method == "POST") {
 			$errorMessage = array();
 			$reCaptcha = new ReCaptcha(RECAPTCHA_SECRET_KEY);
-			if(isset($_POST["g-recaptcha-response"])) {
+			if(isset($_POST["g-recaptcha-response"]) && $_POST["g-recaptcha-response"] != '') {
 				$resp = $reCaptcha->verifyResponse(
 					$_SERVER["REMOTE_ADDR"],
 					$_POST["g-recaptcha-response"]	
 				);
-				if ($resp != null && $resp->success) {
-					
-				} else {
+				if ($resp == null || !$resp->success) {
 					$errorMessage["ERROR_CAPTCHA"] = "Une erreur est survenu, veuillez réessayer";
 				}
 			} else {
@@ -75,6 +73,10 @@ class Controller_Contact extends Controller_Default_Template {
 				$messageContent = str_replace("[MESSAGE]", nl2br($message), $messageContent);
 				
 				if (send_mail ("contact@homemenus.fr", "demande de contact", $messageContent)) {
+					
+					$messageContent =  file_get_contents (ROOT_PATH.'mails/confirmation_contact.html');
+					$messageContent = str_replace("[MESSAGE]", nl2br($message), $messageContent);
+					
 					send_mail ($email, "confirmation demande de contact", $messageContent);
 					$request->mailSuccess = true;
 				} else {
