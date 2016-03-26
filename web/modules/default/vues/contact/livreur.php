@@ -12,7 +12,7 @@
 	<?php if ($request->mailSuccess === true) : ?>
 		<div class="alert alert-success" role="alert">
 			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-			Votre mail a bien été transmis aux équipe de cservichezvous
+			Votre mail a bien été transmis aux équipe de homemenus
 		</div>
 	<?php else : ?>
 		<div class="alert alert-danger" role="alert">
