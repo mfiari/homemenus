@@ -1,10 +1,8 @@
 <div class="col-md-12 odd">
 	<h2>Comment ça marche</h2>
-	<p>1) Inscrivez vous</p>
-	<p>2) Rechercher les restaurants proche de chez vous</p>
-	<p>3) Choisissez votre plat</p>
-	<p>4) Commander</p>
-	<p>5) Attendez le livreur bien au chaud</p>
+	<div class="col-md-12">
+		<img style="width : 100%;" src="res/img/comment_ca_marche.png">
+	</div>
 </div>
 <div class="col-md-12 even">
 	<h2>Pour les restaurants</h2>
