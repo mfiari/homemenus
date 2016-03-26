@@ -96,21 +96,39 @@ class Controller_Contact extends Controller_Default_Template {
 	
 	public function livreur ($request) {
 		if ($request->request_method == "POST") {
+			$errorMessage = array();
 			$reCaptcha = new ReCaptcha(RECAPTCHA_SECRET_KEY);
-			if(isset($_POST["g-recaptcha-response"])) {
+			if(isset($_POST["g-recaptcha-response"]) && $_POST["g-recaptcha-response"] != '') {
 				$resp = $reCaptcha->verifyResponse(
 					$_SERVER["REMOTE_ADDR"],
 					$_POST["g-recaptcha-response"]	
 				);
-				if ($resp != null && $resp->success) {
-					echo "OK";
-				} else {
-					echo "CAPTCHA incorrect";
+				if ($resp == null || !$resp->success) {
+					$errorMessage["ERROR_CAPTCHA"] = "Une erreur est survenu, veuillez réessayer";
 				}
+			} else {
+				$errorMessage["NO_CAPTCHA"] = "Veuillez valider le reCAPTCHA afin de prouvez que vous n'êtes pas un robot";
 			}
-			$nom = $_POST['nom'];
-			$prenom = $_POST['prenom'];
-			$telephone = $_POST['telephone'];
+			if (!isset($_POST["nom"]) || trim($_POST["nom"]) == "") {
+				$errorMessage["EMPTY_NOM"] = "Veuillez renseigner votre nom";
+			} else {
+				$nom = $_POST["nom"];
+			}
+			if (!isset($_POST["prenom"]) || trim($_POST["prenom"]) == "") {
+				$errorMessage["EMPTY_PRENOM"] = "Veuillez renseigner votre prénom";
+			} else {
+				$prenom = $_POST["prenom"];
+			}
+			if (!isset($_POST["telephone"]) || trim($_POST["telephone"]) == "") {
+				$errorMessage["EMPTY_TEL"] = "Veuillez renseigner votre telephone";
+			} else {
+				$telephone = $_POST["telephone"];
+			}
+			if (!isset($_POST["email"]) || trim($_POST["email"]) == "") {
+				$errorMessage["EMPTY_EMAIL"] = "Veuillez renseigner votre email";
+			} else {
+				$email = $_POST["email"];
+			}
 			$transports = array();
 			if (isset($_POST['auncun'])) {
 				$transports[] = "aucun";
@@ -130,20 +148,39 @@ class Controller_Contact extends Controller_Default_Template {
 			}
 			$transportContenu .= '</ul>';
 			
-			$message = $_POST['message'];
-			
-			$messageContent =  file_get_contents (ROOT_PATH.'mails/contact_livreur.html');
-			
-			$messageContent = str_replace("[nom]", $nom, $messageContent);
-			$messageContent = str_replace("[prenom]", $prenom, $messageContent);
-			$messageContent = str_replace("[telephone]", $telephone, $messageContent);
-			$messageContent = str_replace("[transport]", $transportContenu, $messageContent);
-			$messageContent = str_replace("[message]", nl2br($message), $messageContent);
-			
-			if (send_mail ("livreur@homemenus.fr", "demande de contact", $messageContent)) {
-				$request->mailSuccess = true;
+			if (!isset($_POST["message"]) || trim($_POST["message"]) == "") {
+				$message = '';
 			} else {
-				$request->mailSuccess = false;
+				$message = $_POST['message'];
+			}
+			
+			if (count($errorMessage) == 0) {
+			
+				$messageContent =  file_get_contents (ROOT_PATH.'mails/contact_livreur.html');
+				
+				$messageContent = str_replace("[nom]", $nom, $messageContent);
+				$messageContent = str_replace("[prenom]", $prenom, $messageContent);
+				$messageContent = str_replace("[telephone]", $telephone, $messageContent);
+				$messageContent = str_replace("[transport]", $transportContenu, $messageContent);
+				$messageContent = str_replace("[message]", nl2br($message), $messageContent);
+				
+				if (send_mail ("livreur@homemenus.fr", "demande de contact", $messageContent)) {
+					
+					$messageContent =  file_get_contents (ROOT_PATH.'mails/confirmation_contact_livreur.html');
+					
+					send_mail ($email, "confirmation demande de contact", $messageContent);
+					
+					$request->mailSuccess = true;
+				} else {
+					$request->mailSuccess = false;
+				}
+			} else {
+				$request->errorMessage = $errorMessage;
+				$request->fieldNom = $nom;
+				$request->fieldPrenom = $prenom;
+				$request->fieldTelephone = $telephone;
+				$request->fieldEmail = $email;
+				$request->fieldMessage = $message;
 			}
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact.js", "https://www.google.com/recaptcha/api.js");
