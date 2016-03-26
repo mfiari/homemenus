@@ -27,7 +27,7 @@
 		<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="">
 			<fieldset>
 				<div class="form-group">
-					<label for="sujet">Sujet : </label>
+					<label for="sujet">Sujet<span class="required">*</span> : </label>
 					<select name="sujet">
 					<?php foreach ($request->sujets as $key => $sujet) : ?>
 						<option value="<?php echo $key; ?>"><?php echo $sujet; ?></option>
@@ -35,11 +35,11 @@
 					</select>
 				</div>
 				<div class="form-group">
-					<label for="email">Votre email : </label>
+					<label for="email">Votre email<span class="required">*</span> : </label>
 					<input class="form-control" name="email" type="email" value="<?php echo $request->fieldEmail !== false ? $request->fieldEmail : ''; ?>" required>
 				</div>
 				<div class="form-group">
-					<label for="message">Message : </label>
+					<label for="message">Message<span class="required">*</span> : </label>
 					<textarea class="form-control" name="message" rows="8" cols="45" required><?php echo $request->fieldMessage !== false ? $request->fieldMessage : ''; ?></textarea>
 				</div>
 				<div class="g-recaptcha" data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>"></div>
