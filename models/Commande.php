@@ -1588,7 +1588,7 @@ class Model_Commande extends Model_Template {
 	
 	public function getAll () {
 		$sql = "SELECT com.id AS id_commande, livreur.uid AS id_livreur, livreur.login, resto.id AS id_restaurant, resto.nom AS nom_restaurant, 
-		resto.code_postal AS cp_restaurant, resto.ville AS ville_restaurant, com.date_commande, com.prix, com.etape, com.note
+		resto.code_postal AS cp_restaurant, resto.ville AS ville_restaurant, com.date_commande, com.prix, com.prix_livraison, com.etape, com.note
 		FROM commande com
 		LEFT JOIN users livreur ON livreur.uid = com.id_livreur
 		JOIN restaurants resto ON resto.id = com.id_restaurant
@@ -1604,7 +1604,7 @@ class Model_Commande extends Model_Template {
 			$commande = new Model_Commande();
 			$commande->id = $c["id_commande"];
 			$commande->date_commande = $c["date_commande"];
-			$commande->prix = $c["prix"];
+			$commande->prix = $c["prix"] + $c["prix_livraison"];
 			$commande->etape = $c["etape"];
 			$commande->note = $c["note"];
 			
