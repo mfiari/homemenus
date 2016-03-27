@@ -2,7 +2,7 @@
 <?php $horaire = $restaurant->horaire; ?>
 <div id="restaurant">
 	<h2><?php echo utf8_encode($request->restaurant->nom); ?></h2>
-	<a class="btn btn-primary" href="?controler=restaurant&action=recherche">
+	<a style="margin-bottom: 10px;" class="btn btn-primary" href="?controler=restaurant&action=recherche">
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour au resultat de la recherche
 	</a>
 	<div class="row">
@@ -21,7 +21,6 @@
 							<span>Ouvert de <?php echo $horaire->heure_debut; ?>h<?php echo $horaire->minute_debut; ?> à <?php echo $horaire->heure_fin; ?>h<?php echo $horaire->minute_fin; ?></span>
 						<?php endif; ?>
 					</p>
-					<button class="btn btn-primary">Voir toute les informations</button>
 				</div>
 				<div class="col-md-6">
 					<div id="googleMap" class="col-md-10 col-md-offset-1" style="height:200px; margin-top : 10px;"></div>
@@ -55,7 +54,7 @@
 			</div>
 		</div>
 	</div>
-	<a class="btn btn-primary" href="?controler=restaurant&action=recherche">
+	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=restaurant&action=recherche">
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour au resultat de la recherche
 	</a>
 </div>
