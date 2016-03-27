@@ -108,6 +108,21 @@
 	<?php endforeach; ?>
 	<div class="row">
 		<div class="col-md-8">
+			<span>Prix de livraison : </span>
+		</div>
+		<div class="col-md-4">
+			<div class="row">
+				<div class="col-md-6"></div>
+				<div class="col-md-6">
+					<?php echo $request->commande->prix_livraison; ?> €
+				</div>
+			</div>
+		</div>
+		<?php $totalPrix += $request->commande->prix_livraison; ?>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-md-8">
 			<span>Total : </span>
 		</div>
 		<div class="col-md-4">
