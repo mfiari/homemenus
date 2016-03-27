@@ -1628,7 +1628,7 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotal () {
-		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix) AS total_prix FROM commande";
+		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix) + SUM(prix_livraison) AS total_prix FROM commande";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			var_dump($stmt->errorInfo());
@@ -1642,7 +1642,8 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotalByLivreur () {
-		$sql = "SELECT livreur.uid AS id_livreur, livreur.login AS nom, COUNT(*) AS total_commande, SUM(commande.prix) AS total_prix FROM commande 
+		$sql = "SELECT livreur.uid AS id_livreur, livreur.login AS nom, COUNT(*) AS total_commande, SUM(commande.prix) + SUM(commande.prix_livraison) AS total_prix 
+		FROM commande 
 		LEFT JOIN users livreur ON livreur.uid = commande.id_livreur
 		GROUP BY livreur.uid";
 		$stmt = $this->db->prepare($sql);
@@ -1654,7 +1655,8 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotalByRestaurant () {
-		$sql = "SELECT resto.id AS id_restaurant, resto.nom AS nom, COUNT(*) AS total_commande, SUM(commande.prix) AS total_prix FROM commande 
+		$sql = "SELECT resto.id AS id_restaurant, resto.nom AS nom, COUNT(*) AS total_commande, SUM(commande.prix) + SUM(commande.prix_livraison) AS total_prix 
+		FROM commande 
 		JOIN restaurants resto ON resto.id = commande.id_restaurant
 		GROUP BY resto.id";
 		$stmt = $this->db->prepare($sql);
@@ -1666,7 +1668,8 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotalByClient () {
-		$sql = "SELECT client.uid AS id_livreur, client.nom AS nom, client.prenom AS prenom, COUNT(*) AS total_commande, SUM(commande.prix) AS total_prix FROM commande 
+		$sql = "SELECT client.uid AS id_livreur, client.nom AS nom, client.prenom AS prenom, COUNT(*) AS total_commande, 
+		SUM(commande.prix) + SUM(commande.prix_livraison) AS total_prix FROM commande 
 		JOIN users client ON client.uid = commande.uid
 		GROUP BY client.uid";
 		$stmt = $this->db->prepare($sql);
@@ -1678,7 +1681,7 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotalByVille () {
-		$sql = "SELECT ville AS nom, code_postal AS cp, COUNT(*) AS total_commande, SUM(commande.prix) AS total_prix FROM commande
+		$sql = "SELECT ville AS nom, code_postal AS cp, COUNT(*) AS total_commande, SUM(commande.prix) + SUM(commande.prix_livraison) AS total_prix FROM commande
 		GROUP BY ville";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
