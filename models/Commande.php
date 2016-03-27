@@ -279,7 +279,7 @@ class Model_Commande extends Model_Template {
 			$carte->id = $c['id'];
 			$carte->nom = $c['nom'];
 			$carte->quantite = $c['quantite'];
-			$carte->prix = $c['prix'];
+			$carte->prix = $c['prix'] * $c['quantite'];
 			
 			$sql = "SELECT supp.id, supp.nom, supp.prix
 			FROM commande_carte_supplement css
