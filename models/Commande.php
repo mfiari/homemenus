@@ -714,8 +714,8 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getCommandeRestaurant () {
-		$sql = "SELECT com.id, liv.uid, liv.nom, liv.prenom, com.heure_souhaite, com.minute_souhaite, com.heure_restaurant, com.minute_restaurant, com.prix, com.etape,
-		com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_commande
+		$sql = "SELECT com.id, liv.uid, liv.nom, liv.prenom, com.heure_souhaite, com.minute_souhaite, com.heure_restaurant, com.minute_restaurant, com.prix, 
+		com.prix_livraison, com.etape, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_commande
 		FROM commande com
 		LEFT JOIN users liv ON liv.uid = com.id_livreur
 		WHERE com.id = :id";
@@ -734,6 +734,7 @@ class Model_Commande extends Model_Template {
 		$this->heure_restaurant = $value['heure_restaurant'];
 		$this->minute_restaurant = $value['minute_restaurant'];
 		$this->prix = $value['prix'];
+		$this->prix_livraison = $value['prix_livraison'];
 		$this->etape = $value['etape'];
 		$this->date_validation_restaurant = $value['date_validation_restaurant'];
 		$this->date_fin_preparation_restaurant = $value['date_fin_preparation_restaurant'];
