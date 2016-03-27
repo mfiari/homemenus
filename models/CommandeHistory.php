@@ -48,13 +48,13 @@ class Model_Commande_History extends Model_Template {
 		$sql = "INSERT INTO commande_history (id_commande, id_user, nom_user, prenom_user, email_user, rue_user, ville_user, code_postal_user,
 		rue_commande, ville_commande, code_postal_commande, latitude_commande, longitude_commande, telephone_commande, id_livreur, nom_livreur,
 		prenom_livreur, login_livreur, id_restaurant, nom_restaurant, rue_restaurant, ville_restaurant, code_postal_restaurant, telephone_restaurant,
-		latitude_restaurant, longitude_restaurant, date_commande, heure_souhaite, minute_souhaite, prix, date_validation_restaurant,
-		date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, etape, note, commentaire)
+		latitude_restaurant, longitude_restaurant, date_commande, heure_souhaite, minute_souhaite, prix, prix_livraison, distance, 
+		date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, etape, note, commentaire)
 		VALUE (:id_commande, :id_user, :nom_user, :prenom_user, :email_user, :rue_user, :ville_user, :code_postal_user,
 		:rue_commande, :ville_commande, :code_postal_commande, :latitude_commande, :longitude_commande, :telephone_commande, :id_livreur, :nom_livreur,
 		:prenom_livreur, :login_livreur, :id_restaurant, :nom_restaurant, :rue_restaurant, :ville_restaurant, :code_postal_restaurant, :telephone_restaurant,
-		:latitude_restaurant, :longitude_restaurant, :date_commande, :heure_souhaite, :minute_souhaite, :prix, :date_validation_restaurant,
-		:date_fin_preparation_restaurant, :date_recuperation_livreur, :date_livraison, :etape, :note, :commentaire)";
+		:latitude_restaurant, :longitude_restaurant, :date_commande, :heure_souhaite, :minute_souhaite, :prix, :prix_livraison, :distance, 
+		:date_validation_restaurant, :date_fin_preparation_restaurant, :date_recuperation_livreur, :date_livraison, :etape, :note, :commentaire)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id_commande", $commande->id);
 		$stmt->bindValue(":id_user", $commande->client->id);
@@ -86,6 +86,8 @@ class Model_Commande_History extends Model_Template {
 		$stmt->bindValue(":heure_souhaite", $commande->heure_souhaite);
 		$stmt->bindValue(":minute_souhaite", $commande->minute_souhaite);
 		$stmt->bindValue(":prix", $commande->prix);
+		$stmt->bindValue(":prix_livraison", $commande->prix_livraison);
+		$stmt->bindValue(":distance", $commande->distance);
 		$stmt->bindValue(":date_validation_restaurant", $commande->date_validation_restaurant);
 		$stmt->bindValue(":date_fin_preparation_restaurant", $commande->date_fin_preparation_restaurant);
 		$stmt->bindValue(":date_recuperation_livreur", $commande->date_recuperation_livreur);
@@ -142,11 +144,12 @@ class Model_Commande_History extends Model_Template {
 		}
 		
 		foreach ($commande->cartes as $carte) {
-			$sql = "INSERT INTO commande_carte_history (id_commande, id_carte, nom_carte, id_categorie, nom_categorie, parent_categorie, parent_nom, 
+			$sql = "INSERT INTO commande_carte_history (id_commande, quantite, id_carte, nom_carte, id_categorie, nom_categorie, parent_categorie, parent_nom, 
 			commentaire_carte)
-			VALUES (:id_commande, :id_carte, :nom_carte, :id_categorie, :nom_categorie, :parent_categorie, :parent_nom, :commentaire_carte)";
+			VALUES (:id_commande, :quantite, :id_carte, :nom_carte, :id_categorie, :nom_categorie, :parent_categorie, :parent_nom, :commentaire_carte)";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id_commande", $id_commande_history);
+			$stmt->bindValue(":quantite", $carte->quantite);
 			$stmt->bindValue(":id_carte", $carte->id);
 			$stmt->bindValue(":nom_carte", $carte->nom);
 			$stmt->bindValue(":id_categorie", $carte->categorie->id);

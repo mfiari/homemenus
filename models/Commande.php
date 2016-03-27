@@ -1247,14 +1247,14 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getCommandeTerminer () {
-		$sql = "SELECT com.id AS id_commande, user.uid AS id_client, user.nom AS nom_client, user.prenom AS prenom_client, user.login AS login_user, user.email AS email_client, 
-		uc.rue AS rue_client, uc.ville AS ville_client, uc.code_postal AS cp_client, com.rue AS rue_commande, com.ville AS ville_commande, 
-		com.code_postal AS cp_commande, com.latitude AS latitude_commande, com.longitude AS longitude_commande, com.telephone AS tel_commande, 
-		livreur.uid AS id_livreur, livreur.nom AS nom_livreur, livreur.prenom AS prenom_livreur, livreur.login AS login_livreur, 
+		$sql = "SELECT com.id AS id_commande, user.uid AS id_client, user.nom AS nom_client, user.prenom AS prenom_client, user.login AS login_user, 
+		user.email AS email_client, uc.rue AS rue_client, uc.ville AS ville_client, uc.code_postal AS cp_client, com.rue AS rue_commande, 
+		com.ville AS ville_commande, com.code_postal AS cp_commande, com.latitude AS latitude_commande, com.longitude AS longitude_commande, 
+		com.telephone AS tel_commande, livreur.uid AS id_livreur, livreur.nom AS nom_livreur, livreur.prenom AS prenom_livreur, livreur.login AS login_livreur, 
 		resto.id AS id_restaurant, resto.nom AS nom_restaurant, resto.rue AS rue_restaurant, resto.ville AS ville_restaurant, 
 		resto.code_postal AS cp_restaurant, resto.telephone AS tel_restaurant, resto.latitude AS latitude_restaurant, resto.longitude AS longitude_restaurant, 
-		com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.date_validation_restaurant, com.date_fin_preparation_restaurant, 
-		com.date_recuperation_livreur, com.date_livraison, com.etape, com.note, com.commentaire
+		com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison, com.distance, com.date_validation_restaurant, 
+		com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.date_livraison, com.etape, com.note, com.commentaire
 		FROM commande com
 		JOIN users user ON user.uid = com.uid
 		JOIN user_client uc ON uc.uid = user.uid
@@ -1280,6 +1280,8 @@ class Model_Commande extends Model_Template {
 			$commande->heure_souhaite = $c["heure_souhaite"];
 			$commande->minute_souhaite = $c["minute_souhaite"];
 			$commande->prix = $c["prix"];
+			$commande->prix_livraison = $c["prix_livraison"];
+			$commande->distance = $c["distance"];
 			$commande->date_validation_restaurant = $c["date_validation_restaurant"];
 			$commande->date_fin_preparation_restaurant = $c["date_fin_preparation_restaurant"];
 			$commande->date_recuperation_livreur = $c["date_recuperation_livreur"];
