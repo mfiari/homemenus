@@ -219,7 +219,7 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTotal () {
-		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix) AS total_prix FROM commande_history";
+		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix) + SUM(prix_livraison) AS total_prix FROM commande_history";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			var_dump($stmt->errorInfo());
@@ -233,7 +233,7 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTotalByLivreur () {
-		$sql = "SELECT id_livreur, login_livreur AS nom, COUNT(*) AS total_commande, SUM(prix) AS total_prix FROM commande_history
+		$sql = "SELECT id_livreur, login_livreur AS nom, COUNT(*) AS total_commande, SUM(prix) + SUM(prix_livraison) AS total_prix FROM commande_history
 		GROUP BY id_livreur";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
@@ -244,7 +244,7 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTotalByRestaurant () {
-		$sql = "SELECT id_restaurant, nom_restaurant AS nom, COUNT(*) AS total_commande, SUM(prix) AS total_prix FROM commande_history 
+		$sql = "SELECT id_restaurant, nom_restaurant AS nom, COUNT(*) AS total_commande, SUM(prix) + SUM(prix_livraison) AS total_prix FROM commande_history 
 		GROUP BY id_restaurant";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
@@ -255,7 +255,7 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTotalByClient () {
-		$sql = "SELECT id_user, nom_user AS nom, prenom_user AS prenom, COUNT(*) AS total_commande, SUM(prix) AS total_prix FROM commande_history 
+		$sql = "SELECT id_user, nom_user AS nom, prenom_user AS prenom, COUNT(*) AS total_commande, SUM(prix) + SUM(prix_livraison) AS total_prix FROM commande_history 
 		GROUP BY id_user";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
@@ -266,7 +266,7 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTotalByVille () {
-		$sql = "SELECT ville_commande AS nom, code_postal_commande AS cp, COUNT(*) AS total_commande, SUM(prix) AS total_prix FROM commande_history
+		$sql = "SELECT ville_commande AS nom, code_postal_commande AS cp, COUNT(*) AS total_commande, SUM(prix) + SUM(prix_livraison) AS total_prix FROM commande_history
 		GROUP BY ville_commande";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
