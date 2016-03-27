@@ -119,22 +119,6 @@ class Controller_Paypal extends Controller_Default_Template {
 		if ($commande->create($panier)) {
 			$panier->remove();
 			$user = new Model_User();
-			/*$livreurs = $user->getLivreurPerimetre($code_postal);
-			$registatoin_ids = array();
-			$gcm = new GCMPushMessage(GOOGLE_API_KEY);
-			foreach ($livreurs as $livreur) {
-				array_push($registatoin_ids, $livreur->gcm_token);
-			}
-			$message = "Vous avez reçu une nouvelle commande";
-			// listre des utilisateurs à notifier
-			$gcm->setDevices($registatoin_ids);
-		 
-			// Le titre de la notification
-			$data = array("title" => "Nouvelle commande");
-		 
-			// On notifie nos utilisateurs
-			//$result = $gcm->send($message, $data);
-			$result = $gcm->sendToTopic('/topics/livreur-new_commande',$message, $data);*/
 			
 			$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
 			if (count($restaurantUsers) > 0) {
@@ -158,6 +142,13 @@ class Controller_Paypal extends Controller_Default_Template {
 				$result = $gcm->send($message, $data);
 				//$result = $gcm->send('/topics/restaurant-commande',$message, $data);
 			}
+			
+			$messageContent =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
+			
+			$messageContent = str_replace("[COMMANDE_ID]", $commande->id, $messageContent);
+			
+			send_mail ("admin@homemenus.fr", "Nouvelle commande", $messageContent);
+			
 		}
 		$request->vue = $this->render("paypal_success.php");
 	}
