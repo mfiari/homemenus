@@ -742,7 +742,7 @@ class Model_Commande extends Model_Template {
 			$menu->id = $commandeMenu['id_menu'];
 			$menu->nom = $commandeMenu['nom_menu'];
 			$menu->quantite = $commandeMenu['quantite'];
-			$menu->prix = $commandeMenu['prix'];
+			$menu->prix = $commandeMenu['prix'] * $commandeMenu['quantite'];
 			
 			$format = new Model_Format();
 			$format->id = $commandeMenu['id_format'];
@@ -802,7 +802,7 @@ class Model_Commande extends Model_Template {
 			$carte = new Model_Carte(false);
 			$carte->id = $commandeCarte['id_carte'];
 			$carte->nom = $commandeCarte['nom_carte'];
-			$carte->prix = $commandeCarte['prix'];
+			$carte->prix = $commandeCarte['prix'] * $commandeCarte['quantite'];
 			$carte->quantite = $commandeCarte['quantite'];
 			
 			$format = new Model_Format();
