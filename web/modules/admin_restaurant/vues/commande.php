@@ -1,4 +1,7 @@
 <h2>Commande #<?php echo $request->commande->id; ?></h2>
+<a class="btn btn-primary" href="?controler=commande">
+	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
+</a>
 <div id="commande">
 	<?php $totalPrix = 0; ?>
 	<?php $totalQte = 0; ?>
@@ -95,3 +98,6 @@
 		</div>
 	</div>
 </div>
+<a class="btn btn-primary" href="?controler=commande">
+	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
+</a>
