@@ -257,8 +257,7 @@ class Model_Restaurant extends Model_Template {
 		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin
 		FROM restaurants r 
 		JOIN restaurant_horaires rh ON rh.id_restaurant = r.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
-		OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin >= HOUR(CURRENT_TIME)))
-		GROUP BY r.id";
+		OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin >= HOUR(CURRENT_TIME)))";
 		if (isset($filters['tagsFilter']) && count($filters['tagsFilter']) > 0) {
 			$sql .= ' JOIN restaurant_tag rt ON rt.id_restaurant = r.id AND rt.id_tag IN ('.implode(',', $filters['tagsFilter']).')';
 		}
@@ -268,7 +267,7 @@ class Model_Restaurant extends Model_Template {
 			$sql .= " ".$link." $key = :$key";
 			$link = "AND";
 		}
-		$sql .= " Order by r.score, r.nom";
+		$sql .= " GROUP BY r.id Order by r.score, r.nom";
 		$stmt = $this->db->prepare($sql);
 		foreach ($filters as $key => $filter) {
 			if ($key == "distanceKm" || $key == "search_ardresse" || $key == "tags" || $key == "tagsFilter") continue;
@@ -607,6 +606,43 @@ class Model_Restaurant extends Model_Template {
 			$this->tags[] = $tag;
 		}
 		return $this;
+	}
+	
+	public function filterTags ($filtre, $restaurants) {
+		$sql = "SELECT tag.id, tag.nom FROM tags tag 
+		JOIN restaurant_tag rt ON rt.id_tag = tag.id 
+		WHERE nom LIKE '%".$filtre."%' AND rt.id_restaurant IN (".implode(',', $restaurants).")
+		GROUP BY tag.id";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			return false;
+		}
+		$list = array();
+		$tags = $stmt->fetchAll();
+		foreach ($tags as $value) {
+			$tag = new Model_Tag();
+			$tag->id = $value["id"];
+			$tag->nom = $value["nom"];
+			$list[] = $tag;
+		}
+		return $list;
+	}
+	
+	public function filterRestaurant ($filtre, $restaurants) {
+		$sql = "SELECT id, nom FROM restaurants WHERE nom LIKE '%".$filtre."%' AND id IN (".implode(',', $restaurants).")";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			return false;
+		}
+		$list = array();
+		$tags = $stmt->fetchAll();
+		foreach ($tags as $value) {
+			$tag = new Model_Tag();
+			$tag->id = $value["id"];
+			$tag->nom = $value["nom"];
+			$list[] = $tag;
+		}
+		return $list;
 	}
 	
 	public function loadOptions () {

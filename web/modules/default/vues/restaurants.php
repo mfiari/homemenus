@@ -44,13 +44,28 @@
 					<input name="livreur_dispo" type="checkbox" <?php echo $request->livreur_dispo ? "checked" : ""; ?>  />Livreur disponible
 				</div>
 			</div>
-			<div class="col-md-6">
-				<?php foreach ($request->tags as $tag) : ?>
-					<div class="input-group">
-						<input name="tag_<?php echo $tag->id; ?>" type="checkbox" value="<?php echo $tag->id; ?>" <?php echo in_array($tag->id, $request->tagsFilter) ? 'checked' : ''; ?>  /><?php echo utf8_encode($tag->nom); ?>
+			<div class="col-md-4">
+				<div class="input-group">
+					<label for="tags">Catégorie : </label>
+					<input id="tags" name="tags" type="text"  />
+					<div>
+						<?php foreach ($request->tags as $tag) : ?>
+							<?php if (in_array($tag->id, $request->tagsFilter)) : ?>
+								<p><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000; cursor : pointer" onclick="removeTag(<?php echo $tag->id; ?>)"></span><?php echo utf8_encode($tag->nom); ?>
+							<?php endif ?>
+						<?php endforeach; ?>
 					</div>
-				<?php endforeach; ?>
+				</div>
 			</div>
+			<div class="col-md-4">
+				<div class="input-group">
+					<label for="tags">Restaurant : </label>
+					<input id="restaurantsField" name="tags" type="text"  />
+				</div>
+			</div>
+			<?php foreach ($request->tags as $tag) : ?>
+				<input id="field_tag_<?php echo $tag->id; ?>" name="tag_<?php echo $tag->id; ?>" type="checkbox" value="<?php echo $tag->id; ?>" <?php echo in_array($tag->id, $request->tagsFilter) ? 'checked' : ''; ?> style="display : none;" />
+			<?php endforeach; ?>
 		</div>
 		<div class="row search-button">
 			<button class="btn btn-primary" type="submit">Rechercher</button>
@@ -58,6 +73,7 @@
 	</form>
 </div>
 <div id="restaurants">
+	<?php $restaurantIds = array(); ?>
 	<?php if ($request->adressError) : ?>
 		<div class="alert alert-danger" role="alert">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -78,6 +94,7 @@
 		?>
 		<p><?php echo count($request->restaurants) ?> restaurants trouvés</p>
 		<?php foreach ($request->restaurants as $restaurant) : ?>
+			<?php $restaurantIds[] = $restaurant->id; ?>
 			<?php $horaire = $restaurant->horaire; ?>
 			<?php if ($indice %2 == 0) : ?>
 				<div class="row">
@@ -130,7 +147,67 @@
 			}
 			
 		});
+		$('#tags').autocomplete({
+			source: function( request, response ) {
+				$.ajax({
+					dataType: "json",
+					type : 'Get',
+					url: '?controler=restaurant&action=autocompleteTag',
+					data : {
+						term: request.term,
+						restaurant : <?php echo json_encode($restaurantIds); ?>
+					},
+					success: function(data) {
+						response(data);
+					},
+					error: function(data) {
+						alert(data);
+					}
+				});
+			},
+			minLength : 1,
+			select: function(event, ui) {
+				$("#field_tag_"+ui.item.id).prop("checked", true);
+				$("#restaurant-filter-form").submit();
+			}
+		}).autocomplete( "instance" )._renderItem = function( ul, item ) {
+		  return $("<li>")
+			.append( "<a>" + item.value + "</a>" )
+			.appendTo( ul );
+		};
+		$('#restaurantsField').autocomplete({
+			source: function( request, response ) {
+				$.ajax({
+					dataType: "json",
+					type : 'Get',
+					url: '?controler=restaurant&action=autocompleteRestaurant',
+					data : {
+						term: request.term,
+						restaurant : <?php echo json_encode($restaurantIds); ?>
+					},
+					success: function(data) {
+						response(data);
+					},
+					error: function(data) {
+						alert(data);
+					}
+				});
+			},
+			minLength : 1,
+			select: function(event, ui) {
+				
+			}
+		}).autocomplete( "instance" )._renderItem = function( ul, item ) {
+		  return $("<li>")
+			.append( "<a>" + item.value + "</a>" )
+			.appendTo( ul );
+		};
 	});
+	
+	function removeTag(id) {
+		$("#field_tag_"+id).prop("checked", false);
+		$("#restaurant-filter-form").submit();
+	}
 </script>
 <style>
 	#full_address {
@@ -199,5 +276,10 @@
 		max-height: 180px;
 		max-width: 100%;
 	}
+	
+	.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+	.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+	.autocomplete-selected { background: #F0F0F0; }
+	.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
 	
 </style>

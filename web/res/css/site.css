@@ -262,7 +262,8 @@ span.disponible {
     border-radius: 10px;
     float: right;
     height: 15px;
-    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-top: 10px;
     width: 15px;
 }
 
@@ -271,7 +272,8 @@ span.closed {
     border-radius: 10px;
     float: right;
     height: 15px;
-    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-top: 10px;
     width: 15px;
 }
 

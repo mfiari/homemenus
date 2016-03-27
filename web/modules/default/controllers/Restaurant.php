@@ -42,6 +42,12 @@ class Controller_Restaurant extends Controller_Default_Template {
 				case "menu" :
 					$this->menu($request);
 					break;
+				case "autocompleteTag" :
+					$this->autocompleteTag($request);
+					break;
+				case "autocompleteRestaurant" :
+					$this->autocompleteRestaurant($request);
+					break;
 				default :
 					$this->redirect('404');
 					break;
@@ -261,6 +267,46 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$restaurant->loadMenus();
 			$request->restaurant = $restaurant;
 			$request->vue = $this->render("menus.php");
+		}
+	}
+	
+	private function autocompleteTag ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		if(isset($_GET['term'])) {
+			$restaurants = $_GET['restaurant'];
+			// Mot tapé par l'utilisateur
+			$q = htmlentities($_GET['term']);
+			$modelRestaurant = new Model_Restaurant();
+			$suggestions = array();
+			$list = $modelRestaurant->filterTags ($q, $restaurants);
+			foreach ($list as $tag) {
+				$suggestions[] = array();
+				$indice = count($suggestions) - 1;
+				$suggestions[$indice]['id'] = $tag->id;
+				$suggestions[$indice]['value'] = utf8_encode($tag->nom);
+			}
+			echo json_encode($suggestions);
+		}
+	}
+	
+	private function autocompleteRestaurant ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		if(isset($_GET['term'])) {
+			$restaurants = $_GET['restaurant'];
+			// Mot tapé par l'utilisateur
+			$q = htmlentities($_GET['term']);
+			$modelRestaurant = new Model_Restaurant();
+			$suggestions = array();
+			$list = $modelRestaurant->filterRestaurant ($q, $restaurants);
+			foreach ($list as $restaurant) {
+				$suggestions[] = array();
+				$indice = count($suggestions) - 1;
+				$suggestions[$indice]['id'] = $restaurant->id;
+				$suggestions[$indice]['value'] = utf8_encode($restaurant->nom);
+			}
+			echo json_encode($suggestions);
 		}
 	}
 	
