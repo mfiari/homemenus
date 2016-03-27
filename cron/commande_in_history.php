@@ -53,6 +53,6 @@
 	$messageContent = str_replace("[NB_TOTAL_COMMANDE_ERROR]", $totalCommandeError, $messageContent);
 	$messageContent = str_replace("[MONTANT_TOTAL_ERROR]", $montantTotalError, $messageContent);
 	
-	send_mail ("admin@cservichezvous.fr", "Bilan des commandes", $messageContent);
+	send_mail ("admin@homemenus.fr", "Bilan des commandes", $messageContent);
 	
 	writeLog (CRON_LOG, "fin historisation commande");
