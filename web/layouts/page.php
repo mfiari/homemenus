@@ -69,7 +69,7 @@
 			</div>
 			<?php include('footer.html'); ?>
 		</div>
-		<?php if ($request->_auth && $request->_auth->status == USER_CLIENT) : ?>
+		<?php if ($request->_auth && $request->_auth->status == USER_CLIENT && $request->_hasCommandeEnCours) : ?>
 		<script type="text/javascript">
 			window.setInterval(function() {
 				$.ajax({

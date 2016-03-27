@@ -272,7 +272,7 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 		$heure_commande = -1;
 		$minute_commande = 0;
-		if (isset($_POST['type']) && $_POST['type'] == "pre_commande") {
+		if ((isset($_POST['type']) && $_POST['type'] == "pre_commande") || (!isset($_POST['type']) && isset($_POST['heure_commande'])) ) {
 			$heure_commande = $_POST['heure_commande'];
 			$minute_commande = $_POST['minute_commande'];
 		}

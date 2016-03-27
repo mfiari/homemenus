@@ -48,8 +48,12 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function create ($panier) {
-		$sql = "INSERT INTO commande (uid, rue, ville, code_postal, telephone, id_restaurant, date_commande, heure_souhaite, minute_souhaite, etape) 
-		(SELECT uid, rue, ville, code_postal, telephone, id_restaurant, now(), heure_souhaite, minute_souhaite, 0 FROM panier WHERE id = :id)";
+		$sql = "INSERT INTO commande (uid, rue, ville, code_postal, telephone, id_restaurant, date_commande, heure_souhaite, minute_souhaite, 
+		prix_livraison, distance, etape) 
+		(SELECT panier.uid, panier.rue, panier.ville, panier.code_postal, panier.telephone, panier.id_restaurant, now(), panier.heure_souhaite, 
+		panier.minute_souhaite, pl.prix, panier.distance, 0 FROM panier 
+		JOIN prix_livraison pl ON panier.distance BETWEEN pl.distance_min AND pl.distance_max
+		WHERE panier.id = :id)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $panier->id);
 		if (!$stmt->execute()) {
@@ -73,7 +77,7 @@ class Model_Commande extends Model_Template {
 		}
 		$listPanierMenu = $stmt->fetchAll();
 		foreach ($listPanierMenu as $panierMenu) {
-			$total += $panierMenu['prix'];
+			$total += $panierMenu['prix'] * $panierMenu['quantite'];
 			$sql = "INSERT INTO commande_menu (id_commande, id_menu, id_format, id_formule, quantite) VALUES (:id, :menu, :format, :formule, :quantite)";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $id_commande);
@@ -113,13 +117,12 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $panier->id);
 		if (!$stmt->execute()) {
-			echo "menus  : ";
 			var_dump($stmt->errorInfo());
 			return false;
 		}
 		$listPanierCarte = $stmt->fetchAll();
 		foreach ($listPanierCarte as $panierCarte) {
-			$total += $panierCarte['prix'];
+			$total += $panierCarte['prix'] * $panierCarte['quantite'];
 			$sql = "INSERT INTO commande_carte (id_commande, id_carte, id_format, quantite) VALUES (:id, :id_carte, :id_format, :quantite)";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $id_commande);
@@ -158,7 +161,6 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $panierCarte['id']);
 			if (!$stmt->execute()) {
-				echo "menus  : ";
 				var_dump($stmt->errorInfo());
 				return false;
 			}
@@ -365,6 +367,21 @@ class Model_Commande extends Model_Template {
 		$this->livreur->gcm_token = $value['gcm_token'];
 		$this->livreur->is_login = $value['is_login'];
 		return $this->livreur;
+	}
+	
+	public function hasCommandeEnCours () {
+		$sql = "SELECT COUNT(*) AS nb_commande FROM commande WHERE uid = :uid AND etape < 4";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->uid);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return;
+		}
+		return $value['nb_commande'] > 0;
 	}
 	
 	/*

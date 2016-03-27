@@ -27,10 +27,14 @@ if (isset($_SESSION["uid"]) && isset($_SESSION["session"])) {
 
 if ($request->_auth && $request->_auth->status == "USER") {
 	include_once ROOT_PATH."models/Panier.php";
+	include_once ROOT_PATH."models/Commande.php";
 	$panier = new Model_Panier();
 	$panier->uid = $request->_auth->id;
 	$request->_itemsPanier = $panier->getNbArticle();
 	$request->_id_restaurant_panier = $panier->getRestaurant();
+	$commande = new Model_Commande();
+	$commande->uid = $request->_auth->id;
+	$request->_hasCommandeEnCours = $commande->hasCommandeEnCours();
 }
 
 if (isset($_GET["module"])) {
