@@ -592,7 +592,7 @@ class Model_Commande extends Model_Template {
 		FROM commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		WHERE id_livreur = :livreur
-		AND etape < 5";
+		AND etape < 4";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":livreur", $this->uid);
 		if (!$stmt->execute()) {
@@ -1413,7 +1413,7 @@ class Model_Commande extends Model_Template {
 			}
 			
 			$sql = "SELECT cc.id, carte.id AS id_carte, carte.nom AS nom_carte, rc.id AS id_categorie, rc.nom AS nom_categorie, parent.id AS id_parent, parent.nom AS nom_parent, 
-			carte.commentaire AS commentaire_carte, carte.limite_supplement, carte.limite_accompagnement, cc.quantite, cf.id AS id_format, rf.nom AS nom_format, 
+			carte.commentaire AS commentaire_carte, carte.limite_supplement, cc.quantite, cf.id AS id_format, rf.nom AS nom_format, 
 			cf.prix, cf.temps_preparation
 			FROM commande_carte cc
 			JOIN carte ON carte.id = cc.id_carte
