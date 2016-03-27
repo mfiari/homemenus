@@ -388,7 +388,7 @@ class Model_Commande extends Model_Template {
 	* Récupère les commandes utilisateur en cours
 	*/
 	public function loadNotFinishedCommande () {
-		$sql = "SELECT com.id AS id_commande, com.id_livreur, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix,
+		$sql = "SELECT com.id AS id_commande, com.id_livreur, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison,
 		com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.etape, resto.id AS id_restaurant, resto.nom,
 		com.last_view_user
 		FROM commande com
@@ -407,7 +407,7 @@ class Model_Commande extends Model_Template {
 			$commande->id = $c["id_commande"];
 			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
 			$commande->etape = $c["etape"];
-			$commande->prix = $c["prix"];
+			$commande->prix = $c["prix"] + $c["prix_livraison"];
 			$commande->livreur = $c["id_livreur"];
 			$restaurant = new Model_Restaurant();
 			$restaurant->id = $c["id_restaurant"];
