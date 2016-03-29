@@ -81,11 +81,9 @@ class Controller_User extends Controller_Template {
 	private function login () {
 		if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
 			$this->error(400, "Login non renseigné");
-			return;
 		}
 		if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
 			$this->error(400, "Mot de passe non renseigné");
-			return;
 		}
 		$ext = $this->getExtension();
 		$login = $_POST["login"];
@@ -94,7 +92,9 @@ class Controller_User extends Controller_Template {
 		$user = $model->login($login, $password);
 		if (!$user) {
 			$this->error(404, "Login ou mot de passe incorrect");
-			return;
+		}
+		if (!$user->is_enable) {
+			$this->error(403, "Not authorized");
 		}
 		require 'vue/inscription.'.$ext.'.php';
 	}
@@ -114,40 +114,57 @@ class Controller_User extends Controller_Template {
 	}
 	
 	private function inscription () {
-		if (!isset($_POST["nom"])) {
-			die();
-		}
-		if (!isset($_POST["prenom"])) {
-			die();
-		}
-		if (!isset($_POST["login"])) {
-			die();
-		}
-		if (!isset($_POST["password"])) {
-			die();
-		}
-		if (!isset($_POST["status"])) {
-			die();
-		}
-		$nom = $_POST["nom"];
-		$prenom = $_POST["prenom"];
-		$login = $_POST["login"];
-		$password = $_POST["password"];
-		$status = $_POST["status"];
-		$model = new Model_User();
-		$id_user = $model->insert($nom, $prenom, $login, $password, $status);
-		if ($status == "restaurant") {
-			$id_restaurant = $_POST["id_restaurant"];
-			$model->insertRestaurant($id_user, $id_restaurant);
-		} else if ($status == "user") {
-			$rue = $_POST["rue"];
-			$ville = $_POST["ville"];
-			$code_postal = $_POST["code_postal"];
-			$telephone = $_POST["telephone"];
-			$model->insertUser($id_user, $rue, $ville, $code_postal, $telephone);
-		} else if ($status == "livreur") {
-			$dispo = $_POST["dispo"];
-			$model->insertLivreur($id_user, $dispo);
+		if ($_SERVER['REQUEST_METHOD'] == "POST") {
+			$errorMessage = array();
+			if (!isset($_POST["nom"]) || trim($_POST["nom"]) == "") {
+				$this->error(400, "Le nom ne peut être vide");
+			}
+			if (!isset($_POST["prenom"]) || trim($_POST["prenom"]) == "") {
+				$this->error(400, "Le prénom ne peut être vide");
+			}
+			if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
+				$this->error(400, "Le login ne peut être vide");
+			}
+			if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
+				$this->error(400, "Le mot de passe ne peut être vide");
+			}
+			$rue = null;
+			$ville = null;
+			$code_postal = null;
+			$telephone = null;
+			if (isset($_POST["telephone"]) && trim($_POST["telephone"]) != '') {
+				$telephone = trim($_POST["telephone"]);
+			}
+			$model = new Model_User();
+			$model->nom = trim($_POST["nom"]);
+			$model->prenom = trim($_POST["prenom"]);
+			$model->login = trim($_POST["login"]);
+			$model->email = trim($_POST["login"]);
+			$model->password = trim($_POST["password"]);
+			$model->status = USER_CLIENT;
+			$model->rue = $rue;
+			$model->ville = $ville;
+			$model->code_postal = $code_postal;
+			$model->inscription_token = generateToken();
+			$model->telephone = $telephone;
+			if ($model->isLoginAvailable()) {
+				$model->beginTransaction();
+				if ($model->save()) {
+					$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription.html');
+					$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
+					$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
+					$messageContent = str_replace("[UID]", $model->id, $messageContent);
+					$messageContent = str_replace("[TOKEN]", $model->inscription_token, $messageContent);
+					$messageContent = str_replace("[WEBSITE_URL]", WEBSITE_URL, $messageContent);
+					
+					send_mail ($model->email, "Création de votre compte", $messageContent);
+				} else {
+					$this->error(500, "Une erreur s'est produite, veuillez réessayé ultérieurement.");
+				}
+				$model->endTransaction();
+			} else {
+				$this->error(400, "Cet email existe déjà");
+			}
 		}
 	}
 	

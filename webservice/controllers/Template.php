@@ -10,6 +10,7 @@ abstract class Controller_Template {
 	
 	protected function error ($code, $message = "") {
 		header("HTTP/1.0 ".$code." ".$message);
+		die();
 	}
 	
 	protected function getExtension () {
