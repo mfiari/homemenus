@@ -1,36 +1,50 @@
 <?php
 	
 	$dom = new DOMDocument();
-	$restaurantDom = $dom->createElement("restaurant");
-	$dom->appendChild($restaurantDom);
-	$restaurantDom->setAttribute("id", $restaurant->id);
-	$nodeNom = $dom->createElement("nom");
-	$texteNom = $dom->createTextNode($restaurant->nom);
-	$nodeNom->appendChild($texteNom);
-	$restaurantDom->appendChild($nodeNom);
+	$nodeCarte = $dom->createElement("carte");
+	$dom->appendChild($nodeCarte);
+	$nodeCarte->setAttribute("id", $carte->id);
+	addTextNode ($dom, $nodeCarte, "nom", utf8_encode($carte->nom));
+	addTextNode ($dom, $nodeCarte, "commentaire", utf8_encode($carte->commentaire));
 	
-	$nodeCategories = $dom->createElement("categories");
-	foreach ($restaurant->carte as $categorie => $value) {
-		$nodeCategorie = $dom->createElement("categorie");
-		$nodeNom = $dom->createElement("nom");
-		$texteCategorie = $dom->createTextNode($categorie);
-		$nodeNom->appendChild($texteCategorie);
-		$nodeCategorie->appendChild($nodeNom);
+	$nodeFormats = $dom->createElement("formats");
+	foreach ($carte->formats as $format) {
+		$nodeFromat = $dom->createElement("format");
+		$nodeFromat->setAttribute("id", $format->id);
+		addTextNode ($dom, $nodeFromat, "nom", utf8_encode($format->nom));
+		addTextNode ($dom, $nodeFromat, "prix", utf8_encode($format->prix));
+		$nodeFormats->appendChild($nodeFromat);
+	}
+	$nodeCarte->appendChild($nodeFormats);
+	
+	$nodeAccompagnements = $dom->createElement("accompagnements");
+	foreach ($carte->accompagnements as $accompagnement) {
+		$nodeAccompagnement = $dom->createElement("accompagnement");
+		$nodeAccompagnement->setAttribute("id", $accompagnement->id);
+		addTextNode ($dom, $nodeAccompagnement, "limite", $accompagnement->limite);
 		
 		$nodeCartes = $dom->createElement("cartes");
-		foreach ($value as $carte) {
-			$nodeCarte = $dom->createElement("carte");
-			$nodeCarte->setAttribute("id", $carte->id);
-			$nodeNom = $dom->createElement("nom");
-			$texteNom = $dom->createTextNode($carte->nom);
-			$nodeNom->appendChild($texteNom);
-			$nodeCarte->appendChild($nodeNom);
-			$nodeCartes->appendChild($nodeCarte);
+		foreach ($accompagnement->cartes as $carteAccompagement) {
+			$nodeCarteAccompagnement = $dom->createElement("carte");
+			$nodeCarteAccompagnement->setAttribute("id", $carteAccompagement->id);
+			addTextNode ($dom, $nodeCarteAccompagnement, "nom", utf8_encode($nodeCarteAccompagnement->nom));
+			$nodeCartes->appendChild($nodeCarteAccompagnement);
 		}
-		$nodeCategorie->appendChild($nodeCartes);
-		$nodeCategories->appendChild($nodeCategorie);
+		$nodeAccompagnement->appendChild($nodeCartes);
 	}
-	$restaurantDom->appendChild($nodeCategories);
+	$nodeCarte->appendChild($nodeAccompagnements);
+	
+	$nodeSupplements = $dom->createElement("supplements");
+	foreach ($carte->supplements as $supplement) {
+		$nodeSupplement = $dom->createElement("supplement");
+		$nodeSupplement->setAttribute("id", $supplement->id);
+		addTextNode ($dom, $nodeSupplement, "nom", utf8_encode($supplement->nom));
+		addTextNode ($dom, $nodeSupplement, "prix", $supplement->prix);
+		addTextNode ($dom, $nodeSupplement, "commentaire", utf8_encode($supplement->commentaire));
+		$nodeSupplements->appendChild($nodeSupplement);
+	}
+	$nodeCarte->appendChild($nodeSupplements);
+	
 	header("Content-type: text/xml; charset=utf-8");
 	print $dom->saveXML();
 	

@@ -265,7 +265,7 @@ class Model_Carte extends Model_Template {
 		return true;
 	}
 	
-	public function load () {
+	public function load ($id_restaurant = false) {
 		$sql = "SELECT nom, is_visible, commentaire, limite_supplement FROM carte WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
@@ -279,6 +279,9 @@ class Model_Carte extends Model_Template {
 		$this->commentaire = $value['commentaire'];
 		$this->is_visible = $value['is_visible'];
 		$this->limite_supplement = $value['limite_supplement'];
+		if ($id_restaurant !== false) {
+			$this->getLogo ($id_restaurant);
+		}
 		
 		$sql = "SELECT format.id, format.nom, cf.prix, cf.temps_preparation 
 		FROM carte_format cf

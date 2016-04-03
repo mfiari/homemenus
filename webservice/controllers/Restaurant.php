@@ -185,17 +185,35 @@ class Controller_Restaurant extends Controller_Template {
 			$modelRestaurant = new Model_Restaurant();
 			$modelRestaurant->id = $_GET['id'];
 			$restaurant = $modelRestaurant->load();
+			$imgSize = "default";
+			if (isset($_GET['img_size'])) {
+				$imgSize = $_GET['img_size'];
+			}
 			$modelCategorie = new Model_Categorie();
-			$restaurant->categories = $modelCategorie->getParentContenu($restaurant->id);
+			$restaurant->categories = $modelCategorie->getParentContenu($restaurant->id, $imgSize);
 			require 'vue/restaurant/restaurant.'.$this->ext.'.php';
 		}
 	}
 	
 	private function categorie () {
+		$id_categorie = $_GET["id_categorie"];
+		$id_restaurant = $_GET["id_restaurant"];
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id_restaurant'];
+		$restaurant = $modelRestaurant->loadMinInformation();
+		$imgSize = "default";
+		if (isset($_GET['img_size'])) {
+			$imgSize = $_GET['img_size'];
+		}
 		$modelCategorie = new Model_Categorie();
-		$modelCategorie->id = $_GET['id'];
-		$categorie = $modelCategorie->loadContenu();
-		require 'vue/categorie/contenus.'.$this->ext.'.php';
+		$modelCategorie->id = $_GET['id_categorie'];
+		$categorie = $modelCategorie->load();
+		$childrens = $modelCategorie->getChildren();
+		foreach ($childrens as $children) {
+			$children->loadContenu($id_restaurant, $imgSize);
+			$restaurant->addCategorie($children);
+		}
+		require 'vue/restaurant/categorie.'.$this->ext.'.php';
 	}
 	
 	private function carteContenu () {
@@ -206,16 +224,60 @@ class Controller_Restaurant extends Controller_Template {
 	}
 	
 	private function carte () {
-		$modelRestaurant = new Model_Restaurant();
-		$modelRestaurant->id = $_GET['id'];
-		$restaurant = $modelRestaurant->loadCarte();
-		require 'vue/restaurant/carte.'.$this->ext.'.php';
+		if (isset($_GET["id_carte"])) {
+			
+			$id_restaurant = $_GET['id_restaurant'];
+			
+			$modelCarte = new Model_Carte();
+			$modelCarte->id = $_GET['id_carte'];
+			$carte = $modelCarte->load();
+			$carte->getLogo($id_restaurant);
+			
+			/*$modelUser = new Model_User();
+			$ville = $_SESSION['search_ville'];
+			$codePostal = $_SESSION['search_cp'];
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $request->id_restaurant;
+			$fields = array ("code_postal", "ville");
+			$restaurant->get($fields);
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+			$request->has_livreur_dispo = count($livreurs) > 0;*/
+			
+			require 'vue/restaurant/carte.'.$this->ext.'.php';
+		}
 	}
 	
 	private function menu () {
-		$modelRestaurant = new Model_Restaurant();
-		$modelRestaurant->id = $_GET['id'];
-		$restaurant = $modelRestaurant->loadMenus();
+		$restaurant = new Model_Restaurant();
+		$restaurant->id = $_GET['id'];
+		$fields = array ("nom", "code_postal", "ville");
+		$restaurant->get($fields);
+		
+		$modelUser = new Model_User();
+		
+		if (isset($_GET['code_postal']) && isset($_GET['ville'])) {
+			$ville = $_GET['ville'];
+			$codePostal = $_GET['code_postal'];
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+			$has_livreur_dispo = count($livreurs) > 0;
+		} else if (isset($_GET['latitude']) && isset($_GET['longitude'])) {
+			$latitude = $_GET['latitude'];
+			$longitude = $_GET['longitude'];
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+			$has_livreur_dispo = count($livreurs) > 0;
+		} else if (isset($_SESSION['search_cp']) && isset($_SESSION['search_ville'])) {
+			$ville = $_SESSION['search_ville'];
+			$codePostal = $_SESSION['search_cp'];
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+			$has_livreur_dispo = count($livreurs) > 0;
+		} else {
+			$has_livreur_dispo = false;
+		}
+		
+		$modelMenu = new Model_Menu();
+		$modelMenu->id = $_GET['id_menu'];
+		$menu = $modelMenu->load($restaurant->id);
+		
 		require 'vue/restaurant/menu.'.$this->ext.'.php';
 	}
 	

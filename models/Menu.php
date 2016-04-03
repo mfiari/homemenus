@@ -106,7 +106,7 @@ class Model_Menu extends Model_Template {
 		return true;
 	}
 	
-	public function load () {
+	public function load ($id_restaurant = false) {
 		$sql = "SELECT nom, commentaire FROM menus WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
@@ -190,7 +190,7 @@ class Model_Menu extends Model_Template {
 					
 					$modelCarte = new Model_Carte();
 					$modelCarte->id = $cont['id_carte'];
-					$contenu->carte = $modelCarte->load();
+					$contenu->carte = $modelCarte->load($id_restaurant);
 					
 					$categorie->addContenu($contenu);
 				}

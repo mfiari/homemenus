@@ -40,7 +40,7 @@
 			$("#loading-modal").modal();
 			var id_menu = $(this).attr('data-id');
 			var id_restaurant = $("#id_restaurant").val();
-			$.ajax({
+			/*$.ajax({
 				type: "GET",
 				url: '?controler=restaurant&action=menu&id='+id_restaurant+'&id_menu='+id_menu,
 				dataType: "html"
@@ -48,6 +48,15 @@
 				$("#loading-modal").modal('hide');
 				$("#menu-modal .modal-content").html(msg);
 				$("#menu-modal").modal();
+			});*/
+			$.ajax({
+				type: "GET",
+				url: 'http://localhost/projets/homemenus/website/webservice/index.php?module=restaurant&action=menu&id='+id_restaurant+'&id_menu='+id_menu+'&ext=json',
+				dataType: "html"
+			}).done(function( msg ) {
+				console.log(msg);
+				var data = $.parseJSON(msg);
+				initMenu (data);
 			});
 		});
 	})

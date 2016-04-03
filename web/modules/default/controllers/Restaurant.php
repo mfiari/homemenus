@@ -266,6 +266,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$restaurant = $modelRestaurant->loadMinInformation();
 			$restaurant->loadMenus();
 			$request->restaurant = $restaurant;
+			$request->javascripts = array("res/js/menu.js");
 			$request->vue = $this->render("menus.php");
 		}
 	}

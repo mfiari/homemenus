@@ -74,7 +74,7 @@ class Model_Categorie extends Model_Template {
 		return $this;
 	}
 	
-	public function getParentContenu ($id_restaurant) {
+	public function getParentContenu ($id_restaurant, $directory = "default") {
 		$sql = "SELECT id, nom FROM restaurant_categorie WHERE id_restaurant = :id AND parent_categorie = 0 ORDER BY ordre";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $id_restaurant);
@@ -87,7 +87,7 @@ class Model_Categorie extends Model_Template {
 			$categorie = new Model_Categorie();
 			$categorie->id = $c["id"];
 			$categorie->nom = $c["nom"];
-			$categorie->getLogo($id_restaurant);
+			$categorie->getLogo($id_restaurant, $directory);
 			$list[] = $categorie;
 		}
 		return $list;
@@ -111,7 +111,7 @@ class Model_Categorie extends Model_Template {
 		return $list;
 	}
 	
-	public function loadContenu ($id_restaurant) {
+	public function loadContenu ($id_restaurant, $directory = "default") {
 		/*$sql = "SELECT carte.id, carte.nom FROM carte
 		JOIN carte_disponibilite cd ON cd.id_carte = carte.id
 		JOIN restaurant_horaires rh ON rh.id = cd.id_horaire AND rh.id_jour = WEEKDAY(CURRENT_DATE)-1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
@@ -129,7 +129,7 @@ class Model_Categorie extends Model_Template {
 			$contenu = new Model_Contenu();
 			$contenu->id = $c["id"];
 			$contenu->nom = $c["nom"];
-			$contenu->getLogo($id_restaurant);
+			$contenu->getLogo($id_restaurant, $directory);
 			$this->contenus[] = $contenu;
 		}
 		return $this;
@@ -153,16 +153,16 @@ class Model_Categorie extends Model_Template {
 		return $this;
 	}
 	
-	private function getLogo ($id_restaurant) {
+	private function getLogo ($id_restaurant, $directory = "default") {
 		$imgPath = "res/img/restaurant/";
 		$logoDirectory = WEBSITE_PATH.$imgPath;
 		if (file_exists($logoDirectory.$id_restaurant)) {
-			if (file_exists($logoDirectory.$id_restaurant.'/categories/'.$this->id.'.png')) {
-				$this->logo = $imgPath.$id_restaurant.'/categories/'.$this->id.'.png';
-			} else if (file_exists($logoDirectory.$id_restaurant.'/categories/'.$this->id.'.jpg')) {
-				$this->logo = $imgPath.$id_restaurant.'/categories/'.$this->id.'.jpg';
-			} else if (file_exists($logoDirectory.$id_restaurant.'/categories/'.$this->id.'.gif')) {
-				$this->logo = $imgPath.$id_restaurant.'/categories/'.$this->id.'.gif';
+			if (file_exists($logoDirectory.$id_restaurant.'/categories/'.$directory.'/'.$this->id.'.png')) {
+				$this->logo = $imgPath.$id_restaurant.'/categories/'.$directory.'/'.$this->id.'.png';
+			} else if (file_exists($logoDirectory.$id_restaurant.'/categories/'.$directory.'/'.$this->id.'.jpg')) {
+				$this->logo = $imgPath.$id_restaurant.'/categories/'.$directory.'/'.$this->id.'.jpg';
+			} else if (file_exists($logoDirectory.$id_restaurant.'/categories/'.$directory.'/'.$this->id.'.gif')) {
+				$this->logo = $imgPath.$id_restaurant.'/categories/'.$directory.'/'.$this->id.'.gif';
 			} else {
 				$this->logo = $imgPath.'default/cloche.jpg';
 			}

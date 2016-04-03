@@ -98,7 +98,7 @@ class Controller_Panier extends Controller_Default_Template {
 			$this->error(400, "Bad request");
 		}
 		return $panier;
-	} 
+	}
 	
 	public function addCarte ($request) {
 		if ($request->request_method != "POST") {

@@ -39,16 +39,16 @@ class Model_Contenu {
 		$this->accompagnements[] = $accompagnement;
 	}
 	
-	public function getLogo ($id_restaurant) {
+	public function getLogo ($id_restaurant, $directory = "default") {
 		$imgPath = "res/img/restaurant/";
 		$logoDirectory = WEBSITE_PATH.$imgPath;
 		if (file_exists($logoDirectory.$id_restaurant)) {
-			if (file_exists($logoDirectory.$id_restaurant.'/contenus/'.$this->id.'.png')) {
-				$this->logo = $imgPath.$id_restaurant.'/contenus/'.$this->id.'.png';
-			} else if (file_exists($logoDirectory.$id_restaurant.'/contenus/'.$this->id.'.jpg')) {
-				$this->logo = $imgPath.$id_restaurant.'/contenus/'.$this->id.'.jpg';
-			} else if (file_exists($logoDirectory.$id_restaurant.'/contenus/'.$this->id.'.gif')) {
-				$this->logo = $imgPath.$id_restaurant.'/contenus/'.$this->id.'.gif';
+			if (file_exists($logoDirectory.$id_restaurant.'/contenus/'.$directory.'/'.$this->id.'.png')) {
+				$this->logo = $imgPath.$id_restaurant.'/contenus/'.$directory.'/'.$this->id.'.png';
+			} else if (file_exists($logoDirectory.$id_restaurant.'/contenus/'.$directory.'/'.$this->id.'.jpg')) {
+				$this->logo = $imgPath.$id_restaurant.'/contenus/'.$directory.'/'.$this->id.'.jpg';
+			} else if (file_exists($logoDirectory.$id_restaurant.'/contenus/'.$directory.'/'.$this->id.'.gif')) {
+				$this->logo = $imgPath.$id_restaurant.'/contenus/'.$directory.'/'.$this->id.'.gif';
 			} else {
 				$this->logo = $imgPath.'default/cloche.jpg';
 			}

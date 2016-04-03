@@ -1,79 +1,261 @@
 
-$(function() {
-	var id = getParameterByName("id");
-	$.ajax({
-		type: "GET",
-		url: "webservice/index.php",
-		dataType: "html",
-		data: "module=menu&action=one&id="+id+"&ext=json"
-	}).done(function( msg ) {
-		var menu = $.parseJSON(msg);
-		if (menu.length == 0) {
-			return;
+var formContent = {};
+
+function initMenu (data) {
+	var restaurant = data.restaurant;
+	var menu = restaurant.menu;
+	
+	/* Setting header */
+	var modalHeader = $('<div />').addClass('modal-header').append('<button type="button" class="close" data-dismiss="modal">&times;</button>');
+	var modalHeaderTitle = $('<h2 />').addClass('modal-title').html(menu.nom);
+	modalHeader.append(modalHeaderTitle);
+	if (menu.commentaire != "") {
+		var menuCommentaire = $('<span />').html(menu.commentaire);
+		modalHeader.append(menuCommentaire);
+	}
+	$("#menu-modal .modal-content").append(modalHeader);
+				
+	/* Setting body content */
+				
+	$("#menu-modal .modal-content").append(
+		$('<div />').addClass('modal-body').append(
+			$('<div />').addClass('row').append(
+				$('<div />').attr('id', 'menu-resume').addClass('col-md-4').append(
+					$('<h3>Votre séléction</h3>')
+				)
+			).append(
+				$('<div />').attr('id', 'menu-content').addClass('col-md-8')
+			)
+		)
+	);
+	
+	$("#loading-modal").modal('hide');
+	$("#menu-modal").modal();
+	
+	initFormat (menu);
+	
+}
+
+function initFormat (menu) {
+	if (menu.formats.length > 1) {
+		var formatDiv = $('<div />').attr('id', 'step').append('<h3>Choisissez votre format</h3>');
+		for (var i = 0 ; i < menu.formats.length ; i++) {
+			formatDiv.append(
+				$('<div />').append(
+					$('<div />').append(
+						$('<input />').attr('name', 'id_format').attr('type', 'radio').val(menu.formats[i].id).click(
+							{format : menu.formats[i]},
+							function (event) {
+								chooseFormat (event.data.format);
+							}
+						)
+					).append(menu.formats[i].nom)
+				).append(
+					$('<div />').html('Prix : ' + menu.formats[i].prix + ' €')
+				)
+			);
 		}
-		var html = '<h2>'+menu.nom+'</h2>';
-		html += '<p>Prix : '+menu.prix+' €</p>';
-		html += '<p>Temps de préparation : '+menu.preparation+' min</p>';
-		html += '<p>'+menu.commentaire+'</p>';
-		var formulaire = "";
-		$.each(menu.categories, function(id, categorie) {
-			if (id != 1) {
-				formulaire += '<h3>'+categorie.nom+'</h3>';
-				var operation;
-				if (categorie.quantite == 1) {
-					operation = function (id_categorie, categorie, contenu) {
-						return '<input type="radio" name="'+id_categorie+'" value="'+contenu.id+'">'+contenu.nom+'<br />';
-					};
+		formatDiv.append(
+			$('<button />').addClass('btn btn-primary').html('Suivant').click(function () {
+				if (!formContent.format) {
+					alert('format non choisit');
 				} else {
-					operation = function (id_categorie, categorie, contenu) {
-						var select = '<select name="select'+id_categorie+'_'+contenu.id+'">';
-						for (var i = 1 ; i <= categorie.quantite ; i++) {
-							select += '<option value="'+i+'">'+i+'</option>';
-						}
-						select += '</select>';
-						return '<input type="checkbox" name="'+id_categorie+'_'+contenu.id+'" value="'+contenu.id+'">'+contenu.nom+select+'<br />';
-					};
+					validateFormat (menu);
 				}
-				$.each(categorie.contenus, function(indice, contenu) {
-					if (contenu.obligatoire == "1") {
-						formulaire += '<input type="checkbox" disabled="disabled" name="'+id+'_'+contenu.id+'" value="'+contenu.id+'" checked>'+contenu.nom+'<br />';
-						formulaire += '<input type="text" hidden="hidden" name="'+id+'_'+contenu.id+'" value="'+contenu.id+'" />';
-					} else {
-						formulaire += operation(id, categorie, contenu);
-					}
-					if (contenu.commentaire != "") {
-						formulaire += '<p>('+contenu.commentaire+')</p>';
-					}
-				});
-			} else {
-				formulaire += '<h3>Menu</h3>';
-				$.each(categorie.contenus, function(indice, contenu) {
-					formulaire += '<p>'+contenu.nom+'<p/>';
-					if (contenu.commentaire != "") {
-						formulaire += '<p>('+contenu.commentaire+')</p>';
-					}
-				});
-			}
-		});
-		$("#menu").append(html);
-		$("#ajout_panier button").before(formulaire);
-	}).fail(function (jqXHR, textStatus, errorThrown) {
-		
-	});
-	$("#ajout_panier").submit(function (evt) {
-		evt.preventDefault();
-		var id_user = $("#id_user_field").val();
-		if (id_user == "") {
-			alert("Vous devez être connecter pour commander");
-		} else {
-			$.ajax({
-				type: "POST",
-				url: "webservice/index.php?module=panier&action=ajouter",
-				dataType: "html",
-				data: $("#ajout_panier").serialize()
-			}).done(function( msg ) {
-				panier();
-			});
+			})
+		)
+		$('#menu-content').append(formatDiv);
+	} else {
+		chooseFormat (menu.formats[0]);
+		initFormule (menu);
+	}
+}
+
+function chooseFormat (format) {
+	formContent.format = {};
+	formContent.format.id = format.id;
+	formContent.format.nom = format.nom;
+	formContent.format.prix = format.prix;
+	formContent.chooseFormat = true;
+	console.log(formContent.format);
+}
+
+function validateFormat (menu) {
+	$('#menu-resume').append(
+		$('<hr />')
+	).append(
+		$('<span />').html(formContent.format.nom + ' (' + formContent.format.prix + '€)')
+	);
+	initFormule (menu);
+}
+
+function initFormule (menu) {
+	if (menu.formules.length > 1) {
+		var formuleDiv = $('<div />').attr('id', 'step-').append('<h3>Choisissez votre formule</h3>');
+		for (var i = 0 ; i < menu.formules.length ; i++) {
+			formuleDiv.append(
+				$('<div />').append(
+					$('<div />').append(
+						$('<input />').attr('name', 'id_format').attr('type', 'radio').val(menu.formules[i].id)
+					).append(menu.formules[i].nom)
+				)
+			);
 		}
-	});
-});
+		formuleDiv.append('<button class="btn btn-primary">Précédent</button>');
+		formuleDiv.append('<button class="btn btn-primary">Suivant</button>');
+		$('#menu-content').append(formuleDiv);
+	} else {
+		chooseFormule (menu.formules[0]);
+		initCategorie (menu.formules[0], 0);
+	}
+}
+
+function chooseFormule (formule) {
+	formContent.formule = {};
+	formContent.formule.id = formule.id;
+	formContent.formule.nom = formule.nom;
+	formContent.chooseFormule = true;
+	console.log(formContent.formule);
+}
+
+function validateFormule (formule) {
+	$('#menu-resume').append(
+		$('<hr />')
+	).append(
+		$('<span />').html(formContent.formule.nom)
+	);
+	initCategorie (formule, 0);
+}
+
+function initCategorie (formule, index) {
+	if (formule.categories.length > index) {
+		var categorie = formule.categories[index];
+		var categorieDiv = $('<div />').attr('id', 'step-').append('<h3>Choisissez votre ' + categorie.nom + '</h3>');
+		for (var j = 0 ; j < categorie.contenus.length ; j++) {
+			categorieDiv.append(
+				$('<div />').addClass('col-md-12').append(
+					$('<div />').append(
+						$('<input />').attr('name', 'contenu_'+categorie.id).attr('type', 'radio').val(categorie.contenus[j].id).click(
+							{categorie : categorie, contenus : categorie.contenus[j], index : index},
+							function (event) {
+								chooseCategorie (event.data.categorie, event.data.contenus, event.data.index);
+							}
+						)
+					).append(
+						$('<span />').html(categorie.contenus[j].carte.nom)
+					).append(
+						$('<img />').attr('src', categorie.contenus[j].carte.logo).css('width', '100px')
+					)
+				)
+			);
+		}
+		categorieDiv.append(
+			$('<button />').addClass('btn btn-primary').html('Précédent').click(
+				{formule : formule, index : index},
+				function (event) {
+					if (index == 0) {
+						
+					} else {
+						initCategorie (event.data.formule, event.data.index -1);
+					}
+				}
+			)
+		);
+		categorieDiv.append(
+			$('<button />').addClass('btn btn-primary').html('Suivant').click(
+				{formule : formule, index : index},
+				function (event) {
+					if (!formContent.categorie[event.data.index]) {
+						alert('contenu non choisit');
+					} else {
+						validateCategorie (event.data.formule, event.data.index);
+					}
+				}
+			)
+		);
+		$('#menu-content').html('');
+		$('#menu-content').append(categorieDiv);
+	} else {
+		resume();
+	}
+}
+
+function chooseCategorie (categorie, contenu, index) {
+	if (!formContent.categorie) {
+		formContent.categorie = [];
+	}
+	formContent.categorie[index] = {};
+	formContent.categorie[index].id = categorie.id;
+	formContent.categorie[index].nom = categorie.nom;
+	formContent.categorie[index].contenu = {};
+	formContent.categorie[index].contenu.id = contenu.id;
+	formContent.categorie[index].contenu.id_carte = contenu.carte.id;
+	formContent.categorie[index].contenu.nom = contenu.carte.nom;
+	console.log(formContent.categorie[index]);
+}
+
+function validateCategorie (formule, index) {
+	$('#menu-resume').append(
+		$('<hr />')
+	).append(
+		$('<h3 />').html(formContent.categorie[index].nom)
+	).append(
+		$('<span />').html(formContent.categorie[index].contenu.nom)
+	);
+	initCategorie (formule, index+1);
+}
+
+function resume () {
+	
+	var stepper = $('<div />').attr('id', 'stepper').addClass('stepper').attr('data-min-value', '1').attr('data-max-value', '5').append(
+		'<label>Quantite</label>' + 
+		'<a class="stepper-less stepper-button">-</a>' + 
+		'<input type="text" name="quantite" value="0" class="stepper-value">' + 
+		'<a class="stepper-more stepper-button">+</a>'
+	);
+	
+	$('#menu-content').hide();
+	$('#menu-resume').removeClass('col-md-4').addClass('col-md-12');
+	
+	$('#menu-resume').after(
+		$('<div />').addClass('col-md-12').append(
+			$('<button />').addClass('btn btn-primary').html('Précédent').click(function () {
+			})
+		).append(
+			$('<button />').addClass('btn btn-primary').html('Valider').click(function () {
+			})
+		)
+	).before(stepper);
+	
+	initStepper ("stepper");
+	
+	/*var div = $('<div />');
+	if (formContent.chooseFormat) {
+		div.append(
+			$('<h3 />').html(formContent.format.nom + ' (' + formContent.format.prix + '€)')
+		);
+	}
+	if (formContent.chooseFormule) {
+		div.append(
+			$('<h3 />').html(formContent.formule.nom)
+		);
+	}
+	for (var i = 0 ; i < formContent.categorie.length ; i++) {
+		div.append(
+			$('<div />').append(
+				$('<h3 />').html(formContent.categorie[i].nom)
+			).append(
+				$('<span />').html(formContent.categorie[i].contenu.nom)
+			)
+		);
+	}
+	div.append(
+		$('<button />').addClass('btn btn-primary').html('Précédent').click(function () {
+		})
+	).append(
+		$('<button />').addClass('btn btn-primary').html('Valider').click(function () {
+		})
+	);
+	$('#menu-content').html('');
+	$('#menu-content').append(div);*/
+}
