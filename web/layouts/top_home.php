@@ -7,7 +7,6 @@
 				<img id="logo" src="res/img/logo.png">
 			</a>
 			<ul class="menu">
-				<li><a href="?action=index">Accueil</a></li>
 				<?php if ($request->_auth) : ?>
 					<li><a href="?controler=contact">Contact</a></li>
 					<li><a id="cardMenu">
@@ -28,10 +27,12 @@
 							<li><a href="?action=logout"><span class="glyphicon glyphicon-off" aria-hidden="true"></span>deconnexion</a></li>
 						</ul>
 					</li>
+					<li><a href="?action=faq">FAQ</a></li>
 				<?php else : ?>
 					<li><a href="?action=inscription">Inscription</a></li>
 					<li><a data-toggle="modal" data-target="#login-modal">Connexion</a></li>
 					<li><a href="?controler=contact">Contact</a></li>
+					<li><a href="?action=faq">FAQ</a></li>
 				<?php endif; ?>
 			</ul>
 		</div>

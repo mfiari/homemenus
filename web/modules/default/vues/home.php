@@ -1,37 +1,62 @@
 <div class="col-md-12 even">
-	<h2>Pour les restaurants</h2>
+	<h2>Devenir restaurant partenaire</h2>
 	<div class="row">
-		<div class="col-md-8">
-			<p>Des couverts en plus, sans aucun effort ni investissement supplémentaire ? Ne changez rien, on s’occupe de tout !</p>
-			<p>Contactez-nous dès maintenant via notre <a href="?controler=contact&action=restaurant">page de contact</a></p>
+		<div class="col-md-9 col-sm-9 col-xs-9">
+			<p>Besoin d’offrir une nouvelle dimension à votre restaurant. Envie de faire plus de commandes et d’avoir plus de couverts, sans faire d’effort, 
+			ni même faire d’investissement, avec HoMe Menus c’est garanti.</p>
+			<p>Faites nous confiance nous nous occupons de tout !</p>
+				<p>Contactez-nous dès maintenant via notre <a href="?controler=contact&action=restaurant">page de contact</a></p>
 		</div>
-		<div class="col-md-4">
-			<!-- <img style="height : 150px;" src="res/img/img1.jpg"> -->
+		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/home.png">
 		</div>
 	</div>
 </div>
 <div class="col-md-12 odd">
-	<h2>Pour les livreurs</h2>
+	<h2>Pour les entreprises</h2>
 	<div class="row">
-		<div class="col-md-4">
-			<!-- <img style="height : 150px;" src="res/img/img2.jpg"> -->
+		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/home.png">
 		</div>
-		<div class="col-md-8">
-			<p>Nous cherchons des coursiers! Excellente rémunération, des horaires flexibles, rejoignez une communauté de coursiers en expansion.</p>
-			<p>Postulez maintenant sur notre <a href="?controler=contact&action=livreur">page de contact</a></p>
+		<div class="col-md-9 col-sm-9 col-xs-9">
+			<p>La meilleure solution pour vos déjeuners d’équipe et autres événements ou tout simplement pour de bons repas au bureau. 
+			HoMe Menus a prévu une gamme exceptionnelle de produits et services. Venez découvrir ici ce que nous avons prévu pour vous ! </p>
+			<p>Contactez-nous dès maintenant via notre <a href="?controler=contact&action=restaurant">page de contact</a></p>
 		</div>
 	</div>
 </div>
 <div class="col-md-12 even">
-	<h2>Pour les pro</h2>
+	<h2>Devenir Livreur</h2>
 	<div class="row">
-		<div class="col-md-8">
-			<p>Vous êtes une entreprise et vous souhaitez faire une commande pour une réunion.</p>
-			<p>Vous êtes un particulier et vous souhaitez faire une commande pour un évènement particulier.</p>
-			<p>Nous vous apportons nos solutions. <a href="?controler=contact&action=pro">Contactez-nous</a> pour un devis</p>
+		<div class="col-md-9 col-sm-9 col-xs-9">
+			<p>Vous  êtes sportif, dynamique et avez envie de vous faire un extra, rejoignez l’aventure HoMe Menus. 
+			<a href="?controler=contact&action=livreur">Postulez dès maintenant</a> !</p>
 		</div>
-		<div class="col-md-4">
-			<!-- <img style="height : 150px;" src="res/img/img3.jpg"> -->
+		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/home.png">
+		</div>
+	</div>
+</div>
+<div class="col-md-12 odd">
+	<h2>Pour les plus exigeants</h2>
+	<div class="row">
+		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/home.png">
+		</div>
+		<div class="col-md-9 col-sm-9 col-xs-9">
+			<p>Un compte spécial pour les grands gourmands, pensé et imaginé par des gourmands. <a href="">Venez découvrir les avantages du compte premium</a> !</p>
+		</div>
+	</div>
+</div>
+<div class="col-md-12 even">
+	<h2>Commande spéciale</h2>
+	<div class="row">
+		<div class="col-md-9 col-sm-9 col-xs-9">
+			<p>Besoin d’organiser un repas d’anniversaire, une réunion, un événement, 
+			<a href="?controler=contact&action=livreur">contactez nous</a> afin que nous satisfaisions vos envies.</p>
+		</div>
+		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/home.png">
 		</div>
 	</div>
 </div>

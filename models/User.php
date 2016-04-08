@@ -339,7 +339,6 @@ class Model_User extends Model_Template {
 		$this->prenom = $value["prenom"];
 		$this->login = $value["login"];
 		$this->status = $value["status"];
-		$this->session = $session;
 		$this->rue = $value["rue"];
 		$this->ville = $value["ville"];
 		$this->code_postal = $value["code_postal"];

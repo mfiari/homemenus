@@ -25,13 +25,14 @@ class Controller_Compte extends Controller_Default_Template {
 	}
 	
 	public function index ($request) {
-		if ($request->user) {
+		if ($request->_auth) {
 			$request->title = "Compte";
+			$modelUser = new Model_User();
+			$modelUser->id = $request->_auth->id;
+			$request->user = $modelUser->getById();
 			$request->vue = $this->render("compte.php");
 		} else {
-			$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/compte.js");
-			$request->title = "Compte";
-			$request->vue = $this->render("login.php");
+			$this->redirect('inscription');
 		}
 	}
 	
