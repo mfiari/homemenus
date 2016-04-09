@@ -45,8 +45,7 @@
 	});
 	$("#loginForm").submit(function(event) {
 		event.preventDefault();
-		$("#loginButton").css('display', 'none');
-		$("#login-modal .modal-footer .glyphicon-refresh-animate").css('display', 'inline-block');
+		showLoading('loginButton', true);
 		$.ajax({
 			type: "POST",
 			url: "?action=login",
@@ -69,9 +68,8 @@
 					$("#login-modal .modal-footer div.alert-danger span.message").html("Une erreur est survenu, veuillez réessayé.");
 					break;
 			}
-			$("#login-modal .modal-footer .glyphicon-refresh-animate").css('display', 'none');
 			$("#login-modal .modal-footer div.alert-danger").css('display', 'block');
-			$("#loginButton").css('display', 'block');
+			hideLoading('loginButton');
 		});
 	});
 </script>
