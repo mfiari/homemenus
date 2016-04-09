@@ -15,6 +15,12 @@ class Controller_Compte extends Controller_Default_Template {
 				case "activation" :
 					$this->activation($request);
 					break;
+				case "forgot_password" :
+					$this->forgot_password($request);
+					break;
+				case "reset_password" :
+					$this->reset_password($request);
+					break;
 				default :
 					$this->error_404($request);
 					break;
@@ -58,6 +64,43 @@ class Controller_Compte extends Controller_Default_Template {
 			$request->vue = $this->render("confirmation_inscription_success.php");
 		} else {
 			$request->vue = $this->render("confirmation_inscription_fail.php");
+		}
+	}
+	
+	public function forgot_password ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		if ($request->request_method != "POST") {
+			$this->error(405, "Method not allowed");
+		}
+		if (!isset($_POST['login'])) {
+			$this->error(400, "bad request");
+		}
+		$model = new Model_User();
+		$model->login = trim($_POST["login"]);
+		$user = $model->getByLogin();
+		if ($user) {
+			if (!$user->is_enable) {
+				$this->error(403, "Not authorized");
+			}
+			$token = generateToken();
+			$messageContent =  file_get_contents (ROOT_PATH.'mails/forgot_password.html');
+			$messageContent = str_replace("[UID]", $model->id, $messageContent);
+			$messageContent = str_replace("[TOKEN]", $model->inscription_token, $messageContent);
+			$messageContent = str_replace("[WEBSITE_URL]", WEBSITE_URL, $messageContent);
+					
+			send_mail ($model->email, "Changement de mot de passe", $messageContent);
+			
+		} else {
+			$this->error(404, "Not found");
+		}
+	}
+	
+	public function reset_password ($request) {
+		if ($request->request_method != "POST") {
+			
+		} else if ($request->request_method != "GET") {
+			$request->vue = $this->render("reset_password.php");
 		}
 	}
 }

@@ -215,6 +215,13 @@ function boundToPoints (list) {
 	}
 }
 
+function showLoading (divid, hide) {
+	if (hide) {
+		$("#"+divid).css('display', 'none');
+	}
+	$("#"+divid).after('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>');
+}
+
 function playNotificationSong () {
 	var audio = new Audio('res/media/sound.mp3');
 	audio.play();

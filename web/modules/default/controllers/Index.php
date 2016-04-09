@@ -43,6 +43,9 @@ class Controller_Index extends Controller_Default_Template {
 				case "cgv" :
 					$this->cgv($request);
 					break;
+				case "recaptcha" :
+					$this->recaptcha($request);
+					break;
 				case "404" :
 					$this->error_404($request);
 					break;
@@ -195,6 +198,12 @@ class Controller_Index extends Controller_Default_Template {
 	
 	public function cgv ($request) {
 		$request->vue = $this->render("cgv.php");
+	}
+	
+	public function recaptcha ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$request->vue = $this->render("recaptcha.php");
 	}
 	
 	public function error_404 ($request) {

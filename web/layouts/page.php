@@ -7,6 +7,7 @@
 				include('panier.html');
 			} else {
 				include('login.html');
+				include('forgot_password.php');
 			}
 		 ?>
 		<div id="page-container">

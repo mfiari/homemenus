@@ -83,6 +83,27 @@ class Model_User extends Model_Template {
 		return $this;
 	}
 	
+	public function getByLogin () {
+		$sql = "SELECT uid, email, is_enable FROM users WHERE login = :login";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":login", $this->login);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null || $value == false) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : confirm", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$this->id = $value['uid'];
+		$this->email = $value['email'];
+		$this->is_enable = $value["is_enable"];
+		return $this;
+	}
+	
 	public function save () {
 		if ($this->id == -1) {
 			return $this->insert();
