@@ -45,14 +45,24 @@ class Controller_User extends Controller_Admin_Template {
 		$model = new Model_User();
 		$model->id = trim($_GET["id_user"]);
 		$model->enable();
-		$this->redirect('livreurs', 'user');
+		$type = $_GET["type"];
+		if ($type == "client") {
+			$this->redirect('clients', 'user');
+		} else {
+			$this->redirect('livreurs', 'user');
+		}
 	}
 	
 	public function disable ($request) {
 		$model = new Model_User();
 		$model->id = trim($_GET["id_user"]);
 		$model->disable();
-		$this->redirect('livreurs', 'user');
+		$type = $_GET["type"];
+		if ($type == "client") {
+			$this->redirect('clients', 'user');
+		} else {
+			$this->redirect('livreurs', 'user');
+		}
 	}
 	
 	public function livreurs ($request) {

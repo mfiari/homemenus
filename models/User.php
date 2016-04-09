@@ -644,7 +644,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getAllClients () {
-		$sql = "SELECT user.uid, user.nom, user.prenom, uc.code_postal, uc.ville, user.is_enable
+		$sql = "SELECT user.uid, user.nom, user.prenom, user.login, uc.code_postal, uc.ville, user.is_enable
 		FROM users user JOIN user_client uc ON uc.uid = user.uid WHERE user.status = 'USER'";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
@@ -659,6 +659,7 @@ class Model_User extends Model_Template {
 			$user->id = $usr['uid'];
 			$user->nom = $usr['nom'];
 			$user->prenom = $usr['prenom'];
+			$user->login = $usr['login'];
 			$user->code_postal = $usr['code_postal'];
 			$user->ville = $usr['ville'];
 			$user->is_enable = $usr['is_enable'];
