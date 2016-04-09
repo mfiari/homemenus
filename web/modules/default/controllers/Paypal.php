@@ -29,6 +29,15 @@ class Controller_Paypal extends Controller_Default_Template {
 				case "return" :
 					$this->return_action($request);
 					break;
+				case "premium_subscribe" :
+					$this->premium_subscribe($request);
+					break;
+				case "premium_cancel" :
+					$this->premium_cancel($request);
+					break;
+				case "premium_return" :
+					$this->premium_return($request);
+					break;
 			}
 		} else {
 			$this->index($request);
@@ -154,6 +163,73 @@ class Controller_Paypal extends Controller_Default_Template {
 	}
 	
 	public function return_action ($request) {
+		
+	}
+	
+	public function premium_subscribe ($request) {
+		
+		$requete = construit_url_paypal(); // Construit les options de base
+		// La fonction urlencode permet d'encoder au format URL les espaces, slash, deux points, etc.)
+		$requete = $requete."&METHOD=SetExpressCheckout".
+			"&CANCELURL=".urlencode(WEBSITE_URL."index.php?controler=paypal&action=premium_cancel").
+			"&RETURNURL=".urlencode(WEBSITE_URL."index.php?controler=paypal&action=premium_return").
+			"&AMT=15".
+			"&CURRENCYCODE=EUR".
+			"&DESC=".urlencode("Souscription au compte premium").
+			"&LOCALECODE=FR".
+			"&HDRIMG=".urlencode(WEBSITE_URL."res/img/logo.png");
+					
+		// Affiche la chaîne pour vérifier que la chaîne est bien formatée :
+		//echo $requete;
+
+		// Initialise notre session cURL. On lui donne la requête à exécuter
+		$ch = curl_init($requete);
+		// Modifie l'option CURLOPT_SSL_VERIFYPEER afin d'ignorer la vérification du certificat SSL. Si cette option est à 1, une erreur affichera que la vérification du certificat SSL a échoué, et rien ne sera retourné. 
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+		// Retourne directement le transfert sous forme de chaîne de la valeur retournée par curl_exec() au lieu de l'afficher directement. 
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+		// On lance l'exécution de la requête URL et on récupère le résultat dans une variable
+		$resultat_paypal = curl_exec($ch);
+
+		// S'il y a une erreur, on affiche "Erreur", suivi du détail de l'erreur.
+		if (!$resultat_paypal)
+			{echo "<p>Erreur</p><p>".curl_error($ch)."</p>";}
+
+		else // S'il s'est exécuté correctement, on effectue les traitements...
+		{
+			$liste_param_paypal = recup_param_paypal($resultat_paypal); // Lance notre fonction qui dispatche le résultat obtenu en un array
+			
+			// On affiche le tout pour voir que tout est OK.
+			/*echo "<pre>";
+			print_r($liste_param_paypal);
+			echo "</pre>";*/
+
+			// Si la requête a été traitée avec succès
+			if ($liste_param_paypal['ACK'] == 'Success') {
+				// Redirige le visiteur sur le site de PayPal
+				header("Location: https://www.sandbox.paypal.com/webscr&cmd=_express-checkout&token=".$liste_param_paypal['TOKEN']);
+				exit();
+			} else // En cas d'échec, affiche la première erreur trouvée.
+			{
+				echo "<p>Erreur de communication avec le serveur PayPal.<br />".$liste_param_paypal['L_SHORTMESSAGE0']."<br />".$liste_param_paypal['L_LONGMESSAGE0']."</p>";
+			}		
+			
+		}
+
+		// On ferme notre session cURL.
+		curl_close($ch);
+	}
+	
+	public function premium_cancel ($request) {
+		$user = new Model_User();
+		$user->id = $request->_auth->id;
+		$user->subscribePremium();
+		$request->vue = $this->render("paypal/premium_success.php");
+	}
+	
+	public function premium_return ($request) {
 		
 	}
 }

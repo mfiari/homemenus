@@ -19,6 +19,7 @@ class Model_User extends Model_Template {
 	private $is_login;
 	private $is_enable;
 	private $is_ready;
+	private $is_premium;
 	private $latitude;
 	private $longitude;
 	private $perimetres;
@@ -261,6 +262,18 @@ class Model_User extends Model_Template {
 		return true;
 	}
 	
+	public function subscribePremium () {
+		$sql = "UPDATE users SET is_premium = true WHERE uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : disable", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
 	public function login($login, $password) {
 		$sql = "SELECT uid, nom, prenom, status, session_id, is_enable FROM users WHERE login = :login AND password = sha1(:password)";
 		$stmt = $this->db->prepare($sql);
@@ -352,7 +365,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getById () {
-		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone
+		$sql = "SELECT user.nom, user.prenom, user.status, user.login, user.is_premium, uc.rue, uc.ville, uc.code_postal, uc.telephone
 		FROM users user
 		LEFT JOIN user_client uc ON uc.uid = user.uid
 		WHERE user.uid = :uid";
@@ -373,6 +386,7 @@ class Model_User extends Model_Template {
 		$this->prenom = $value["prenom"];
 		$this->login = $value["login"];
 		$this->status = $value["status"];
+		$this->is_premium = $value["is_premium"];
 		$this->rue = $value["rue"];
 		$this->ville = $value["ville"];
 		$this->code_postal = $value["code_postal"];
