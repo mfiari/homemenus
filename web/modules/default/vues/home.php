@@ -21,7 +21,7 @@
 		<div class="col-md-9 col-sm-9 col-xs-9">
 			<p>La meilleure solution pour vos déjeuners d’équipe et autres événements ou tout simplement pour de bons repas au bureau. 
 			HoMe Menus a prévu une gamme exceptionnelle de produits et services. Venez découvrir ici ce que nous avons prévu pour vous ! </p>
-			<p>Contactez-nous dès maintenant via notre <a href="?controler=contact&action=restaurant">page de contact</a></p>
+			<p>Contactez-nous dès maintenant via notre <a href="?controler=contact&action=entreprise">page de contact</a></p>
 		</div>
 	</div>
 </div>
@@ -44,7 +44,7 @@
 			<img style="max-width : 90%; max-height : 90%;" src="res/img/home.png">
 		</div>
 		<div class="col-md-9 col-sm-9 col-xs-9">
-			<p>Un compte spécial pour les grands gourmands, pensé et imaginé par des gourmands. <a href="">Venez découvrir les avantages du compte premium</a> !</p>
+			<p>Un compte spécial pour les grands gourmands, pensé et imaginé par des gourmands. <a href="?action=premium">Venez découvrir les avantages du compte premium</a> !</p>
 		</div>
 	</div>
 </div>
@@ -53,7 +53,7 @@
 	<div class="row">
 		<div class="col-md-9 col-sm-9 col-xs-9">
 			<p>Besoin d’organiser un repas d’anniversaire, une réunion, un événement, 
-			<a href="?controler=contact&action=livreur">contactez nous</a> afin que nous satisfaisions vos envies.</p>
+			<a href="?controler=contact&action=evenement">contactez nous</a> afin que nous satisfaisions vos envies.</p>
 		</div>
 		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
 			<img style="max-width : 90%; max-height : 90%;" src="res/img/home.png">

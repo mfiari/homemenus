@@ -1,4 +1,4 @@
-<h2>Devenir livreur</h2>
+<h2>Commande spéciale</h2>
 <?php if ($request->errorMessage) : ?>
 	<?php foreach ($request->errorMessage as $key => $value) : ?>
 		<div class="alert alert-danger" role="alert">
@@ -27,6 +27,28 @@
 		<p style="text-align : center;">Envoyez-nous vos coordonnées et nous vous contacterons rapidement.</p>
 		<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="">
 			<fieldset>
+				<div class="form-group">
+					<label for="categorie">Vous êtes<span class="required">*</span> : </label>
+					<select id="categorie" name="categorie">
+						<option value="particulier">Un particulier</option>
+						<option value="entreprise">Une entreprise</option>
+					</select>
+				</div>
+				<div id="entreprise">
+					<h3>Votre entreprise</h3>
+					<div class="form-group">
+						<label for="entreprise">Nom<span class="required">*</span> : </label>
+						<input class="form-control" name="entreprise" type="text" value="<?php echo $request->fieldEntreprise !== false ? $request->fieldEntreprise : ''; ?>" required>
+					</div>
+					<div class="form-group">
+						<label for="code_postal">Code postal<span class="required">*</span> : </label>
+						<input class="form-control" name="code_postal" type="text" value="<?php echo $request->fieldCP !== false ? $request->fieldCP : ''; ?>" required>
+					</div>
+					<div class="form-group">
+						<label for="ville">Ville<span class="required">*</span> : </label>
+						<input class="form-control" name="ville" type="text" value="<?php echo $request->fieldVille !== false ? $request->fieldVille : ''; ?>" required>
+					</div>
+				</div>
 				<h3>Vos coordonnées</h3>
 				<div class="form-group">
 					<label for="nom">Nom<span class="required">*</span> : </label>
@@ -44,13 +66,9 @@
 					<label for="email">Votre email<span class="required">*</span> : </label>
 					<input class="form-control" name="email" type="email" value="<?php echo $request->fieldEmail !== false ? $request->fieldEmail : ''; ?>" required>
 				</div>
-				<div class="form-group">
-					<label for="fonction">Moyens de transport : </label><br /><br />
-					<input style="margin-right : 15px;" name="aucun" type="checkbox">Aucun<br />
-					<input style="margin-right : 15px;" name="velo" type="checkbox">Vélo<br />
-					<input style="margin-right : 15px;" name="voiture" type="checkbox">Voiture<br />
-					<input style="margin-right : 15px;" name="autre" type="checkbox">autre
-					<input class="form-control" name="transport" type="text">
+				<div id="divFieldFonction" class="form-group">
+					<label for="fonction">Fonction<span class="required">*</span> : </label>
+					<input class="form-control" name="fonction" type="text" value="<?php echo $request->fieldFonction !== false ? $request->fieldFonction : ''; ?>" required>
 				</div>
 				<h3>Informations complémentaires</h3>
 				<div class="form-group">
@@ -64,3 +82,19 @@
 		</form>
 	</div>
 </div>
+<script type="text/javascript">
+	$(function () {
+		$("#entreprise").hide();
+		$("#divFieldFonction").hide();
+		$("#categorie").change(function() {
+			var value = $(this).val();
+			if (value == "entreprise") {
+				$("#entreprise").show();
+				$("#divFieldFonction").show();
+			} else {
+				$("#entreprise").hide();
+				$("#divFieldFonction").hide();
+			}
+		});
+	});
+</script>

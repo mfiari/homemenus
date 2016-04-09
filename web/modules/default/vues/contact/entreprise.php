@@ -1,4 +1,4 @@
-<h2>Contact</h2>
+<h2>Pour les entreprises</h2>
 <?php if ($request->errorMessage) : ?>
 	<?php foreach ($request->errorMessage as $key => $value) : ?>
 		<div class="alert alert-danger" role="alert">
@@ -24,15 +24,9 @@
 <?php endif; ?>
 <div class="row">
 	<div class="col-md-10 col-md-offset-1">
+		<p style="text-align : center;">Envoyez-nous vos coordonnées et nous vous contacterons rapidement.</p>
 		<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="">
 			<fieldset>
-				<div class="form-group">
-					<label for="categorie">Vous êtes<span class="required">*</span> : </label>
-					<select id="categorie" name="categorie">
-						<option value="particulier">Un particulier</option>
-						<option value="entreprise">Une entreprise</option>
-					</select>
-				</div>
 				<div id="entreprise">
 					<h3>Votre entreprise</h3>
 					<div class="form-group">
@@ -81,19 +75,3 @@
 		</form>
 	</div>
 </div>
-<script type="text/javascript">
-	$(function () {
-		$("#entreprise").hide();
-		$("#divFieldFonction").hide();
-		$("#categorie").change(function() {
-			var value = $(this).val();
-			if (value == "entreprise") {
-				$("#entreprise").show();
-				$("#divFieldFonction").show();
-			} else {
-				$("#entreprise").hide();
-				$("#divFieldFonction").hide();
-			}
-		});
-	});
-</script>

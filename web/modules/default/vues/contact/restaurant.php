@@ -1,4 +1,4 @@
-<h2>Contact</h2>
+<h2>Devenir restaurant partenaire</h2>
 <?php if ($request->errorMessage) : ?>
 	<?php foreach ($request->errorMessage as $key => $value) : ?>
 		<div class="alert alert-danger" role="alert">
@@ -24,6 +24,7 @@
 <?php endif; ?>
 <div class="row">
 	<div class="col-md-10 col-md-offset-1">
+		<p style="text-align : center;">Envoyez-nous vos coordonnées et nous vous contacterons rapidement.</p>
 		<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="">
 			<fieldset>
 				<h3>Votre restaurant</h3>

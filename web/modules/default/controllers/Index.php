@@ -16,6 +16,12 @@ class Controller_Index extends Controller_Default_Template {
 				case "comment_ca_marche" :
 					$this->how_it_work($request);
 					break;
+				case "premium" :
+					$this->premium($request);
+					break;
+				case "faq" :
+					$this->faq($request);
+					break;
 				case "inscription" :
 					$this->signin($request);
 					break;
@@ -59,6 +65,16 @@ class Controller_Index extends Controller_Default_Template {
 	public function how_it_work ($request) {
 		$request->title = "Comment ça marche";
 		$request->vue = $this->render("how_it_work.php");
+	}
+	
+	public function premium ($request) {
+		$request->title = "premium";
+		$request->vue = $this->render("premium.php");
+	}
+	
+	public function faq ($request) {
+		$request->title = "FAQ";
+		$request->vue = $this->render("faq.php");
 	}
 	
 	public function signin ($request) {
