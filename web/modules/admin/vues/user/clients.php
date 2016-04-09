@@ -10,6 +10,7 @@
 						<th>login</th>
 						<th>Ville</th>
 						<th>Actif</th>
+						<th>Premium</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -21,6 +22,7 @@
 							<td><?php echo $client->login; ?></td>
 							<td><?php echo utf8_encode($client->ville); ?> (<?php echo $client->code_postal; ?>)</td>
 							<td><?php echo $client->is_enable ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
+							<td><?php echo $client->is_premium ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
 							<td>
 								<a href="?controler=user&action=client&id_user=<?php echo $client->id; ?>">
 									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
