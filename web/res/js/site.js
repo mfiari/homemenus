@@ -222,6 +222,13 @@ function showLoading (divid, hide) {
 	$("#"+divid).after('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>');
 }
 
+function hideLoading (divid, show) {
+	if (show) {
+		$("#"+divid).css('display', 'block');
+	}
+	$("#"+divid).next().find('.glyphicon-refresh').remove();
+}
+
 function playNotificationSong () {
 	var audio = new Audio('res/media/sound.mp3');
 	audio.play();

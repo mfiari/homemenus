@@ -86,7 +86,7 @@ class Controller_Compte extends Controller_Default_Template {
 			$token = generateToken();
 			$messageContent =  file_get_contents (ROOT_PATH.'mails/forgot_password.html');
 			$messageContent = str_replace("[UID]", $model->id, $messageContent);
-			$messageContent = str_replace("[TOKEN]", $model->inscription_token, $messageContent);
+			$messageContent = str_replace("[TOKEN]", $token, $messageContent);
 			$messageContent = str_replace("[WEBSITE_URL]", WEBSITE_URL, $messageContent);
 					
 			send_mail ($model->email, "Changement de mot de passe", $messageContent);
@@ -97,9 +97,12 @@ class Controller_Compte extends Controller_Default_Template {
 	}
 	
 	public function reset_password ($request) {
-		if ($request->request_method != "POST") {
-			
-		} else if ($request->request_method != "GET") {
+		if ($request->request_method == "POST") {
+			$model = new Model_User();
+			$model->id = trim($_POST["uid"]);
+			$model->password = trim($_POST["password"]);
+			$model->changePassword();
+		} else if ($request->request_method == "GET") {
 			$request->vue = $this->render("reset_password.php");
 		}
 	}

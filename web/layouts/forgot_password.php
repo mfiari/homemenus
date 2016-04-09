@@ -31,7 +31,8 @@
 			dataType: "html",
 			data: $("#forgotPasswordForm").serialize()
 		}).done(function( msg ) {
-			
+			hideLoading('submitButton');
+			$("#forgot-password-modal").modal('hide');
 		}).error(function(jqXHR, textStatus, errorThrown) {
 			switch (jqXHR.status) {
 				case 400 :
@@ -47,9 +48,8 @@
 					$("#login-modal .modal-footer div.alert-danger span.message").html("Une erreur est survenu, veuillez réessayé.");
 					break;
 			}
-			$("#login-modal .modal-footer .glyphicon-refresh-animate").css('display', 'none');
 			$("#login-modal .modal-footer div.alert-danger").css('display', 'block');
-			$("#loginButton").css('display', 'block');
+			hideLoading('submitButton');
 		});
 	});
 </script>

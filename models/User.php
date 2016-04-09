@@ -224,6 +224,19 @@ class Model_User extends Model_Template {
 		return true;
 	}
 	
+	public function changePassword () {
+		$sql = "UPDATE users SET password = :password WHERE uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":password", $this->password);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : confirm", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
 	public function enable () {
 		$sql = "UPDATE users SET is_enable = true WHERE uid = :uid";
 		$stmt = $this->db->prepare($sql);
