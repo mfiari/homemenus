@@ -162,17 +162,19 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$adresseUser = $user_latitude.','.$user_longitude;
 			$modelUser = new Model_User();
 			foreach ($restaurants as $restaurant) {
-				$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
-				$result = getDistance($adresseUser, $adresseResto);
-				if ($result['status'] == "OK") {
-					$distanceRestoKm = $result['distance'] / 1000;
-					if ($distanceRestoKm < $distanceKm) {
-						$restaurant->distance = $distanceRestoKm;
-						$availableRestaurant[] = $restaurant;
+				if ($restaurant->latitude != 0 && $restaurant->longitude != 0) {
+					$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
+					$result = getDistance($adresseUser, $adresseResto);
+					if ($result['status'] == "OK") {
+						$distanceRestoKm = $result['distance'] / 1000;
+						if ($distanceRestoKm < $distanceKm) {
+							$restaurant->distance = $distanceRestoKm;
+							$availableRestaurant[] = $restaurant;
+						}
 					}
+					$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+					$restaurant->has_livreur_dispo = count($livreurs) > 0;
 				}
-				$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
-				$restaurant->has_livreur_dispo = count($livreurs) > 0;
 			}
 			$restaurants = $availableRestaurant;
 				
