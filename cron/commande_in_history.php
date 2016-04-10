@@ -33,16 +33,16 @@
 	foreach ($commandes as $commande) {
 		if ($commande->etape != 4) {
 			$totalCommandeError++;
-			$montantTotalError += $commande->prix;
-			writeLog (CRON_LOG, "Echec historisation commande #".$commande->id, LOG_LEVEL_ERROR);
+			$montantTotalError += $commande->prix + $commande->prix_livraison;
+			writeLog (CRON_LOG, "Echec historisation commande #".$commande->id." : commande ".$commande->getStatus (), LOG_LEVEL_ERROR);
 		} else if ($modelCommandeHistory->save($commande)) {
 			$commande->remove();
 			$totalCommande++;
-			$montantTotal += $commande->prix;
+			$montantTotal += $commande->prix + $commande->prix_livraison;
 		} else {
 			$totalCommandeError++;
-			$montantTotalError += $commande->prix;
-			writeLog (CRON_LOG, "Echec historisation commande #".$commande->id, LOG_LEVEL_ERROR);
+			$montantTotalError += $commande->prix + $commande->prix_livraison;
+			writeLog (CRON_LOG, "Echec historisation commande #".$commande->id." : erreur lors de la sauvegarde", LOG_LEVEL_ERROR);
 		}
 	}
 	
