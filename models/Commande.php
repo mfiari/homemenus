@@ -52,10 +52,12 @@ class Model_Commande extends Model_Template {
 	
 	public function create ($panier) {
 		$sql = "INSERT INTO commande (uid, rue, ville, code_postal, telephone, id_restaurant, date_commande, heure_souhaite, minute_souhaite, 
-		prix_livraison, distance, etape) 
+		prix_livraison, distance, etape, is_premium) 
 		(SELECT panier.uid, panier.rue, panier.ville, panier.code_postal, panier.telephone, panier.id_restaurant, now(), panier.heure_souhaite, 
-		panier.minute_souhaite, pl.prix, panier.distance, 0 FROM panier 
+		panier.minute_souhaite, CASE WHEN user.is_premium THEN pl.prix - pl.reduction_premium ELSE pl.prix END, panier.distance, 0, user.is_premium
+		FROM panier 
 		JOIN prix_livraison pl ON panier.distance BETWEEN pl.distance_min AND pl.distance_max
+		JOIN users user ON user.uid = panier.uid
 		WHERE panier.id = :id)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $panier->id);

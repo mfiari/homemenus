@@ -13,6 +13,7 @@ class Model_Panier extends Model_Template {
 	private $distance;
 	private $prix_livraison;
 	private $prix_minimum;
+	private $reduction_premium;
 	private $heure_souhaite;
 	private $minute_souhaite;
 	private $restaurant;
@@ -141,7 +142,8 @@ class Model_Panier extends Model_Template {
 	
 	public function load () {
 		$sql = "SELECT panier.id, panier.rue, panier.ville, panier.code_postal, panier.telephone, panier.heure_souhaite, panier.minute_souhaite,
-			resto.id AS id_restaurant, resto.nom, rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin, pl.prix, pl.montant_min
+			resto.id AS id_restaurant, resto.nom, rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin, pl.prix, pl.montant_min, 
+			pl.reduction_premium
 		FROM panier 
 		JOIN prix_livraison pl ON panier.distance BETWEEN pl.distance_min AND pl.distance_max
 		JOIN restaurants resto ON resto.id = panier.id_restaurant
@@ -168,6 +170,7 @@ class Model_Panier extends Model_Template {
 		$this->id_restaurant = $value['id_restaurant'];
 		$this->prix_livraison = $value['prix'];
 		$this->prix_minimum = $value['montant_min'];
+		$this->reduction_premium = $value['reduction_premium'];
 		
 		$restaurant = new Model_Restaurant(false);
 		$restaurant->id = $value['id_restaurant'];

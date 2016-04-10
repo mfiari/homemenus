@@ -101,14 +101,20 @@
 								<?php $totalQte += $menu->quantite; ?>
 								<?php $totalPrix += $menu->prix; ?>
 							<?php endforeach; ?>
+							<?php
+								$prix_livraison = $request->panier->prix_livraison;
+								if ($request->_auth->is_premium) {
+									$prix_livraison -= $request->panier->reduction_premium;
+								}
+							?>
 							<tr>
 								<td>prix de livraison</td>
 								<td></td>
-								<td><?php echo $request->panier->prix_livraison; ?> €</td>
+								<td><?php echo $prix_livraison; ?> €</td>
 								<td></td>
 								<td></td>
 							</tr>
-							<?php $totalPrix += $request->panier->prix_livraison; ?>
+							<?php $totalPrix += $prix_livraison; ?>
 						</tbody>
 						<tfoot>
 							<tr>

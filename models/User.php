@@ -395,7 +395,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getBySession ($uid, $session) {
-		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone
+		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone, user.is_premium
 		FROM users user
 		LEFT JOIN user_client uc ON uc.uid = user.uid
 		WHERE user.uid = :uid AND session_id = :session";
@@ -423,6 +423,7 @@ class Model_User extends Model_Template {
 		$this->ville = $value["ville"];
 		$this->code_postal = $value["code_postal"];
 		$this->telephone = $value["telephone"];
+		$this->is_premium = $value["is_premium"];
 		return $this;
 	}
 	
