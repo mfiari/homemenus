@@ -10,9 +10,10 @@
 			<thead>
 				<tr>
 					<th>Numéro de commande</th>
-					<th>Date de commande</th>
+					<th>Livreur</th>
 					<th>Heure souhaité</th>
 					<th>Etat</th>
+					<th></th>
 					<th></th>
 				</tr>
 			</thead>

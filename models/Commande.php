@@ -26,6 +26,7 @@ class Model_Commande extends Model_Template {
 	private $etape;
 	private $etapeLibelle;
 	private $is_modif;
+	private $is_premium;
 	
 	public function __construct($callParent = true) {
 		if ($callParent) {
@@ -671,10 +672,11 @@ class Model_Commande extends Model_Template {
 	*/
 	public function getCommandesRestaurant ($etape = false) {
 		$sql = "SELECT com.id AS id_commande, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.date_validation_restaurant, 
-		com.date_fin_preparation_restaurant, com.etape
+		com.date_fin_preparation_restaurant, com.etape, com.is_premium, liv.uid, liv.nom, liv.prenom
 		FROM commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		JOIN user_restaurant ur ON ur.id_restaurant = resto.id
+		LEFT JOIN users liv ON liv.uid = com.id_livreur
 		WHERE ur.uid = :uid";
 		if ($etape === false) {
 			$sql .= " AND (etape = 0 OR etape = 1)";
@@ -697,6 +699,13 @@ class Model_Commande extends Model_Template {
 			$commande->heure_souhaite = $c["heure_souhaite"];
 			$commande->minute_souhaite = $c["minute_souhaite"];
 			$commande->etape = $c["etape"];
+			$commande->is_premium = $c["is_premium"];
+			
+			$commande->livreur = new Model_User();
+			$commande->livreur->id = $c['uid'];
+			$commande->livreur->nom = $c['nom'];
+			$commande->livreur->prenom = $c['prenom'];
+			
 			$listCommande[] = $commande;
 		}
 		$sql = "UPDATE commande com JOIN user_restaurant ur ON ur.id_restaurant = com.id_restaurant SET last_view_restaurant = NOW()
