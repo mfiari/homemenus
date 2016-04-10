@@ -9,9 +9,11 @@
 			<tr>
 				<th>Numéro de commande</th>
 				<th>Restaurant</th>
+				<th>Livreur</th>
 				<th>Status</th>
 				<th>Prix</th>
-				<th>Date</th>
+				<th>Date de commande</th>
+				<th>Heure souhaité</th>
 				<th></th>
 			</tr>
 		</thead>

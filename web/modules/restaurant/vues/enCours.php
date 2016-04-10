@@ -1,7 +1,7 @@
 <?php foreach ($request->commandes as $commande) : ?>
 	<tr class="commande <?php echo $commande->etape == 0 ? "recu" : "cours"; ?>">
 		<td>#<?php echo $commande->id; ?></td>
-		<td><?php echo $commande->livreur->prenom == '' ? "NA" : $commande->livreur->prenom; ?></td>
+		<td><?php echo $commande->livreur->prenom == '' ? "NA" : utf8_encode($commande->livreur->prenom); ?></td>
 		<?php if ($commande->heure_souhaite == -1) : ?>
 			<td>Au plus tôt</td>
 		<?php else : ?>

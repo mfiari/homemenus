@@ -393,12 +393,13 @@ class Model_Commande extends Model_Template {
 	* Récupère les commandes utilisateur en cours
 	*/
 	public function loadNotFinishedCommande () {
-		$sql = "SELECT com.id AS id_commande, com.id_livreur, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison,
+		$sql = "SELECT com.id AS id_commande, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison,
 		com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.etape, resto.id AS id_restaurant, resto.nom,
-		com.last_view_user
+		com.last_view_user, livreur.uid AS id_livreur, livreur.nom AS nom_livreur, livreur.prenom AS prenom_livreur
 		FROM commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
-		WHERE uid = :uid AND etape < 4";
+		LEFT JOIN users livreur ON livreur.uid = com.id_livreur
+		WHERE com.uid = :uid AND etape < 4";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
@@ -413,11 +414,17 @@ class Model_Commande extends Model_Template {
 			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
 			$commande->etape = $c["etape"];
 			$commande->prix = $c["prix"] + $c["prix_livraison"];
+			$commande->heure_souhaite = $c["heure_souhaite"];
+			$commande->minute_souhaite = $c["minute_souhaite"];
 			$commande->livreur = $c["id_livreur"];
 			$restaurant = new Model_Restaurant();
 			$restaurant->id = $c["id_restaurant"];
 			$restaurant->nom = $c["nom"];
 			$commande->restaurant = $restaurant;
+			$commande->livreur = new Model_User(false);
+			$commande->livreur->id = $c['id_livreur'];
+			$commande->livreur->nom = $c['nom_livreur'];
+			$commande->livreur->prenom = $c['prenom_livreur'];
 			$listCommande[] = $commande;
 		}
 		$sql = "UPDATE commande com SET last_view_user = NOW() WHERE uid = :uid";
