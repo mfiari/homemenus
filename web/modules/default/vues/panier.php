@@ -122,6 +122,9 @@
 					</table>
 				</div>
 			</div>
+			<div>
+				<input type="checkbox" /> Avant de continuer, vous devez accepter les <a href="?action=cgv">conditions générales de vente</a>.
+			</div>
 		</form>
 	<?php else : ?>
 		<span>(vide)</span>
