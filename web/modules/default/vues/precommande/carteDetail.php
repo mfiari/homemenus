@@ -76,7 +76,7 @@
 <div class="modal-footer">
 	<div style="display : none;" class="alert alert-success" role="alert">
 		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-		Votre produit a bien été ajouté au panier
+		Votre produit a bien été ajouté à votre commande
 	</div>
 	<div style="display : none;" class="alert alert-danger" role="alert">
 		<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>

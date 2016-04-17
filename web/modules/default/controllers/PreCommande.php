@@ -67,6 +67,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 	}
 	
 	public function search ($request) {
+		unset($_SESSION['id_commande']);
 		$request->date = $_POST['date'];
 		$request->vue = $this->render("precommande/search.php");
 	}
@@ -150,6 +151,9 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 					$route = $addressComponents[$i]->{'long_name'};
 				}
 			}
+			$_SESSION['search_date'] = $filter["search_date"];
+			$_SESSION['search_hour'] = $filter["search_hour"];
+			$_SESSION['search_minute'] = $filter["search_minute"];
 			$_SESSION['search_adresse'] = $request->search_adresse;
 			$_SESSION['search_ville'] = $ville;
 			$_SESSION['search_cp'] = $codePostal;
@@ -196,7 +200,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 			$request->title = "Restaurant";
 			$modelRestaurant = new Model_Restaurant();
 			$modelRestaurant->id = $_GET['id'];
-			$request->restaurant = $modelRestaurant->load();
+			$request->restaurant = $modelRestaurant->getOne();
 			$modelCategorie = new Model_Categorie();
 			$request->restaurant->categories = $modelCategorie->getParentContenu($request->restaurant->id);
 			$request->search_adresse = $_SESSION['search_adresse'];
@@ -263,6 +267,9 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 			$commande->latitude = $user_latitude;
 			$commande->longitude = $user_longitude;
 			$commande->distance = $distance;
+			$commande->date_commande = $_SESSION['search_date'];
+			$commande->heure_souhaite = $_SESSION['search_hour'];
+			$commande->minute_souhaite = $_SESSION['search_minute'];
 			$commande->update();
 		} else if ($commande->id_restaurant != $id_restaurant) {
 			$this->error(400, "Bad request");
@@ -285,7 +292,15 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		$id_restaurant = $_POST['id_restaurant'];
-		$commande = $this->initCommande ($request, $id_restaurant);
+		if (isset($_SESSION['id_commande'])) {
+			$commande = new Model_Pre_Commande();
+			$commande->uid = $request->_auth->id;
+			$commande->id = $_SESSION['id_commande'];
+			$commande->id_restaurant = $id_restaurant;
+		} else {
+			$commande = $this->initCommande ($request, $id_restaurant);
+			$_SESSION['id_commande'] = $commande->id;
+		}
 		$quantite = $_POST['quantite'];
 		$id_carte = $_POST['id_carte'];
 		$format = $_POST['format'];

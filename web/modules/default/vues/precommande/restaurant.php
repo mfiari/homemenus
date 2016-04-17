@@ -14,13 +14,6 @@
 				<div class="col-md-6">
 					<p><span>Adresse : </span><?php echo $restaurant->rue; ?>, <?php echo $restaurant->code_postal; ?> <?php echo $restaurant->ville; ?></p>
 					<p><?php echo utf8_encode($restaurant->short_desc); ?></p>
-					<p>
-						<?php if ($horaire === false) : ?>
-							<span>fermer aujourd'hui</span>
-						<?php else : ?>
-							<span>Ouvert de <?php echo $horaire->heure_debut; ?>h<?php echo $horaire->minute_debut; ?> à <?php echo $horaire->heure_fin; ?>h<?php echo $horaire->minute_fin; ?></span>
-						<?php endif; ?>
-					</p>
 				</div>
 				<div class="col-md-6">
 					<div id="googleMap" class="col-md-10 col-md-offset-1" style="height:200px; margin-top : 10px;"></div>

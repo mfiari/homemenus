@@ -164,7 +164,7 @@
 					for (var i = 0 ; i < json.length ; i++) {
 						me.commandeContainer.append(
 							$('<div />').append(
-								$('<a />').attr('href', '?controler=compte&action=detailCommande&id_commande='+json[i].id).html('commande ' + json[i].id + ' (' + json[i].restaurant.nom+ ')')
+								$('<a />').attr('href', '?controler=precommande&action=detailCommande&id_commande='+json[i].id).html('commande ' + json[i].id + ' (' + json[i].restaurant.nom+ ')')
 							)
 						);
 					}
@@ -177,7 +177,7 @@
 					$('<h2 />').html(this.weekdays[this.selectedWeekDay] + ' ' + this.selectedDay + ' ' + this.months[this.selectedMonth] + ' ' + this.selectedYear)
 				).append(
 					$('<form />').attr('method', 'post').attr('action', '?controler=precommande&action=search').append(
-						$('<input />').attr('type', 'hidden').attr('name', 'date').val(this.selectedDay + '/' + this.selectedMonth + '/' + this.selectedYear)
+						$('<input />').attr('type', 'hidden').attr('name', 'date').val(this.selectedDay + '/' + (parseInt(this.selectedMonth)+1) + '/' + this.selectedYear)
 					).append(
 						$('<button />').addClass('btn btn-primary').attr('type', 'submit').html('Nouvelle commande')
 					)

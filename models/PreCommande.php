@@ -49,20 +49,7 @@ class Model_Pre_Commande extends Model_Template {
 	}
 	
 	public function init () {
-		$sql = "SELECT id, id_restaurant FROM pre_commande WHERE uid = :uid";
-		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":uid", $this->uid);
-		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
-			return false;
-		}
-		$value = $stmt->fetch(PDO::FETCH_ASSOC);
-		if ($value == null) {
-			$this->insert();
-		} else {
-			$this->id = $value['id'];
-			$this->id_restaurant = $value['id_restaurant'];
-		}
+		$this->insert();
 	}
 	
 	public function insert () {
@@ -77,19 +64,28 @@ class Model_Pre_Commande extends Model_Template {
 	}
 	
 	public function update () {
-		$sql = "UPDATE pre_commande SET id_restaurant = :restaurant, rue = :rue, ville = :ville, code_postal = :code_postal, latitude = :latitude, 
-		longitude = :longitude, telephone = :telephone, distance = :distance WHERE id = :id";
+		$sql = "UPDATE pre_commande 
+		JOIN prix_livraison pl ON :distance BETWEEN pl.distance_min AND pl.distance_max
+		JOIN users user ON user.uid = pre_commande.uid
+		SET id_restaurant = :restaurant, rue = :rue, ville = :ville, code_postal = :code_postal, date_commande = :date_commande,
+		heure_souhaite = :heure, minute_souhaite = :minute, latitude = :latitude, longitude = :longitude, telephone = :telephone, 
+		prix_livraison = (CASE WHEN user.is_premium THEN pl.prix - pl.reduction_premium ELSE pl.prix END), distance = :distance 
+		WHERE pre_commande.id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $this->id_restaurant);
 		$stmt->bindValue(":rue", $this->rue);
 		$stmt->bindValue(":ville", $this->ville);
 		$stmt->bindValue(":code_postal", $this->code_postal);
+		$stmt->bindValue(":date_commande", $this->date_commande);
+		$stmt->bindValue(":heure", $this->heure_souhaite);
+		$stmt->bindValue(":minute", $this->minute_souhaite);
 		$stmt->bindValue(":latitude", $this->latitude);
 		$stmt->bindValue(":longitude", $this->longitude);
 		$stmt->bindValue(":telephone", $this->telephone);
 		$stmt->bindValue(":distance", $this->distance);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
 			return false;
 		}
 		return true;
