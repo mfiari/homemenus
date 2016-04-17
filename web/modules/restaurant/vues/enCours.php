@@ -10,7 +10,7 @@
 		<td><?php echo $commande->getStatus(); ?></td>
 		<td>
 			<?php if ($commande->is_premium) : ?>
-				<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+				<span style="color : #FFFF00" class="glyphicon glyphicon-star" aria-hidden="true"></span>
 			<?php endif; ?>
 		</td>
 		<td>

@@ -234,6 +234,11 @@ function playNotificationSong () {
 	audio.play();
 }
 
+function playMessageSong () {
+	var audio = new Audio('res/media/message.mp3');
+	audio.play();
+}
+
 function enableRating (id_commande) {
 	$("#rating_span_id_commande").html(id_commande);
 	$("#rating_id_commande").val(id_commande);

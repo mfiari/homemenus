@@ -12,9 +12,12 @@
 		<thead>
 			<tr>
 				<th>Numéro de commande</th>
+				<th>Livreur</th>
 				<th>Date de commande</th>
-				<th>Temps de préparation</th>
+				<th>Heure souhaité</th>
+				<th>Etat</th>
 				<th>Prix</th>
+				<th></th>
 				<th></th>
 			</tr>
 		</thead>
@@ -22,9 +25,20 @@
 			<?php foreach ($request->commandes as $commande) : ?>
 				<tr class="commande">
 					<td>#<?php echo $commande->id; ?></td>
+					<td><?php echo $commande->livreur->prenom == '' ? "NA" : utf8_encode($commande->livreur->prenom); ?></td>
 					<td><?php echo $commande->date_commande; ?></td>
-					<td></td>
+					<?php if ($commande->heure_souhaite == -1) : ?>
+						<td>Au plus tôt</td>
+					<?php else : ?>
+						<td><?php echo $commande->heure_souhaite; ?>:<?php echo $commande->minute_souhaite; ?></td>
+					<?php endif; ?>
+					<td><?php echo $commande->getStatus(); ?></td>
 					<td><?php echo $commande->prix; ?> €</td>
+					<td>
+						<?php if ($commande->is_premium) : ?>
+							<span style="color : #FFFF00" class="glyphicon glyphicon-star" aria-hidden="true"></span>
+						<?php endif; ?>
+					</td>
 					<td>
 						<a href="?controler=commande&action=detail&id=<?php echo $commande->id;?>"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
 					</td>
@@ -34,7 +48,7 @@
 		</tbody>
 		<tfoot>
 			<tr>
-				<th colspan="3">Total : </th>
+				<th colspan="5">Total : </th>
 				<th><?php echo $total; ?> €</th>
 				<th></th>
 			</tr>

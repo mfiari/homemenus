@@ -1,14 +1,30 @@
 <h2>Liste des restaurants</h2>
 <div id="search-bar">
 	<form id="restaurant-filter-form" class="form-inline" action="?controler=compte&action=commande_search" method="POST">
+		<input name="date" type="hidden" value="<?php echo $request->search_date; ?>">
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-5">
 				<div class="form-group">
 					<label for="adresse">Adresse : </label>
-					<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Entrez votre adresse" value="<?php echo $request->search_ardresse; ?>">
+					<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Entrez votre adresse" value="<?php echo $request->search_adresse; ?>">
 				</div>
 			</div>
 			<div class="col-md-3">
+				<div class="form-group">
+					<label for="prenom">heure<span class="required">*</span> : </label>
+					<select name="hour">
+						<?php for ($i = 18 ; $i <= 23 ; $i++) : ?>
+							<option <?php echo $i == $request->search_hour ? 'selected' : ''; ?> value="<?php echo $i; ?>"><?php echo $i; ?></option>
+						<?php endfor; ?>
+					</select>h
+					<select name="minute">
+						<?php for ($i = 0 ; $i <= 59 ; $i++) : ?>
+							<option <?php echo $i == $request->search_minute ? 'selected' : ''; ?> value="<?php echo $i; ?>"><?php echo $i; ?></option>
+						<?php endfor; ?>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-2">
 				<div class="form-group">
 					<label for="city">Ville : </label>
 					<select class="form-control search-filter" name="city">
@@ -19,7 +35,7 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<div class="form-group">
 					<label for="distance">Distance : </label>
 					<select class="form-control search-filter" name="distance">
@@ -91,13 +107,13 @@
 			<?php endif; ?>
 			<div class="col-md-6 col-sm-12 item">
 				<span class="title">
-					<a href="?controler=compte&action=restaurant&id=<?php echo $restaurant->id; ?>">
+					<a href="?controler=precommande&action=restaurant&id=<?php echo $restaurant->id; ?>">
 						<?php echo utf8_encode($restaurant->nom); ?>
 					</a>
 				</span>
 				<div class="logo_restaurant">
-					<a href="?controler=compte&action=restaurant&id=<?php echo $restaurant->id; ?>">
-						<img src="res/img/restaurant/<?php echo $restaurant->logo; ?>">
+					<a href="?controler=precommande&action=restaurant&id=<?php echo $restaurant->id; ?>">
+						<img src="<?php echo $restaurant->logo; ?>">
 					</a>
 				</div>
 				<div class="col-md-12 center">

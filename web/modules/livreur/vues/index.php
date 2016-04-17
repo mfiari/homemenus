@@ -5,8 +5,11 @@
 			<tr>
 				<th>Numéro de commande</th>
 				<th>Restaurant</th>
+				<th>Client</th>
 				<th>Status</th>
 				<th>Date</th>
+				<th>Heure souhaité</th>
+				<th></th>
 				<th></th>
 			</tr>
 		</thead>

@@ -376,6 +376,29 @@ class Model_Commande extends Model_Template {
 		return $this->livreur;
 	}
 	
+	public function getClient () {
+		$sql = "SELECT client.uid, client.nom, client.prenom, client.gcm_token, client.is_login FROM commande
+		JOIN users client ON client.uid = commande.uid
+		WHERE commande.id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return;
+		}
+		$this->client = new Model_User();
+		$this->client->id = $value['uid'];
+		$this->client->nom = $value['nom'];
+		$this->client->prenom = $value['prenom'];
+		$this->client->gcm_token = $value['gcm_token'];
+		$this->client->is_login = $value['is_login'];
+		return $this->client;
+	}
+	
 	public function hasCommandeEnCours () {
 		$sql = "SELECT COUNT(*) AS nb_commande FROM commande WHERE uid = :uid AND etape < 4";
 		$stmt = $this->db->prepare($sql);
@@ -389,6 +412,53 @@ class Model_Commande extends Model_Template {
 			return;
 		}
 		return $value['nb_commande'] > 0;
+	}
+	
+	public function getIdCommandeEnCoursClient () {
+		$sql = "SELECT id FROM commande WHERE uid = :uid AND etape < 4";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->uid);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$ids = array();
+		foreach ($result as $commande) {
+			$ids[] = $commande["id"];
+		}
+		return $ids;
+	}
+	
+	public function hasCommandeEnCoursLivreur () {
+		$sql = "SELECT COUNT(*) AS nb_commande FROM commande WHERE id_livreur = :id AND etape < 4";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->uid);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return;
+		}
+		return $value['nb_commande'] > 0;
+	}
+	
+	public function getIdCommandeEnCoursLivreur () {
+		$sql = "SELECT id FROM commande WHERE id_livreur = :id AND etape < 4";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->uid);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$ids = array();
+		foreach ($result as $commande) {
+			$ids[] = $commande["id"];
+		}
+		return $ids;
 	}
 	
 	/*
@@ -616,12 +686,14 @@ class Model_Commande extends Model_Template {
 	* Récupère les commandes livreur en cours
 	*/
 	public function getCommandeEnCours () {
-		$sql = "SELECT com.id AS id_commande, com.uid, com.date_commande, com.heure_souhaite, com.minute_souhaite, 
-		com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.etape, resto.id AS id_restaurant, resto.nom,
-		com.last_view_livreur, 
-		(com.last_view_livreur = '0000-00-00 00:00:00' OR com.last_view_livreur < date_validation_restaurant OR com.last_view_livreur < date_fin_preparation_restaurant) AS is_modif
+		$sql = "SELECT com.id AS id_commande, com.uid, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.etape, com.is_premium, 
+		com.ville AS ville_commande, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, 
+		resto.id AS id_restaurant, resto.nom, resto.ville, com.last_view_livreur, client.uid, client.nom AS nom_client, client.prenom AS prenom_client,
+		(com.last_view_livreur = '0000-00-00 00:00:00' OR com.last_view_livreur < date_validation_restaurant OR 
+		com.last_view_livreur < date_fin_preparation_restaurant) AS is_modif
 		FROM commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
+		JOIN users client ON client.uid = com.uid
 		WHERE id_livreur = :livreur
 		AND etape < 4";
 		$stmt = $this->db->prepare($sql);
@@ -639,9 +711,16 @@ class Model_Commande extends Model_Template {
 			$commande->heure_souhaite = $c["heure_souhaite"];
 			$commande->minute_souhaite = $c["minute_souhaite"];
 			$commande->etape = $c["etape"];
+			$commande->ville = $c["ville_commande"];
+			$commande->is_premium = $c["is_premium"];
+			$commande->client = new Model_User();
+			$commande->client->id = $c['uid'];
+			$commande->client->nom = $c['nom_client'];
+			$commande->client->prenom = $c['prenom_client'];
 			$restaurant = new Model_Restaurant();
 			$restaurant->id = $c["id_restaurant"];
 			$restaurant->nom = $c["nom"];
+			$restaurant->ville = $c["ville"];
 			$commande->restaurant = $restaurant;
 			$restaurant->is_modif = $c["is_modif"];
 			$listCommande[] = $commande;
@@ -688,7 +767,7 @@ class Model_Commande extends Model_Template {
 		LEFT JOIN users liv ON liv.uid = com.id_livreur
 		WHERE ur.uid = :uid";
 		if ($etape === false) {
-			$sql .= " AND (etape = 0 OR etape = 1)";
+			$sql .= " AND etape BETWEEN 0 AND 2";
 		} else {
 			$sql .= " AND etape = $etape";
 		}
@@ -735,7 +814,7 @@ class Model_Commande extends Model_Template {
 	
 	public function getCommandeRestaurant () {
 		$sql = "SELECT com.id, liv.uid, liv.nom, liv.prenom, com.heure_souhaite, com.minute_souhaite, com.heure_restaurant, com.minute_restaurant, com.prix, 
-		com.prix_livraison, com.etape, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_commande
+		com.prix_livraison, com.etape, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_commande, com.id_restaurant
 		FROM commande com
 		LEFT JOIN users liv ON liv.uid = com.id_livreur
 		WHERE com.id = :id";
@@ -753,6 +832,7 @@ class Model_Commande extends Model_Template {
 		$this->minute_souhaite = $value['minute_souhaite'];
 		$this->heure_restaurant = $value['heure_restaurant'];
 		$this->minute_restaurant = $value['minute_restaurant'];
+		$this->restaurant = $value['id_restaurant'];
 		$this->prix = $value['prix'];
 		$this->prix_livraison = $value['prix_livraison'];
 		$this->etape = $value['etape'];
@@ -941,10 +1021,12 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getCommandeRestaurantByDate ($debut = null, $fin = null) {
-		$sql = "SELECT com.id AS id_commande, com.date_commande, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.prix
+		$sql = "SELECT com.id AS id_commande, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.date_validation_restaurant, 
+		com.date_fin_preparation_restaurant, com.prix, com.etape, com.is_premium, liv.uid, liv.nom, liv.prenom
 		FROM commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		JOIN user_restaurant ur ON ur.id_restaurant = resto.id
+		LEFT JOIN users liv ON liv.uid = com.id_livreur
 		WHERE ur.uid = :uid";
 		if ($debut === null) {
 			$sql .= " AND DATE(com.date_commande) = DATE(NOW())";
@@ -967,6 +1049,15 @@ class Model_Commande extends Model_Template {
 			$commande->id = $c["id_commande"];
 			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
 			$commande->prix = $c["prix"];
+			$commande->heure_souhaite = $c["heure_souhaite"];
+			$commande->minute_souhaite = $c["minute_souhaite"];
+			$commande->etape = $c["etape"];
+			$commande->is_premium = $c["is_premium"];
+			
+			$commande->livreur = new Model_User();
+			$commande->livreur->id = $c['uid'];
+			$commande->livreur->nom = $c['nom'];
+			$commande->livreur->prenom = $c['prenom'];
 			$listCommande[] = $commande;
 		}
 		return $listCommande;
@@ -1019,8 +1110,8 @@ class Model_Commande extends Model_Template {
 	public function getCommandeLivreur () {
 		$sql = "SELECT com.id AS id_commande, user.uid AS uid, user.nom AS user_nom, user.prenom AS user_prenom, com.rue AS cmd_rue, com.ville AS cmd_ville, 
 		com.code_postal AS cmd_cp, com.telephone AS cmd_tel, resto.id AS id_restaurant, resto.nom AS resto_nom, resto.rue AS resto_rue, resto.ville AS resto_ville, 
-		resto.code_postal AS resto_cp, resto.telephone AS resto_tel, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.heure_restaurant, com.minute_restaurant, 
-		com.prix, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.etape
+		resto.code_postal AS resto_cp, resto.telephone AS resto_tel, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.heure_restaurant, 
+		com.minute_restaurant, com.prix, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.etape, com.prix_livraison
 		FROM commande com
 		JOIN users user ON user.uid = com.uid
 		JOIN restaurants resto ON resto.id = com.id_restaurant
@@ -1061,6 +1152,7 @@ class Model_Commande extends Model_Template {
 		$this->date_fin_preparation_restaurant = $value['date_fin_preparation_restaurant'];
 		$this->etape = $value['etape'];
 		$this->prix = $value['prix'];
+		$this->prix_livraison = $value['prix_livraison'];
 		
 		$sql = "SELECT cm.id AS id, menu.id AS id_menu, menu.nom AS nom_menu, format.id AS id_format, format.nom AS nom_format, cm.quantite, mf.prix
 		FROM commande_menu cm

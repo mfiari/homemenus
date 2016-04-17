@@ -71,32 +71,50 @@
 			<?php include('footer.html'); ?>
 		</div>
 		<?php if ($request->_auth && $request->_auth->status == USER_CLIENT && $request->_hasCommandeEnCours) : ?>
-		<script type="text/javascript">
-			window.setInterval(function() {
-				$.ajax({
-					type: "GET",
-					url: '?controler=commande&action=modified',
-					dataType: "html"
-				}).done(function( msg ) {
-					if (msg != "") {
-						var nbModif = 0;
-						response = JSON.parse(msg);
-						$.each(response, function( key, value ) {
-							nbModif++;
-							if (value == 4) {
-								enableRating(key);
+			<script type="text/javascript">
+				window.setInterval(function() {
+					$.ajax({
+						type: "GET",
+						url: '?controler=commande&action=modified',
+						dataType: "html"
+					}).done(function( msg ) {
+						if (msg != "") {
+							var nbModif = 0;
+							response = JSON.parse(msg);
+							$.each(response, function( key, value ) {
+								nbModif++;
+								if (value == 4) {
+									enableRating(key);
+								}
+							});
+							if (nbModif > 0) {
+								$(".menu li span.badge").html(nbModif);
+								playNotificationSong ();
+							}
+						} else {
+							$(".menu li span.badge").html("");
+						}
+					});
+				}, 30000);
+			</script>
+		<?php endif; ?>
+		<?php if ($request->_auth && $request->_hasCommandeEnCours) : ?>
+			<?php foreach ($request->_idCommandes AS $id_commande) : ?>
+				<script type="text/javascript">
+					window.setInterval(function() {
+						$.ajax({
+							type: "GET",
+							url: '?controler=commande&action=hasChat&id_commande=<?php echo $id_commande; ?>',
+							dataType: "html"
+						}).done(function( msg ) {
+							if (msg != "" && msg != "0") {
+								openChatBox (<?php echo $id_commande; ?>);
+								playMessageSong ();
 							}
 						});
-						if (nbModif > 0) {
-							$(".menu li span.badge").html(nbModif);
-							playNotificationSong ();
-						}
-					} else {
-						$(".menu li span.badge").html("");
-					}
-				});
-			}, 30000);
-		</script>
+					}, 20000);
+				</script>
+			<?php endforeach; ?>
 		<?php endif; ?>
 	</body>
 </html>

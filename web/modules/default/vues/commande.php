@@ -137,6 +137,7 @@
 		</div>
 	</div>
 </div>
+<a class="btn btn-primary" href="?controler=commande&action=facture&commande=<?php echo $request->commande->id; ?>">Générer la facture</a>
 <a class="btn btn-primary" href="?controler=commande&action=index">
 	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 </a>

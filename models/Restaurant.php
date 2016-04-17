@@ -254,16 +254,27 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function filter ($filters) {
-		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin
+		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, 
+		rh.heure_fin, rh.minute_fin
 		FROM restaurants r 
-		JOIN restaurant_horaires rh ON rh.id_restaurant = r.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
-		OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin >= HOUR(CURRENT_TIME)))";
+		JOIN restaurant_horaires rh ON rh.id_restaurant = r.id";
+		if (isset($filters['search_date'])) {
+			$sql .= " AND rh.id_jour = WEEKDAY('".$filters['search_date']."')+1";
+		} else {
+			$sql .= " AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1";
+		}
+		if (isset($filters['search_hour']) && isset($filters['search_minute'])) {
+			$sql .= ' AND (rh.heure_debut > '.$filters['search_hour'].' OR (rh.heure_debut < '.$filters['search_hour'].' AND rh.heure_fin >= '.$filters['search_hour'].'))';
+		} else {
+			$sql .= " AND (rh.heure_debut > HOUR(CURRENT_TIME) OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin >= HOUR(CURRENT_TIME)))";
+		}
 		if (isset($filters['tagsFilter']) && count($filters['tagsFilter']) > 0) {
 			$sql .= ' JOIN restaurant_tag rt ON rt.id_restaurant = r.id AND rt.id_tag IN ('.implode(',', $filters['tagsFilter']).')';
 		}
 		$link = "WHERE";
 		foreach ($filters as $key => $filter) {
-			if ($key == "distanceKm" || $key == "search_ardresse" || $key == "tags" || $key == "tagsFilter") continue;
+			if ($key == "distanceKm" || $key == "search_adresse" || $key == "tags" || $key == "tagsFilter" || $key == "search_date" 
+			|| $key == "search_hour" || $key == "search_minute") continue;
 			$sql .= " ".$link." $key = :$key";
 			$link = "AND";
 		}

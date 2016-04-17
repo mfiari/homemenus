@@ -1,6 +1,6 @@
 <header class="clearfix">
 	<a href="#" class="chat-close">x</a>
-	<h4><?php echo $request->livreur->prenom; ?></h4>
+	<h4><?php echo $request->livreur->prenom; ?> (commande #<?php echo $request->id_commande; ?>)</h4>
 	<span class="chat-message-counter"><?php count($request->messages); ?></span>
 </header>
 <div class="chat">

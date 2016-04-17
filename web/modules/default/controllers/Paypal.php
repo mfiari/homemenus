@@ -9,6 +9,7 @@ include_once ROOT_PATH."models/Supplement.php";
 include_once ROOT_PATH."models/Menu.php";
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/GCMPushMessage.php";
+include_once ROOT_PATH."models/PDF.php";
 
 
 class Controller_Paypal extends Controller_Default_Template {
@@ -226,6 +227,22 @@ class Controller_Paypal extends Controller_Default_Template {
 		$user = new Model_User();
 		$user->id = $request->_auth->id;
 		$user->subscribePremium();
+		
+		$date_debut = date("d/m/Y");
+		$nextMonth = date("d/m/Y", mktime(0, 0, 0, date("m")+1, date("d"),   date("Y")));
+		$prix = 15;
+		
+		$filename = ROOT_PATH."files/pdf/premium_".$user->id.'_'.date('Ymd').'.pdf';
+		
+		$pdf = new PDF();
+		$pdf->generateFacturePremium($date_debut, $nextMonth, $prix);
+		$pdf->render("F", $filename);
+		
+		$user->getById();
+		
+		$messageContent =  file_get_contents (ROOT_PATH.'mails/subscribe_premium.html');
+		send_mail2 ($user->email, "Souscription au compte premium", $messageContent, "no-reply@homemenus.fr", array($filename));
+		
 		$request->vue = $this->render("paypal/premium_success.php");
 	}
 	

@@ -50,6 +50,11 @@ class Default_Manager {
 					$controller = new Controller_Paypal();
 					$controller->manage($request);
 					break;
+				case "precommande" :
+					include_once WEBSITE_PATH."modules/default/controllers/PreCommande.php";
+					$controller = new Controller_Pre_Commande();
+					$controller->manage($request);
+					break;
 				default :
 					include_once WEBSITE_PATH."modules/default/controllers/Index.php";
 					$controller = new Controller_Index();

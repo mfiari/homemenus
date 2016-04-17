@@ -11,6 +11,7 @@ include_once ROOT_PATH."models/Menu.php";
 include_once ROOT_PATH."models/Formule.php";
 include_once ROOT_PATH."models/Categorie.php";
 include_once ROOT_PATH."models/Contenu.php";
+include_once ROOT_PATH."models/Chat.php";
 
 class Controller_Commande extends Controller_Livreur_Template {
 	
@@ -29,6 +30,15 @@ class Controller_Commande extends Controller_Livreur_Template {
 					break;
 				case "detail" :
 					$this->detail($request);
+					break;
+				case "hasChat" :
+					$this->hasChat($request);
+					break;
+				case "getChat" :
+					$this->getChat($request);
+					break;
+				case "sendMessage" :
+					$this->sendMessage($request);
 					break;
 			}
 		}
@@ -72,7 +82,61 @@ class Controller_Commande extends Controller_Livreur_Template {
 		}
 		$commande = new Model_Commande();
 		$commande->id = $_GET['id'];
-		$request->commande = $commande->getCommandeRestaurant();
+		$request->commande = $commande->getCommandeLivreur();
 		$request->vue = $this->render("commande.php");
+	}
+	
+	public function hasChat ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$id_commande = $_GET['id_commande'];
+		$chat = new Model_Chat();
+		$chat->id_commande = $id_commande;
+		echo $chat->hasChatLivreur();
+	}
+	
+	public function getChat ($request) {
+		$request->disableLayout = true;
+		$id_commande = $_GET['id_commande'];
+		$request->id_commande = $id_commande;
+		$chat = new Model_Chat();
+		$chat->id_commande = $id_commande;
+		$request->messages = $chat->getChatCommande();
+		$chat->vueLivreur();
+		$commande = new Model_Commande();
+		$commande->id = $id_commande;
+		$request->client = $commande->getClient();
+		$request->vue = $this->render("chat.php");
+	}
+	
+	public function sendMessage ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$id_commande = $_POST['id_commande'];
+		$message = $_POST['message'];
+		$sender = "LIVREUR";
+		$chat = new Model_Chat();
+		$chat->id_commande = $id_commande;
+		$chat->sender = $sender;
+		$chat->message = $message;
+		$chat->save();
+		$commande = new Model_Commande();
+		$commande->id = $id_commande;
+		$client = $commande->getClient();
+		$registatoin_ids = array($client->gcm_token);
+		$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+		$message = "Vous avez un nouveau message";
+		// listre des utilisateurs à notifier
+		$gcm->setDevices($registatoin_ids);
+		 
+		// Le titre de la notification
+		$data = array(
+			"title" => "Nouveau message",
+			"key" => "client-new-message",
+			"id_commande" => $id_commande
+		);
+		 
+		// On notifie nos utilisateurs
+		$result = $gcm->send($message, $data);
 	}
 }

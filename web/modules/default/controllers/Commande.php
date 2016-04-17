@@ -12,6 +12,7 @@ include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Contenu.php";
 include_once ROOT_PATH."models/Chat.php";
 include_once ROOT_PATH."models/GCMPushMessage.php";
+include_once ROOT_PATH."models/PDF.php";
 
 
 class Controller_Commande extends Controller_Default_Template {
@@ -47,11 +48,17 @@ class Controller_Commande extends Controller_Default_Template {
 				case "noter" :
 					$this->noter($request);
 					break;
+				case "hasChat" :
+					$this->hasChat($request);
+					break;
 				case "getChat" :
 					$this->getChat($request);
 					break;
 				case "sendMessage" :
 					$this->sendMessage($request);
+					break;
+				case "facture" :
+					$this->facture($request);
 					break;
 			}
 		} else {
@@ -72,6 +79,20 @@ class Controller_Commande extends Controller_Default_Template {
 			$request->commandes = $commande->loadNotFinishedCommande();
 			$request->vue = $this->render("commandes.php");
 		}
+	}
+	
+	public function facture ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		
+		$commande = new Model_Commande();
+		$commande->uid = $request->_auth->id;
+		$commande->id = $_GET["commande"];
+		$commande->load();
+		
+		$pdf = new PDF ();
+		$pdf->generateFactureClient($commande);
+		$pdf->render();
 	}
 	
 	public function modified ($request) {
@@ -232,6 +253,15 @@ class Controller_Commande extends Controller_Default_Template {
 		$commande->noter($note, $commentaire);
 	}
 	
+	public function hasChat ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$id_commande = $_GET['id_commande'];
+		$chat = new Model_Chat();
+		$chat->id_commande = $id_commande;
+		echo $chat->hasChatClient();
+	}
+	
 	public function getChat ($request) {
 		$request->disableLayout = true;
 		$id_commande = $_GET['id_commande'];
@@ -239,6 +269,7 @@ class Controller_Commande extends Controller_Default_Template {
 		$chat = new Model_Chat();
 		$chat->id_commande = $id_commande;
 		$request->messages = $chat->getChatCommande();
+		$chat->vueClient();
 		$commande = new Model_Commande();
 		$commande->id = $id_commande;
 		$request->livreur = $commande->getLivreur();

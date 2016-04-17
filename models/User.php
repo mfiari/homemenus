@@ -327,6 +327,7 @@ class Model_User extends Model_Template {
 		
 		return $this;
 	}
+	
 	public function logout () {
 		$sql = "SELECT status, is_login, is_enable FROM users WHERE uid = :uid";
 		$stmt = $this->db->prepare($sql);
@@ -365,7 +366,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getById () {
-		$sql = "SELECT user.nom, user.prenom, user.status, user.login, user.is_premium, uc.rue, uc.ville, uc.code_postal, uc.telephone
+		$sql = "SELECT user.nom, user.prenom, user.status, user.login, user.email, user.is_premium, uc.rue, uc.ville, uc.code_postal, uc.telephone
 		FROM users user
 		LEFT JOIN user_client uc ON uc.uid = user.uid
 		WHERE user.uid = :uid";
@@ -386,6 +387,7 @@ class Model_User extends Model_Template {
 		$this->prenom = $value["prenom"];
 		$this->login = $value["login"];
 		$this->status = $value["status"];
+		$this->email = $value["email"];
 		$this->is_premium = $value["is_premium"];
 		$this->rue = $value["rue"];
 		$this->ville = $value["ville"];

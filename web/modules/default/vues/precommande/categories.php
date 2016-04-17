@@ -1,7 +1,7 @@
 <h2><?php echo utf8_encode($request->restaurant->nom); ?></h2>
 <input id="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden="hidden" />
 <div id="carte">
-	<a class="btn btn-primary" href="?controler=compte&action=restaurant&id=<?php echo $request->restaurant->id; ?>">
+	<a class="btn btn-primary" href="?controler=precommande&action=restaurant&id=<?php echo $request->restaurant->id; ?>">
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 	</a>
 	<?php 
@@ -29,7 +29,7 @@
 			<?php endforeach; ?>
 		</div>
 	<?php endforeach; ?>
-	<a class="btn btn-primary" href="?controler=compte&action=restaurant&id=<?php echo $request->restaurant->id; ?>">
+	<a class="btn btn-primary" href="?controler=precommande&action=restaurant&id=<?php echo $request->restaurant->id; ?>">
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 	</a>
 </div>
@@ -48,7 +48,7 @@
 			var id_restaurant = $("#id_restaurant").val();
 			$.ajax({
 				type: "GET",
-				url: '?controler=compte&action=carte&id='+id_restaurant+'&id_carte='+id_carte,
+				url: '?controler=precommande&action=carte&id='+id_restaurant+'&id_carte='+id_carte,
 				dataType: "html"
 			}).done(function( msg ) {
 				$("#loading-modal").modal('hide');

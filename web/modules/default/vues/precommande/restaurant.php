@@ -2,7 +2,7 @@
 <?php $horaire = $restaurant->horaire; ?>
 <div id="restaurant">
 	<h2><?php echo utf8_encode($request->restaurant->nom); ?></h2>
-	<a style="margin-bottom: 10px;" class="btn btn-primary" href="?controler=compte&action=commande_search">
+	<a style="margin-bottom: 10px;" class="btn btn-primary" href="?controler=precommande&action=commande_search">
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour au resultat de la recherche
 	</a>
 	<div class="row">
@@ -35,8 +35,8 @@
 		<?php endif; ?>
 		<div class="col-md-4">
 			<div class="col-md-10 col-md-offset-1 item">
-				<div class="title"><a href="?controler=compte&action=categories&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>"><?php echo utf8_encode($categorie->nom); ?></a></div>
-				<div class="vignette"><a href="?controler=compte&action=categories&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>"><img src="<?php echo $categorie->logo; ?>"></a></div>
+				<div class="title"><a href="?controler=precommande&action=categories&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>"><?php echo utf8_encode($categorie->nom); ?></a></div>
+				<div class="vignette"><a href="?controler=precommande&action=categories&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>"><img src="<?php echo $categorie->logo; ?>"></a></div>
 			</div>
 		</div>
 		<?php if ($nbItem %3 == 2) : ?>
@@ -49,12 +49,12 @@
 	<?php endif; ?>
 		<div class="col-md-4">
 			<div class="col-md-10 col-md-offset-1 item">
-				<div class="title"><a href="?controler=compte&action=menu&id=<?php echo $request->restaurant->id; ?>">Menus</a></div>
-				<div class="vignette"><a href="?controler=compte&action=menu&id=<?php echo $request->restaurant->id; ?>"><img src="<?php echo $request->restaurant->getMenuImg(); ?>"></a></div>
+				<div class="title"><a href="?controler=precommande&action=menu&id=<?php echo $request->restaurant->id; ?>">Menus</a></div>
+				<div class="vignette"><a href="?controler=precommande&action=menu&id=<?php echo $request->restaurant->id; ?>"><img src="<?php echo $request->restaurant->getMenuImg(); ?>"></a></div>
 			</div>
 		</div>
 	</div>
-	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=compte&action=commande_search">
+	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=precommande&action=commande_search">
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour au resultat de la recherche
 	</a>
 </div>

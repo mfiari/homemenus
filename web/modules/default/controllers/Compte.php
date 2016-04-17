@@ -15,6 +15,7 @@ include_once ROOT_PATH."models/Tag.php";
 include_once ROOT_PATH."models/Option.php";
 include_once ROOT_PATH."models/OptionValue.php";
 include_once ROOT_PATH."models/Accompagnement.php";
+include_once ROOT_PATH."models/PreCommande.php";
 
 class Controller_Compte extends Controller_Default_Template {
 	
@@ -52,8 +53,26 @@ class Controller_Compte extends Controller_Default_Template {
 				case "carte" :
 					$this->carte($request);
 					break;
+				case "addCarte" :
+					$this->addCarte($request);
+					break;
 				case "menu" :
 					$this->menu($request);
+					break;
+				case "loadCommandeMonth" :
+					$this->loadCommandeMonth($request);
+					break;
+				case "loadCommandeDay" :
+					$this->loadCommandeDay($request);
+					break;
+				case "detailCommande" :
+					$this->detailCommande($request);
+					break;
+				case "validationCommande" :
+					$this->validationCommande($request);
+					break;
+				case "payment" :
+					$this->payment($request);
 					break;
 				default :
 					$this->redirect('404');
@@ -308,6 +327,86 @@ class Controller_Compte extends Controller_Default_Template {
 		}
 	}
 	
+	private function initCommande ($request, $id_restaurant) {
+		$commande = new Model_Pre_Commande();
+		$commande->uid = $request->_auth->id;
+		$commande->init();
+		if ($commande->id_restaurant == -1) {
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $id_restaurant;
+			$fields = array ("latitude", "longitude");
+			$restaurant->get($fields);
+			$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
+			
+			$user_latitude = $_SESSION['search_latitude'];
+			$user_longitude = $_SESSION['search_longitude'];
+			$adresseUser = $user_latitude.','.$user_longitude;
+			
+			$result = getDistance($adresseUser, $adresseResto);
+			$distance = 0;
+			if ($result['status'] == "OK") {
+				$distance = $result['distance'] / 1000;
+			}
+			$commande->id_restaurant = $id_restaurant;
+			$commande->rue = $_SESSION['search_rue'];
+			$commande->ville = $_SESSION['search_ville'];
+			$commande->code_postal = $_SESSION['search_cp'];
+			$commande->latitude = $user_latitude;
+			$commande->longitude = $user_longitude;
+			$commande->distance = $distance;
+			$commande->update();
+		} else if ($commande->id_restaurant != $id_restaurant) {
+			$this->error(400, "Bad request");
+		}
+		return $commande;
+	}
+	
+	public function addCarte ($request) {
+		if ($request->request_method != "POST") {
+			$this->error(405, "Method not allowed");
+			return;
+		}
+		if (!$request->_auth) {
+			$this->error(403, "Not authorized");
+			return;
+		}
+		if (!isset($_POST['id_carte'])) {
+			$this->error(409, "Conflict");
+		}
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$id_restaurant = $_POST['id_restaurant'];
+		$commande = $this->initCommande ($request, $id_restaurant);
+		$quantite = $_POST['quantite'];
+		$id_carte = $_POST['id_carte'];
+		$format = $_POST['format'];
+		$modelCarte = new Model_Carte();
+		$modelCarte->id = $id_carte;
+		$modelCarte->load();
+		$id_panier_carte = $commande->addCarte($id_carte, $format, $quantite);
+		foreach ($modelCarte->options as $option) {
+			foreach ($option->values as $value) {
+				if (isset($_POST['check_option_'.$option->id.'_'.$value->id])) {
+					$commande->addCarteOption($id_panier_carte, $option->id, $value->id);
+				}
+			}
+		}
+		foreach ($modelCarte->accompagnements as $accompagnement) {
+			foreach ($accompagnement->cartes as $carte) {
+				if (isset($_POST['check_accompagnement_'.$carte->id])) {
+					$commande->addCarteAccompagnement($id_panier_carte, $carte->id);
+				}
+			}
+		}
+		$carte = $modelCarte->getSupplements();
+		foreach ($carte->supplements as $supplement) {
+			var_dump($supplement);
+			if (isset($_POST['check_supplement_'.$supplement->id])) {
+				$commande->addCarteSupplement($id_panier_carte, $supplement->id);
+			}
+		}
+	}
+	
 	private function menu ($request) {
 		if (isset($_GET["id_menu"])) {
 			$request->disableLayout = true;
@@ -328,20 +427,85 @@ class Controller_Compte extends Controller_Default_Template {
 		}
 	}
 	
-	private function getLogo ($restaurant) {
-		$logoDirectory = WEBSITE_PATH."res/img/restaurant/";
-		if (file_exists($logoDirectory.$restaurant->id)) {
-			if (file_exists($logoDirectory.$restaurant->id.'/logo.png')) {
-				$restaurant->logo = $restaurant->id.'/logo.png';
-			} else if (file_exists($logoDirectory.$restaurant->id.'/logo.jpg')) {
-				$restaurant->logo = $restaurant->id.'/logo.jpg';
-			} else if (file_exists($logoDirectory.$restaurant->id.'/logo.gif')) {
-				$restaurant->logo = $restaurant->id.'/logo.gif';
-			} else {
-				$restaurant->logo = 'default/logo.jpg';
+	private function loadCommandeMonth ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$month = $_GET['month'];
+		$commande = new Model_Pre_Commande();
+		$commande->uid = $request->_auth->id;
+		$list = $commande->getCommandeInMonth($month);
+		$retour = array();
+		$currentDate = "";
+		$previousDate = "";
+		foreach ($list as $commande) {
+			$currentDate = $commande->date_commande;
+			if ($currentDate != $previousDate) {
+				$retour[$currentDate] = array();
+				$previousDate = $currentDate;
 			}
-		} else {
-			$restaurant->logo = 'default/logo.jpg';
+			$retour[$currentDate][] = array("id" => $commande->id);
 		}
+		echo json_encode($retour);
+	}
+	
+	private function loadCommandeDay ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$month = $_GET['month'];
+		$day = $_GET['day'];
+		$commande = new Model_Pre_Commande();
+		$commande->uid = $request->_auth->id;
+		$list = $commande->getCommandeDay($month, $day);
+		$retour = array();
+		foreach ($list as $commande) {
+			$retour[] = array(
+				"id" => $commande->id,
+				"date" => $commande->daye_commande,
+				"restaurant" => array (
+					"id" => $commande->restaurant->id,
+					"nom" => $commande->restaurant->nom
+				)
+			);
+		}
+		echo json_encode($retour);
+	}
+	
+	private function detailCommande ($request) {
+		$commande = new Model_Pre_Commande();
+		$commande->id = $_GET['id_commande'];
+		$request->commande = $commande->load();
+		$request->vue = $this->render("compte/commande.php");
+	}
+	
+	private function validationCommande ($request) {
+		$commande = new Model_Pre_Commande();
+		$commande->id = $_GET['commande'];
+		$request->commande = $commande->get();
+		$request->vue = $this->render("compte/validation.php");
+	}
+	
+	private function payment ($request) {
+		$commande = new Model_Pre_Commande();
+		$commande->id = $_POST['id_commande'];
+		$commande->get();
+		$paymentMode = $_POST['payment'];
+		if ($paymentMode == 'solde') {
+			
+		} else if ($paymentMode == 'paypal') {
+			
+		} else {
+			
+		}
+	}
+	
+	private function confirmPayment ($request) {
+		$preCommande = new Model_Pre_Commande();
+		if (isset($_GET['id_commande'])) {
+			$preCommande->id = $_GET['id_commande'];
+		} else {
+			$preCommande->id = $request->id_commande;
+		}
+		$preCommande->validate();
+		$request->vue = $this->render("compte/payment_success.php");
 	}
 }

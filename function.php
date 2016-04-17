@@ -152,6 +152,31 @@ function send_mail ($to, $subject, $message, $from = false) {
 	return true;
 }
 
+function send_mail2 ($to, $subject, $message, $from = "no-reply@homemenus.fr", $attachments = array()) {
+	require WEBSITE_PATH.'res/lib/phpmailer/class.phpmailer.php';
+
+	$mail = new PHPMailer;
+
+	$mail->setFrom($from);
+	$mail->addAddress($to);
+
+	foreach ($attachments as $attachment) {
+		$mail->addAttachment($attachment); 
+	}
+	
+	$mail->isHTML(true);
+
+	$mail->Subject = $subject;
+	$mail->Body    = $message;
+
+	if(!$mail->send()) {
+		writeLog (MAIL_LOG, $mail->ErrorInfo, LOG_LEVEL_ERROR, $subject, $to);
+		writeLog (MAIL_LOG, $message, LOG_LEVEL_ERROR, $subject, $to);
+		return false;
+	}
+	return true;
+}
+
 function datepickerToDatetime ($date) {
 	list($day, $month, $year) = explode('/', $date);
 	return $year.'-'.$month.'-'.$day;
@@ -189,6 +214,24 @@ function addTextNode ($dom, $parent, $name, $value) {
 	$texte = $dom->createTextNode($value);
 	$node->appendChild($texte);
 	$parent->appendChild($node);
+}
+
+function getLogoRestaurant ($id_restaurant) {
+	$imgPath = "res/img/restaurant/";
+	$logoDirectory = WEBSITE_PATH.$imgPath;
+	if (file_exists($logoDirectory.$id_restaurant)) {
+		if (file_exists($logoDirectory.$id_restaurant.'/logo.png')) {
+			return $imgPath.$id_restaurant.'/logo.png';
+		} else if (file_exists($logoDirectory.$id_restaurant.'/logo.jpg')) {
+			return $imgPath.$id_restaurant.'/logo.jpg';
+		} else if (file_exists($logoDirectory.$id_restaurant.'/logo.gif')) {
+			return $imgPath.$id_restaurant.'/logo.gif';
+		} else {
+			return $imgPath.'default/logo.jpg';
+		}
+	} else {
+		return $imgPath.'default/logo.jpg';
+	}
 }
 
 ?>

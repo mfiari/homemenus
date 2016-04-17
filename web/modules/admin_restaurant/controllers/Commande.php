@@ -9,6 +9,7 @@ include_once ROOT_PATH."models/Formule.php";
 include_once ROOT_PATH."models/Categorie.php";
 include_once ROOT_PATH."models/Contenu.php";
 include_once ROOT_PATH."models/Carte.php";
+include_once ROOT_PATH."models/PDF.php";
 
 class Controller_Commande extends Controller_Admin_Restaurant_Template {
 	
@@ -21,6 +22,9 @@ class Controller_Commande extends Controller_Admin_Restaurant_Template {
 					break;
 				case "detail" :
 					$this->detail($request);
+					break;
+				case "facture" :
+					$this->facture($request);
 					break;
 			}
 		} else {
@@ -56,5 +60,19 @@ class Controller_Commande extends Controller_Admin_Restaurant_Template {
 		$commande->id = $_GET['id'];
 		$request->commande = $commande->getCommandeRestaurant();
 		$request->vue = $this->render("commande.php");
+	}
+	
+	public function facture ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		
+		$commande = new Model_Commande();
+		$commande->uid = $request->_auth->id;
+		$commande->id = $_GET["commande"];
+		$commande->getCommandeRestaurant();
+		
+		$pdf = new PDF ();
+		$pdf->generateFactureRestaurant($commande);
+		$pdf->render();
 	}
 }
