@@ -34,6 +34,11 @@ class Admin_Manager {
 					$controller = new Controller_Log();
 					$controller->manage($request);
 					break;
+				case "cron" :
+					include_once WEBSITE_PATH."modules/admin/controllers/Cron.php";
+					$controller = new Controller_Cron();
+					$controller->manage($request);
+					break;
 			}
 		} else {
 			include_once WEBSITE_PATH."modules/admin/controllers/Index.php";
