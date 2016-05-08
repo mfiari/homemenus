@@ -22,9 +22,18 @@
 								<a href="?controler=restaurant&action=edit&id_restaurant=<?php echo $restaurant->id; ?>">
 									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 								</a>
-								<a href="?controler=restaurant&action=delete&id_restaurant=<?php echo $restaurant->id; ?>">
-									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-								</a>
+								<?php if ($restaurant->is_enable) : ?>
+									<a href="?controler=restaurant&action=disable&id_restaurant=<?php echo $restaurant->id; ?>">
+										<span title="Désactivé" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
+									</a>
+								<?php else : ?>
+									<a href="?controler=restaurant&action=enable&id_restaurant=<?php echo $restaurant->id; ?>">
+										<span title="Activé" class="glyphicon glyphicon-ok" aria-hidden="true" style="color : #00FF00;"></span>
+									</a>
+									<a href="?controler=restaurant&action=delete&id_restaurant=<?php echo $restaurant->id; ?>">
+										<span title="Supprimé" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
+									</a>
+								<?php endif; ?>
 							</td>
 						</tr>
 					<?php endforeach; ?>

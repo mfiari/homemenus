@@ -31,6 +31,7 @@ class Model_Restaurant extends Model_Template {
 	private $has_livreur_dispo;
 	private $carteImg;
 	private $menuImg;
+	private $is_enable;
 	
 	public function __construct($callParent = true) {
 		if ($callParent) {
@@ -232,7 +233,7 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function getAll () {
-		$sql = "SELECT id, nom, rue, code_postal, ville, latitude, longitude FROM restaurants Order by ville, nom";
+		$sql = "SELECT id, nom, rue, code_postal, ville, latitude, longitude, enabled FROM restaurants Order by ville, nom";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			return false;
@@ -248,9 +249,34 @@ class Model_Restaurant extends Model_Template {
 			$restaurant->ville = $value['ville'];
 			$restaurant->latitude = $value['latitude'];
 			$restaurant->longitude = $value['longitude'];
+			$restaurant->is_enable = $value['enabled'];
 			$list[] = $restaurant;
 		}
 		return $list;
+	}
+	
+	public function enable () {
+		$sql = "UPDATE restaurants SET enabled = true WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : enable", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
+	public function disable () {
+		$sql = "UPDATE restaurants SET enabled = false WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : disable", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
 	}
 	
 	public function filter ($filters) {
@@ -271,12 +297,12 @@ class Model_Restaurant extends Model_Template {
 		if (isset($filters['tagsFilter']) && count($filters['tagsFilter']) > 0) {
 			$sql .= ' JOIN restaurant_tag rt ON rt.id_restaurant = r.id AND rt.id_tag IN ('.implode(',', $filters['tagsFilter']).')';
 		}
-		$link = "WHERE";
+		$sql .= ' WHERE r.enabled = 1'; 
+		$link = "AND";
 		foreach ($filters as $key => $filter) {
 			if ($key == "distanceKm" || $key == "search_adresse" || $key == "tags" || $key == "tagsFilter" || $key == "search_date" 
 			|| $key == "search_hour" || $key == "search_minute") continue;
 			$sql .= " ".$link." $key = :$key";
-			$link = "AND";
 		}
 		$sql .= " GROUP BY r.id Order by r.score, r.nom";
 		$stmt = $this->db->prepare($sql);

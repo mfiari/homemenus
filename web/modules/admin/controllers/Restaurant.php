@@ -29,6 +29,12 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "edit" :
 					$this->edit($request);
 					break;
+				case "enable" :
+					$this->enable($request);
+					break;
+				case "disable" :
+					$this->disable($request);
+					break;
 				case "view" :
 					$this->view($request);
 					break;
@@ -161,6 +167,20 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			}
 			$request->vue = $this->render("restaurant/edit.php");
 		}
+	}
+	
+	public function enable ($request) {
+		$model = new Model_Restaurant();
+		$model->id = trim($_GET["id_restaurant"]);
+		$model->enable();
+		$this->redirect('index', 'restaurant');
+	}
+	
+	public function disable ($request) {
+		$model = new Model_Restaurant();
+		$model->id = trim($_GET["id_restaurant"]);
+		$model->disable();
+		$this->redirect('index', 'restaurant');
 	}
 	
 	public function view ($request) {

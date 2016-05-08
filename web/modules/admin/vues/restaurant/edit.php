@@ -109,23 +109,18 @@
 	</div>
 </div>
 <script type="text/javascript">
-	//enableAutocomplete ('full_address');
+	enableAutocomplete ('full_address');
 	$("#add_restaurant_button").click(function(event) {
-		/*var addressComponents = getAdresseElements();
+		var addressComponents = getAdresseElements();
 		var rue = addressComponents.street_number + ' ' + addressComponents.route;
 		var ville = addressComponents.locality;
 		var code_postal = addressComponents.postal_code;
 		var lat = addressComponents.lat;
-		var lon = addressComponents.lon;*/
-		var rue = "22 rue du commerce";
-		var ville = "Juziers";
-		var code_postal = "78820";
-		var lat = 0;
-		var lon = 0;
+		var lon = addressComponents.lon;
 		$("#rue").val(rue);
 		$("#ville").val(ville);
 		$("#code_postal").val(code_postal);
-		$("#latitude").val(latitude);
+		$("#latitude").val(lat);
 		$("#longitude").val(lon);
 		$("#ajout_restaurant").submit();
 	});
