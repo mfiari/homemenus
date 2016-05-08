@@ -70,6 +70,9 @@ function enableAutocomplete (inputId) {
 		componentRestrictions: {country: "fr"}
 	};
 	var input = document.getElementById(inputId);
+	if (typeof(google) == "undefined") {
+		return;
+	}
 	autocomplete = new google.maps.places.Autocomplete(input,options_auto);
 	console.log(autocomplete);
 	$("#"+inputId).keypress(function () {

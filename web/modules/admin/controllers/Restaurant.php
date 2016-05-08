@@ -32,6 +32,9 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "view" :
 					$this->view($request);
 					break;
+				case "adduser" :
+					$this->adduser($request);
+					break;
 				case "viewCategorie" :
 					$this->viewCategorie($request);
 					break;
@@ -179,6 +182,53 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		$request->restaurant->loadSupplements();
 		$request->restaurant->loadOptions();
 		$request->vue = $this->render("restaurant/view.php");
+	}
+	
+	public function adduser ($request) {
+		if ($request->request_method == "POST") {
+			$nom = $_POST['nom'];
+			$prenom = $_POST['prenom'];
+			$login = $_POST['login'];
+			$email = $_POST['email'];
+			$status = $_POST['status'];
+			$restaurant = $_POST['restaurant'];
+			
+			$modelUser = new Model_User();
+			$modelUser->nom = $nom;
+			$modelUser->prenom = $prenom;
+			$modelUser->login = $login;
+			$modelUser->email = $email;
+			$modelUser->password = generatePassword();
+			$modelUser->inscription_token = generateToken();
+			$modelUser->status = $status;
+			$modelUser->id_restaurant = $restaurant;
+			
+			$modelUser->save();
+			
+			$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription_restaurant.html');
+			
+			$messageContent = str_replace("[NOM]", $nom, $messageContent);
+			$messageContent = str_replace("[PRENOM]", $prenom, $messageContent);
+			$messageContent = str_replace("[LOGIN]", $login, $messageContent);
+			$messageContent = str_replace("[PASSWORD]", $modelUser->password, $messageContent);
+			$messageContent = str_replace("[UID]", $uid, $messageContent);
+			$messageContent = str_replace("[TOKEN]", $token, $messageContent);
+			$messageContent = str_replace("[WEBSITE_URL]", WEBSITE_URL, $messageContent);
+			
+			send_mail ($modelUser->email, "Création de votre compte restaurant", $messageContent);
+			$this->redirect('view', 'restaurant');
+		} else {
+			$request->title = "Administration - user";
+			if (isset($_GET['id_user'])) {
+				$modelUser = new Model_User();
+				$modelUser->id = $_GET['id_user'];
+				$request->user = $modelUser->get();
+			}
+			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant->id = $_GET['id_restaurant'];
+			$request->restaurant = $modelRestaurant->getOne();
+			$request->vue = $this->render("restaurant/adduser.php");
+		}
 	}
 	
 	public function viewCategorie ($request) {

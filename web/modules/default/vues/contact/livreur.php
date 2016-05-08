@@ -12,13 +12,13 @@
 	<?php if ($request->mailSuccess === true) : ?>
 		<div class="alert alert-success" role="alert">
 			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-			Votre mail a bien été transmis aux équipe de homemenus
+			Votre message a bien été transmis aux équipes d'HoMe Menus
 		</div>
 	<?php else : ?>
 		<div class="alert alert-danger" role="alert">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 			<span class="sr-only">Error:</span>
-			Une erreur est survenu lors de l'envoi du mail, veuillez réessayer
+			Une erreur est survenu lors de l'envoi du message, veuillez réessayer
 		</div>
 	<?php endif; ?>
 <?php endif; ?>
@@ -33,7 +33,7 @@
 					<input class="form-control" name="nom" type="text" value="<?php echo $request->fieldNom !== false ? $request->fieldNom : ''; ?>" required>
 				</div>
 				<div class="form-group">
-					<label for="prenom">Prenom<span class="required">*</span> : </label>
+					<label for="prenom">Prénom<span class="required">*</span> : </label>
 					<input class="form-control" name="prenom" type="text" value="<?php echo $request->fieldPrenom !== false ? $request->fieldPrenom : ''; ?>" required>
 				</div>
 				<div class="form-group">
@@ -46,10 +46,10 @@
 				</div>
 				<div class="form-group">
 					<label for="fonction">Moyens de transport : </label><br /><br />
-					<input style="margin-right : 15px;" name="aucun" type="checkbox">Aucun<br />
 					<input style="margin-right : 15px;" name="velo" type="checkbox">Vélo<br />
 					<input style="margin-right : 15px;" name="voiture" type="checkbox">Voiture<br />
-					<input style="margin-right : 15px;" name="autre" type="checkbox">autre
+					<input style="margin-right : 15px;" name="scooter" type="checkbox">Scooter<br />
+					<input style="margin-right : 15px;" name="autre" type="checkbox">Autre(s)
 					<input class="form-control" name="transport" type="text">
 				</div>
 				<h3>Informations complémentaires</h3>

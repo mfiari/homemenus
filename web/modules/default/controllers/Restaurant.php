@@ -84,7 +84,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 				$this->redirect();
 			}
 			$filter = array();
-			$filter["search_ardresse"] = $_POST['adresse'];
+			$filter["search_adresse"] = $_POST['adresse'];
 			if (isset($_POST["city"]) && $_POST["city"] != "") {
 				$filter["ville"] = $_POST["city"];
 			}
@@ -125,9 +125,9 @@ class Controller_Restaurant extends Controller_Default_Template {
 		
 		$restaurants = $modelRestaurant->filter($filter);
 		
-		$request->search_ardresse = $filter["search_ardresse"];
+		$request->search_adresse = $filter["search_adresse"];
 		$geocoder = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false";
-		$localisation = urlencode($filter["search_ardresse"]);
+		$localisation = urlencode($filter["search_adresse"]);
 		$query = sprintf($geocoder,$localisation);
 		$rd = json_decode(file_get_contents($query));
 		/*var_dump($rd);
@@ -149,7 +149,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 					$route = $addressComponents[$i]->{'long_name'};
 				}
 			}
-			$_SESSION['search_adresse'] = $request->search_ardresse;
+			$_SESSION['search_adresse'] = $request->search_adresse;
 			$_SESSION['search_ville'] = $ville;
 			$_SESSION['search_cp'] = $codePostal;
 			$_SESSION['search_rue'] = $street_number.' '.$route;

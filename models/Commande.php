@@ -213,6 +213,180 @@ class Model_Commande extends Model_Template {
 		return true;
 	}
 	
+	public function createFromCommande ($commande) {
+		$sql = "INSERT INTO commande (uid, rue, ville, code_postal, telephone, id_restaurant, date_commande, heure_souhaite, minute_souhaite, 
+		prix_livraison, distance, etape, is_premium) 
+		(SELECT uid, rue, ville, code_postal, telephone, id_restaurant, now(), heure_souhaite, minute_souhaite, prix_livraison, distance, 0, true
+		FROM pre_commande
+		WHERE id = :id)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $commande->id);
+		if (!$stmt->execute()) {
+			writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$id_commande = $this->db->lastInsertId();
+		$this->id = $id_commande;
+		
+		$total = 0;
+		
+		$sql = "SELECT pcm.id, pcm.id_menu, pcm.id_format, pcm.id_formule, pcm.quantite, mf.prix 
+		FROM pre_commande_menu pcm
+		JOIN menu_format mf ON mf.id_format = pcm.id_format AND mf.id_menu = pcm.id_menu
+		WHERE pcm.id_commande = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $commande->id);
+		if (!$stmt->execute()) {
+			writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$listCommandeMenu = $stmt->fetchAll();
+		foreach ($listCommandeMenu as $commandeMenu) {
+			$total += $commandeMenu['prix'] * $commandeMenu['quantite'];
+			$sql = "INSERT INTO commande_menu (id_commande, id_menu, id_format, id_formule, quantite) VALUES (:id, :menu, :format, :formule, :quantite)";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $id_commande);
+			$stmt->bindValue(":menu", $commandeMenu['id_menu']);
+			$stmt->bindValue(":format", $commandeMenu['id_format']);
+			$stmt->bindValue(":formule", $commandeMenu['id_formule']);
+			$stmt->bindValue(":quantite", $commandeMenu['quantite']);
+			if (!$stmt->execute()) {
+				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+				var_dump($stmt->errorInfo());
+				return false;
+			}
+			$id_commande_menu = $this->db->lastInsertId();
+			
+			$sql = "SELECT id_contenu FROM pre_commande_menu_contenu WHERE id_commande_menu = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $commandeMenu['id']);
+			if (!$stmt->execute()) {
+				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+				var_dump($stmt->errorInfo());
+				return false;
+			}
+			$listCommandeContenu = $stmt->fetchAll();
+			foreach ($listCommandeContenu as $commandeContenu) {
+				$sql = "INSERT INTO commande_menu_contenu (id_commande_menu, id_contenu) VALUES (:id, :id_contenu)";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $id_commande_menu);
+				$stmt->bindValue(":id_contenu", $commandeContenu['id_contenu']);
+				if (!$stmt->execute()) {
+					writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+					var_dump($stmt->errorInfo());
+					return false;
+				}
+			}
+		}
+		
+		$sql = "SELECT pcc.id, pcc.id_carte, pcc.id_format, pcc.quantite, cf.prix FROM pre_commande_carte pcc
+		JOIN carte_format cf ON cf.id_format = pcc.id_format AND cf.id_carte = pcc.id_carte
+		WHERE pcc.id_commande = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $commande->id);
+		if (!$stmt->execute()) {
+			writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$listCommandeCarte = $stmt->fetchAll();
+		foreach ($listCommandeCarte as $commandeCarte) {
+			$total += $commandeCarte['prix'] * $commandeCarte['quantite'];
+			$sql = "INSERT INTO commande_carte (id_commande, id_carte, id_format, quantite) VALUES (:id, :id_carte, :id_format, :quantite)";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $id_commande);
+			$stmt->bindValue(":id_carte", $commandeCarte['id_carte']);
+			$stmt->bindValue(":id_format", $commandeCarte['id_format']);
+			$stmt->bindValue(":quantite", $commandeCarte['quantite']);
+			if (!$stmt->execute()) {
+				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+				var_dump($stmt->errorInfo());
+				return false;
+			}
+			$id_commande_carte = $this->db->lastInsertId();
+			
+			$sql = "SELECT id_option, id_value FROM pre_commande_carte_option WHERE id_commande_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $commandeCarte['id']);
+			if (!$stmt->execute()) {
+				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+				var_dump($stmt->errorInfo());
+				return false;
+			}
+			$listCommandeOption = $stmt->fetchAll();
+			foreach ($listCommandeOption as $commandeOption) {
+				$sql = "INSERT INTO commande_carte_option (id_commande_carte, id_option, id_value) VALUES (:id, :option, :value)";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $id_commande_carte);
+				$stmt->bindValue(":option", $commandeOption['id_option']);
+				$stmt->bindValue(":value", $commandeOption['id_value']);
+				if (!$stmt->execute()) {
+					writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+					var_dump($stmt->errorInfo());
+					return false;
+				}
+			}
+			
+			$sql = "SELECT pccs.id_supplement, supp.prix FROM pre_commande_carte_supplement pccs
+			JOIN supplements supp ON supp.id = pccs.id_supplement
+			WHERE id_commande_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $commandeCarte['id']);
+			if (!$stmt->execute()) {
+				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+				var_dump($stmt->errorInfo());
+				return false;
+			}
+			$listCommandeSupplement = $stmt->fetchAll();
+			foreach ($listCommandeSupplement as $commandeSupplement) {
+				$total += $commandeSupplement['prix'];
+				$sql = "INSERT INTO commande_carte_supplement (id_commande_carte, id_supplement) VALUES (:id, :id_supplement)";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $id_commande_carte);
+				$stmt->bindValue(":id_supplement", $commandeSupplement['id_supplement']);
+				if (!$stmt->execute()) {
+					writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+					var_dump($stmt->errorInfo());
+					return false;
+				}
+			}
+			
+			$sql = "SELECT id_accompagnement FROM pre_commande_carte_accompagnement WHERE id_commande_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $commandeCarte['id']);
+			if (!$stmt->execute()) {
+				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+				var_dump($stmt->errorInfo());
+				return false;
+			}
+			$listCommandeAccompagnement = $stmt->fetchAll();
+			foreach ($listCommandeAccompagnement as $commandeAccompagnement) {
+				$sql = "INSERT INTO commande_carte_accompagnement (id_commande_carte, id_accompagnement) VALUES (:id, :accompagnement)";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $id_commande_carte);
+				$stmt->bindValue(":accompagnement", $commandeAccompagnement['id_accompagnement']);
+				if (!$stmt->execute()) {
+					writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+					var_dump($stmt->errorInfo());
+					return false;
+				}
+			}
+		}
+		
+		$sql = "UPDATE commande SET prix = :prix WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $id_commande);
+		$stmt->bindValue(":prix", $total);
+		if (!$stmt->execute()) {
+			writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		return true;
+	}
+	
 	public function load () {
 		$sql = "
 		SELECT 

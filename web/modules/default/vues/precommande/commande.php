@@ -118,7 +118,8 @@
 		</div>
 	</div>
 </div>
-<a class="btn btn-primary" href="?controler=compte&action=validationCommande&commande=<?php echo $request->commande->id; ?>">Valider la commande</a>
+<a class="btn btn-primary" href="?controler=precommande&action=restaurant&id=<?php echo $request->commande->restaurant->id; ?>&id_commande=<?php echo $request->commande->id; ?>">Ajouter un produit</a>
+<a class="btn btn-primary" href="?controler=precommande&action=validationCommande&commande=<?php echo $request->commande->id; ?>">Valider la commande</a>
 <a class="btn btn-primary" href="?controler=compte&action=annulationCommande&commande=<?php echo $request->commande->id; ?>">Annuler la commande</a>
 <p>
 	Afin que votre commande soit prise en compte par nos équipe, vous devez valider votre commande au plus tard 24h avant la date indiquer

@@ -24,6 +24,8 @@ class Model_Pre_Commande extends Model_Template {
 	private $restaurant;
 	private $is_modif;
 	private $id_restaurant;
+	private $validation;
+	private $payment;
 	
 	public function __construct($callParent = true) {
 		if ($callParent) {
@@ -144,7 +146,7 @@ class Model_Pre_Commande extends Model_Template {
 	}
 	
 	public function getCommandeInMonth ($month) {
-		$sql = "SELECT id, date_commande FROM pre_commande WHERE uid = :uid AND MONTH(date_commande) = :month ORDER BY date_commande ASC";
+		$sql = "SELECT id, date_commande, validation FROM pre_commande WHERE uid = :uid AND MONTH(date_commande) = :month ORDER BY date_commande ASC";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		$stmt->bindValue(":month", $month);
@@ -158,6 +160,7 @@ class Model_Pre_Commande extends Model_Template {
 			$commande = new Model_Pre_Commande(false);
 			$commande->id = $c["id"];
 			$commande->date_commande = $c["date_commande"];
+			$commande->validation = $c["validation"];
 			$listCommande[] = $commande;
 		}
 		return $listCommande;
@@ -219,9 +222,10 @@ class Model_Pre_Commande extends Model_Template {
 	public function load () {
 		$sql = "SELECT com.id AS id_commande, com.rue, com.ville, com.code_postal, com.latitude, com.longitude, com.telephone, resto.id AS id_resto, 
 			resto.nom AS nom_resto, resto.rue AS rue_resto, resto.ville AS ville_resto, resto.code_postal AS cp_resto, date_commande, heure_souhaite, 
-			minute_souhaite, prix, prix_livraison, distance
+			minute_souhaite, prix, prix_livraison, distance, client.uid, client.email
 		FROM pre_commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
+		JOIN users client ON client.uid = com.uid
 		WHERE com.id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
@@ -245,6 +249,9 @@ class Model_Pre_Commande extends Model_Template {
 		$this->restaurant->rue = $value['rue_resto'];
 		$this->restaurant->ville = $value['ville_resto'];
 		$this->restaurant->code_postal = $value['cp_resto'];
+		$this->client = new Model_User(false);
+		$this->client->id = $c["uid"];
+		$this->client->email = $c["email"];
 		$this->date_commande = $value['date_commande'];
 		$this->heure_souhaite = $value['heure_souhaite'];
 		$this->minute_souhaite = $value['minute_souhaite'];
@@ -334,8 +341,7 @@ class Model_Pre_Commande extends Model_Template {
 		
 		return $this;
 	}
-	
-	
+		
 	public function getClient () {
 		$sql = "SELECT client.uid, client.nom, client.prenom, client.gcm_token, client.is_login FROM commande
 		JOIN users client ON client.uid = commande.uid
@@ -358,11 +364,9 @@ class Model_Pre_Commande extends Model_Template {
 		$this->client->is_login = $value['is_login'];
 		return $this->client;
 	}
-		
-
 	
 	public function remove () {
-		$sql = "SELECT id FROM commande_menu WHERE id_commande = :id";
+		$sql = "SELECT id FROM pre_commande_menu WHERE id_commande = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -371,14 +375,14 @@ class Model_Pre_Commande extends Model_Template {
 		}
 		$result = $stmt->fetchAll();
 		foreach ($result as $value) {
-			$sql = "DELETE FROM commande_contenu WHERE id_commande_menu = :id";
+			$sql = "DELETE FROM pre_commande_menu_contenu WHERE id_commande_menu = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
 				var_dump($stmt->errorInfo());
 				return false;
 			}
-			$sql = "DELETE FROM commande_menu WHERE id = :id";
+			$sql = "DELETE FROM pre_commande_menu WHERE id = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
@@ -386,7 +390,7 @@ class Model_Pre_Commande extends Model_Template {
 				return false;
 			}
 		}
-		$sql = "SELECT id FROM commande_carte WHERE id_commande = :id";
+		$sql = "SELECT id FROM pre_commande_carte WHERE id_commande = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -395,14 +399,14 @@ class Model_Pre_Commande extends Model_Template {
 		}
 		$result = $stmt->fetchAll();
 		foreach ($result as $value) {
-			$sql = "DELETE FROM commande_carte_supplement WHERE id_commande_carte = :id";
+			$sql = "DELETE FROM pre_commande_carte_supplement WHERE id_commande_carte = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
 				var_dump($stmt->errorInfo());
 				return false;
 			}
-			$sql = "DELETE FROM commande_carte WHERE id = :id";
+			$sql = "DELETE FROM pre_commande_carte WHERE id = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
@@ -410,7 +414,7 @@ class Model_Pre_Commande extends Model_Template {
 				return false;
 			}
 		}
-		$sql = "DELETE FROM commande WHERE id = :id";
+		$sql = "DELETE FROM pre_commande WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -419,4 +423,59 @@ class Model_Pre_Commande extends Model_Template {
 		}
 		return true;
 	}
+	
+	public function validate () {
+		$sql = "UPDATE pre_commande SET validation = true, date_validation = NOW(), payment = :payment
+		WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":payment", $this->payment);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		return true;
+	}
+	
+	public function getNotValidateCommande () {
+		$sql = "SELECT com.id, com.date_commande, user.uid, user.email 
+		FROM pre_commande com 
+		JOIN users user ON user.uid = com.uid
+		WHERE com.validation = false";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$listCommande = array();
+		foreach ($result as $c) {
+			$commande = new Model_Pre_Commande();
+			$commande->id = $c["id"];
+			$commande->client = new Model_User(false);
+			$commande->client->id = $c["uid"];
+			$commande->client->email = $c["email"];
+			$commande->date_commande = $c["date_commande"];
+			$listCommande[] = $commande;
+		}
+		return $listCommande;
+	}
+	
+	public function getTodayCommande () {
+		$sql = "SELECT id FROM pre_commande WHERE date_commande = CURRENT_DATE AND validation = true";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$listCommande = array();
+		foreach ($result as $c) {
+			$commande = new Model_Pre_Commande();
+			$commande->id = $c["id"];
+			$listCommande[] = $commande;
+		}
+		return $listCommande;
+	}
+	
 }

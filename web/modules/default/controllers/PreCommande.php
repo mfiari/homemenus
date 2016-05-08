@@ -197,6 +197,9 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 	
 	public function restaurant ($request) {
 		if (isset($_GET['id'])) {
+			if (isset($_GET['id_commande'])) {
+				$_SESSION['id_commande'] = $_GET['id_commande'];
+			}
 			$request->title = "Restaurant";
 			$modelRestaurant = new Model_Restaurant();
 			$modelRestaurant->id = $_GET['id'];
@@ -367,7 +370,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 				$retour[$currentDate] = array();
 				$previousDate = $currentDate;
 			}
-			$retour[$currentDate][] = array("id" => $commande->id);
+			$retour[$currentDate][] = array("id" => $commande->id, "validation" => $commande->validation);
 		}
 		echo json_encode($retour);
 	}
@@ -420,6 +423,8 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		} else {
 			
 		}
+		$request->id_commande = $commande->id;
+		$this->confirmPayment ($request);
 	}
 	
 	private function confirmPayment ($request) {
@@ -429,6 +434,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		} else {
 			$preCommande->id = $request->id_commande;
 		}
+		$preCommande->payment = "PAYPAL";
 		$preCommande->validate();
 		$request->vue = $this->render("precommande/payment_success.php");
 	}

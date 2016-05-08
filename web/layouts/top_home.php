@@ -3,9 +3,6 @@
 <header class="home">
 	<div class="container">
 		<div>
-			<a href="?action=index">
-				<img id="logo" src="res/img/logo.png">
-			</a>
 			<ul class="menu">
 				<?php if ($request->_auth) : ?>
 					<li><a href="?controler=contact">Contact</a></li>
@@ -37,7 +34,7 @@
 			</ul>
 		</div>
 		<div>
-			<h1>Vos envies sont servis</h1>
+			<h1>Vos envies sont servis !</h1>
 		</div>
 		<div id="adress-search" class="col-md-8 col-md-offset-2">
 			<form id="adress-form" action="?controler=restaurant&action=recherche" method="POST">

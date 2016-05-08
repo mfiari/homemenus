@@ -5,6 +5,7 @@
 	include_once ROOT_PATH."function.php";
 	include_once ROOT_PATH."models/Template.php";
 	include_once ROOT_PATH."models/Commande.php";
+	include_once ROOT_PATH."models/PreCommande.php";
 	include_once ROOT_PATH."models/User.php";
 	include_once ROOT_PATH."models/Restaurant.php";
 	include_once ROOT_PATH."models/GCMPushMessage.php";
@@ -14,7 +15,6 @@
 	foreach ($commandes as $preCommande) {
 		$commande = new Model_Commande();
 		if ($commande->createFromCommande($preCommande)) {
-			$preCommande->remove();
 			$user = new Model_User();
 			
 			$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
@@ -41,9 +41,18 @@
 			}
 			
 			$messageContent =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
-			
 			$messageContent = str_replace("[COMMANDE_ID]", $commande->id, $messageContent);
-			
 			send_mail ("admin@homemenus.fr", "Nouvelle commande", $messageContent);
+			
+			$messageContent =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_pre_commande.html');
+			$messageContent = str_replace("[COMMANDE_ID]", $preCommande->id, $messageContent);
+			$messageContent = str_replace("[RESTAURANT_NAME]", $preCommande->restaurant->nom, $messageContent);
+			$messageContent = str_replace("[URL]", WEBSITE_URL.'?controler=commande&id='.$commande->id, $messageContent);
+			send_mail ($preCommande->client->email, "Nouvelle commande", $messageContent);
+			
+			
+			$preCommande->remove();
+		} else {
+			writeLog (CRON_LOG, "erreur lors de la création de la pré commande #".$preCommande->id, LOG_LEVEL_ERROR);
 		}
 	}

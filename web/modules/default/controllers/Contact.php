@@ -34,8 +34,8 @@ class Controller_Contact extends Controller_Default_Template {
 	
 	public function index ($request) {
 		$sujets = array(
-			"BUG" => "J'ai trouvé un bug",
 			"QUESTION" => "J'ai une question",
+			"BUG" => "J'ai trouvé un bug",
 			"COMPTE_BLOQUE" => "Mon compte est bloqué"
 		);
 		if ($request->request_method == "POST") {
@@ -92,7 +92,7 @@ class Controller_Contact extends Controller_Default_Template {
 			}
 		}
 		$request->sujets = $sujets;
-		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact.js", "https://www.google.com/recaptcha/api.js");
+		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/contact.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "Contact";
 		$request->vue = $this->render("contact/contact.php");
 	}
@@ -133,14 +133,14 @@ class Controller_Contact extends Controller_Default_Template {
 				$email = $_POST["email"];
 			}
 			$transports = array();
-			if (isset($_POST['auncun'])) {
-				$transports[] = "aucun";
-			}
 			if (isset($_POST['velo'])) {
 				$transports[] = "velo";
 			}
 			if (isset($_POST['voiture'])) {
 				$transports[] = "voiture";
+			}
+			if (isset($_POST['scooter'])) {
+				$transports[] = "scooter";
 			}
 			if (isset($_POST['autre'])) {
 				$transports[] = $_POST['transport'];
@@ -186,7 +186,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$request->fieldMessage = $message;
 			}
 		}
-		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact.js", "https://www.google.com/recaptcha/api.js");
+		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/livreur.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "Contact";
 		$request->vue = $this->render("contact/livreur.php");
 	}
@@ -277,7 +277,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$request->fieldMessage = $message;
 			}
 		}
-		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact.js", "https://www.google.com/recaptcha/api.js");
+		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/restaurant.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "Contact";
 		$request->vue = $this->render("contact/restaurant.php");
 	}
@@ -380,7 +380,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$request->fieldMessage = $message;
 			}
 		}
-		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact.js", "https://www.google.com/recaptcha/api.js");
+		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/entreprise.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "Contact";
 		$request->vue = $this->render("contact/entreprise.php");
 	}
@@ -541,7 +541,7 @@ class Controller_Contact extends Controller_Default_Template {
 				}
 			}
 		}
-		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact.js", "https://www.google.com/recaptcha/api.js");
+		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/evenement.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "Contact";
 		$request->vue = $this->render("contact/evenements.php");
 	}

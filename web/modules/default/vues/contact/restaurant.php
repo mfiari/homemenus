@@ -12,13 +12,13 @@
 	<?php if ($request->mailSuccess === true) : ?>
 		<div class="alert alert-success" role="alert">
 			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-			Votre mail a bien été transmis aux équipe de homemenus
+			Votre message a bien été transmis aux équipes d'HoMe Menus
 		</div>
 	<?php else : ?>
 		<div class="alert alert-danger" role="alert">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 			<span class="sr-only">Error:</span>
-			Une erreur est survenu lors de l'envoi du mail, veuillez réessayer
+			Une erreur est survenu lors de l'envoi du message, veuillez réessayer
 		</div>
 	<?php endif; ?>
 <?php endif; ?>
@@ -29,7 +29,7 @@
 			<fieldset>
 				<h3>Votre restaurant</h3>
 				<div class="form-group">
-					<label for="restaurant">Nom<span class="required">*</span> : </label>
+					<label for="restaurant">Nom du restaurant<span class="required">*</span> : </label>
 					<input class="form-control" name="restaurant" type="text" value="<?php echo $request->fieldRestaurant !== false ? $request->fieldRestaurant : ''; ?>" required>
 				</div>
 				<div class="form-group">
@@ -46,7 +46,7 @@
 					<input class="form-control" name="nom" type="text" value="<?php echo $request->fieldNom !== false ? $request->fieldNom : ''; ?>" required>
 				</div>
 				<div class="form-group">
-					<label for="prenom">Prenom<span class="required">*</span> : </label>
+					<label for="prenom">Prénom<span class="required">*</span> : </label>
 					<input class="form-control" name="prenom" type="text" value="<?php echo $request->fieldPrenom !== false ? $request->fieldPrenom : ''; ?>" required>
 				</div>
 				<div class="form-group">

@@ -36,9 +36,11 @@
 			'Novembre',
 			'Décembre'
 		];
-		me.commandeCount = [];
+		me.commandeCountNotValidate = [];
+		me.commandeCountValidate = [];
 		for (var i = 0 ; i < 31 ; i++) {
-			me.commandeCount[i] = 0;
+			me.commandeCountNotValidate[i] = 0;
+			me.commandeCountValidate[i] = 0;
 		}
         me.options = options;
 		console.log(me);
@@ -118,9 +120,15 @@
 								event.data.calendar.selectDate(event.data.day, event.data.month, event.data.year);
 							}
 						);
-						if (this.commandeCount[firstDay.getDate()] > 0) {
+						if (this.commandeCountNotValidate[firstDay.getDate()] > 0) {
 							td.append(
-								$('<span />').addClass('badge').html(this.commandeCount[firstDay.getDate()]).css('margin-left', '5px')
+								$('<span />').addClass('badge').css('background-color', '#FF0000').html(this.commandeCountNotValidate[firstDay.getDate()]).css('margin-left', '5px')
+							);
+							
+						}
+						if (this.commandeCountValidate[firstDay.getDate()] > 0) {
+							td.append(
+								$('<span />').addClass('badge').css('background-color', '#00FF00').html(this.commandeCountValidate[firstDay.getDate()]).css('margin-left', '5px')
 							);
 							
 						}
@@ -149,11 +157,11 @@
 		},
 		displayCommande : function () {
 			this.commandeContainer.html('');
-			if (this.commandeCount[this.selectedDay] > 0) {
+			if (this.commandeCountNotValidate[this.selectedDay] > 0 || this.commandeCountValidate[this.selectedDay] > 0) {
 				var me = this;
 				$.ajax({
 					type: "GET",
-					url: "?controler=compte&action=loadCommandeDay&month="+(parseInt(me.selectedMonth)+1)+"&day="+me.selectedDay,
+					url: "?controler=precommande&action=loadCommandeDay&month="+(parseInt(me.selectedMonth)+1)+"&day="+me.selectedDay,
 					dataType: "html"
 				}).done(function(msg) {
 					console.log(msg);
@@ -169,7 +177,11 @@
 						);
 					}
 					me.commandeContainer.append(
-						$('<button />').addClass('btn btn-primary').attr('type', 'submit').html('Nouvelle commande')
+						$('<form />').attr('method', 'post').attr('action', '?controler=precommande&action=search').append(
+							$('<input />').attr('type', 'hidden').attr('name', 'date').val(me.selectedDay + '/' + (parseInt(me.selectedMonth)+1) + '/' + me.selectedYear)
+						).append(
+							$('<button />').addClass('btn btn-primary').attr('type', 'submit').html('Nouvelle commande')
+						)
 					)
 				});
 			} else {
@@ -188,7 +200,7 @@
 			var me = this;
 			$.ajax({
 				type: "GET",
-				url: "?controler=compte&action=loadCommandeMonth&month="+(parseInt(me.selectedMonth)+1),
+				url: "?controler=precommande&action=loadCommandeMonth&month="+(parseInt(me.selectedMonth)+1),
 				dataType: "html"
 			}).done(function(msg) {
 				console.log(msg);
@@ -196,9 +208,16 @@
 				$.each(json, function(key, value) {
 					var dates = key.split("-");
 					var day = dates[2];
-					me.commandeCount[day] = value.length;
+					for (var i = 0 ; i < value.length ; i++) {
+						if (value[i].validation == 0) {
+							me.commandeCountNotValidate[day]++;
+						} else {
+							me.commandeCountValidate[day]++;
+						}
+					}
 				});
-				console.log(me.commandeCount);
+				console.log(me.commandeCountNotValidate);
+				console.log(me.commandeCountValidate);
 				me.displayTable();
 			});
 		},

@@ -24,6 +24,7 @@ class Model_User extends Model_Template {
 	private $longitude;
 	private $perimetres;
 	private $horaires;
+	private $id_restaurant;
 	
 	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
@@ -134,6 +135,8 @@ class Model_User extends Model_Template {
 			return $this->insertLivreur();
 		} else if ($this->status == USER_CLIENT) {
 			return $this->insertUser();
+		} else if ($this->status == USER_RESTAURANT || $this->status == USER_ADMIN_RESTAURANT) {
+			return $this->insertRestaurant();
 		}
 		return false;
 	}
@@ -192,6 +195,19 @@ class Model_User extends Model_Template {
 				$this->sqlHasFailed = true;
 				return false;
 			}
+		}
+		return true;
+	}
+	
+	public function insertRestaurant() {
+		$sql = "INSERT INTO user_restaurant (uid, id_restaurant) VALUES (:uid, :id_restaurant)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		$stmt->bindValue(":id_restaurant", $this->id_restaurant);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : insertUser", $sql);
+			$this->sqlHasFailed = true;
+			return false;
 		}
 		return true;
 	}

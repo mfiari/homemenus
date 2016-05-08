@@ -10,7 +10,7 @@
 			<a href="?action=index" class="logo">
 				<img id="logo" src="res/img/logo.png">
 			</a>
-			<span class="slogan">Les restaurants s'invitent chez vous</span>
+			<img id="slogan" src="res/img/slogan.png">
 		</div>
 		<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
 			<ul class="menu nav navbar-nav">

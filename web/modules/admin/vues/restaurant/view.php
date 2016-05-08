@@ -29,7 +29,7 @@
 								<?php endforeach; ?>
 							</tbody>
 						</table>
-						<button class="btn btn-primary" type="submit">Ajouter une nouvelle utilisateur</button>
+						<a href="?controler=restaurant&action=adduser&id_restaurant=<?php echo $request->restaurant->id; ?>" class="btn btn-primary">Ajouter une nouvelle utilisateur</a>
 					</div>
 				</div>
 			</div>

@@ -106,13 +106,18 @@ header span.slogan {
 header a.logo {
 	float: left;
     font-size: 18px;
-    height: 50px;
+    height: 65px;
     line-height: 13px;
-    padding: 8px;
+    padding: 4px 10px 0 5px;
 }
  
 #logo {
-	width : 85px;
+	width : 130px;
+}
+ 
+#slogan {
+	margin-top : 26px;
+	width : 150px;
 }
 
 header ul.menu {
@@ -166,7 +171,7 @@ form#adress-form {
 /* Main content */
 
 #main-content {
-	margin-top : 55px;
+	margin-top : 70px;
 }
 
 #subscribeForm input {

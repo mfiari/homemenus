@@ -281,7 +281,7 @@ class Model_Restaurant extends Model_Template {
 		$sql .= " GROUP BY r.id Order by r.score, r.nom";
 		$stmt = $this->db->prepare($sql);
 		foreach ($filters as $key => $filter) {
-			if ($key == "distanceKm" || $key == "search_ardresse" || $key == "tags" || $key == "tagsFilter") continue;
+			if ($key == "distanceKm" || $key == "search_adresse" || $key == "tags" || $key == "tagsFilter") continue;
 			$stmt->bindValue(":$key", $filter);
 		}
 		if (!$stmt->execute()) {

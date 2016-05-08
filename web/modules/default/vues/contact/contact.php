@@ -12,13 +12,13 @@
 	<?php if ($request->mailSuccess === true) : ?>
 		<div class="alert alert-success" role="alert">
 			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-			Votre mail a bien été transmis aux équipe de homemenus
+			Votre message a bien été transmis aux équipes d'HoMe Menus
 		</div>
 	<?php else : ?>
 		<div class="alert alert-danger" role="alert">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 			<span class="sr-only">Error:</span>
-			Une erreur est survenu lors de l'envoi du mail, veuillez réessayer
+			Une erreur est survenu lors de l'envoi du message, veuillez réessayer
 		</div>
 	<?php endif; ?>
 <?php endif; ?>
