@@ -14,8 +14,11 @@
 						<table class="table table-striped">
 							<thead>
 								<tr>
+									<th>Nom</th>
 									<th>Login</th>
 									<th>Role</th>
+									<th>Actif</th>
+									<th>Connecté</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -23,8 +26,21 @@
 								<?php foreach ($request->users as $user) : ?>
 									<tr>
 										<td><?php echo utf8_encode($user->nom); ?> <?php echo utf8_encode($user->prenom); ?></td>
+										<td><?php echo utf8_encode($user->login); ?></td>
 										<td><?php echo $user->status; ?></td>
-										<td></td>
+										<td><?php echo $user->is_enable ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
+										<td><?php echo $user->is_login ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
+										<td>
+											<?php if ($user->is_enable) : ?>
+												<a href="?controler=restaurant&action=disableUser&id_user=<?php echo $user->id; ?>&id_restaurant=<?php echo $request->restaurant->id; ?>">
+													<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+												</a>
+											<?php else : ?>
+												<a href="?controler=restaurant&action=enableUser&id_user=<?php echo $user->id; ?>&id_restaurant=<?php echo $request->restaurant->id; ?>">
+													<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+												</a>
+											<?php endif; ?>
+										</td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>

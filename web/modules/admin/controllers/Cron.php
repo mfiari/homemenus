@@ -33,22 +33,22 @@ class Controller_Cron extends Controller_Admin_Template {
 	}
 	
 	public function runDispatchLivreur ($request) {
-		exec(ROOT_PATH.'cron/dispatch_livreur.php');
+		exec('php '.ROOT_PATH.'cron/dispatch_livreur.php');
 		$this->redirect('index', 'cron');
 	}
 	
 	public function runCreateCommande ($request) {
-		exec(ROOT_PATH.'cron/create_commande.php');
+		exec('php '.ROOT_PATH.'cron/create_commande.php');
 		$this->redirect('index', 'cron');
 	}
 	
 	public function runCommandeHistory ($request) {
-		exec(ROOT_PATH.'cron/commande_in_history.php');
+		exec('php '.ROOT_PATH.'cron/commande_in_history.php');
 		$this->redirect('index', 'cron');
 	}
 	
 	public function runPreCommande ($request) {
-		exec(ROOT_PATH.'cron/manage_pre_commande.php');
+		exec('php '.ROOT_PATH.'cron/manage_pre_commande.php');
 		$this->redirect('index', 'cron');
 	}
 }

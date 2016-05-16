@@ -16,6 +16,8 @@ class Model_Restaurant extends Model_Template {
 	private $longitude;
 	private $short_desc;
 	private $distance;
+	private $pourcentage;
+	private $virement;
 	private $horaires;
 	private $horaire;
 	private $categories;
@@ -77,8 +79,8 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function insert () {
-		$sql = "INSERT INTO restaurants (nom, rue, ville, code_postal, telephone, latitude, longitude, short_desc, long_desc, score)
-		VALUES (:nom, :rue, :ville, :cp, :tel, :lat, :lon, :short, :long, :score)";
+		$sql = "INSERT INTO restaurants (nom, rue, ville, code_postal, telephone, latitude, longitude, short_desc, long_desc, score, pourcentage)
+		VALUES (:nom, :rue, :ville, :cp, :tel, :lat, :lon, :short, :long, :score, :pourcentage)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":nom", $this->nom);
 		$stmt->bindValue(":rue", $this->rue);
@@ -90,6 +92,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt->bindValue(":short", $this->short_desc);
 		$stmt->bindValue(":long", $this->long_desc);
 		$stmt->bindValue(":score", 0);
+		$stmt->bindValue(":pourcentage", $this->pourcentage);
 		if (!$stmt->execute()) {
 			var_dump($stmt->errorInfo());
 			return false;
@@ -193,7 +196,7 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function getOne () {
-		$sql = "SELECT nom, rue, ville, code_postal, telephone, short_desc, long_desc FROM restaurants WHERE id = :id";
+		$sql = "SELECT nom, rue, ville, code_postal, telephone, short_desc, long_desc, pourcentage, virement FROM restaurants WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -207,6 +210,8 @@ class Model_Restaurant extends Model_Template {
 		$this->telephone = $value['telephone'];
 		$this->short_desc = $value['short_desc'];
 		$this->long_desc = $value['long_desc'];
+		$this->pourcentage = $value['pourcentage'];
+		$this->virement = $value['virement'];
 		
 		$sql = "SELECT id_jour, nom, heure_debut, minute_debut, heure_fin, minute_fin 
 		FROM restaurant_horaires
@@ -372,7 +377,8 @@ class Model_Restaurant extends Model_Template {
 	
 	public function loadByUser ($uid) {
 		$sql = "SELECT user.nom AS user_nom, user.prenom AS user_prenom, user.email AS user_email, resto.id AS id_resto, resto.nom AS resto_nom, 
-		resto.rue AS resto_rue, resto.ville AS resto_ville, resto.code_postal AS resto_cp, resto.telephone AS resto_tel
+		resto.rue AS resto_rue, resto.ville AS resto_ville, resto.code_postal AS resto_cp, resto.telephone AS resto_tel, resto.short_desc, 
+		resto.long_desc, resto.pourcentage, resto.virement
 		FROM users user 
 		JOIN user_restaurant ur ON ur.uid = user.uid
 		JOIN restaurants resto ON resto.id = ur.id_restaurant
@@ -396,6 +402,10 @@ class Model_Restaurant extends Model_Template {
 		$this->ville = $value['resto_ville'];
 		$this->code_postal = $value['resto_cp'];
 		$this->telephone = $value['resto_tel'];
+		$this->short_desc = $value['short_desc'];
+		$this->long_desc = $value['long_desc'];
+		$this->pourcentage = $value['pourcentage'];
+		$this->virement = $value['virement'];
 		$user = new Model_User();
 		$user->uid = $uid;
 		$user->nom = $value['user_nom'];
@@ -744,6 +754,27 @@ class Model_Restaurant extends Model_Template {
 			$tag->id = $value['id'];
 			$tag->nom = $value['nom'];
 			$list[] = $tag;
+		}
+		return $list;
+	}
+	
+	public function getRestaurantsCalculeDistance () {
+		$sql = "SELECT resto.id, resto.latitude, resto.longitude 
+		FROM restaurants resto 
+		JOIN update_distance_restaurant udr ON udr.id_restaurant = resto.id";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$restaurants = $stmt->fetchAll();
+		$list = array();
+		foreach ($restaurants as $resto) {
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $resto['id'];
+			$restaurant->latitude = $resto['latitude'];
+			$restaurant->longitude = $resto['longitude'];
+			$list[] = $restaurant;
 		}
 		return $list;
 	}

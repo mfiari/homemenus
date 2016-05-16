@@ -23,7 +23,7 @@
 	DEFINE ("MYSQL_PASSWORD", "");
 	
 	/* GCM config */
-	DEFINE ("GOOGLE_API_KEY", "AIzaSyDVfxjjuT0cofmt_lhTGgMxKgZdjHRy5IM");
+	DEFINE ("GOOGLE_API_KEY", "AIzaSyA2OFGXi3t5i1_mVyyHBw8OBp20ZsY9Lh0");
 	
 	/* recaptcha */
 	DEFINE ("RECAPTCHA_SITE_KEY", "6LfchhsTAAAAADMbJz4UTn1TvRhwUSLq9tfA4zLt");
@@ -47,5 +47,14 @@
 	DEFINE ("USER_RESTAURANT", "RESTAURANT");
 	DEFINE ("USER_ADMIN", "ADMIN");
 	DEFINE ("USER_ADMIN_RESTAURANT", "ADMIN_RESTAURANT");
+	
+	/* MAIL */
+	DEFINE ("SEND_MAIL", false);
+	DEFINE ("MAIL_FROM_DEFAULT", "test@homemenus.fr");
+	DEFINE ("MAIL_CONTACT", "test@homemenus.fr");
+	DEFINE ("MAIL_RESTAURANT", "test@homemenus.fr");
+	DEFINE ("MAIL_LIVREUR", "test@homemenus.fr");
+	DEFINE ("MAIL_PRO", "test@homemenus.fr");
+	DEFINE ("MAIL_ADMIN", "test@homemenus.fr");
 
 ?>

@@ -70,12 +70,12 @@ class Controller_Contact extends Controller_Default_Template {
 			if (count($errorMessage) == 0) {
 				
 				$messageContent =  file_get_contents (ROOT_PATH.'mails/contact.html');
-			
+				
 				$messageContent = str_replace("[SUJET]", $sujets[$sujet], $messageContent);
 				$messageContent = str_replace("[EMAIL]", $email, $messageContent);
 				$messageContent = str_replace("[MESSAGE]", nl2br($message), $messageContent);
 				
-				if (send_mail ("contact@homemenus.fr", "demande de contact", $messageContent)) {
+				if (send_mail (MAIL_CONTACT, "demande de contact", $messageContent)) {
 					
 					$messageContent =  file_get_contents (ROOT_PATH.'mails/confirmation_contact.html');
 					$messageContent = str_replace("[MESSAGE]", nl2br($message), $messageContent);
@@ -167,7 +167,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$messageContent = str_replace("[transport]", $transportContenu, $messageContent);
 				$messageContent = str_replace("[message]", nl2br($message), $messageContent);
 				
-				if (send_mail ("livreur@homemenus.fr", "demande de contact d'un livreur", $messageContent)) {
+				if (send_mail (MAIL_LIVREUR, "demande de contact d'un livreur", $messageContent)) {
 					
 					$messageContent =  file_get_contents (ROOT_PATH.'mails/confirmation_contact_livreur.html');
 					
@@ -260,7 +260,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$messageContent = str_replace("[fonction]", $fonction, $messageContent);
 				$messageContent = str_replace("[message]", nl2br($message), $messageContent);
 				
-				if (send_mail ("restaurant@homemenus.fr", "demande de contact", $messageContent)) {
+				if (send_mail (MAIL_RESTAURANT, "demande de contact", $messageContent)) {
 					$request->mailSuccess = true;
 				} else {
 					$request->mailSuccess = false;
@@ -357,7 +357,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$messageContent = str_replace("[fonction]", $fonction, $messageContent);
 				$messageContent = str_replace("[message]", nl2br($message), $messageContent);
 				
-				if (send_mail ("pro@homemenus.fr", "demande de contact d'une entreprise", $messageContent)) {
+				if (send_mail (MAIL_PRO, "demande de contact d'une entreprise", $messageContent)) {
 					
 					$messageContent =  file_get_contents (ROOT_PATH.'mails/confirmation_contact_livreur.html');
 				
@@ -462,7 +462,7 @@ class Controller_Contact extends Controller_Default_Template {
 					$messageContent = str_replace("[fonction]", $fonction, $messageContent);
 					$messageContent = str_replace("[message]", nl2br($message), $messageContent);
 					
-					if (send_mail ("pro@homemenus.fr", "demande de contact d'une entreprise", $messageContent)) {
+					if (send_mail (MAIL_PRO, "demande de contact d'une entreprise", $messageContent)) {
 						
 						$messageContent =  file_get_contents (ROOT_PATH.'mails/confirmation_contact_livreur.html');
 					
@@ -521,7 +521,7 @@ class Controller_Contact extends Controller_Default_Template {
 					$messageContent = str_replace("[email]", $email, $messageContent);
 					$messageContent = str_replace("[message]", nl2br($message), $messageContent);
 					
-					if (send_mail ("pro@homemenus.fr", "demande de contact d'un particulier", $messageContent)) {
+					if (send_mail (MAIL_PRO, "demande de contact d'un particulier", $messageContent)) {
 						
 						$messageContent =  file_get_contents (ROOT_PATH.'mails/confirmation_contact_livreur.html');
 					

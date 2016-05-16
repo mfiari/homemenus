@@ -32,7 +32,22 @@
 						<label for="telephone">Téléphone : </label>
 						<input class="form-control" name="telephone" type="text" value="<?php echo $request->restaurant->telephone; ?>" maxlength="10" >
 					</div>
-					<button id="subscribe-button" class="btn btn-primary" type="submit">Valider</button>
+					<div class="form-group">
+						<label>Courte description : </label>
+						<span><?php echo $request->restaurant->short_desc; ?></span>
+					</div>
+					<div class="form-group">
+						<label>Description : </label>
+						<span><?php echo $request->restaurant->long_desc; ?></span>
+					</div>
+					<div class="form-group">
+						<label>Pourcentage : </label>
+						<span><?php echo $request->restaurant->pourcentage; ?> %</span>
+					</div>
+					<div class="form-group">
+						<label>Virement : </label>
+						<span><?php echo $request->restaurant->virement; ?></span>
+					</div>
 				</fieldset>
 			</form>
 		</div>

@@ -1,4 +1,5 @@
 <h2>Liste des restaurants</h2>
+<span>(Si vous souhaitez commander dans un restaurant qui se trouve à plus de 15 km de chez vous, veuillez passer par la <a href="">commande spéciale</a>)</span>
 <div id="search-bar">
 	<form id="restaurant-filter-form" class="form-inline" action="?controler=restaurant&action=recherche" method="POST">
 		<div class="row">
@@ -23,7 +24,7 @@
 				<div class="form-group">
 					<label for="distance">Distance : </label>
 					<select class="form-control search-filter" name="distance">
-						<?php for ($i = 5 ; $i <= 20 ; $i += 5) :?>
+						<?php for ($i = 5 ; $i <= 15 ; $i += 5) :?>
 							<option value="<?php echo $i; ?>" <?php echo $request->distance == $i ? "selected" : ""; ?>><?php echo $i; ?> km</option>
 						<?php endfor; ?>
 					</select>

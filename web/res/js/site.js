@@ -229,7 +229,8 @@ function hideLoading (divid, show) {
 	if (show) {
 		$("#"+divid).css('display', 'block');
 	}
-	$("#"+divid).next().find('.glyphicon-refresh').remove();
+	console.log($("#"+divid).next());
+	$("#"+divid).next(".glyphicon-refresh").remove();
 }
 
 function playNotificationSong () {

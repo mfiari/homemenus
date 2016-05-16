@@ -1,6 +1,6 @@
 <header class="navbar navbar-inverse navbar-fixed-top" role="banner">
 	<div class="container">
-		<div class="navbar-header">
+		<div class="navbar-header" style="width : 300px;">
 			<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
 				<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
@@ -10,7 +10,7 @@
 			<a href="?action=index" class="logo">
 				<img id="logo" src="res/img/logo.png">
 			</a>
-			<span class="slogan">Vos envies sont servis</span>
+			<img id="logo" src="<?php echo getLogoRestaurant ($request->_restaurant->id); ?>">
 		</div>
 		<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
 			<ul class="menu nav navbar-nav">

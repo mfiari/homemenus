@@ -10,16 +10,84 @@
 			<p>Telephone : <?php echo $request->livreur->telephone; ?></p>
 		</div>
 		<div class="row">
-			<h2>Périmètre</h2>
-			<?php foreach ($request->livreur->perimetres as $perimetre) : ?>
-				<p><?php echo $perimetre->ville; ?> <?php echo $perimetre->code_postal; ?></p>
-			<?php endforeach; ?>
-		</div>
-		<div class="row">
-			<h2>Horaires</h2>
-			<?php foreach ($request->livreur->horaires as $horaire) : ?>
-				<p><?php echo $horaire->name; ?> : de <?php echo $horaire->heure_debut; ?>h<?php echo $horaire->minute_debut; ?> à <?php echo $horaire->heure_fin; ?>h<?php echo $horaire->minute_fin; ?></p>
-			<?php endforeach; ?>
+			<h2>Disponibilité</h2>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Adresse</th>
+						<th>Jour</th>
+						<th>Debut</th>
+						<th>Fin</th>
+						<th>Vehicule</th>
+						<th>perimetre</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ($request->livreur->dispos as $dispo) : ?>
+						<tr>
+							<td><?php echo $dispo->rue; ?>, <?php echo $dispo->code_postal; ?> <?php echo $dispo->ville; ?></td>
+							<td><?php echo $dispo->id_jour; ?></td>
+							<td><?php echo $dispo->heure_debut; ?>h<?php echo $dispo->minute_debut; ?></td>
+							<td><?php echo $dispo->heure_fin; ?>h<?php echo $dispo->minute_fin; ?></td>
+							<td><?php echo $dispo->vehicule; ?></td>
+							<td><?php echo $dispo->perimetre; ?> km</td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+			<div id="disponibilite">
+				<form id="ajoutDispoForm" method="post" action="?controler=user&amp;action=add_dispo">
+					<input name="id_livreur" value="<?php echo $request->livreur->id; ?>" hidden>
+					<input id="rue" name="rue" hidden>
+					<input id="ville" name="ville" hidden>
+					<input id="code_postal" name="code_postal" hidden>
+					<input id="latitude" name="latitude" hidden>
+					<input id="longitude" name="longitude" hidden>
+					<input id="full_address" name="adresse">
+					<select name="day">
+						<option value="1">Lundi</option>
+						<option value="2">Mardi</option>
+						<option value="3">Mercredi</option>
+						<option value="4">Jeudi</option>
+						<option value="5">Vendredi</option>
+						<option value="6">Samedi</option>
+						<option value="7">Dimanche</option>
+					</select>
+					<select name="km">
+						<option value="3">3 km</option>
+						<option value="5">5 km</option>
+						<option value="10">10 km</option>
+						<option value="15">15 km</option>
+					</select>
+					<select name="vehicule">
+						<option value="VOITURE">VOITURE</option>
+						<option value="SCOOTER">SCOOTER</option>
+						<option value="MOTO">MOTO</option>
+						<option value="VELO">VELO</option>
+					</select>
+					<select name="heure_debut">
+						<?php for ($i = 0 ; $i <= 23 ; $i++) : ?>
+							<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+						<?php endfor; ?>
+					</select>h
+					<select name="minute_debut">
+						<?php for ($i = 0 ; $i <= 59 ; $i++) : ?>
+							<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+						<?php endfor; ?>
+					</select>
+					<select name="heure_fin">
+						<?php for ($i = 0 ; $i <= 23 ; $i++) : ?>
+							<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+						<?php endfor; ?>
+					</select>h
+					<select name="minute_fin">
+						<?php for ($i = 0 ; $i <= 59 ; $i++) : ?>
+							<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+						<?php endfor; ?>
+					</select>
+					<button id="dispo-button" type="button">Valider</button></form>
+			</div>
 		</div>
 		<div class="row">
 			<h2>Trajet</h2>
@@ -131,3 +199,35 @@
 		</a>
 	</div>
 </div>
+<script type="text/javascript">
+	$(function() {
+		enableAutocomplete("full_address");
+		$("#dispo-button").click(function(event) {
+			var addressComponents = getAdresseElements();
+			var fullAdresse = $("#full_address").val();
+			if (addressComponents === false && fullAdresse != '') {
+				$("#full_address").addClass( "error" );
+				if ($("#full_address-error").length == 0) {
+					$("#full_address").after('<label id="full_address-error" class="error" for="full_address">L\'adresse saisie est invalide</label>');
+				}
+				return false;
+			}
+			$("#full_address-error").remove();
+			if (addressComponents !== false) {
+				console.log(addressComponents);
+				var rue = addressComponents.street_number + ' ' + addressComponents.route;
+				var ville = addressComponents.locality;
+				var code_postal = addressComponents.postal_code;
+				var latitude = addressComponents.lat;
+				var longitude = addressComponents.lon;
+				
+				$('#rue').val(rue);
+				$('#ville').val(ville);
+				$('#code_postal').val(code_postal);
+				$('#latitude').val(latitude);
+				$('#longitude').val(longitude);
+			}
+			$("#ajoutDispoForm").submit();
+		});
+	});
+</script>

@@ -16,6 +16,10 @@
 	$texteStatus = $dom->createTextNode($user->status);
 	$nodeStatus->appendChild($texteStatus);
 	$userDom->appendChild($nodeStatus);
+	$nodeSession = $dom->createElement("session");
+	$texteSession = $dom->createTextNode($user->session);
+	$nodeSession->appendChild($texteSession);
+	$userDom->appendChild($nodeSession);
 	header("Content-type: text/xml; charset=utf-8");
 	print $dom->saveXML();
 	

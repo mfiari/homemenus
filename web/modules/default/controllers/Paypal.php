@@ -241,7 +241,7 @@ class Controller_Paypal extends Controller_Default_Template {
 		$user->getById();
 		
 		$messageContent =  file_get_contents (ROOT_PATH.'mails/subscribe_premium.html');
-		send_mail2 ($user->email, "Souscription au compte premium", $messageContent, "no-reply@homemenus.fr", array($filename));
+		send_mail ($user->email, "Souscription au compte premium", $messageContent, MAIL_FROM_DEFAULT, array($filename));
 		
 		$request->vue = $this->render("paypal/premium_success.php");
 	}

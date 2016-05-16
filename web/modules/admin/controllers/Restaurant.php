@@ -41,6 +41,12 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "adduser" :
 					$this->adduser($request);
 					break;
+				case "enableUser" :
+					$this->enableUser($request);
+					break;
+				case "disableUser" :
+					$this->disableUser($request);
+					break;
 				case "viewCategorie" :
 					$this->viewCategorie($request);
 					break;
@@ -108,56 +114,82 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function edit ($request) {
 		if ($request->request_method == "POST") {
 			$nom = $_POST['nom'];
-			$rue = $_POST['rue'];
-			$ville = $_POST['ville'];
-			$code_postal = $_POST['code_postal'];
 			$telephone = $_POST['telephone'];
-			$latitude = $_POST['latitude'];
-			$longitude = $_POST['longitude'];
+			$pourcentage = $_POST['pourcentage'];
+			$virement = $_POST['virement'];
 			$short_desc = $_POST['short_desc'];
 			$long_desc = $_POST['long_desc'];
 			
-			$modelRestaurant = new Model_Restaurant();
-			$modelRestaurant->nom = $nom;
-			$modelRestaurant->rue = $rue;
-			$modelRestaurant->ville = $ville;
-			$modelRestaurant->code_postal = $code_postal;
-			$modelRestaurant->telephone = $telephone;
-			$modelRestaurant->latitude = $latitude;
-			$modelRestaurant->longitude = $longitude;
-			$modelRestaurant->short_desc = $short_desc;
-			$modelRestaurant->long_desc = $long_desc;
-			
-			for ($i = 1 ; $i <= 7 ; $i++) {
-				if (!isset($_POST['ferme_'.$i]) || $_POST['ferme_'.$i] != 'on') {
-					$horaire = new Model_Horaire();
-					$horaire->id_jour = $i;
-					$horaire->heure_debut = $_POST['de_'.$i.'_heure'];
-					$horaire->minute_debut = $_POST['de_'.$i.'_minute'];
-					$horaire->heure_fin = $_POST['a_'.$i.'_heure'];
-					$horaire->minute_fin = $_POST['a_'.$i.'_minute'];
-					$modelRestaurant->addHoraire($horaire);
+			$adresse = $_POST["adresse"];
+			$geocoder = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false";
+			$localisation = urlencode($adresse);
+			$query = sprintf($geocoder,$localisation);
+			$rd = json_decode(file_get_contents($query));
+			if ($rd->{'status'} == "OK") {
+				$addressComponents = $rd->{'results'}[0]->{'address_components'};
+				$code_postal = "";
+				$ville = "";
+				$street_number = "";
+				$route = "";
+				for ($i = 0 ; $i < count($addressComponents) ; $i++) {
+					if ($addressComponents[$i]->{'types'}[0] == 'postal_code') {
+						$code_postal = $addressComponents[$i]->{'short_name'};
+					} else if ($addressComponents[$i]->{'types'}[0] == 'locality') {
+						$ville = $addressComponents[$i]->{'long_name'};
+					} else if ($addressComponents[$i]->{'types'}[0] == 'street_number') {
+						$street_number = $addressComponents[$i]->{'long_name'};
+					} else if ($addressComponents[$i]->{'types'}[0] == 'route') {
+						$route = $addressComponents[$i]->{'long_name'};
+					}
 				}
-			}
-			
-			$modelRestaurant->save();
-			if (isset($_FILES) && isset($_FILES['logo'])) {
-				$logo = $_FILES['logo'];
-				$ext = pathinfo($logo['name'],  PATHINFO_EXTENSION);
+				$rue = $street_number.' '.$route;
+				$coord = $rd->{'results'}[0]->{'geometry'}->{'location'};
+				$latitude = $coord->{'lat'};
+				$longitude = $coord->{'lng'};
 				
-				$uploaddir = WEBSITE_PATH.'res/img/restaurant/';
-				if (!file_exists($uploaddir.$modelRestaurant->id)) {
-					mkdir($uploaddir.$modelRestaurant->id);
-					mkdir($uploaddir.$modelRestaurant->id.'/categories');
-					mkdir($uploaddir.$modelRestaurant->id.'/contenus');
-				}
-				$uploadfile = $uploaddir.$modelRestaurant->id.'/logo'.'.'.$ext;
+				$modelRestaurant = new Model_Restaurant();
+				$modelRestaurant->nom = $nom;
+				$modelRestaurant->rue = $rue;
+				$modelRestaurant->ville = $ville;
+				$modelRestaurant->code_postal = $code_postal;
+				$modelRestaurant->telephone = $telephone;
+				$modelRestaurant->pourcentage = $pourcentage;
+				$modelRestaurant->latitude = $latitude;
+				$modelRestaurant->longitude = $longitude;
+				$modelRestaurant->short_desc = $short_desc;
+				$modelRestaurant->long_desc = $long_desc;
 				
-				if (!move_uploaded_file($logo['tmp_name'], $uploadfile)) {
-					writeLog (SERVER_LOG, "erreur upload file $uploadfile");
+				for ($i = 1 ; $i <= 7 ; $i++) {
+					if (!isset($_POST['ferme_'.$i]) || $_POST['ferme_'.$i] != 'on') {
+						$horaire = new Model_Horaire();
+						$horaire->id_jour = $i;
+						$horaire->heure_debut = $_POST['de_'.$i.'_heure'];
+						$horaire->minute_debut = $_POST['de_'.$i.'_minute'];
+						$horaire->heure_fin = $_POST['a_'.$i.'_heure'];
+						$horaire->minute_fin = $_POST['a_'.$i.'_minute'];
+						$modelRestaurant->addHoraire($horaire);
+					}
 				}
+				
+				$modelRestaurant->save();
+				if (isset($_FILES) && isset($_FILES['logo'])) {
+					$logo = $_FILES['logo'];
+					$ext = pathinfo($logo['name'],  PATHINFO_EXTENSION);
+					
+					$uploaddir = WEBSITE_PATH.'res/img/restaurant/';
+					if (!file_exists($uploaddir.$modelRestaurant->id)) {
+						mkdir($uploaddir.$modelRestaurant->id);
+						mkdir($uploaddir.$modelRestaurant->id.'/categories');
+						mkdir($uploaddir.$modelRestaurant->id.'/contenus');
+					}
+					$uploadfile = $uploaddir.$modelRestaurant->id.'/logo'.'.'.$ext;
+					
+					if (!move_uploaded_file($logo['tmp_name'], $uploadfile)) {
+						writeLog (SERVER_LOG, "erreur upload file $uploadfile");
+					}
+				}
+				$this->redirect('index', 'restaurant');
 			}
-			$this->redirect('index', 'restaurant');
 		} else {
 			$request->title = "Administration - restaurant";
 			if (isset($_GET['id_restaurant'])) {
@@ -225,18 +257,24 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			
 			$modelUser->save();
 			
+			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant->id = $_GET['id_restaurant'];
+			$modelRestaurant->loadMinInformation();
+			
 			$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription_restaurant.html');
 			
 			$messageContent = str_replace("[NOM]", $nom, $messageContent);
 			$messageContent = str_replace("[PRENOM]", $prenom, $messageContent);
+			$messageContent = str_replace("[STATUS]", $modelUser->status == 'ADMIN_RESTAURANT' ? 'administrateur' : 'utilisateur', $messageContent);
+			$messageContent = str_replace("[RESTAURANT]", $modelRestaurant->nom, $messageContent);
 			$messageContent = str_replace("[LOGIN]", $login, $messageContent);
 			$messageContent = str_replace("[PASSWORD]", $modelUser->password, $messageContent);
-			$messageContent = str_replace("[UID]", $uid, $messageContent);
-			$messageContent = str_replace("[TOKEN]", $token, $messageContent);
+			$messageContent = str_replace("[UID]", $modelUser->id, $messageContent);
+			$messageContent = str_replace("[TOKEN]", $modelUser->inscription_token, $messageContent);
 			$messageContent = str_replace("[WEBSITE_URL]", WEBSITE_URL, $messageContent);
 			
-			send_mail ($modelUser->email, "Création de votre compte restaurant", $messageContent);
-			$this->redirect('view', 'restaurant');
+			send_mail ($modelUser->email, "Création de votre compte restaurateur", $messageContent);
+			$this->redirect('view', 'restaurant', '', array('id_restaurant' => $restaurant));
 		} else {
 			$request->title = "Administration - user";
 			if (isset($_GET['id_user'])) {
@@ -249,6 +287,22 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$request->restaurant = $modelRestaurant->getOne();
 			$request->vue = $this->render("restaurant/adduser.php");
 		}
+	}
+	
+	public function enableUser ($request) {
+		$model = new Model_User();
+		$id_restaurant = trim($_GET["id_restaurant"]);
+		$model->id = trim($_GET["id_user"]);
+		$model->enable();
+		$this->redirect('view', 'restaurant', '', array('id_restaurant' => $id_restaurant));
+	}
+	
+	public function disableUser ($request) {
+		$model = new Model_User();
+		$id_restaurant = trim($_GET["id_restaurant"]);
+		$model->id = trim($_GET["id_user"]);
+		$model->disable();
+		$this->redirect('view', 'restaurant', '', array('id_restaurant' => $id_restaurant));
 	}
 	
 	public function viewCategorie ($request) {

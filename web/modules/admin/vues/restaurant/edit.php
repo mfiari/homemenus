@@ -8,13 +8,16 @@
 				<?php else : ?>
 					<legend>Ajouter un restaurant</legend>
 				<?php endif; ?>
-				<input type="text" hidden="hidden" value="<?php echo $edit ? $request->restaurant->id : 0; ?>">
+				<input type="text" name="id_restaurant" hidden="hidden" value="<?php echo $edit ? $request->restaurant->id : 0; ?>">
 				<div class="form-group">
 					<label for="nom">Nom : </label>
 					<input class="form-control" name="nom" type="text" value="<?php echo $edit ? $request->restaurant->nom : ""; ?>" />
 				</div>
 				<div class="form-group">
 					<label for="login">Logo : </label>
+					<?php if ($edit) : ?>
+						<br /><img src="<?php echo getLogoRestaurant ($request->restaurant->id); ?>" alt="log" height="100" width="100"><br />
+					<?php endif; ?>
 					<input type="file" name="logo" />
 				</div>
 				<div class="form-group">
@@ -31,6 +34,18 @@
 					<input class="form-control" name="telephone" type="text" value="<?php echo $edit ? $request->restaurant->telephone : ""; ?>" />
 				</div>
 				<div class="form-group">
+					<label for="pourcentage">Pourcentage : </label>
+					<input class="form-control" name="pourcentage" type="text" value="<?php echo $edit ? $request->restaurant->pourcentage : ""; ?>" />
+				</div>
+				<div class="form-group">
+					<label for="virement">Virement : </label>
+					<select name="virement">
+						<option value="JOURNALIER" <?php echo $edit && $request->restaurant->virement == 'JOURNALIER' ? 'selected' : ""; ?>>Journalier</option>
+						<option value="HEBDOMADAIRE" <?php echo $edit && $request->restaurant->virement == 'HEBDOMADAIRE' ? 'selected' : ""; ?>>Hebdomadaire</option>
+						<option value="MENSUEL" <?php echo $edit && $request->restaurant->virement == 'MENSUEL' ? 'selected' : ""; ?>>Mensuel</option>
+					</select>
+				</div>
+				<div class="form-group">
 					<label for="short_desc">Description courte : </label>
 					<input class="form-control" name="short_desc" type="text" value="<?php echo $edit ? $request->restaurant->short_desc : ""; ?>" />
 				</div>
@@ -39,69 +54,48 @@
 					<textarea class="form-control" name="long_desc" ><?php echo $edit ? $request->restaurant->long_desc : ""; ?></textarea>
 				</div>
 				<div id="horraires">
-					<span>Horaires</span>
-					<?php if ($edit) : ?>
-						<?php foreach ($request->restaurant->horaires as $horaire) : ?>
-							<div class="row">
-								<div class="col-md-2">
-									<label><?php echo $horaire->name; ?> : </label>
-								</div>
-								<div class="col-md-4">
-									<div class="form-group">
-										<label>De : </label>
-										<input class="form-control" name="de_<?php echo $horaire->id; ?>_heure" type="text" value="<?php echo $horaire->heure_debut; ?>" size="2" />
-										<label>h</label>
-										<input class="form-control" name="de_<?php echo $horaire->id; ?>_minute" type="text" value="<?php echo $horaire->minute_debut; ?>" size="2" />
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="form-group">
-										<label>à : </label>
-										<input class="form-control" name="a_<?php echo $horaire->id; ?>_heure" type="text" value="<?php echo $horaire->heure_fin; ?>" size="2" />
-										<label>h</label>
-										<input class="form-control" name="a_<?php echo $horaire->id; ?>_minute" type="text" value="<?php echo $horaire->minute_fin; ?>" size="2" />
-									</div>
-								</div>
-								<div class="col-md-2">
-									<div class="form-group">
-										<input type="checkbox" name="ferme_<?php echo $horaire->id; ?>" value="1"> Fermé
-									</div>
-								</div>
-							</div>
-						<?php endforeach; ?>
-					<?php else : ?>
+				<span>Horaires</span>
+					<?php 
+						$jours = array(1 => "Lundi", 2 => "Mardi", 3 => "Mercredi", 4 => "Jeudi", 5 => "Vendredi", 6 => "Samedi", 7 => "Dimanche");
+					?>
+					<?php foreach ($jours as $jkey => $jour) : ?>
 						<?php 
-							$jours = array(1 => "Lundi", 2 => "Mardi", 3 => "Mercredi", 4 => "Jeudi", 5 => "Vendredi", 6 => "Samedi", 7 => "Dimanche");
+							if ($edit) {
+								foreach ($request->restaurant->horaires as $current_horaire) {
+									if ($current_horaire->id_jour == $jkey) {
+										$horaire = $current_horaire;
+										break;
+									}
+								}
+							}
 						?>
-						<?php foreach ($jours as $jkey => $jour) : ?>
-							<div class="row">
-								<div class="col-md-2">
-									<label><?php echo $jour; ?> : </label>
-								</div>
-								<div class="col-md-4">
-									<div class="form-group">
-										<label>De : </label>
-										<input class="form-control" name="de_<?php echo $jkey; ?>_heure" type="text" value="" size="2" />
-										<label>h</label>
-										<input class="form-control" name="de_<?php echo $jkey; ?>_minute" type="text" value="00" size="2" />
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="form-group">
-										<label>à : </label>
-										<input class="form-control" name="a_<?php echo $jkey; ?>_heure" type="text" value="" size="2" />
-										<label>h</label>
-										<input class="form-control" name="a_<?php echo $jkey; ?>_minute" type="text" value="00" size="2" />
-									</div>
-								</div>
-								<div class="col-md-2">
-									<div class="form-group">
-										<input type="checkbox" name="ferme_<?php echo $jkey; ?>"> Fermé
-									</div>
+						<div class="row">
+							<div class="col-md-2">
+								<label><?php echo $jour; ?> : </label>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label>De : </label>
+									<input class="form-control" name="de_<?php echo $jkey; ?>_heure" type="text" value="<?php echo isset($horaire) ? $horaire->heure_debut : ""; ?>" size="2" />
+									<label>h</label>
+									<input class="form-control" name="de_<?php echo $jkey; ?>_minute" type="text" value="<?php echo isset($horaire) ? $horaire->minute_debut : "00"; ?>" size="2" />
 								</div>
 							</div>
-						<?php endforeach; ?>
-					<?php endif; ?>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label>à : </label>
+									<input class="form-control" name="a_<?php echo $jkey; ?>_heure" type="text" value="<?php echo isset($horaire) ? $horaire->heure_fin : ""; ?>" size="2" />
+									<label>h</label>
+									<input class="form-control" name="a_<?php echo $jkey; ?>_minute" type="text" value="<?php echo isset($horaire) ? $horaire->minute_fin : "00"; ?>" size="2" />
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<input type="checkbox" name="ferme_<?php echo $jkey; ?>" <?php echo $edit && !isset($horaire) ? 'checked' : ""; ?>> Fermé
+								</div>
+							</div>
+						</div>
+					<?php endforeach; ?>
 				</div>
 				<button id="add_restaurant_button" class="btn btn-primary" type="button">Valider</button>
 			</fieldset>

@@ -207,6 +207,7 @@ class Controller_User extends Controller_Template {
 		$model = new Model_User();
 		$model->id = $_POST["id"];
 		$model->gcm_token = $_POST["gcm_token"];
+		$model->session = $_POST["session"];
 		if (!$model->registerToGcm()) {
 			return;
 		}

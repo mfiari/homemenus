@@ -130,33 +130,18 @@ function writeLog ($type, $texte, $level = LOG_LEVEL_INFO, $message = null) {
 	}
 }
 
-function send_mail ($to, $subject, $message, $from = false) {
+function send_mail ($to, $subject, $message, $from = MAIL_FROM_DEFAULT, $attachments = array()) {
+	require_once WEBSITE_PATH.'res/lib/phpmailer/class.phpmailer.php';
 	
-	if (ENVIRONNEMENT != "PRODUCTION") {
+	if (!SEND_MAIL) {
 		return true;
 	}
 	
-	$headers  = 'MIME-Version: 1.0' . "\r\n";
-    $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-	
-	if (!$from) {
-		$headers .= "From: no-reply@homemenus.fr";
-	} else {
-		$headers .= "From: $from";
-	}
-	
-	if (!mail($to,$subject,$message,$headers)) {
-		writeLog (MAIL_LOG, $message, LOG_LEVEL_ERROR, $subject, $to);
-		return false;
-	} 
-	return true;
-}
-
-function send_mail2 ($to, $subject, $message, $from = "no-reply@homemenus.fr", $attachments = array()) {
-	require WEBSITE_PATH.'res/lib/phpmailer/class.phpmailer.php';
+	$message = ajout_environnement_mail ($message);
 
 	$mail = new PHPMailer;
 
+	$mail->CharSet = 'utf-8';
 	$mail->setFrom($from);
 	$mail->addAddress($to);
 
@@ -175,6 +160,21 @@ function send_mail2 ($to, $subject, $message, $from = "no-reply@homemenus.fr", $
 		return false;
 	}
 	return true;
+}
+
+function ajout_environnement_mail ($messageContent) {
+	if (ENVIRONNEMENT == "DEV") {
+		$messageContent = str_replace("[ENVIRONNEMENT]", "ENVIRONNEMENT DE DÉVELOPPEMENT", $messageContent);
+	} else if (ENVIRONNEMENT == "TEST") {
+		$messageContent = str_replace("[ENVIRONNEMENT]", "ENVIRONNEMENT DE TEST", $messageContent);
+	} else if (ENVIRONNEMENT == "DEMO") {
+		$messageContent = str_replace("[ENVIRONNEMENT]", "ENVIRONNEMENT DE DEMO", $messageContent);
+	} else if (ENVIRONNEMENT == "PREPROD") {
+		$messageContent = str_replace("[ENVIRONNEMENT]", "ENVIRONNEMENT DE RECETTE", $messageContent);
+	} else if (ENVIRONNEMENT == "PROD") {
+		$messageContent = str_replace("[ENVIRONNEMENT]", "", $messageContent);
+	}
+	return $messageContent;
 }
 
 function datepickerToDatetime ($date) {

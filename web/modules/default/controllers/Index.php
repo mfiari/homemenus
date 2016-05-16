@@ -211,7 +211,11 @@ class Controller_Index extends Controller_Default_Template {
 	}
 	
 	public function logout ($request) {
-		session_destroy();
+		$user = new Model_User();
+		$user->id = $_SESSION["uid"];
+		if ($user->logout()) {
+			session_destroy();
+		}
 		$this->redirect();
 	}
 	

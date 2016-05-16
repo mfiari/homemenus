@@ -86,7 +86,7 @@ class Controller_Compte extends Controller_Default_Template {
 			} else {
 				$messageContent = str_replace("[ADRESSE]", "(adresse non renseignée)", $messageContent);
 			}
-			send_mail ("admin@homemenus.fr", "création de compte", $messageContent);
+			send_mail (MAIL_ADMIN, "création de compte", $messageContent);
 			
 			$_SESSION["uid"] = $model->id;
 			$_SESSION["session"] = $model->session;

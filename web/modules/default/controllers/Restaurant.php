@@ -165,6 +165,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 				if ($restaurant->latitude != 0 && $restaurant->longitude != 0) {
 					$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
 					$result = getDistance($adresseUser, $adresseResto);
+					//var_dump($result); die();
 					if ($result['status'] == "OK") {
 						$distanceRestoKm = $result['distance'] / 1000;
 						if ($distanceRestoKm < $distanceKm) {
@@ -172,7 +173,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 							$availableRestaurant[] = $restaurant;
 						}
 					}
-					$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+					$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
 					$restaurant->has_livreur_dispo = count($livreurs) > 0;
 				}
 			}
@@ -231,7 +232,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$restaurant->id = $request->id_restaurant;
 			$fields = array ("code_postal", "ville");
 			$restaurant->get($fields);
-			$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
 			$request->has_livreur_dispo = count($livreurs) > 0;
 			
 			$request->vue = $this->render("carteDetail.php");
@@ -258,7 +259,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$restaurant->id = $request->id_restaurant;
 			$fields = array ("code_postal", "ville");
 			$restaurant->get($fields);
-			$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
 			$request->has_livreur_dispo = count($livreurs) > 0;
 			
 			$request->vue = $this->render("menu.php");

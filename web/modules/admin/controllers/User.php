@@ -9,6 +9,7 @@ include_once ROOT_PATH."models/Perimetre.php";
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/CommandeHistory.php";
+include_once ROOT_PATH."models/Dispo.php";
 
 class Controller_User extends Controller_Admin_Template {
 	
@@ -36,6 +37,9 @@ class Controller_User extends Controller_Admin_Template {
 					break;
 				case "disable" :
 					$this->disable($request);
+					break;
+				case "add_dispo" :
+					$this->add_dispo($request);
 					break;
 			}
 		}
@@ -104,27 +108,6 @@ class Controller_User extends Controller_Admin_Template {
 			$modelUser->telephone = $telephone;
 			$modelUser->status = "LIVREUR";
 			
-			for ($i = 1 ; $i <= 7 ; $i++) {
-				if (!isset($_POST['ferme_'.$i]) || $_POST['ferme_'.$i] != 'on') {
-					$horaire = new Model_Horaire();
-					$horaire->id_jour = $i;
-					$horaire->heure_debut = $_POST['de_'.$i.'_heure'];
-					$horaire->minute_debut = $_POST['de_'.$i.'_minute'];
-					$horaire->heure_fin = $_POST['a_'.$i.'_heure'];
-					$horaire->minute_fin = $_POST['a_'.$i.'_minute'];
-					$modelUser->addHoraire($horaire);
-				}
-			}
-			
-			for ($i = 1 ; $i <= 5 ; $i++) {
-				if (isset($_POST['per_cp_'.$i]) && $_POST['per_cp_'.$i] != '' && isset($_POST['per_ville_'.$i]) && $_POST['per_ville_'.$i] != '') {
-					$perimetre = new Model_Perimetre();
-					$perimetre->code_postal = $_POST['per_cp_'.$i];
-					$perimetre->ville = $_POST['per_ville_'.$i];
-					$modelUser->addPerimetre($perimetre);
-				}
-			}
-			
 			$modelUser->save();
 			
 			$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription_livreur.html');
@@ -133,8 +116,8 @@ class Controller_User extends Controller_Admin_Template {
 			$messageContent = str_replace("[PRENOM]", $prenom, $messageContent);
 			$messageContent = str_replace("[LOGIN]", $login, $messageContent);
 			$messageContent = str_replace("[PASSWORD]", $modelUser->password, $messageContent);
-			$messageContent = str_replace("[UID]", $uid, $messageContent);
-			$messageContent = str_replace("[TOKEN]", $token, $messageContent);
+			$messageContent = str_replace("[UID]", $modelUser->id, $messageContent);
+			$messageContent = str_replace("[TOKEN]", $modelUser->inscription_token, $messageContent);
 			$messageContent = str_replace("[WEBSITE_URL]", WEBSITE_URL, $messageContent);
 			
 			send_mail ($modelUser->email, "Création de votre compte livreur", $messageContent);
@@ -166,5 +149,30 @@ class Controller_User extends Controller_Admin_Template {
 		$request->commandes = $modelCommande->loadCommandeClient();
 		$request->title = "Administration - client";
 		$request->vue = $this->render("user/client.php");
+	}
+	
+	public function add_dispo ($request) {
+		if ($request->request_method == "POST") {
+			
+			$dispo = new Model_Dispo();
+			$dispo->id_livreur = $_POST['id_livreur'];
+			$dispo->rue = $_POST['rue'];
+			$dispo->ville = $_POST['ville'];
+			$dispo->code_postal = $_POST['code_postal'];
+			$dispo->latitude = $_POST['latitude'];
+			$dispo->longitude = $_POST['longitude'];
+			$dispo->perimetre = $_POST['km'];
+			$dispo->vehicule = $_POST['vehicule'];
+			$dispo->id_jour = $_POST['day'];
+			$dispo->heure_debut = $_POST['heure_debut'];
+			$dispo->minute_debut = $_POST['minute_debut'];
+			$dispo->heure_fin = $_POST['heure_fin'];
+			$dispo->minute_fin = $_POST['minute_fin'];
+			
+			$dispo->save();
+			$this->redirect('livreurs', 'user');
+		} else {
+			$this->redirect('livreurs', 'user');
+		}
 	}
 }

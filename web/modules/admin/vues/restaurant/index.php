@@ -5,6 +5,7 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Nom</th>
 						<th>Adresse</th>
 						<th></th>
@@ -13,6 +14,7 @@
 				<tbody>
 					<?php foreach ($request->restaurants as $restaurant) : ?>
 						<tr>
+							<td><img src="<?php echo getLogoRestaurant ($restaurant->id); ?>" alt="logo" height="50" width="50"></td>
 							<td><a href="?controler=restaurant&action=view&id_restaurant=<?php echo $restaurant->id; ?>"><?php echo utf8_encode($restaurant->nom); ?></a></td>
 							<td><?php echo utf8_encode($restaurant->rue); ?>, <?php echo $restaurant->code_postal; ?> <?php echo utf8_encode($restaurant->ville); ?></td>
 							<td>

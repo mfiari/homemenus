@@ -23,6 +23,7 @@ class Model_User extends Model_Template {
 	private $latitude;
 	private $longitude;
 	private $perimetres;
+	private $dispos;
 	private $horaires;
 	private $id_restaurant;
 	
@@ -32,6 +33,7 @@ class Model_User extends Model_Template {
 		}
 		$this->id = -1;
 		$this->perimetres = array();
+		$this->dispos = array();
 		$this->horaires = array();
 	}
 	
@@ -114,8 +116,8 @@ class Model_User extends Model_Template {
 	}
 	
 	public function insert() {
-		$sql = "INSERT INTO users (nom, prenom, login, password, email, status, session_id, inscription_token, is_enable, date_creation) 
-		VALUES (:nom, :prenom, :login, sha1(:password), :email, :status, :session_id, :token, false, now())";
+		$sql = "INSERT INTO users (nom, prenom, login, password, email, status, inscription_token, is_enable, date_creation) 
+		VALUES (:nom, :prenom, :login, sha1(:password), :email, :status, :token, false, now())";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":nom", $this->nom);
 		$stmt->bindValue(":prenom", $this->prenom);
@@ -123,7 +125,6 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":password", $this->password);
 		$stmt->bindValue(":email", $this->email);
 		$stmt->bindValue(":status", $this->status);
-		$stmt->bindValue(":session_id", $this->login);
 		$stmt->bindValue(":token", $this->inscription_token);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : insert", $sql);
@@ -167,35 +168,6 @@ class Model_User extends Model_Template {
 			$this->sqlHasFailed = true;
 			return false;
 		}
-		
-		foreach ($this->horaires as $horaire) {
-			$sql = "INSERT INTO user_livreur_horaires (uid, id_jour, heure_debut, minute_debut, heure_fin, minute_fin) 
-			VALUES(:uid, :id_jour, :heure_debut, :minute_debut, :heure_fin, :minute_fin)";
-			$stmt = $this->db->prepare($sql);
-			$stmt->bindValue(":uid", $this->id);
-			$stmt->bindValue(":id_jour", $horaire->id_jour);
-			$stmt->bindValue(":heure_debut", $horaire->heure_debut);
-			$stmt->bindValue(":minute_debut", $horaire->minute_debut);
-			$stmt->bindValue(":heure_fin", $horaire->heure_fin);
-			$stmt->bindValue(":minute_fin", $horaire->minute_fin);
-			if (!$stmt->execute()) {
-				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : insert", $sql);
-				$this->sqlHasFailed = true;
-				return false;
-			}
-		}
-		foreach ($this->perimetres as $perimetre) {
-			$sql = "INSERT INTO user_livreur_perimetre (uid, code_postal, ville) VALUES(:uid, :code_postal, :ville)";
-			$stmt = $this->db->prepare($sql);
-			$stmt->bindValue(":uid", $this->id);
-			$stmt->bindValue(":code_postal", $perimetre->code_postal);
-			$stmt->bindValue(":ville", $perimetre->ville);
-			if (!$stmt->execute()) {
-				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : insert", $sql);
-				$this->sqlHasFailed = true;
-				return false;
-			}
-		}
 		return true;
 	}
 	
@@ -213,7 +185,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function confirm () {
-		$sql = "SELECT uid, nom, prenom, status, session_id, is_enable FROM users WHERE uid = :id AND inscription_token = :token";
+		$sql = "SELECT uid, nom, prenom, status, is_enable FROM users WHERE uid = :id AND inscription_token = :token";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		$stmt->bindValue(":token", $this->inscription_token);
@@ -228,10 +200,8 @@ class Model_User extends Model_Template {
 			$this->sqlHasFailed = true;
 			return false;
 		}
-		$token = generateToken();
-		$sql = "UPDATE users SET session_id = :session, is_login = true, is_enable = true WHERE uid = :uid";
+		$sql = "UPDATE users SET is_enable = true WHERE uid = :uid";
 		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":session", $token);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : confirm", $sql);
@@ -291,7 +261,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function login($login, $password) {
-		$sql = "SELECT uid, nom, prenom, status, session_id, is_enable FROM users WHERE login = :login AND password = sha1(:password)";
+		$sql = "SELECT uid, nom, prenom, status, is_enable FROM users WHERE login = :login AND password = sha1(:password)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":login", $login);
 		$stmt->bindValue(":password", $password);
@@ -312,9 +282,18 @@ class Model_User extends Model_Template {
 		if ($this->is_enable) {
 			$token = generateToken();
 		
-			$sql = "UPDATE users SET session_id = :session, is_login = true WHERE uid = :uid";
+			$sql = "INSERT INTO user_session (uid, session_key, date_login) VALUES(:uid, :key, NOW())";
 			$stmt = $this->db->prepare($sql);
-			$stmt->bindValue(":session", $token);
+			$stmt->bindValue(":uid", $value["uid"]);
+			$stmt->bindValue(":key", $token);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+				$this->sqlHasFailed = true;
+				return false;
+			}
+		
+			$sql = "UPDATE users SET is_login = true WHERE uid = :uid";
+			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":uid", $value["uid"]);
 			if (!$stmt->execute()) {
 				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
@@ -360,6 +339,14 @@ class Model_User extends Model_Template {
 			return false;
 		}
 		$sql = "UPDATE users SET is_login = false WHERE uid = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$sql = "UPDATE user_session SET date_logout = NOW() WHERE uid = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -415,8 +402,9 @@ class Model_User extends Model_Template {
 	public function getBySession ($uid, $session) {
 		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone, user.is_premium
 		FROM users user
+		JOIN user_session us ON us.uid = user.uid
 		LEFT JOIN user_client uc ON uc.uid = user.uid
-		WHERE user.uid = :uid AND session_id = :session";
+		WHERE user.uid = :uid AND us.session_key = :session AND user.is_login = true";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $uid);
 		$stmt->bindValue(":session", $session);
@@ -522,7 +510,32 @@ class Model_User extends Model_Template {
 		return $list;
 	}
 	
-	public function getLivreurAvailableForRestaurant ($codePostal, $ville, $restaurant) {
+	public function getLivreurAvailableForRestaurant ($restaurant) {
+		$sql = "SELECT user.uid
+		FROM users user
+		JOIN user_livreur ul ON ul.uid = user.uid
+		JOIN user_livreur_dispo uld ON uld.uid = user.uid
+		JOIN distance_livreur_resto dlr ON dlr.id_restaurant = :restaurant AND dlr.id_dispo = uld.id
+		WHERE user.is_enable = 1 AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1) 
+		AND (uld.heure_debut > HOUR(CURRENT_TIME) OR (uld.heure_debut < HOUR(CURRENT_TIME) AND uld.heure_fin >= HOUR(CURRENT_TIME)))";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":restaurant", $restaurant->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getLivreurAvailable", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$livreurs = $stmt->fetchAll();
+		$list = array();
+		foreach ($livreurs as $livreur) {
+			$user = new Model_User(false);
+			$user->id = $livreur['uid'];
+			$list[] = $user;
+		}
+		return $list;
+	}
+	
+	public function getLivreurAvailableForRestaurant2 ($codePostal, $ville, $restaurant) {
 		$sql = "SELECT user.uid
 		FROM users user
 		JOIN user_livreur ul ON ul.uid = user.uid
@@ -554,6 +567,40 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getLivreurAvailableForCommande ($commande) {
+		$sql = "SELECT user.uid, user.login, user.is_login, us.gcm_token, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin
+		FROM users user
+		JOIN user_livreur ul ON ul.uid = user.uid
+		JOIN user_livreur_dispo uld ON uld.uid = user.uid
+		JOIN distance_livreur_resto dlr ON dlr.id_restaurant = :restaurant AND dlr.id_dispo = uld.id
+		JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
+		WHERE user.is_enable = 1 AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1) ";
+		if ($commande->heure_souhaite == -1) {
+			"AND (uld.heure_debut > HOUR(CURRENT_TIME) OR (uld.heure_debut < HOUR(CURRENT_TIME) AND uld.heure_fin >= HOUR(CURRENT_TIME)))";
+		} else {
+			$heure = $commande->heure_souhaite;
+			"AND (uld.heure_debut > ".$heure." OR (uld.heure_debut < ".$heure." AND uld.heure_fin > ".$heure."))";
+		}
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":restaurant", $commande->restaurant->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getLivreurAvailable", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$livreurs = $stmt->fetchAll();
+		$list = array();
+		foreach ($livreurs as $livreur) {
+			$user = new Model_User(false);
+			$user->id = $livreur['uid'];
+			$user->login = $livreur['login'];
+			$user->is_login = $livreur['is_login'];
+			$user->gcm_token = $livreur['gcm_token'];
+			$list[] = $user;
+		}
+		return $list;
+	}
+	
+	public function getLivreurAvailableForCommande2 ($commande) {
 		$sql = "SELECT user.uid, user.login, user.is_login, user.gcm_token, ulh.heure_debut, ulh.heure_fin
 		FROM users user
 		JOIN user_livreur ul ON ul.uid = user.uid
@@ -616,9 +663,10 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getRestaurantUsers ($id_restaurant) {
-		$sql = "SELECT users.uid, users.gcm_token FROM users 
+		$sql = "SELECT users.uid, us.gcm_token FROM users 
 		JOIN user_restaurant ur ON ur.uid = users.uid
-		WHERE ur.id_restaurant = :restaurant AND users.is_login = true";
+		JOIN user_session us ON us.uid = users.uid AND date_logout = '0000-00-00 00:00:00'
+		WHERE ur.id_restaurant = :restaurant AND users.is_login = true AND us.gcm_token IS NOT NULL";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $id_restaurant);
 		if (!$stmt->execute()) {
@@ -638,10 +686,11 @@ class Model_User extends Model_Template {
 	}
 	
 	public function registerToGcm () {
-		$sql = "UPDATE users SET gcm_token = :token WHERE uid = :id";
+		$sql = "UPDATE user_session SET gcm_token = :token WHERE uid = :id AND session_key = :session_key";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":token", $this->gcm_token);
 		$stmt->bindValue(":id", $this->id);
+		$stmt->bindValue(":session_key", $this->session);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : registerToGcm", $sql);
 			$this->sqlHasFailed = true;
@@ -753,7 +802,8 @@ class Model_User extends Model_Template {
 		$this->is_enable = $value["is_enable"];
 		$this->telephone = $value["telephone"];
 		
-		$sql = "SELECT id, code_postal, ville FROM user_livreur_perimetre WHERE uid = :id";
+		$sql = "SELECT id, rue, ville, code_postal, latitude, longitude, perimetre, vehicule, id_jour, heure_debut, minute_debut, heure_fin, minute_fin 
+		FROM user_livreur_dispo WHERE uid = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -761,35 +811,23 @@ class Model_User extends Model_Template {
 			$this->sqlHasFailed = true;
 			return false;
 		}
-		$perimetres = $stmt->fetchAll();
-		foreach ($perimetres as $p) {
-			$perimetre = new Model_Perimetre(false);
-			$perimetre->id = $p['id'];
-			$perimetre->ville = $p['ville'];
-			$perimetre->code_postal = $p['code_postal'];
-			$this->perimetres[] = $perimetre;
-		}
-		
-		$sql = "SELECT id_jour, nom, heure_debut, minute_debut, heure_fin, minute_fin 
-		FROM user_livreur_horaires ulh
-		JOIN days ON days.id = ulh.id_jour
-		WHERE ulh.uid = :id
-		ORDER BY id_jour, heure_debut";
-		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":id", $this->id);
-		if (!$stmt->execute()) {
-			return false;
-		}
-		$horaires = $stmt->fetchAll();
-		foreach ($horaires as $hor) {
-			$horaire = new Model_Horaire();
-			$horaire->id_jour = $hor["id_jour"];
-			$horaire->name = $hor["nom"];
-			$horaire->heure_debut = $hor["heure_debut"];
-			$horaire->minute_debut = $hor["minute_debut"];
-			$horaire->heure_fin = $hor["heure_fin"];
-			$horaire->minute_fin = $hor["minute_fin"];
-			$this->horaires[] = $horaire;
+		$dispos = $stmt->fetchAll();
+		foreach ($dispos as $disp) {
+			$dispo = new Model_Dispo(false);
+			$dispo->id = $disp['id'];
+			$dispo->rue = $disp['rue'];
+			$dispo->ville = $disp['ville'];
+			$dispo->code_postal = $disp['code_postal'];
+			$dispo->latitude = $disp['latitude'];
+			$dispo->longitude = $disp['longitude'];
+			$dispo->perimetre = $disp['perimetre'];
+			$dispo->vehicule = $disp['vehicule'];
+			$dispo->id_jour = $disp['id_jour'];
+			$dispo->heure_debut = $disp['heure_debut'];
+			$dispo->minute_debut = $disp['minute_debut'];
+			$dispo->heure_fin = $disp['heure_fin'];
+			$dispo->minute_fin = $disp['minute_fin'];
+			$this->dispos[] = $dispo;
 		}
 		return $this;
 	}

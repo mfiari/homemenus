@@ -23,7 +23,6 @@
 						<input id="password_field" class="form-control" name="password" type="password" required>
 					</div>
 					<button id="loginButton" class="btn btn-primary" type="submit">Connexion</button>
-					<span style="display : none;" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -69,7 +68,7 @@
 					break;
 			}
 			$("#login-modal .modal-footer div.alert-danger").css('display', 'block');
-			hideLoading('loginButton');
+			hideLoading('loginButton', true);
 		});
 	});
 </script>

@@ -988,8 +988,10 @@ class Model_Commande extends Model_Template {
 	
 	public function getCommandeRestaurant () {
 		$sql = "SELECT com.id, liv.uid, liv.nom, liv.prenom, com.heure_souhaite, com.minute_souhaite, com.heure_restaurant, com.minute_restaurant, com.prix, 
-		com.prix_livraison, com.etape, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_commande, com.id_restaurant
+		com.prix_livraison, com.etape, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_commande, 
+		resto.id AS id_resto, resto.nom AS nom_resto, resto.rue AS rue_resto, resto.ville AS ville_resto, resto.code_postal AS cp_resto, resto.telephone AS tel_resto
 		FROM commande com
+		JOIN restaurants resto ON resto.id = com.id_restaurant
 		LEFT JOIN users liv ON liv.uid = com.id_livreur
 		WHERE com.id = :id";
 		$stmt = $this->db->prepare($sql);
@@ -1006,7 +1008,16 @@ class Model_Commande extends Model_Template {
 		$this->minute_souhaite = $value['minute_souhaite'];
 		$this->heure_restaurant = $value['heure_restaurant'];
 		$this->minute_restaurant = $value['minute_restaurant'];
-		$this->restaurant = $value['id_restaurant'];
+		
+		$restaurant = new Model_Restaurant();
+		$restaurant->id = $value["id_resto"];
+		$restaurant->nom = $value["nom_resto"];
+		$restaurant->rue = $value["rue_resto"];
+		$restaurant->ville = $value["ville_resto"];
+		$restaurant->code_postal = $value["cp_resto"];
+		$restaurant->telephone = $value["tel_resto"];
+		$this->restaurant = $restaurant;
+		
 		$this->prix = $value['prix'];
 		$this->prix_livraison = $value['prix_livraison'];
 		$this->etape = $value['etape'];
