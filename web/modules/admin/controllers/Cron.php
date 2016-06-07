@@ -21,6 +21,12 @@ class Controller_Cron extends Controller_Admin_Template {
 				case "runPreCommande" :
 					$this->runPreCommande($request);
 					break;
+				case "updateDistanceRestaurant" :
+					$this->updateDistanceRestaurant($request);
+					break;
+				case "dumpDatabase" :
+					$this->dumpDatabase($request);
+					break;
 			}
 		} else {
 			$this->index($request);
@@ -49,6 +55,16 @@ class Controller_Cron extends Controller_Admin_Template {
 	
 	public function runPreCommande ($request) {
 		exec('php '.ROOT_PATH.'cron/manage_pre_commande.php');
+		$this->redirect('index', 'cron');
+	}
+	
+	public function updateDistanceRestaurant ($request) {
+		exec('php '.ROOT_PATH.'cron/distance_resto_livreur.php');
+		$this->redirect('index', 'cron');
+	}
+	
+	public function dumpDatabase ($request) {
+		exec('php '.ROOT_PATH.'cron/dump_database.php');
 		$this->redirect('index', 'cron');
 	}
 }

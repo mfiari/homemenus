@@ -10,6 +10,8 @@ class Model_Categorie extends Model_Template {
 	private $logo;
 	private $ordre;
 	private $contenus;
+	private $nb_child;
+	private $nb_carte;
 	
 	public function __construct($callParent = true) {
 		if ($callParent) {
@@ -75,7 +77,13 @@ class Model_Categorie extends Model_Template {
 	}
 	
 	public function getParentContenu ($id_restaurant, $directory = "default") {
-		$sql = "SELECT id, nom FROM restaurant_categorie WHERE id_restaurant = :id AND parent_categorie = 0 ORDER BY ordre";
+		$sql = "SELECT rc.id, rc.nom, COUNT(rc2.id) AS nb_child, COUNT(carte.id) AS nb_carte
+		FROM restaurant_categorie rc
+		LEFT JOIN restaurant_categorie rc2 ON rc2.parent_categorie = rc.id
+		LEFT JOIN carte ON carte.id_categorie = rc.id AND carte.is_visible = 1
+		WHERE rc.id_restaurant = :id AND rc.parent_categorie = 0 
+		GROUP BY rc.id
+		ORDER BY rc.ordre";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $id_restaurant);
 		if (!$stmt->execute()) {
@@ -87,6 +95,8 @@ class Model_Categorie extends Model_Template {
 			$categorie = new Model_Categorie();
 			$categorie->id = $c["id"];
 			$categorie->nom = $c["nom"];
+			$categorie->nb_child = $c["nb_child"];
+			$categorie->nb_carte = $c["nb_carte"];
 			$categorie->getLogo($id_restaurant, $directory);
 			$list[] = $categorie;
 		}
@@ -117,7 +127,8 @@ class Model_Categorie extends Model_Template {
 		JOIN restaurant_horaires rh ON rh.id = cd.id_horaire AND rh.id_jour = WEEKDAY(CURRENT_DATE)-1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
 		OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin > HOUR(CURRENT_TIME)))
 		WHERE id_categorie = :id AND is_visible = 1 ORDER BY ordre";*/
-		$sql = "SELECT carte.id, carte.nom FROM carte
+		$sql = "SELECT carte.id, carte.nom, carte.commentaire, (SELECT MIN(cf.prix) FROM carte_format cf WHERE cf.id_carte = carte.id) AS prix
+		FROM carte
 		WHERE id_categorie = :id AND is_visible = 1 ORDER BY ordre";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
@@ -129,6 +140,8 @@ class Model_Categorie extends Model_Template {
 			$contenu = new Model_Contenu();
 			$contenu->id = $c["id"];
 			$contenu->nom = $c["nom"];
+			$contenu->prix = $c["prix"];
+			$contenu->commentaire = $c["commentaire"];
 			$contenu->getLogo($id_restaurant, $directory);
 			$this->contenus[] = $contenu;
 		}

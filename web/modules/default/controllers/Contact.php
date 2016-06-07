@@ -23,6 +23,9 @@ class Controller_Contact extends Controller_Default_Template {
 				case "evenement" :
 					$this->evenement($request);
 					break;
+				case "avis" :
+					$this->avis($request);
+					break;
 				default :
 					$this->redirect('404');
 					break;
@@ -161,11 +164,12 @@ class Controller_Contact extends Controller_Default_Template {
 			
 				$messageContent =  file_get_contents (ROOT_PATH.'mails/contact_livreur.html');
 				
-				$messageContent = str_replace("[nom]", $nom, $messageContent);
-				$messageContent = str_replace("[prenom]", $prenom, $messageContent);
-				$messageContent = str_replace("[telephone]", $telephone, $messageContent);
-				$messageContent = str_replace("[transport]", $transportContenu, $messageContent);
-				$messageContent = str_replace("[message]", nl2br($message), $messageContent);
+				$messageContent = str_replace("[NOM]", $nom, $messageContent);
+				$messageContent = str_replace("[PRENOM]", $prenom, $messageContent);
+				$messageContent = str_replace("[EMAIL]", $email, $messageContent);
+				$messageContent = str_replace("[TELEPHONE]", $telephone, $messageContent);
+				$messageContent = str_replace("[TRANSPORT]", $transportContenu, $messageContent);
+				$messageContent = str_replace("[MESSAGE]", nl2br($message), $messageContent);
 				
 				if (send_mail (MAIL_LIVREUR, "demande de contact d'un livreur", $messageContent)) {
 					
@@ -544,5 +548,42 @@ class Controller_Contact extends Controller_Default_Template {
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/evenement.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "Contact";
 		$request->vue = $this->render("contact/evenements.php");
+	}
+	
+	public function avis ($request) {
+		if ($request->request_method == "POST") {
+			$errorMessage = array();
+			if (!isset($_POST["nom"]) || trim($_POST["nom"]) == "") {
+				$errorMessage["EMPTY_RESTAURANT"] = "Veuillez renseigner le nom de votre restaurant";
+			} else {
+				$restaurant = $_POST["nom"];
+			}
+			if (!isset($_POST["ville"]) || trim($_POST["ville"]) == "") {
+				$errorMessage["EMPTY_VILLE"] = "Veuillez renseigner la ville de votre restaurant";
+			} else {
+				$ville = $_POST["ville"];
+			}
+			if (!isset($_POST["ville_user"]) || trim($_POST["ville_user"]) == "") {
+				$errorMessage["EMPTY_VILLE_USER"] = "Veuillez renseigner le code postal de votre restaurant";
+			} else {
+				$ville_user = $_POST["ville_user"];
+			}
+			if (count($errorMessage) == 0) {
+			
+				$messageContent =  file_get_contents (ROOT_PATH.'mails/avis.html');
+				
+				$messageContent = str_replace("[RESTAURANT]", $restaurant, $messageContent);
+				$messageContent = str_replace("[VILLE]", $ville, $messageContent);
+				$messageContent = str_replace("[VILLEUSER]", $ville_user, $messageContent);
+				if (send_mail (MAIL_CONTACT, "Avis", $messageContent)) {
+					$request->mailSuccess = true;
+				} else {
+					$request->mailSuccess = false;
+				}
+			} else {
+				
+			}
+			$this->redirect('recherche', 'restaurant', '', array('avis_send' => 'success'));
+		}
 	}
 }

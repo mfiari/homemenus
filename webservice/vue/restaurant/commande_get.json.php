@@ -1,5 +1,5 @@
 <?php
-	
+	//var_dump("test json"); die();
 	$retour = array();
 	
 	$retour['id'] = $result->id;
@@ -15,7 +15,7 @@
 	$retour['prix'] = $result->prix;
 	$retour['date_validation_restaurant'] = $result->date_validation_restaurant;
 	$retour['date_fin_preparation_restaurant'] = $result->date_fin_preparation_restaurant;
-	
+	//var_dump($retour); die();
 	if ($result->client) {
 		$retour['client'] = array();
 		$retour['client']['id'] = $result->client->id;
@@ -39,12 +39,13 @@
 		$retour['livreur']['nom'] = utf8_encode($result->livreur->nom);
 		$retour['livreur']['prenom'] = utf8_encode($result->livreur->prenom);
 	}
-	
+	//var_dump($retour); die();
 	$retour['menus'] = array();
 	foreach ($result->menus as $menu) {
 		$retour['menus'][$menu->id] = array();
 		$retour['menus'][$menu->id]['nom'] = utf8_encode($menu->nom);
-		$retour['menus'][$menu->id]['quantite'] = utf8_encode($menu->quantite);
+		$retour['menus'][$menu->id]['quantite'] = $menu->quantite;
+		$retour['menus'][$menu->id]['prix'] = $menu->prix;
 		
 		$retour['menus'][$menu->id]['formats'] = array();
 		
@@ -67,7 +68,6 @@
 				
 				$retour['menus'][$menu->id]['formules'][$formule->id]['categories'][$categorie->id]['contenus'] = array();
 				
-				$contenus = $dom->createElement("contenus");
 				foreach ($categorie->contenus as $contenu) {
 					$retour['menus'][$menu->id]['formules'][$formule->id]['categories'][$categorie->id]['contenus'][$contenu->id] = array();
 					$retour['menus'][$menu->id]['formules'][$formule->id]['categories'][$categorie->id]['contenus'][$contenu->id]['nom'] = utf8_encode($contenu->nom);
@@ -75,7 +75,7 @@
 			}
 		}
 	}
-	
+	//var_dump($retour); die();
 	$retour['cartes'] = array();
 	foreach ($result->cartes as $carte) {
 		$retour['cartes'][$carte->id] = array();
@@ -83,33 +83,49 @@
 		$retour['cartes'][$carte->id]['prix'] = $carte->prix;
 		$retour['cartes'][$carte->id]['quantite'] = $carte->quantite;
 		
-		$retour['cartes'][$carte->id]['options'] = array();
-		
-		foreach ($carte->options as $option) {
-			$retour['cartes'][$carte->id]['options'][$option->id] = array();
-			$retour['cartes'][$carte->id]['options'][$option->id]['nom'] = utf8_encode($option->nom);
-			$value = $option->values[0];
-			$retour['cartes'][$carte->id]['options'][$option->id]['value'] = utf8_encode($value->nom);
+		foreach ($carte->formats as $format) {
+			$retour['cartes'][$carte->id]['format'] = array();
+			$retour['cartes'][$carte->id]['format']['id'] = $format->id;
+			$retour['cartes'][$carte->id]['format']['nom'] = utf8_encode($format->nom);
 		}
 		
-		$retour['cartes'][$carte->id]['supplements'] = array();
+		if (count($carte->options) > 0) {
+			$retour['cartes'][$carte->id]['options'] = array();
 		
-		foreach ($carte->supplements as $supplement) {
-			$retour['cartes'][$carte->id]['supplements'][$supplement->id] = array();
-			$retour['cartes'][$carte->id]['supplements'][$supplement->id]['nom'] = utf8_encode($supplement->nom);
+			foreach ($carte->options as $option) {
+				$retour['cartes'][$carte->id]['options'][$option->id] = array();
+				$retour['cartes'][$carte->id]['options'][$option->id]['nom'] = utf8_encode($option->nom);
+				$value = $option->values[0];
+				$retour['cartes'][$carte->id]['options'][$option->id]['value'] = utf8_encode($value->nom);
+			}
 		}
 		
-		$retour['cartes'][$carte->id]['accompagnements'] = array();
+		if (count($carte->supplements) > 0) {
 		
-		foreach ($carte->accompagnements as $accompagnement) {
-			$retour['cartes'][$carte->id]['accompagnements'][$accompagnement->id] = array();
-			$retour['cartes'][$carte->id]['accompagnements'][$accompagnement->id]['cartes'] = array();
-			foreach ($accompagnement->cartes as $accompagnementCarte) {
-				$retour['cartes'][$carte->id]['accompagnements'][$accompagnement->id]['cartes'][$accompagnementCarte->id] = array();
-				$retour['cartes'][$carte->id]['accompagnements'][$accompagnement->id]['cartes'][$accompagnementCarte->id]['nom'] = utf8_encode($accompagnementCarte->nom);
+			$retour['cartes'][$carte->id]['supplements'] = array();
+			
+			foreach ($carte->supplements as $supplement) {
+				$retour['cartes'][$carte->id]['supplements'][$supplement->id] = array();
+				$retour['cartes'][$carte->id]['supplements'][$supplement->id]['nom'] = utf8_encode($supplement->nom);
+			}
+		}
+		
+		if (count($carte->accompagnements) > 0) {
+		
+			$retour['cartes'][$carte->id]['accompagnements'] = array();
+			
+			foreach ($carte->accompagnements as $accompagnement) {
+				$retour['cartes'][$carte->id]['accompagnements'][$accompagnement->id] = array();
+				$retour['cartes'][$carte->id]['accompagnements'][$accompagnement->id]['cartes'] = array();
+				foreach ($accompagnement->cartes as $accompagnementCarte) {
+					$retour['cartes'][$carte->id]['accompagnements'][$accompagnement->id]['cartes'][$accompagnementCarte->id] = array();
+					$retour['cartes'][$carte->id]['accompagnements'][$accompagnement->id]['cartes'][$accompagnementCarte->id]['nom'] = utf8_encode($accompagnementCarte->nom);
+				}
 			}
 		}
 	}
+	
+	//var_dump($retour); die();
 	header("Content-type: application/json; charset=utf-8");
 	echo json_encode($retour);
 	

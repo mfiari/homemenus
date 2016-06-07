@@ -132,12 +132,27 @@ function writeLog ($type, $texte, $level = LOG_LEVEL_INFO, $message = null) {
 
 function send_mail ($to, $subject, $message, $from = MAIL_FROM_DEFAULT, $attachments = array()) {
 	require_once WEBSITE_PATH.'res/lib/phpmailer/class.phpmailer.php';
-	
-	if (!SEND_MAIL) {
-		return true;
-	}
+	require_once MODEL_PATH.'Template.php';
+	require_once MODEL_PATH.'Mail.php';
 	
 	$message = ajout_environnement_mail ($message);
+	
+	$mailSend = false;
+	
+	$modelMail = new Model_Mail();
+	$modelMail->from = $from;
+	$modelMail->to = $to;
+	$modelMail->sujet = $subject;
+	$modelMail->contenu = $message;
+	if (isset($request) && $request->_auth) {
+		$modelMail->id_user = $request->_auth->id;
+	}
+	
+	if (!SEND_MAIL) {
+		$modelMail->is_send = false;
+		$modelMail->save();
+		return true;
+	}
 
 	$mail = new PHPMailer;
 
@@ -147,6 +162,7 @@ function send_mail ($to, $subject, $message, $from = MAIL_FROM_DEFAULT, $attachm
 
 	foreach ($attachments as $attachment) {
 		$mail->addAttachment($attachment); 
+		$modelMail->addAttachment($attachment); 
 	}
 	
 	$mail->isHTML(true);
@@ -157,8 +173,12 @@ function send_mail ($to, $subject, $message, $from = MAIL_FROM_DEFAULT, $attachm
 	if(!$mail->send()) {
 		writeLog (MAIL_LOG, $mail->ErrorInfo, LOG_LEVEL_ERROR, $subject, $to);
 		writeLog (MAIL_LOG, $message, LOG_LEVEL_ERROR, $subject, $to);
+		$modelMail->is_send = false;
+		$modelMail->save();
 		return false;
 	}
+	$modelMail->is_send = true;
+	$modelMail->save();
 	return true;
 }
 
@@ -182,13 +202,44 @@ function datepickerToDatetime ($date) {
 	return $year.'-'.$month.'-'.$day;
 }
 
+function formatPrix ($prix) {
+	$prixExplode = explode('.', $prix);
+	$dizaine = $prixExplode[0];
+	$prixFinal = $dizaine;
+	if (count($prixExplode) > 1) {
+		if (strlen($prixExplode[1]) == 1) {
+			$prixFinal .= ','.$prixExplode[1].'0';
+		} else {
+			$prixFinal .= ','.$prixExplode[1];
+		}
+	} else {
+		$prixFinal .= ',00';
+	}
+	$prixFinal .= ' €';
+	return $prixFinal;
+}
+
+function formatHeureMinute ($heure, $minute) {
+	if (strlen($minute) == 1) {
+		$minute = '0'.$minute;
+	}
+	return $heure.'h'.$minute;
+}
+
 function construit_url_paypal() {
-	$api_paypal = 'https://api-3t.sandbox.paypal.com/nvp?'; // Site de l'API PayPal. On ajoute déjà le ? afin de concaténer directement les paramètres.
+	/* $api_paypal = 'https://api-3t.sandbox.paypal.com/nvp?'; // Site de l'API PayPal test. On ajoute déjà le ? afin de concaténer directement les paramètres. */
+	$api_paypal = 'https://api-3t.paypal.com/nvp?'; // Site de l'API PayPal prod. On ajoute déjà le ? afin de concaténer directement les paramètres.
+	
 	$version = 56.0; // Version de l'API
 
-	$user = 'cservichezvous_api1.gmail.com'; // Utilisateur API
-	$pass = 'D24DDXJJCGUJYKR9'; // Mot de passe API
-	$signature = 'ArNp9UkZWjxr7O8Wgxl1F5CN.u13A4.lDIpfU3dMcFsPcOT7XEZ6ubVT'; // Signature de l'API
+	/* $user = 'cservichezvous_api1.gmail.com'; // Utilisateur API test */
+	$user = 'homemenus.inbox_api1.gmail.com'; // Utilisateur API prod
+	
+	/* $pass = 'D24DDXJJCGUJYKR9'; // Mot de passe API test */
+	$pass = 'C29KYXQ9RNCB6ZLR'; // Mot de passe API prod
+	
+	/* $signature = 'ArNp9UkZWjxr7O8Wgxl1F5CN.u13A4.lDIpfU3dMcFsPcOT7XEZ6ubVT'; // Signature de l'API test */
+	$signature = 'AFcWxV21C7fd0v3bYYYRCpSSRl31AvgsNoywKGG.vIR-KOkSRKLCbGw2'; // Signature de l'API prod
 
 	$api_paypal = $api_paypal.'VERSION='.$version.'&USER='.$user.'&PWD='.$pass.'&SIGNATURE='.$signature; // Ajoute tous les paramètres
 

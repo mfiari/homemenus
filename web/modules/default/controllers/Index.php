@@ -43,6 +43,12 @@ class Controller_Index extends Controller_Default_Template {
 				case "cgv" :
 					$this->cgv($request);
 					break;
+				case "paiement" :
+					$this->paiement($request);
+					break;
+				case "paiement2" :
+					$this->paiement2($request);
+					break;
 				case "recaptcha" :
 					$this->recaptcha($request);
 					break;
@@ -60,7 +66,7 @@ class Controller_Index extends Controller_Default_Template {
 	
 	public function home ($request) {
 		$request->home = true;
-		$request->title = "Index";
+		$request->title = "HoMe Menus";
 		$request->javascripts = array("res/js/home.js");
 		$request->vue = $this->render("home.php");
 	}
@@ -137,6 +143,7 @@ class Controller_Index extends Controller_Default_Template {
 						$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription.html');
 						$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
 						$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
+						$messageContent = str_replace("[LOGIN]", $model->login, $messageContent);
 						$messageContent = str_replace("[UID]", $model->id, $messageContent);
 						$messageContent = str_replace("[TOKEN]", $model->inscription_token, $messageContent);
 						$messageContent = str_replace("[WEBSITE_URL]", WEBSITE_URL, $messageContent);
@@ -148,7 +155,7 @@ class Controller_Index extends Controller_Default_Template {
 					}
 					$model->endTransaction();
 				} else {
-					$request->errorMessage = array("USER_EXISTS" => "Cet email existe déjà");
+					$request->errorMessage = array("USER_EXISTS" => "l'email ".$model->email." existe déjà");
 				}
 			} else {
 				$request->errorMessage = $errorMessage;
@@ -198,6 +205,21 @@ class Controller_Index extends Controller_Default_Template {
 	
 	public function cgv ($request) {
 		$request->vue = $this->render("cgv.php");
+	}
+	
+	public function paiement ($request) {
+		require_once WEBSITE_PATH.'res/lib/braintree/Braintree.php';
+		\Braintree_Configuration::environment('sandbox');
+		\Braintree_Configuration::merchantId('f67spz3sxb4rdvfs');
+		\Braintree_Configuration::publicKey('nzng9z3d8dmyw84g');
+		\Braintree_Configuration::privateKey('39f185c352f34549e1fbc7017e881184');
+		$clientToken = Braintree_ClientToken::generate();
+		var_dump($clientToken); die();
+		$request->vue = $this->render("paiement.php");
+	}
+	
+	public function paiement2 ($request) {
+		$request->vue = $this->render("paiement2.php");
 	}
 	
 	public function recaptcha ($request) {

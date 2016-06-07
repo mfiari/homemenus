@@ -12,12 +12,18 @@
 					<thead>
 						<tr>
 							<th>Nb de commande</th>
+							<th>Total restaurant</th>
+							<th>Total Livreur</th>
+							<th>Total HoMe Menus</th>
 							<th>Total</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
 							<td><?php echo $request->resultats['total_commande']; ?></td>
+							<td><?php echo $request->resultats['part_restaurant']; ?></td>
+							<td><?php echo $request->resultats['part_livreur']; ?></td>
+							<td><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
 							<td><?php echo $request->resultats['total_prix']; ?></td>
 						</tr>
 					</tbody>
@@ -32,6 +38,9 @@
 						<tr>
 							<th>Livreur</th>
 							<th>Nb de commande</th>
+							<th>Total restaurant</th>
+							<th>Total Livreur</th>
+							<th>Total HoMe Menus</th>
 							<th>Total</th>
 						</tr>
 					</thead>
@@ -40,6 +49,9 @@
 							<tr>
 								<td><?php echo utf8_encode($livreur['nom']); ?></td>
 								<td><?php echo $livreur['total_commande']; ?></td>
+								<td><?php echo $livreur['part_restaurant']; ?></td>
+								<td><?php echo $livreur['part_livreur']; ?></td>
+								<td><?php echo $livreur['total_prix'] - $livreur['part_restaurant'] - $livreur['part_livreur']; ?></td>
 								<td><?php echo $livreur['total_prix']; ?></td>
 							</tr>
 						<?php endforeach; ?>
@@ -55,6 +67,9 @@
 						<tr>
 							<th>Restaurant</th>
 							<th>Nb de commande</th>
+							<th>Total restaurant</th>
+							<th>Total Livreur</th>
+							<th>Total HoMe Menus</th>
 							<th>Total</th>
 						</tr>
 					</thead>
@@ -63,6 +78,9 @@
 							<tr>
 								<td><?php echo utf8_encode($restaurant['nom']); ?></td>
 								<td><?php echo $restaurant['total_commande']; ?></td>
+								<td><?php echo $restaurant['part_restaurant']; ?></td>
+								<td><?php echo $restaurant['part_livreur']; ?></td>
+								<td><?php echo $restaurant['total_prix'] - $restaurant['part_restaurant'] - $restaurant['part_livreur']; ?></td>
 								<td><?php echo $restaurant['total_prix']; ?></td>
 							</tr>
 						<?php endforeach; ?>
@@ -78,6 +96,9 @@
 						<tr>
 							<th>Client</th>
 							<th>Nb de commande</th>
+							<th>Total restaurant</th>
+							<th>Total Livreur</th>
+							<th>Total HoMe Menus</th>
 							<th>Total</th>
 						</tr>
 					</thead>
@@ -86,6 +107,9 @@
 							<tr>
 								<td><?php echo $client['nom']; ?> <?php echo $client['prenom']; ?></td>
 								<td><?php echo $client['total_commande']; ?></td>
+								<td><?php echo $client['part_restaurant']; ?></td>
+								<td><?php echo $client['part_livreur']; ?></td>
+								<td><?php echo $client['total_prix'] - $client['part_restaurant'] - $client['part_livreur']; ?></td>
 								<td><?php echo $client['total_prix']; ?></td>
 							</tr>
 						<?php endforeach; ?>
@@ -101,6 +125,9 @@
 						<tr>
 							<th>Ville</th>
 							<th>Nb de commande</th>
+							<th>Total restaurant</th>
+							<th>Total Livreur</th>
+							<th>Total HoMe Menus</th>
 							<th>Total</th>
 						</tr>
 					</thead>
@@ -109,6 +136,9 @@
 							<tr>
 								<td><?php echo $ville['nom']; ?> (<?php echo $ville['cp']; ?>)</td>
 								<td><?php echo $ville['total_commande']; ?></td>
+								<td><?php echo $ville['part_restaurant']; ?></td>
+								<td><?php echo $ville['part_livreur']; ?></td>
+								<td><?php echo $ville['total_prix'] - $ville['part_restaurant'] - $ville['part_livreur']; ?></td>
 								<td><?php echo $ville['total_prix']; ?></td>
 							</tr>
 						<?php endforeach; ?>

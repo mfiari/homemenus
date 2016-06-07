@@ -28,7 +28,7 @@ class Model_Supplement extends Model_Template {
 	}
 	
 	public function save () {
-		$sql = "INSERT INTO supplement (id_restaurant, nom, prix, commentaire) VALUES (:restaurant, :nom, :prix, :commentaire)";
+		$sql = "INSERT INTO supplements (id_restaurant, nom, prix, commentaire) VALUES (:restaurant, :nom, :prix, :commentaire)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $this->id_restaurant);
 		$stmt->bindValue(":nom", $this->nom);
@@ -43,7 +43,7 @@ class Model_Supplement extends Model_Template {
 	}
 	
 	public function remove () {
-		$sql = "DELETE FROM supplement WHERE id = :id";
+		$sql = "DELETE FROM supplements WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {

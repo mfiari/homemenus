@@ -47,7 +47,7 @@ if ($request->_auth) {
 		if ($request->_hasCommandeEnCours) {
 			$request->_idCommandes = $commande->getIdCommandeEnCoursLivreur();
 		}
-	} else if ($request->_auth->status == ADMIN_RESTAURANT) {
+	} else if ($request->_auth->status == USER_ADMIN_RESTAURANT) {
 		include_once ROOT_PATH."models/Restaurant.php";
 		$modelRestaurant = new Model_Restaurant();
 		$fields = array('id', 'nom');

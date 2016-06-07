@@ -258,17 +258,17 @@ class Controller_Restaurant extends Controller_Template {
 		if (isset($_GET['code_postal']) && isset($_GET['ville'])) {
 			$ville = $_GET['ville'];
 			$codePostal = $_GET['code_postal'];
-			$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
 			$has_livreur_dispo = count($livreurs) > 0;
 		} else if (isset($_GET['latitude']) && isset($_GET['longitude'])) {
 			$latitude = $_GET['latitude'];
 			$longitude = $_GET['longitude'];
-			$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
 			$has_livreur_dispo = count($livreurs) > 0;
 		} else if (isset($_SESSION['search_cp']) && isset($_SESSION['search_ville'])) {
 			$ville = $_SESSION['search_ville'];
 			$codePostal = $_SESSION['search_cp'];
-			$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
 			$has_livreur_dispo = count($livreurs) > 0;
 		} else {
 			$has_livreur_dispo = false;

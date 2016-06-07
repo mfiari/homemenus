@@ -9,6 +9,7 @@ class Model_Contenu {
 	private $supplement;
 	private $limite_supplement;
 	private $commentaire;
+	private $prix;
 	private $logo;
 	private $supplements;
 	private $accompagnements;

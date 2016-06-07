@@ -25,7 +25,7 @@
 				<p>Il n'y a pas plus simple, inscrivez-vous, puis rentrez votre adresse dans la barre de recherche de notre page d’accueil pour avoir accès 
 				à la liste de tous vos restaurants favoris.</p>
 				<p>Sélectionnez le restaurant qui vous fait envie, Commandez ce que vous souhaitez, validez votre commande et rentrez 
-				vos informations de livraison et de paiement et il ne reste plus qu’à vous livrer ! On vous avez dit que c’était simple !</p>
+				vos informations de livraison et de paiement et il ne reste plus qu’à vous livrer ! Nous vous avions dit que c’était simple !</p>
 			</div>
 			
 			<div>
@@ -59,7 +59,8 @@
 			
 			<div>
 				<h3>En combien de temps serais-je livré ?</h3>
-				<p>A partir du moment où vous validez la commande et selon l’endroit où vous vous situez il faut compter 30 à 45 minutes. 
+				<p>A partir du moment où vous validez la commande et selon l’endroit où vous vous situez, 
+				le temps de livraison peut être variable mais n’excède pas 60 minutes. 
 				Nous faisons notre maximum afin de vous livrer au plus vite.</p>
 			</div>
 			
@@ -84,8 +85,7 @@
 			
 			<div>
 				<h3>Y’a-t-il un montant minimum de commande ?</h3>
-				<p>15 € minimum pour les commandes dans un périmètre de 0 à 5 kilomètres</p>
-				<p>20 € minimum pour les autres périmètres.</p>
+				<p>Oui, mais celui-ci peut varier d’un restaurant à un autre.</p>
 			</div>
 
 			<div>

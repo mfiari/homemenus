@@ -5,7 +5,7 @@
 		<p>En vertu de l'article 6 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, il est précisé aux utilisateurs du site 
 		<a href="http://homemenus.fr/" title="HoMe Menus - homemenus.fr">homemenus.fr</a> l'identité des différents intervenants dans le cadre de sa réalisation et 
 		de son suivi :</p>
-		<p><strong>Propriétaire</strong> : HoMe Menus – XXXX – 2 rue des aubépines 78440 Issou<br />
+		<p><strong>Propriétaire</strong> : HoMe Menus – 81973136500014 – 2 rue des aubépines 78440 Issou<br />
 		<strong>Créateur</strong>  : <a href="http://homemenus.fr">Ledoux Alexis</a><br />
 		<strong>Responsable publication</strong> : Ledoux Alexis – informatique@homemenus.fr<br />
 		Le responsable publication est une personne physique ou une personne morale.<br />
@@ -32,7 +32,7 @@
 		l’ensemble des activités de la société.</p>
 		<p>HoMe Menus s’efforce de fournir sur le site <a href="http://homemenus.fr/" title="HoMe Menus - homemenus.fr">homemenus.fr</a> 
 		des informations aussi précises que possible. 
-		Toutefois, il ne pourra être tenue responsable des omissions, des inexactitudes et des carences dans la mise à jour, 
+		Toutefois, il ne pourra être tenu responsable des omissions, des inexactitudes et des carences dans la mise à jour, 
 		qu’elles soient de son fait ou du fait des tiers partenaires qui lui fournissent ces informations.</p>
 		<p>Tous les informations indiquées sur le site <a href="http://homemenus.fr/" title="HoMe Menus - homemenus.fr">homemenus.fr</a> 
 		sont données à titre indicatif, et sont susceptibles d’évoluer. 
@@ -86,7 +86,7 @@
 		Seule l'hypothèse du rachat de HoMe Menus et de ses droits permettrait la transmission des dites informations à l'éventuel acquéreur 
 		qui serait à son tour tenu de la même obligation de conservation et de modification des données vis à vis de l'utilisateur du site 
 		<a href="http://homemenus.fr/" title="HoMe Menus - homemenus.fr">homemenus.fr</a>.</p>
-		<p>Le site susnommé est déclaré à la CNIL sous le numéro XXXX.</p>
+		<p>Le site susnommé est déclaré à la CNIL sous le numéro 1954983.</p>
 		<p>Les bases de données sont protégées par les dispositions de la loi du 1er juillet 1998 transposant la directive 96/9 du 11 mars 1996 
 		relative à la protection juridique des bases de données.</p>
 		

@@ -3,11 +3,12 @@
 	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 </a>
 <div id="restaurant">
-	<h3><?php echo utf8_encode($request->commande->restaurant->nom); ?></h3>
-	<p><?php echo $request->commande->restaurant->rue; ?>, <?php echo $request->commande->restaurant->code_postal; ?> <?php echo $request->commande->restaurant->ville; ?></p>
+	<?php $restaurant = $request->commande->restaurant; ?>
+	<h3><?php echo utf8_encode($restaurant->nom); ?></h3>
+	<p><?php echo utf8_encode($restaurant->rue); ?>, <?php echo $restaurant->code_postal; ?> <?php echo $restaurant->ville; ?></p>
 </div>
 <div id="livreur">
-	<?php if ($request->commande->livreur->nom != '') : ?>
+	<?php if ($request->commande->livreur->id != '') : ?>
 		<h3>Livreur</h3>
 		<div class="col-md-6">
 			<span><?php echo $request->commande->livreur->prenom; ?></span>
@@ -18,8 +19,32 @@
 		<script type="text/javascript">
 			$(function() {
 				initialize();
-				var adresse = "<?php echo $restaurant->rue.', '.$restaurant->ville; ?>";
-				codeAddress(adresse, "<?php echo utf8_encode($restaurant->nom); ?>");
+				var list = [];
+				
+				var homePoint = {};
+				homePoint.type = "HOME";
+				homePoint.adresse = "<?php echo $request->commande->rue.', '.$request->commande->ville; ?>";
+				
+				list.push(homePoint);
+				
+				var restoPoint = {};
+				restoPoint.type = "ADRESSE";
+				restoPoint.adresse = "<?php echo $request->commande->restaurant->rue.', '.$request->commande->restaurant->ville; ?>";
+				restoPoint.content = "<?php echo utf8_encode($request->commande->restaurant->nom); ?>";
+				
+				list.push(restoPoint);
+				
+				var livreurPoint = {};
+				livreurPoint.type = "ADRESSE";
+				livreurPoint.latitude = <?php echo $request->commande->livreur->latitude; ?>;
+				livreurPoint.longitude = <?php echo $request->commande->livreur->longitude; ?>;
+				livreurPoint.content = "<?php echo utf8_encode($request->commande->livreur->prenom); ?>";
+				
+				if (livreurPoint.latitude != 0 && livreurPoint.longitude != 0) {
+					list.push(livreurPoint);
+				}
+				
+				boundToPoints(list);
 			});
 		</script>
 	<?php endif; ?>
@@ -37,21 +62,16 @@
 					(<?php echo utf8_encode($menu->formats[0]->nom); ?>)
 				<?php endif; ?>
 				<?php foreach ($menu->formules as $formule) : ?>
-					<div class="row">
-						<div class="col-md-offset-1 col-md-11">
-							<span><?php echo utf8_encode($formule->nom); ?></span>
-							<?php foreach ($formule->categories as $categorie) : ?>
-								<div class="row">
-									<div class="col-md-offset-1 col-md-11">
-										<span><?php echo utf8_encode($categorie->nom); ?></span>
-										<?php foreach ($categorie->contenus as $contenu) : ?>
-											<span><?php echo utf8_encode($contenu->nom); ?></span>
-										<?php endforeach; ?>
-									</div>
-								</div>
-							<?php endforeach; ?>
+					<?php foreach ($formule->categories as $categorie) : ?>
+						<div class="row">
+							<div class="col-md-offset-1 col-md-11">
+								<span><?php echo utf8_encode($categorie->nom); ?> : </span>
+								<?php foreach ($categorie->contenus as $contenu) : ?>
+									<span><?php echo utf8_encode($contenu->nom); ?></span>
+								<?php endforeach; ?>
+							</div>
 						</div>
-					</div>
+					<?php endforeach; ?>
 				<?php endforeach; ?>
 			</div>
 			<div class="col-md-4">
@@ -61,7 +81,7 @@
 						<?php $totalQte += $menu->quantite; ?>
 					</div>
 					<div class="col-md-6">
-						<?php echo $menu->prix; ?> €
+						<?php echo formatPrix($menu->prix); ?>
 						<?php $totalPrix += $menu->prix; ?>
 					</div>
 				</div>
@@ -90,6 +110,33 @@
 						</div>
 					</div>
 				<?php endif; ?>
+				<?php if (count($carte->options) > 0) : ?>
+					<div class="row">
+						<div class="col-md-offset-1 col-md-11">
+							<div class="row">
+								<div class="col-md-offset-1 col-md-11">
+									<?php foreach ($carte->options as $option) : ?>
+										<span><?php echo utf8_encode($option->nom); ?></span>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
+				<?php if (count($carte->accompagnements) > 0) : ?>
+					<div class="row">
+						<div class="col-md-offset-1 col-md-11">
+							<span>accompagnements : </span>
+							<div class="row">
+								<div class="col-md-offset-1 col-md-11">
+									<?php foreach ($carte->accompagnements as $accompagnement) : ?>
+										<span><?php echo utf8_encode($accompagnement->nom); ?></span>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
 			</div>
 			<div class="col-md-4">
 				<div class="row">
@@ -98,7 +145,7 @@
 						<?php $totalQte += $carte->quantite; ?>
 					</div>
 					<div class="col-md-6">
-						<?php echo $carte->prix; ?> €
+						<?php echo formatPrix($carte->prix); ?>
 						<?php $totalPrix += $carte->prix; ?>
 					</div>
 				</div>
@@ -114,7 +161,7 @@
 			<div class="row">
 				<div class="col-md-6"></div>
 				<div class="col-md-6">
-					<?php echo $request->commande->prix_livraison; ?> €
+					<?php echo formatPrix($request->commande->prix_livraison); ?>
 				</div>
 			</div>
 		</div>
@@ -131,7 +178,7 @@
 					<?php echo $totalQte; ?>
 				</div>
 				<div class="col-md-6">
-					<?php echo $totalPrix; ?> €
+					<?php echo formatPrix($totalPrix); ?>
 				</div>
 			</div>
 		</div>

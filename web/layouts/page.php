@@ -68,7 +68,23 @@
 					</div>
 				</div>
 			</div>
-			<?php include('footer.html'); ?>
+			<?php
+				if ($request->_auth) {
+					if ($request->_auth->status == USER_ADMIN) {
+						include('footer_admin.html');
+					} else if ($request->_auth->status == USER_LIVREUR) {
+						include('footer_livreur.html');
+					} else if ($request->_auth->status == USER_RESTAURANT) {
+						include('footer_restaurant.html');
+					} else if ($request->_auth->status == USER_ADMIN_RESTAURANT) {
+						include('footer_admin_restaurant.html');
+					} else {
+						include('footer.html');
+					}
+				} else {
+					include('footer.html');
+				}
+			?>
 		</div>
 		<?php if ($request->_auth && $request->_auth->status == USER_CLIENT && $request->_hasCommandeEnCours) : ?>
 			<script type="text/javascript">

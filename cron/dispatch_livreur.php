@@ -58,6 +58,15 @@
 				$nbCommandeLivreur = count($livreurCommandes);
 			} else {
 				
+				/* 2) si le livreur à moins de commande */
+				if (count($livreurCommandes) >  $nbCommandeLivreur) {
+					continue;
+				}
+				if (count($livreurCommandes) <  $nbCommandeLivreur) {
+					$bestLivreur = $livreur;
+					$nbCommandeLivreur = count($livreurCommandes);
+					continue;
+				}
 				/* 1) si le livreur à une commande à récupérer dans ce restaurant */
 				$tmpCommandeInRestaurant = false;
 				foreach ($livreurCommandes as $cmd) {
@@ -70,15 +79,6 @@
 					continue;
 				}
 				if ($tmpCommandeInRestaurant && !$hasCmdInRestaurant) {
-					$bestLivreur = $livreur;
-					$nbCommandeLivreur = count($livreurCommandes);
-					continue;
-				}
-				/* 2) si le livreur à moins de commande */
-				if (count($livreurCommandes) >  $nbCommandeLivreur) {
-					continue;
-				}
-				if (count($livreurCommandes) <  $nbCommandeLivreur) {
 					$bestLivreur = $livreur;
 					$nbCommandeLivreur = count($livreurCommandes);
 					continue;

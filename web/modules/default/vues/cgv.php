@@ -1,12 +1,12 @@
 <div class="row">
 	<div class="col-md-10  col-md-offset-1">
 		<h2>Conditions générales de vente</h2>
-		<p>HoMe Menu<br />
-		Société par actions simplifiée (SASU) au capital de 1000 euros<br />
+		<p>HoMe Menus<br />
+		Société par actions simplifiées (SASU) au capital de 1000 euros<br />
 		Siège social 2 rue des aubépines, 78440 Issou ;  </p>
 
-		<p>N° de téléphone 0637340348 ; Adresse du courrier électronique contact@homemenus.fr<br />
-		RCS (ou Répertoire des métiers) de .........(lieu) n°...............  </p>
+		<p>N° de téléphone : 0637340348 ; Adresse du courrier électronique : contact@homemenus.fr<br />
+		RCS de 2 rue des aubépines, 78440 Issou n°81973136500014  </p>
 
 		<p>N° individuel d'identification fiscal </p>
 
@@ -16,7 +16,7 @@
 
 		<h3>Article 1 - Objet</h3>
 
-		<p>Les présentes conditions régissent les ventes par la société HoMe Menu 2 rue des aubépines, 78440 Issou 
+		<p>Les présentes conditions régissent les ventes par la société HoMe Menus 2 rue des aubépines, 78440 Issou 
 		d'un service de livraison de plats de restaurants. </p>
 
 		<h3>Article 2 - Prix</h3>
@@ -30,7 +30,7 @@
 		tant en termes de déclarations que de paiements aux autorités et organismes compétents de votre pays. 
 		Nous vous conseillons de vous renseigner sur ces aspects auprès de vos autorités locales. </p>
 
-		<p>Toutes les commandes quelle que soit leur origine sont payables en euros.</p>
+		<p>Toutes les commandes, quelle que soit leur origine, sont payables en euros.</p>
 
 		<p>La société HoMe Menus se réserve le droit de modifier ses prix à tout moment, 
 		mais le produit sera facturé sur la base du tarif en vigueur au moment de la validation de la commande et sous réserve de disponibilité.</p>
@@ -118,7 +118,7 @@
 		<p>La société HoMe Menus ne peut être tenue pour responsable de retard de livraison 
 		dû exclusivement à une indisponibilité du client après plusieurs propositions de rendez-vous.</p>
 
-		<h3>Article 9 - Garantie</h3>
+		<h3>Article 9 - Garanties</h3>
 		<p>Tous nos produits bénéficient de la garantie légale de conformité et de la garantie des vices cachés, 
 		prévues par les articles 1641 et suivants du Code civil. En cas de non-conformité d'un produit vendu, il pourra être retourné, échangé ou remboursé.</p>
 		<p>Toutes les réclamations, demandes d'échange ou de remboursement doivent s'effectuer par mail dans le délai de 30 jours de la livraison.</p>

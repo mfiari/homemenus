@@ -12,7 +12,7 @@
 		<input type="hidden" name="id_carte" value="<?php echo $request->carte->id; ?>" />
 		<input type="hidden" name="id_restaurant" value="<?php echo $request->id_restaurant; ?>" />
 		<div id="stepper" class="stepper" data-min-value="1" data-max-value="5">
-			<label>Quantite</label>
+			<label>Quantité</label>
 			<a class="stepper-less stepper-button">-</a>
 			<input type="text" name="quantite" value="0" class="stepper-value">
 			<a class="stepper-more stepper-button">+</a>
@@ -21,14 +21,14 @@
 			<?php $format = $request->carte->formats[0]; ?>
 			<input type="hidden" name="format" value="<?php echo $format->id; ?>" />
 			<div>
-				<p>Prix : <?php echo $format->prix; ?> €</p>
+				<p>Prix : <?php echo formatPrix($format->prix); ?></p>
 			</div>
 		<?php else : ?>
 			<div class="row">
 				<?php foreach ($request->carte->formats as $format) : ?>
 					<div class="col-md-4">
-						<div><input type="radio" name="format" value="<?php echo $format->id; ?>"><?php echo utf8_encode($format->nom); ?></div>
-						<div>Prix : <?php echo $format->prix; ?> €</div>
+						<div><input type="radio" name="format" value="<?php echo $format->id; ?>"><span style="margin-left : 10px;"><?php echo utf8_encode($format->nom); ?></span></div>
+						<div>Prix : <?php echo formatPrix($format->prix); ?></div>
 					</div>
 				<?php endforeach; ?>
 			</div>
@@ -38,8 +38,8 @@
 				<?php foreach ($request->carte->options as $option) : ?>
 					<h3>Choisissez votre <?php echo utf8_encode($option->nom); ?> </h3>
 					<?php foreach ($option->values as $value) : ?>
-						<div>
-							<input type="radio" name="check_option_<?php echo $option->id; ?>_<?php echo $value->id; ?>"/>
+						<div style="margin-left : 20px;">
+							<input type="radio" name="check_option_<?php echo $option->id; ?>" value="<?php echo $value->id; ?>"/>
 							<span><?php echo utf8_encode($value->nom); ?></span>
 						</div>
 					<?php endforeach; ?>
@@ -84,7 +84,7 @@
 		Veuillez vous connecter afin d'ajouter un produit au panier, <a data-toggle="modal" onclick="$('#carte-modal').modal('hide');" data-target="#login-modal">Connectez-vous</a>
 	</div>
 	<?php if ($request->has_livreur_dispo === false) : ?>
-		<div class="alert alert-danger" role="alert">
+		<div class="alert alert-danger" role="alert" style="text-align: center;">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 			<span class="sr-only">Error:</span>
 			Il n'y a aucun livreur disponible pour vous livrer ce restaurant
@@ -118,7 +118,8 @@
 			$("#carte-modal .modal-footer div.alert-success").css('display', 'inline-block');
 			setTimeout(function(){ 
 				$("#carte-modal").modal('hide');
-			}, 3000);
+				location.reload();
+			}, 2000);
 		}).error(function(msg) {
 			$("#carte-modal .modal-footer .glyphicon-refresh-animate").css('display', 'none');
 			$("#carte-modal .modal-footer div.alert-danger").css('display', 'inline-block');

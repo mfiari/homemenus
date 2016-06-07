@@ -56,5 +56,11 @@
 	DEFINE ("MAIL_LIVREUR", "test@homemenus.fr");
 	DEFINE ("MAIL_PRO", "test@homemenus.fr");
 	DEFINE ("MAIL_ADMIN", "test@homemenus.fr");
+	
+	/* PAYPAL */
+	DEFINE ("PAYPAL_ENV", "PROD");
+	DEFINE ("PAYPAL_USER", "homemenus.inbox_api1.gmail.com");
+	DEFINE ("PAYPAL_PASSWORD", "C29KYXQ9RNCB6ZLR");
+	DEFINE ("PAYPAL_SIGNATURE", "AFcWxV21C7fd0v3bYYYRCpSSRl31AvgsNoywKGG.vIR-KOkSRKLCbGw2");
 
 ?>

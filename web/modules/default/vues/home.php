@@ -6,11 +6,11 @@
 			<a href="?controler=contact&action=evenement">contactez nous</a> afin que nous satisfaisions vos envies.</p>
 		</div>
 		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/home.png">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/special.jpg">
 		</div>
 	</div>
 </div>
-<div class="col-md-12 odd">
+<!--<div class="col-md-12 odd">
 	<h2>Pour les plus exigeants</h2>
 	<div class="row">
 		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
@@ -20,7 +20,7 @@
 			<p>Un compte spécial pour les grands gourmands, pensé et imaginé par des gourmands. <a href="?action=premium">Venez découvrir les avantages du compte premium</a> !</p>
 		</div>
 	</div>
-</div>
+</div>-->
 <div class="col-md-12 even">
 	<h2>Pour les entreprises</h2>
 	<div class="row">
@@ -38,7 +38,7 @@
 	<h2>Devenir Livreur</h2>
 	<div class="row">
 		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/livreur.png">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/livreur.jpg">
 		</div>
 		<div class="col-md-9 col-sm-9 col-xs-9">
 			<p>Vous  êtes sportif, dynamique et avez envie de vous faire un extra, rejoignez l’aventure HoMe Menus. 
@@ -56,11 +56,11 @@
 				<p>Contactez-nous dès maintenant via notre <a href="?controler=contact&action=restaurant">page de contact</a></p>
 		</div>
 		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/home.png">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/partenaire.jpg">
 		</div>
 	</div>
 </div>
-<div class="col-md-12 odd">
+<!--<div class="col-md-12 odd">
 	<h2>Nous somme présent sur mobile</h2>
 	<div class="col-md-6 mobile">
 		<a href=""><img src="res/img/app_store.png"></a>
@@ -68,4 +68,4 @@
 	<div class="col-md-6 mobile">
 		<a href="https://play.google.com/apps/testing/homemenus.projet"><img src="res/img/google_play.jpg"></a>
 	</div>
-</div>
+</div>-->

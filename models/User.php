@@ -433,6 +433,38 @@ class Model_User extends Model_Template {
 		return $this;
 	}
 	
+	public function getByLoginAndPassword($login, $password) {
+		$sql = "SELECT uid, nom, prenom, status, is_enable FROM users WHERE login = :login AND password = sha1(:password)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":login", $login);
+		$stmt->bindValue(":password", $password);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null || $value == false) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
+	public function modifyPassword ($newPassword) {
+		$sql = "UPDATE users SET password = sha1(:password) WHERE uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":password", $newPassword);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : livreurReady", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
 	public function getByRestaurant ($id_restaurant) {
 		$sql = "SELECT user.uid, user.nom, user.prenom, user.login, user.status, user.is_login, user.is_enable 
 		FROM users user
@@ -517,7 +549,7 @@ class Model_User extends Model_Template {
 		JOIN user_livreur_dispo uld ON uld.uid = user.uid
 		JOIN distance_livreur_resto dlr ON dlr.id_restaurant = :restaurant AND dlr.id_dispo = uld.id
 		WHERE user.is_enable = 1 AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1) 
-		AND (uld.heure_debut > HOUR(CURRENT_TIME) OR (uld.heure_debut < HOUR(CURRENT_TIME) AND uld.heure_fin >= HOUR(CURRENT_TIME)))";
+		AND (uld.heure_debut >= HOUR(CURRENT_TIME) OR (uld.heure_debut < HOUR(CURRENT_TIME) AND uld.heure_fin >= HOUR(CURRENT_TIME)))";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $restaurant->id);
 		if (!$stmt->execute()) {
@@ -571,7 +603,7 @@ class Model_User extends Model_Template {
 		FROM users user
 		JOIN user_livreur ul ON ul.uid = user.uid
 		JOIN user_livreur_dispo uld ON uld.uid = user.uid
-		JOIN distance_livreur_resto dlr ON dlr.id_restaurant = :restaurant AND dlr.id_dispo = uld.id
+		JOIN distance_livreur_resto dlr ON dlr.id_restaurant = :restaurant AND dlr.id_dispo = uld.id AND dlr.perimetre <= uld.perimetre
 		JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
 		WHERE user.is_enable = 1 AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1) ";
 		if ($commande->heure_souhaite == -1) {
@@ -802,8 +834,10 @@ class Model_User extends Model_Template {
 		$this->is_enable = $value["is_enable"];
 		$this->telephone = $value["telephone"];
 		
-		$sql = "SELECT id, rue, ville, code_postal, latitude, longitude, perimetre, vehicule, id_jour, heure_debut, minute_debut, heure_fin, minute_fin 
-		FROM user_livreur_dispo WHERE uid = :id";
+		$sql = "SELECT uld.id, rue, ville, code_postal, latitude, longitude, perimetre, vehicule, id_jour, heure_debut, minute_debut, heure_fin, minute_fin, days.nom 
+		FROM user_livreur_dispo uld
+		JOIN days ON days.id = id_jour
+		WHERE uid = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -823,6 +857,7 @@ class Model_User extends Model_Template {
 			$dispo->perimetre = $disp['perimetre'];
 			$dispo->vehicule = $disp['vehicule'];
 			$dispo->id_jour = $disp['id_jour'];
+			$dispo->jour = $disp['nom'];
 			$dispo->heure_debut = $disp['heure_debut'];
 			$dispo->minute_debut = $disp['minute_debut'];
 			$dispo->heure_fin = $disp['heure_fin'];

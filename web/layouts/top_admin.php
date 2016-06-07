@@ -10,7 +10,6 @@
 			<a href="?action=index" class="logo">
 				<img id="logo" src="res/img/logo.png">
 			</a>
-			<img id="slogan" src="res/img/slogan.png">
 		</div>
 		<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
 			<ul class="menu nav navbar-nav">
@@ -19,8 +18,9 @@
 				<li><a href="?controler=user&action=livreurs">Livreurs</a></li>
 				<li><a href="?controler=user&action=clients">Clients</a></li>
 				<li><a href="?controler=commande">Commandes</a></li>
+				<li><a href="?controler=recherche">recherches</a></li>
+				<li><a href="?controler=mail">mails</a></li>
 				<li><a href="?controler=log">Log</a></li>
-				<li><a href="?action=compte">Mon compte</a></li>
 				<li><a href="?controler=cron">Cron</a></li>
 				<li><a href="?action=logout">deconnexion</a></li>
 			</ul>

@@ -127,10 +127,26 @@ class Controller_Compte extends Controller_Default_Template {
 	
 	public function reset_password ($request) {
 		if ($request->request_method == "POST") {
-			$model = new Model_User();
-			$model->id = trim($_POST["uid"]);
-			$model->password = trim($_POST["password"]);
-			$model->changePassword();
+			$errors = array();
+			$modelUser = new Model_User();
+			$modelUser->id = trim($_POST["uid"]);
+			$newPassword = trim($_POST["password"]);
+			$confirmPassword = trim($_POST["confirm_password"]);
+			if ($newPassword != $confirmPassword) {
+				$errors["DIFFERENT_PASSWORD"] = "Les champs mot de passe et confirmations sont différents.";
+			} else {
+				if ($modelUser->modifyPassword($newPassword) === false) {
+					$errors["MODIFY_ERROR"] = "Erreur lors de la modification du mot de passe, veuillez réessayer";
+				} else {
+					$request->modifyPasswordSuccess = true;
+				}
+			}
+			if (count($errors) > 0) {
+				$request->errorMessage = $errors;
+				$request->vue = $this->render("reset_password.php");
+			} else {
+				$request->vue = $this->render("reset_password_succes.php");
+			}
 		} else if ($request->request_method == "GET") {
 			$request->vue = $this->render("reset_password.php");
 		}

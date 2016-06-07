@@ -199,6 +199,7 @@ function boundToPoints (list) {
 	var bounds = new google.maps.LatLngBounds();
 	for (var i = 0; i < list.length; i++) {
 		var point = list[i];
+		console.log(point);
 		if (point.type == "HOME") {
 			if (point.adresse) {
 				codeAddress(point.adresse, "", bounds, false, 'res/img/home_marker_bleu.png');
@@ -213,7 +214,17 @@ function boundToPoints (list) {
 				map.fitBounds(bounds);
 			}
 		} else if (point.type == "ADRESSE") {
-			codeAddress(point.adresse, point.content, bounds);
+			if (point.adresse) {
+				codeAddress(point.adresse, point.content, bounds);
+			} else {
+				var position = new google.maps.LatLng(point.latitude,point.longitude);
+				var marker = new google.maps.Marker({
+					map: map,
+					position: position
+				});
+				bounds = bounds.extend(position);
+				map.fitBounds(bounds);
+			}
 		}
 	}
 }

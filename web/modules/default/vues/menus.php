@@ -42,7 +42,7 @@
 			var id_restaurant = $("#id_restaurant").val();
 			$.ajax({
 				type: "GET",
-				url: 'http://localhost/projets/homemenus/website/webservice/index.php?module=restaurant&action=menu&id='+id_restaurant+'&id_menu='+id_menu+'&ext=json',
+				url: '<?php echo WS_URL; ?>index.php?module=restaurant&action=menu&id='+id_restaurant+'&id_menu='+id_menu+'&ext=json',
 				dataType: "html"
 			}).done(function( msg ) {
 				console.log(msg);

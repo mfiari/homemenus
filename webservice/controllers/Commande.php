@@ -139,7 +139,11 @@ class Controller_Commande extends Controller_Template {
 		$commande = new Model_Commande();
 		$commande->id = $id_commande;
 		$result = $commande->getCommandeRestaurant();
-		require 'vue/restaurant/commande_get.'.$ext.'.php';
+		if (file_exists('vue/restaurant/commande_get.'.$ext.'.php')) {
+			require 'vue/restaurant/commande_get.'.$ext.'.php';
+		} else {
+			var_dump("file not exists ".'vue/restaurant/commande_get.'.$ext.'.php');
+		}
 	}
 	
 	private function validationRestaurant () {

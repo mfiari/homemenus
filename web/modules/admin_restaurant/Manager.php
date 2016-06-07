@@ -19,6 +19,16 @@ class Default_Manager {
 					$controller = new Controller_Commande();
 					$controller->manage($request);
 					break;
+				case "restaurant" :
+					include_once WEBSITE_PATH."modules/admin_restaurant/controllers/Restaurant.php";
+					$controller = new Controller_Restaurant();
+					$controller->manage($request);
+					break;
+				case "compte" :
+					include_once WEBSITE_PATH."modules/admin_restaurant/controllers/Compte.php";
+					$controller = new Controller_Compte();
+					$controller->manage($request);
+					break;
 			}
 		} else {
 			include_once WEBSITE_PATH."modules/admin_restaurant/controllers/Index.php";

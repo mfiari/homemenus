@@ -189,6 +189,8 @@ class Controller_Restaurant extends Controller_Admin_Template {
 					}
 				}
 				$this->redirect('index', 'restaurant');
+			} else {
+				var_dump($rd); die();
 			}
 		} else {
 			$request->title = "Administration - restaurant";
@@ -618,6 +620,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$modelSupplement->prix = $prix;
 			$modelSupplement->commentaire = $commentaire;
 			$modelSupplement->save();
+			$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
 		}
 	}
 	

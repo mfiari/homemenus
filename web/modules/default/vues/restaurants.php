@@ -1,26 +1,14 @@
 <h2>Liste des restaurants</h2>
-<span>(Si vous souhaitez commander dans un restaurant qui se trouve à plus de 15 km de chez vous, veuillez passer par la <a href="">commande spéciale</a>)</span>
 <div id="search-bar">
 	<form id="restaurant-filter-form" class="form-inline" action="?controler=restaurant&action=recherche" method="POST">
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-5">
 				<div class="form-group">
 					<label for="adresse">Adresse : </label>
 					<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Entrez votre adresse" value="<?php echo $request->search_adresse; ?>">
 				</div>
 			</div>
-			<div class="col-md-3">
-				<div class="form-group">
-					<label for="city">Ville : </label>
-					<select class="form-control search-filter" name="city">
-						<option value="">Tous</option>
-						<?php foreach ($request->villes as $ville) : ?>
-							<option value="<?php echo $ville; ?>" <?php echo $request->ville == $ville ? "selected" : ""; ?>><?php echo $ville; ?></option>
-						<?php endforeach; ?>
-					</select>
-				</div>
-			</div>
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<div class="form-group">
 					<label for="distance">Distance : </label>
 					<select class="form-control search-filter" name="distance">
@@ -30,10 +18,26 @@
 					</select>
 				</div>
 			</div>
+			<div class="col-md-3">
+				<?php if (count($request->restaurants) > 0) : ?>
+					<div class="form-group">
+						<label for="city">Ville : </label>
+						<select class="form-control search-filter" name="city">
+							<option value="">Tous</option>
+							<?php foreach ($request->villes as $ville) : ?>
+								<option value="<?php echo $ville; ?>" <?php echo $request->ville == $ville ? "selected" : ""; ?>><?php echo $ville; ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				<?php endif; ?>
+			</div>
+			<div class="col-md-2">
+				<button class="btn btn-primary" type="submit">Rechercher</button>
+			</div>
 		</div>
-		<div class="row search-more">
+		<!--<div class="row search-more">
 			<a>Plus de critère</a>
-		</div>
+		</div>-->
 		<div class="row advence-search">
 			<div class="col-md-2">
 				<div class="input-group">
@@ -68,12 +72,18 @@
 				<input id="field_tag_<?php echo $tag->id; ?>" name="tag_<?php echo $tag->id; ?>" type="checkbox" value="<?php echo $tag->id; ?>" <?php echo in_array($tag->id, $request->tagsFilter) ? 'checked' : ''; ?> style="display : none;" />
 			<?php endforeach; ?>
 		</div>
-		<div class="row search-button">
+		<!--<div class="row search-button">
 			<button class="btn btn-primary" type="submit">Rechercher</button>
-		</div>
+		</div>-->
 	</form>
 </div>
 <div id="restaurants">
+	<?php if (isset($_GET['avis_send']) && $_GET['avis_send'] == 'success') : ?>
+		<div class="alert alert-success" role="alert">
+			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+			Votre suggestion a bien été transmise aux équipes d'HoMe Menus
+		</div>
+	<?php endif; ?>
 	<?php $restaurantIds = array(); ?>
 	<?php if ($request->adressError) : ?>
 		<div class="alert alert-danger" role="alert">
@@ -85,7 +95,7 @@
 		<div class="alert alert-danger" role="alert">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 			<span class="sr-only">Error:</span>
-			Votre recherche n'a retourné aucun résultat.
+			Votre recherche n'a retourné aucun résultat. Peut-être devriez-vous augmenter la distance de recherche.
 		</div>
 	<?php else : ?>
 		<?php
@@ -93,47 +103,82 @@
 			$current_minute = date('i');
 			$indice = 0;
 		?>
-		<p><?php echo count($request->restaurants) ?> restaurants trouvés</p>
 		<?php foreach ($request->restaurants as $restaurant) : ?>
-			<?php $restaurantIds[] = $restaurant->id; ?>
 			<?php $horaire = $restaurant->horaire; ?>
-			<?php if ($indice %2 == 0) : ?>
-				<div class="row">
-			<?php endif; ?>
-			<div class="col-md-6 col-sm-12 item">
-				<span class="title">
-					<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
-						<?php echo utf8_encode($restaurant->nom); ?>
-					</a>
-				</span>
-				<?php if (!$restaurant->has_livreur_dispo) : ?>
-					<span class="closed">Pas de livreur disponible</span>
-				<?php elseif ($horaire->heure_debut <= $current_heure && $horaire->heure_fin >= $current_heure) : ?>
-					<span class="open">Ouvert</span>
-				<?php else : ?>
-					<span class="closed">Fermé</span>
+			<?php if ($horaire->heure_debut != '') : ?>
+				<?php if ($indice %4 == 0) : ?>
+					<div class="row">
 				<?php endif; ?>
-				<div class="logo_restaurant">
-					<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
-						<img src="res/img/restaurant/<?php echo $restaurant->logo; ?>">
-					</a>
+				<div class="col-md-3 col-sm-12 item">
+					<span class="title">
+						<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
+							<?php echo utf8_encode($restaurant->nom); ?>
+						</a>
+					</span>
+					<div class="logo_restaurant">
+						<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
+							<img src="res/img/restaurant/<?php echo $restaurant->logo; ?>">
+						</a>
+					</div>
+					<div class="col-md-12 center">
+						<p><?php echo utf8_encode($restaurant->short_desc); ?></p>
+					</div>
 				</div>
-				<div class="col-md-12 center">
-					<p><?php echo utf8_encode($restaurant->short_desc); ?></p>
-					<p><?php echo utf8_encode($restaurant->rue); ?>, <?php echo utf8_encode($restaurant->code_postal); ?> <?php echo utf8_encode($restaurant->ville); ?></p>
-					<p>Ouvert de <?php echo $horaire->heure_debut; ?>:<?php echo $horaire->minute_debut; ?> à <?php echo $horaire->heure_fin; ?>:<?php echo $horaire->minute_fin; ?></p>
-					<p>distance : <?php echo utf8_encode($restaurant->distance); ?> km</p>
-				</div>
-			</div>
-			<?php if ($indice %2 == 1) : ?>
-				</div>
+				<?php if ($indice %4 == 3) : ?>
+					</div>
+				<?php endif; ?>
+				<?php $indice++; ?>
 			<?php endif; ?>
-			<?php $indice++; ?>
 		<?php endforeach; ?>
-		<?php if ($indice %2 == 1) : ?>
+		<?php if ($indice %4 == 1) : ?>
 			</div>
 		<?php endif; ?>
 	<?php endif; ?>
+</div>
+<div>
+	<h3>Restaurants fermé aujourd'hui mais correspondant à votre recherche</h3>
+	<table class="table table-striped">
+		<tbody>
+			<?php foreach ($request->restaurants as $restaurant) : ?>
+				<?php $horaire = $restaurant->horaire; ?>
+				<?php if ($horaire->heure_debut == '') : ?>
+					<tr>
+						<td>
+							<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
+								<?php echo utf8_encode($restaurant->nom); ?>
+							</a>
+						</td>
+						<td><?php echo utf8_encode($restaurant->short_desc); ?></td>
+						<td><?php echo $restaurant->distance; ?> Km</td>
+					</tr>
+				<?php endif; ?>
+			<?php endforeach; ?>
+		</tbody>
+	</table>
+</div>
+<div>
+	<h3>Vous ne trouvez pas votre restaurant, faites nous part de vos suggestions</h3>
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+			<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="?controler=contact&action=avis">
+				<fieldset>
+					<div class="form-group">
+						<label for="sujet">Nom du restaurant<span class="required">*</span> : </label>
+						<input class="form-control" name="nom" type="text" value="" required>
+					</div>
+					<div class="form-group">
+						<label for="sujet">Ville du restaurant<span class="required">*</span> : </label>
+						<input class="form-control" name="ville" type="text" value="" required>
+					</div>
+					<div class="form-group">
+						<label for="sujet">Votre ville<span class="required">*</span> : </label>
+						<input class="form-control" name="ville_user" type="text" value="" required>
+					</div>
+					<button class="btn btn-primary" type="submit">Envoyer</button>
+				</fieldset>
+			</form>
+		</div>
+	</div>
 </div>
 <script type="text/javascript">
 	$(function() {
@@ -212,7 +257,7 @@
 </script>
 <style>
 	#full_address {
-		width: 450px;
+		width: 380px;
 	}
 	
 	.advence-search {
@@ -274,8 +319,8 @@
 	}
 	
 	.logo_restaurant img {
-		max-height: 180px;
-		max-width: 100%;
+		height: 120px;
+		width: 200px;
 	}
 	
 	.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }

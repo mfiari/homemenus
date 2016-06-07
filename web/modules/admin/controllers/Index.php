@@ -15,9 +15,6 @@ class Controller_Index extends Controller_Admin_Template {
 				case "index" :
 					$this->stats($request);
 					break;
-				case "compte" :
-					$this->compte($request);
-					break;
 				case "stats" :
 					$this->stats($request);
 					break;
@@ -34,11 +31,6 @@ class Controller_Index extends Controller_Admin_Template {
 		} else {
 			$this->stats($request);
 		}
-	}
-	
-	public function compte ($request) {
-		$request->title = "Administration";
-		$request->vue = $this->render("index.php");
 	}
 	
 	public function stats ($request) {

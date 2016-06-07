@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col-md-10  col-md-offset-1">
-		<h2>Inscription confirmé</h2>
+		<h2>Inscription confirmée</h2>
 		<div>
 			Votre compte a bien été activé.<br />
 		</div>

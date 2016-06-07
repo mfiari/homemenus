@@ -29,7 +29,7 @@
 				</div>
 				<div class="form-group">
 					<label for="ville">Commentaire : </label>
-					<textarea class="form-control" name="commentaire" ><?php echo $edit ? $request->contenu->commentaire : ""; ?></textarea>
+					<textarea class="form-control" name="commentaire" ><?php echo $edit ? utf8_encode($request->contenu->commentaire) : ""; ?></textarea>
 				</div>
 				<div id="formats">
 					<h3>Formats</h3>

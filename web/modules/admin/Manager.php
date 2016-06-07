@@ -29,6 +29,16 @@ class Admin_Manager {
 					$controller = new Controller_Commande();
 					$controller->manage($request);
 					break;
+				case "recherche" :
+					include_once WEBSITE_PATH."modules/admin/controllers/Recherche.php";
+					$controller = new Controller_Recherche();
+					$controller->manage($request);
+					break;
+				case "mail" :
+					include_once WEBSITE_PATH."modules/admin/controllers/Mail.php";
+					$controller = new Controller_Mail();
+					$controller->manage($request);
+					break;
 				case "log" :
 					include_once WEBSITE_PATH."modules/admin/controllers/Log.php";
 					$controller = new Controller_Log();

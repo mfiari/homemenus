@@ -10,7 +10,9 @@
 				</div>
 			<?php endforeach; ?>
 		<?php endif; ?>
-		<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?action=inscription">
+		<form method="post" enctype="x-www-form-urlencoded" action="">
+			<input name="uid" value="<?php echo $_GET['uid']; ?>" hidden="hidden" />
+			<input name="token" value="<?php echo $_GET['token']; ?>" hidden="hidden" />
 			<fieldset>
 				<div class="form-group">
 					<label for="password">Mot de passe<span class="required">*</span> : </label>
@@ -23,7 +25,7 @@
 				<div>
 					<span class="required">* Obligatoire</span>
 				</div>
-				<button id="subscribe-button" class="btn btn-primary" type="button">Valider</button>
+				<button id="subscribe-button" class="btn btn-primary" type="submit">Valider</button>
 			</fieldset>
 		</form>
 	</div>

@@ -8,9 +8,9 @@
 		<p>Le site <span id="span_id_nom_site">homemenus.fr</span> est édité par :</p>
 
 
-		<p><span id="span_id_nom_editeur">SASU XXX</span>, dont le siège social est situé à l'adresse suivante : 
+		<p><span id="span_id_nom_editeur">SASU HOME MENUS</span>, dont le siège social est situé à l'adresse suivante : 
 		<span id="span_id_adresse_siege_social_editeur">2 rue des aubépines 78440 Issou</span>, et immatriculée au registre suivant : 
-		<span id="span_id_immatriculation_editeur">XXXX</span>.</p>
+		<span id="span_id_immatriculation_editeur">81973136500014</span>.</p>
 		<p>Téléphone : <span id="span_id_n_de_telephone_de_la_societe">0637340348</span>/ 
 		Adresse e-mail : <span id="span_id_adresse_mail_editeur">contact@homemenus.fr</span>.</p>
 
@@ -30,7 +30,7 @@
 		<p>Pour toute question ou demande d'information concernant le site, ou tout signalement de contenu ou d'activités illicites, 
 		l'utilisateur peut contacter l'éditeur à l'adresse e-mail suivante: 
 		<span id="span_id_adresse_e_mail_de_contact_pour_le_dp">contact@homemenus.fr</span> ou adresser un courrier recommandé avec accusé de réception à : 
-		<span id="span_id_nom_editeur">SASU XXX</span> - <span id="span_id_adresse_siege_social_editeur">2 rue des aubépines 78440 Issou</span></p>
+		<span id="span_id_nom_editeur">SASU HOME MENUS</span> - <span id="span_id_adresse_siege_social_editeur">2 rue des aubépines 78440 Issou</span></p>
 		
 		<p><strong><br>ARTICLE 4. ACCEPTATION DES CONDITIONS D'UTILISATION</strong></p>
 		<p>L'accès et l'utilisation du site sont soumis à l'acceptation et au respect des présentes Conditions Générales d'Utilisation.</p>
@@ -114,7 +114,7 @@
 		
 		<p><br><strong>ARTICLE 10. COLLECTE DE DONNÉES</strong></p>
 		<p>Le site est déclaré à la Commission Nationale Informatique et Libertés (CNIL) sous le numéro 
-		<span id="span_id_numero_de_declaration_a_la_cnil" class="encours">XXXX</span> </p>
+		<span id="span_id_numero_de_declaration_a_la_cnil" class="encours">1954983</span> </p>
 		<p>En outre, le site est conforme aux dispositions de la Loi n° 78-17 du 6 janvier 1978 relative à l'informatique, aux fichiers et aux libertés. 
 		En vertu des dispositions de la loi précitée, l'utilisateur bénéficie, notamment, d'un droit d'opposition (articles 32 et 38), 
 		d'accès (articles 38 et 39) et de rectification (article 40) des données le concernant.</p>

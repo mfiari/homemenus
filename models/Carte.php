@@ -318,8 +318,10 @@ class Model_Carte extends Model_Template {
 			$accompagnement->limite = $acc["limite"];
 			$accompagnement->id_categorie = $acc["id_categorie"];
 			
-			$sql = "SELECT carte.id, carte.nom FROM carte JOIN carte_accompagnement_contenu cac WHERE carte.id = cac.id_accompagnement";
+			$sql = "SELECT carte.id, carte.nom FROM carte JOIN carte_accompagnement_contenu cac 
+			WHERE carte.id = cac.id_accompagnement AND cac.id_carte_accompagnement = :id";
 			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $accompagnement->id);
 			if (!$stmt->execute()) {
 				var_dump($stmt->errorInfo());
 				return false;

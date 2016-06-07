@@ -42,18 +42,12 @@
 		<div id="adress-search" class="col-md-8 col-md-offset-2">
 			<form id="adress-form" action="?controler=restaurant&action=recherche" method="POST">
 				<div class="input-group">
-					<?php
-						$adresse = "";
-						if ($request->_auth) {
-							$adresse = $request->_auth->rue.', '.$request->_auth->code_postal.' '.$request->_auth->ville;
-						}
-					?>
 					<div class="search-block">
-						<input id="full_address" class="form-control" name="adresse" type="text" value="<?php echo $adresse; ?>" placeholder="Entrez votre adresse">
+						<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Saisissez votre adresse de livraison">
 						<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
 					</div>
 					<span class="input-group-btn">
-						<button class="btn btn-primary" type="submit">Trouvez votre restaurant</button>
+						<button class="btn btn-primary" type="submit">Trouvez des restaurants</button>
 					</span>
 				</div>
 			</form>

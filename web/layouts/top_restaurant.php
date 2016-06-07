@@ -10,12 +10,11 @@
 			<a href="?action=index" class="logo">
 				<img id="logo" src="res/img/logo.png">
 			</a>
-			<span class="slogan">Vos envies sont servis</span>
 		</div>
 		<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
 			<ul class="menu nav navbar-nav">
 				<li><a href="?action=index">Accueil</a></li>
-				<li><a href="?controler=commande">Commandes</a></li>
+				<li><a href="?controler=commande">Commandes du jour</a></li>
 				<li><a href="?action=logout">deconnexion</a></li>
 			</ul>
 		</nav>

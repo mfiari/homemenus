@@ -1,9 +1,16 @@
 
 var formContent = {};
 
+var menuContainer;
+
 function initMenu (data) {
 	var restaurant = data.restaurant;
 	var menu = restaurant.menu;
+	
+	formContent.id_menu = menu.id;
+	formContent.id_restaurant = restaurant.id;
+	
+	$("#menu-modal .modal-content").html('');
 	
 	/* Setting header */
 	var modalHeader = $('<div />').addClass('modal-header').append('<button type="button" class="close" data-dismiss="modal">&times;</button>');
@@ -130,7 +137,7 @@ function validateFormule (formule) {
 function initCategorie (formule, index) {
 	if (formule.categories.length > index) {
 		var categorie = formule.categories[index];
-		var categorieDiv = $('<div />').attr('id', 'step-').append('<h3>Choisissez votre ' + categorie.nom + '</h3>');
+		var categorieDiv = $('<div />').css('max-height', '500px').css('overflow-y', 'auto').attr('id', 'step-').append('<h3>Choisissez votre ' + categorie.nom + '</h3>');
 		for (var j = 0 ; j < categorie.contenus.length ; j++) {
 			categorieDiv.append(
 				$('<div />').addClass('col-md-12').append(
@@ -142,9 +149,9 @@ function initCategorie (formule, index) {
 							}
 						)
 					).append(
-						$('<span />').html(categorie.contenus[j].carte.nom)
+						$('<span />').html(categorie.contenus[j].carte.nom).css('margin-left', '10px')
 					).append(
-						$('<img />').attr('src', categorie.contenus[j].carte.logo).css('width', '100px')
+						$('<img />').attr('src', categorie.contenus[j].carte.logo).css('width', '80px')
 					)
 				)
 			);
@@ -198,7 +205,7 @@ function validateCategorie (formule, index) {
 	$('#menu-resume').append(
 		$('<hr />')
 	).append(
-		$('<h3 />').html(formContent.categorie[index].nom)
+		$('<h4 />').html(formContent.categorie[index].nom)
 	).append(
 		$('<span />').html(formContent.categorie[index].contenu.nom)
 	);
@@ -223,39 +230,36 @@ function resume () {
 			})
 		).append(
 			$('<button />').addClass('btn btn-primary').html('Valider').click(function () {
+				
+				var sendData = {};
+				sendData.id_menu = formContent.id_menu;
+				sendData.id_restaurant = formContent.id_restaurant;
+				sendData.quantite = 1;
+				sendData.id_format = formContent.format.id;
+				sendData.id_formule = formContent.formule.id;
+				for (var i = 0 ; i < formContent.categorie.length ; i++) {
+					sendData['contenu_'+formContent.categorie[i].id] = formContent.categorie[i].contenu.id;
+				}
+				
+				$.ajax({
+					type: "POST",
+					url: "?controler=panier&action=addMenu",
+					dataType: "html",
+					data: sendData
+				}).done(function( msg ) {
+					$("#menu-modal .modal-footer .glyphicon-refresh-animate").css('display', 'none');
+					$("#menu-modal .modal-footer div.alert-success").css('display', 'inline-block');
+					setTimeout(function(){ 
+						$("#menu-modal").modal('hide');
+						location.reload();
+					}, 2000);
+				}).error(function(msg) {
+					$("#menu-modal .modal-footer .glyphicon-refresh-animate").css('display', 'none');
+					$("#menu-modal .modal-footer div.alert-danger").css('display', 'inline-block');
+				});
 			})
 		)
 	).before(stepper);
 	
 	initStepper ("stepper");
-	
-	/*var div = $('<div />');
-	if (formContent.chooseFormat) {
-		div.append(
-			$('<h3 />').html(formContent.format.nom + ' (' + formContent.format.prix + '€)')
-		);
-	}
-	if (formContent.chooseFormule) {
-		div.append(
-			$('<h3 />').html(formContent.formule.nom)
-		);
-	}
-	for (var i = 0 ; i < formContent.categorie.length ; i++) {
-		div.append(
-			$('<div />').append(
-				$('<h3 />').html(formContent.categorie[i].nom)
-			).append(
-				$('<span />').html(formContent.categorie[i].contenu.nom)
-			)
-		);
-	}
-	div.append(
-		$('<button />').addClass('btn btn-primary').html('Précédent').click(function () {
-		})
-	).append(
-		$('<button />').addClass('btn btn-primary').html('Valider').click(function () {
-		})
-	);
-	$('#menu-content').html('');
-	$('#menu-content').append(div);*/
 }

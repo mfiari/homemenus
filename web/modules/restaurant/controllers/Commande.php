@@ -42,8 +42,8 @@ class Controller_Commande extends Controller_Restaurant_Template {
 		$request->title = "Index";
 		$commande = new Model_Commande();
 		$commande->uid = $request->_auth->id;
-		$request->commandes = $commande->getCommandesRestaurant();
-		$request->vue = $this->render("index.php");
+		$request->commandes = $commande->getAllCommandesRestaurant();
+		$request->vue = $this->render("commandes.php");
 	}
 	
 	public function validation ($request) {

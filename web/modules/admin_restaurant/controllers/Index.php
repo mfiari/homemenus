@@ -34,7 +34,8 @@ class Controller_Index extends Controller_Admin_Restaurant_Template {
 		$modelRestaurant = new Model_Restaurant();
 		$uid = $request->_auth->id;
 		$request->restaurant = $modelRestaurant->loadByUser($uid);
-		$request->restaurant->loadModifications();
+		$modelUser = new Model_User();
+		$request->users = $modelUser->getByRestaurant($request->_restaurant->id);
 		$request->vue = $this->render("index.php");
 	}
 	

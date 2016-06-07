@@ -6,7 +6,7 @@
 				<h4 class="modal-title">J'ai oublié mon mot de passe</h4>
 			</div>
 			<div class="modal-body">
-				<p>Saisissez votre identifiant (adresse mail). Vous recevrez ensuite un mail vous permettant de renouveler votre mot de passe</p>
+				<p>Saisissez votre identifiant. Vous recevrez ensuite un mail vous permettant de renouveler votre mot de passe</p>
 				<form method="post" enctype="x-www-form-urlencoded" id="forgotPasswordForm" action="">
 					<div class="form-group">
 						<label for="login">email<span class="required">*</span> : </label>

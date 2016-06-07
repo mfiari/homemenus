@@ -10,7 +10,7 @@
 				</div>
 			<?php endforeach; ?>
 		<?php endif; ?>
-		<div class="col-md-9">
+		<div class="col-md-12">
 			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?action=compte">
 				<fieldset>
 					<div class="form-group">
@@ -47,7 +47,7 @@
 					<button id="subscribe-button" class="btn btn-primary" type="button">Modifier</button>
 				</fieldset>
 			</form>
-			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?action=compte">
+			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=compte&action=reset_password">
 				<h3>Modifier mon mot de passe</h3>
 				<fieldset>
 					<div class="form-group">
@@ -62,21 +62,21 @@
 						<label for="confirm_password">Confirmer Mot de passe : </label>
 						<input class="form-control" name="confirm_password" type="password" maxlength="32" required>
 					</div>
-					<button id="subscribe-button" class="btn btn-primary" type="button">Modifier</button>
+					<button id="subscribe-button" class="btn btn-primary" type="submit">Modifier</button>
 				</fieldset>
 			</form>
-			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=paypal&action=premium_subscribe">
+			<!--<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=paypal&action=premium_subscribe">
 				<h3>Souscrire au compte premium</h3>
 				<fieldset>
 					<a href="?controler=paypal&action=premium_subscribe" id="subscribe-button" class="btn btn-primary" type="button">Souscrire</a>
 				</fieldset>
-			</form>
+			</form>-->
 		</div>
-		<div class="col-md-3">
+		<!--<div class="col-md-3">
 			<ul>
 				<li>Mon solde</li>
 				<li><a href="?controler=compte&action=calendrier">Mon calendrier</a></li>
 			</ul>
-		</div>
+		</div>-->
 	</div>
 </div>

@@ -1,11 +1,6 @@
 <div class="col-md-12">
 	<h2>Commandes reçu <span class="badge"></span></h2>
 	<div id="commandes">
-		filter par : <select>
-			<option value="">Toutes</option>
-			<option value="recu">Reçu</option>
-			<option value="cours">En cours</option>
-		</select>
 		<table class="table table-striped">
 			<thead>
 				<tr>

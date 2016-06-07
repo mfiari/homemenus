@@ -49,8 +49,9 @@
 	foreach ($result->menus as $menu) {
 		$nodeMenu = $dom->createElement("menu");
 		$nodeMenu->setAttribute("id", $menu->id);
-		addTextNode ($dom, $nodeMenu, "nom", $menu->nom);
+		addTextNode ($dom, $nodeMenu, "nom", utf8_encode($menu->nom));
 		addTextNode ($dom, $nodeMenu, "quantite", $menu->quantite);
+		addTextNode ($dom, $nodeMenu, "prix", $menu->prix);
 		
 		$formats = $dom->createElement("formats");
 		foreach ($menu->formats as $format) {
@@ -88,7 +89,7 @@
 			
 			$formules->appendChild($nodeFormule);
 		}
-		$nodeMenu->appendChild($formats);
+		$nodeMenu->appendChild($formules);
 		
 		$menus->appendChild($nodeMenu);
 	}
@@ -101,6 +102,13 @@
 		addTextNode ($dom, $nodeCarte, "nom", utf8_encode($carte->nom));
 		addTextNode ($dom, $nodeCarte, "prix", $carte->prix);
 		addTextNode ($dom, $nodeCarte, "quantite", $carte->quantite);
+		
+		foreach ($carte->formats as $format) {
+			$nodeFormat = $dom->createElement("format");
+			$nodeFormat->setAttribute("id", $format->id);
+			addTextNode ($dom, $nodeFormat, "nom", utf8_encode($format->nom));
+			$nodeCarte->appendChild($nodeFormat);
+		}
 		
 		$nodeOptions = $dom->createElement("options");
 		foreach ($carte->options as $option) {

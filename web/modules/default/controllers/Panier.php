@@ -7,6 +7,9 @@ include_once ROOT_PATH."models/Horaire.php";
 include_once ROOT_PATH."models/Carte.php";
 include_once ROOT_PATH."models/Supplement.php";
 include_once ROOT_PATH."models/Menu.php";
+include_once ROOT_PATH."models/Formule.php";
+include_once ROOT_PATH."models/Contenu.php";
+include_once ROOT_PATH."models/Categorie.php";
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/GCMPushMessage.php";
 include_once ROOT_PATH."models/Format.php";
@@ -39,6 +42,12 @@ class Controller_Panier extends Controller_Default_Template {
 				case "removeMenu" :
 					$this->removeMenu($request);
 					break;
+				case "validate" :
+					$this->validate($request);
+					break;
+				case "finalisation" :
+					$this->finalisation($request);
+					break;
 				case "commande" :
 					$this->commande($request);
 					break;
@@ -50,7 +59,7 @@ class Controller_Panier extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$panier = new Model_Panier();
 		$panier->uid = $request->_auth->id;
-		$request->panier = $panier->load();
+		$request->panier = $panier->loadPanier();
 		if (isset($_SESSION['search_adresse'])) {
 			$request->adresse = $_SESSION['search_adresse'];
 		}
@@ -124,10 +133,8 @@ class Controller_Panier extends Controller_Default_Template {
 		$modelCarte->load();
 		$id_panier_carte = $panier->addCarte($id_carte, $format, $quantite);
 		foreach ($modelCarte->options as $option) {
-			foreach ($option->values as $value) {
-				if (isset($_POST['check_option_'.$option->id.'_'.$value->id])) {
-					$panier->addCarteOption($id_panier_carte, $option->id, $value->id);
-				}
+			if (isset($_POST['check_option_'.$option->id])) {
+				$panier->addCarteOption($id_panier_carte, $option->id, $_POST['check_option_'.$option->id]);
 			}
 		}
 		foreach ($modelCarte->accompagnements as $accompagnement) {
@@ -137,9 +144,7 @@ class Controller_Panier extends Controller_Default_Template {
 				}
 			}
 		}
-		$carte = $modelCarte->getSupplements();
-		foreach ($carte->supplements as $supplement) {
-			var_dump($supplement);
+		foreach ($modelCarte->supplements as $supplement) {
 			if (isset($_POST['check_supplement_'.$supplement->id])) {
 				$panier->addCarteSupplement($id_panier_carte, $supplement->id);
 			}
@@ -183,11 +188,9 @@ class Controller_Panier extends Controller_Default_Template {
 	public function addMenu ($request) {
 		if ($request->request_method != "POST") {
 			$this->error(405, "Method not allowed");
-			return;
 		}
 		if (!$request->_auth) {
 			$this->error(403, "Not authorized");
-			return;
 		}
 		if (!isset($_POST['id_menu'])) {
 			$this->error(400, "Bad request");
@@ -195,9 +198,9 @@ class Controller_Panier extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		$id_menu = $_POST['id_menu'];
+		$id_restaurant = $_POST['id_restaurant'];
 		$modelMenu = new Model_Menu();
 		$modelMenu->id = $id_menu;
-		$id_restaurant = $modelMenu->getRestaurant();
 		$panier = $this->initPanier ($request, $id_restaurant);
 		
 		$quantite = $_POST['quantite'];
@@ -246,6 +249,80 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 	}
 	
+	public function validate ($request) {
+		if ($request->request_method != "POST") {
+			$this->error(405, "Method not allowed");
+			return;
+		}
+		if (!$request->_auth) {
+			$this->error(403, "Not authorized");
+			return;
+		}
+		$rue = "";
+		$ville = "";
+		$code_postal = "";
+		if (isset($_POST['rue'])) {
+			$rue = $_POST['rue'];
+		}
+		if (isset($_POST['ville'])) {
+			$ville = $_POST['ville'];
+		}
+		if (isset($_POST['code_postal'])) {
+			$code_postal = $_POST['code_postal'];
+		}
+		if (isset($_POST['telephone'])) {
+			$telephone = $_POST['telephone'];
+		}
+		$heure_commande = -1;
+		$minute_commande = 0;
+		if ((isset($_POST['type']) && $_POST['type'] == "pre_commande") || (!isset($_POST['type']) && isset($_POST['heure_commande'])) ) {
+			$heure_commande = $_POST['heure_commande'];
+			$minute_commande = $_POST['minute_commande'];
+		}
+		
+		$panier = new Model_Panier();
+		$panier->uid = $request->_auth->id;
+		
+		
+		$restaurant = new Model_Restaurant();
+		$restaurant->id = $panier->getRestaurant();
+		$fields = array ("latitude", "longitude");
+		$restaurant->get($fields);
+		$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
+		
+		$adresse = $rue.', '.$code_postal.' '.$ville;
+		$geocoder = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false";
+		$localisation = urlencode($adresse);
+		$query = sprintf($geocoder,$localisation);
+		$rd = json_decode(file_get_contents($query));
+		
+		if ($rd->{'status'} == "OK") {
+			$coord = $rd->{'results'}[0]->{'geometry'}->{'location'};
+			$user_latitude = $coord->{'lat'};
+			$user_longitude = $coord->{'lng'};
+			
+			$adresseUser = $user_latitude.','.$user_longitude;
+			
+			$result = getDistance($adresseUser, $adresseResto);
+			$distance = 0;
+			if ($result['status'] == "OK") {
+				$distance = $result['distance'] / 1000;
+			}
+			
+			
+			$panier->validate($rue, $ville, $code_postal, $telephone, $heure_commande, $minute_commande, $distance);
+			
+			$result = array();
+			$result['distance'] = $distance;
+			
+			$request->disableLayout = true;
+			$request->noRender = true;
+			echo json_encode($result);
+		} else {
+			$this->error(404, "Not found");
+		}
+	}
+	
 	public function commande ($request) {
 		if ($request->request_method != "POST") {
 			$this->error(405, "Method not allowed");
@@ -284,5 +361,92 @@ class Controller_Panier extends Controller_Default_Template {
 		$panier = new Model_Panier();
 		$panier->uid = $request->_auth->id;
 		$panier->validate($rue, $ville, $code_postal, $telephone, $heure_commande, $minute_commande);
+	}
+	
+	public function finalisation ($request) {
+		$panier = new Model_Panier();
+		$panier->uid = $request->_auth->id;
+		$request->panier = $panier->load();
+		$request->vue = $this->render("panier_validate.php");
+	}
+	
+	public function valideCarte () {
+		
+		$panier = new Model_Panier();
+		$panier->uid = $request->_auth->id;
+		$panier = $panier->load();
+		
+		$totalPrix = 0;
+		
+		foreach ($panier->carteList as $carte) {
+			$totalPrix += $carte->prix;
+		}
+		
+		foreach ($panier->menuList as $menu) {
+			$totalPrix += $menu->prix;
+		}
+		
+		$totalPrix += $panier->prix_livraison;
+		
+		require_once WEBSITE_PATH.'res/lib/stripe/init.php';
+		if (isset($_POST['stripeToken'])) {
+			\Stripe\Stripe::setApiKey("sk_live_SMEkTXt4kmuUgkQoBdGBSaOD");
+
+			// Get the credit card details submitted by the form
+			$token = $_POST['stripeToken'];
+
+			// Create the charge on Stripe's servers - this will charge the user's card
+			try {
+			  $charge = \Stripe\Charge::create(array(
+				"amount" => $totalPrix * 100, // amount in cents, again
+				"currency" => "eur",
+				"source" => $token,
+				"description" => "validation commande user ".$request->_auth->id
+				));
+				
+				$panier = new Model_Panier();
+				$panier->uid = $request->_auth->id;
+				$panier->init();
+				$commande = new Model_Commande();
+				if ($commande->create($panier)) {
+					$panier->remove();
+					$user = new Model_User();
+					
+					$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
+					if (count($restaurantUsers) > 0) {
+						$registatoin_ids = array();
+						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+						foreach ($restaurantUsers as $restaurantUser) {
+							array_push($registatoin_ids, $restaurantUser->gcm_token);
+						}
+						$message = "Vous avez reçu une nouvelle commande";
+						// listre des utilisateurs à notifier
+						$gcm->setDevices($registatoin_ids);
+					 
+						// Le titre de la notification
+						$data = array(
+							"title" => "Nouvelle commande",
+							"key" => "restaurant-new-commande",
+							"id_commande" => $commande->id
+						);
+					 
+						// On notifie nos utilisateurs
+						$result = $gcm->send($message, $data);
+						//$result = $gcm->send('/topics/restaurant-commande',$message, $data);
+					}
+					
+					$messageContent =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
+					
+					$messageContent = str_replace("[COMMANDE_ID]", $commande->id, $messageContent);
+					
+					send_mail (MAIL_ADMIN, "Nouvelle commande", $messageContent);
+					
+				}
+				$request->vue = $this->render("paypal_success.php");
+				
+			} catch(\Stripe\Error\Card $e) {
+				
+			}
+		}
 	}
 }

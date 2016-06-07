@@ -26,6 +26,9 @@ class Controller_Commande extends Controller_Admin_Restaurant_Template {
 				case "facture" :
 					$this->facture($request);
 					break;
+				case "history" :
+					$this->history($request);
+					break;
 			}
 		} else {
 			$this->index($request);
@@ -34,21 +37,9 @@ class Controller_Commande extends Controller_Admin_Restaurant_Template {
 	
 	public function index ($request) {
 		$request->title = "Index";
-		$debut = null;
-		$fin = null;
-		if (isset($_POST['date_debut']) && $_POST['date_debut'] != '') {
-			$debut = trim($_POST['date_debut']);
-			$request->date_debut = $debut;
-			$debut = datepickerToDatetime($debut);
-		}
-		if ($debut != null && isset($_POST['date_fin']) && $_POST['date_fin'] != '') {
-			$fin = trim($_POST['date_fin']);
-			$request->date_fin = $fin;
-			$fin = datepickerToDatetime($fin);
-		}
 		$commande = new Model_Commande();
 		$commande->uid = $request->_auth->id;
-		$request->commandes = $commande->getCommandeRestaurantByDate($debut, $fin);
+		$request->commandes = $commande->getAllCommandesRestaurant();
 		$request->vue = $this->render("commandes.php");
 	}
 	
@@ -74,5 +65,25 @@ class Controller_Commande extends Controller_Admin_Restaurant_Template {
 		$pdf = new PDF ();
 		$pdf->generateFactureRestaurant($commande);
 		$pdf->render();
+	}
+	
+	public function history ($request) {
+		$request->title = "Index";
+		$debut = null;
+		$fin = null;
+		if (isset($_POST['date_debut']) && $_POST['date_debut'] != '') {
+			$debut = trim($_POST['date_debut']);
+			$request->date_debut = $debut;
+			$debut = datepickerToDatetime($debut);
+		}
+		if ($debut != null && isset($_POST['date_fin']) && $_POST['date_fin'] != '') {
+			$fin = trim($_POST['date_fin']);
+			$request->date_fin = $fin;
+			$fin = datepickerToDatetime($fin);
+		}
+		$commande = new Model_Commande();
+		$commande->uid = $request->_auth->id;
+		$request->commandes = $commande->getAllCommandesRestaurant();
+		$request->vue = $this->render("commandes_history.php");
 	}
 }

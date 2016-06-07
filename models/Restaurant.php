@@ -15,6 +15,7 @@ class Model_Restaurant extends Model_Template {
 	private $latitude;
 	private $longitude;
 	private $short_desc;
+	private $long_desc;
 	private $distance;
 	private $pourcentage;
 	private $virement;
@@ -288,16 +289,16 @@ class Model_Restaurant extends Model_Template {
 		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, 
 		rh.heure_fin, rh.minute_fin
 		FROM restaurants r 
-		JOIN restaurant_horaires rh ON rh.id_restaurant = r.id";
+		LEFT JOIN restaurant_horaires rh ON rh.id_restaurant = r.id";
 		if (isset($filters['search_date'])) {
 			$sql .= " AND rh.id_jour = WEEKDAY('".$filters['search_date']."')+1";
 		} else {
 			$sql .= " AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1";
 		}
 		if (isset($filters['search_hour']) && isset($filters['search_minute'])) {
-			$sql .= ' AND (rh.heure_debut > '.$filters['search_hour'].' OR (rh.heure_debut < '.$filters['search_hour'].' AND rh.heure_fin >= '.$filters['search_hour'].'))';
+			$sql .= ' AND (rh.heure_debut >= '.$filters['search_hour'].' OR (rh.heure_debut < '.$filters['search_hour'].' AND rh.heure_fin >= '.$filters['search_hour'].'))';
 		} else {
-			$sql .= " AND (rh.heure_debut > HOUR(CURRENT_TIME) OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin >= HOUR(CURRENT_TIME)))";
+			$sql .= " AND (rh.heure_debut >= HOUR(CURRENT_TIME) OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin >= HOUR(CURRENT_TIME)))";
 		}
 		if (isset($filters['tagsFilter']) && count($filters['tagsFilter']) > 0) {
 			$sql .= ' JOIN restaurant_tag rt ON rt.id_restaurant = r.id AND rt.id_tag IN ('.implode(',', $filters['tagsFilter']).')';
@@ -343,10 +344,11 @@ class Model_Restaurant extends Model_Template {
 		return $list;
 	}
 	
-	public function load () {
-		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin
+	public function loadAll () {
+		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.long_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, 
+		rh.heure_fin, rh.minute_fin
 		FROM restaurants r 
-		JOIN restaurant_horaires rh ON rh.id_restaurant = r.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
+		LEFT JOIN restaurant_horaires rh ON rh.id_restaurant = r.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
 		OR ((rh.heure_debut < HOUR(CURRENT_TIME) OR (rh.heure_debut = HOUR(CURRENT_TIME) AND rh.minute_debut <= MINUTE(CURRENT_TIME))) 
 		AND (rh.heure_fin > HOUR(CURRENT_TIME) OR (rh.heure_fin = HOUR(CURRENT_TIME) AND rh.minute_fin > MINUTE(CURRENT_TIME)))))
 		WHERE r.id = :id
@@ -363,6 +365,83 @@ class Model_Restaurant extends Model_Template {
 		$this->ville = $value['ville'];
 		$this->code_postal = $value['code_postal'];
 		$this->short_desc = $value['short_desc'];
+		$this->long_desc = $value['long_desc'];
+		$this->latitude = $value['latitude'];
+		$this->longitude = $value['longitude'];
+		$horaire = new Model_Horaire(false);
+		$horaire->id_jour = $value['id_jour'];
+		$horaire->heure_debut = $value['heure_debut'];
+		$horaire->minute_debut = $value['minute_debut'];
+		$horaire->heure_fin = $value['heure_fin'];
+		$horaire->minute_fin = $value['minute_fin'];
+		$this->horaire = $horaire;
+		
+		$sql = "SELECT id, nom FROM restaurant_categorie WHERE id_restaurant = :id AND parent_categorie = 0 ORDER BY ordre";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			return false;
+		}
+		$categories = $stmt->fetchAll();
+		foreach ($categories as $c) {
+			$categorie = new Model_Categorie();
+			$categorie->id = $c["id"];
+			$categorie->nom = $c["nom"];
+						
+			$childrens = $categorie->getChildren();
+			if (count($childrens) > 0) {
+				foreach ($childrens as $children) {
+					$children->loadContenu($this->id);
+					$children->parent_categorie = $categorie;
+					$this->categories[] = $children;
+				}
+			} else {
+				$categorie->loadContenu($this->id);
+				$this->categories[] = $categorie;
+			}
+		}
+		$sql = "SELECT id, nom, commentaire, (SELECT MIN(mf.prix) FROM menu_format mf WHERE mf.id_menu = menus.id) AS prix 
+		FROM menus WHERE id_restaurant = :id ORDER BY ordre";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			return false;
+		}
+		$menus = $stmt->fetchAll();
+		foreach ($menus as $m) {
+			$menu = new Model_Menu();
+			$menu->id = $m["id"];
+			$menu->nom = $m["nom"];
+			$menu->prix = $m["prix"];
+			$menu->commentaire = $m["commentaire"];
+			$menu->getLogo($this->id);
+			$this->menus[] = $menu;
+		}
+		return $this;
+	}
+	
+	public function load () {
+		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.long_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, 
+		rh.heure_fin, rh.minute_fin
+		FROM restaurants r 
+		LEFT JOIN restaurant_horaires rh ON rh.id_restaurant = r.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
+		OR ((rh.heure_debut < HOUR(CURRENT_TIME) OR (rh.heure_debut = HOUR(CURRENT_TIME) AND rh.minute_debut <= MINUTE(CURRENT_TIME))) 
+		AND (rh.heure_fin > HOUR(CURRENT_TIME) OR (rh.heure_fin = HOUR(CURRENT_TIME) AND rh.minute_fin > MINUTE(CURRENT_TIME)))))
+		WHERE r.id = :id
+		GROUP BY r.id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		$this->id = $value['id'];
+		$this->nom = $value['nom'];
+		$this->rue = $value['rue'];
+		$this->ville = $value['ville'];
+		$this->code_postal = $value['code_postal'];
+		$this->short_desc = $value['short_desc'];
+		$this->long_desc = $value['long_desc'];
 		$this->latitude = $value['latitude'];
 		$this->longitude = $value['longitude'];
 		$horaire = new Model_Horaire(false);
@@ -593,7 +672,7 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function loadSupplements () {
-		$sql = "SELECT id, nom, prix, commentaire FROM supplement WHERE id_restaurant = :id";
+		$sql = "SELECT id, nom, prix, commentaire FROM supplements WHERE id_restaurant = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -777,6 +856,19 @@ class Model_Restaurant extends Model_Template {
 			$list[] = $restaurant;
 		}
 		return $list;
+	}
+	
+	public function hasMenu () {
+		$sql = "SELECT COUNT(*) AS nb_menu FROM menus WHERE id_restaurant = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		return $value !== false && $value['nb_menu'] > 0;
 	}
 	
 	public function isOpen () {

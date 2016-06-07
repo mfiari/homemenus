@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col-md-12">
-		<h1><?php echo $request->restaurant->nom; ?> : <?php echo $request->categorie->nom; ?></h1>
+		<h1><?php echo utf8_encode($request->restaurant->nom); ?> : <?php echo utf8_encode($request->categorie->nom); ?></h1>
 		<a class="btn btn-primary" href="?controler=restaurant&action=view&id_restaurant=<?php echo $request->restaurant->id; ?>">
 			<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 		</a>

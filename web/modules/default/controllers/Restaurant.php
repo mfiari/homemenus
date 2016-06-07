@@ -3,6 +3,7 @@
 include_once ROOT_PATH."function.php";
 
 include_once ROOT_PATH."models/Template.php";
+include_once ROOT_PATH."models/Panier.php";
 include_once ROOT_PATH."models/User.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Horaire.php";
@@ -17,6 +18,7 @@ include_once ROOT_PATH."models/Tag.php";
 include_once ROOT_PATH."models/Option.php";
 include_once ROOT_PATH."models/OptionValue.php";
 include_once ROOT_PATH."models/Accompagnement.php";
+include_once ROOT_PATH."models/Recherche.php";
 
 class Controller_Restaurant extends Controller_Default_Template {
 	
@@ -58,15 +60,44 @@ class Controller_Restaurant extends Controller_Default_Template {
 	}
 	
 	public function index ($request) {
-		if (isset($_GET['id'])) {
+		if (isset($_GET['id']) && isset($_SESSION['search_adresse'])) {
+			
 			$request->title = "Restaurant";
 			$modelRestaurant = new Model_Restaurant();
 			$modelRestaurant->id = $_GET['id'];
-			$request->restaurant = $modelRestaurant->load();
-			$modelCategorie = new Model_Categorie();
-			$request->restaurant->categories = $modelCategorie->getParentContenu($request->restaurant->id);
+			$request->restaurant = $modelRestaurant->loadAll();
+			
+			$modelUser = new Model_User();
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($request->restaurant);
+			$request->restaurant->has_livreur_dispo = count($livreurs) > 0;
+			
+			$adresseUser = $_SESSION['search_latitude'].','.$_SESSION['search_longitude'];
+			$adresseResto = $request->restaurant->latitude.','.$request->restaurant->longitude;
+			$result = getDistance($adresseUser, $adresseResto);
+			//var_dump($result); die();
+			if ($result['status'] == "OK") {
+				$distanceRestoKm = $result['distance'] / 1000;
+				$request->restaurant->distance = $distanceRestoKm;
+			}
+			
+			$panier = new Model_Panier();
+			$panier->uid = $request->_auth->id;
+			$request->panier = $panier->loadPanier();
+			if (isset($_SESSION['search_adresse'])) {
+				$request->adresse = $_SESSION['search_adresse'];
+			}
+			if (isset($_SESSION['search_ville'])) {
+				$request->ville = $_SESSION['search_ville'];
+			}
+			if (isset($_SESSION['search_cp'])) {
+				$request->codePostal = $_SESSION['search_cp'];
+			}
+			if (isset($_SESSION['search_rue'])) {
+				$request->rue = $_SESSION['search_rue'];
+			}
 			$request->search_adresse = $_SESSION['search_adresse'];
-			$request->vue = $this->render("restaurant.php");
+			$request->javascripts = array("res/js/menu.js");
+			$request->vue = $this->render("restaurant/restaurant.php");
 		} else {
 			$this->redirect();
 		}		
@@ -94,7 +125,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			if (isset($_POST["distance"]) && $_POST["distance"] != "") {
 				$filter["distanceKm"] = $_POST["distance"];
 			} else {
-				$filter["distanceKm"] = 5;
+				$filter["distanceKm"] = 15;
 			}
 			$modelRestaurant = new Model_Restaurant();
 		
@@ -132,6 +163,17 @@ class Controller_Restaurant extends Controller_Default_Template {
 		$rd = json_decode(file_get_contents($query));
 		/*var_dump($rd);
 		var_dump($rd->{'status'}); die();*/
+		
+		$recherche = new Model_Recherche();
+		$recherche->recherche = $filter["search_adresse"];
+		$recherche->distance = $filter["distanceKm"];
+		if (isset($filter["ville"])) {
+			$recherche->ville = $filter["ville"];
+		}
+		if ($request->_auth) {
+			$recherche->user = $request->_auth;
+		}
+		
 		if ($rd->{'status'} == "OK") {
 			$addressComponents = $rd->{'results'}[0]->{'address_components'};
 			$codePostal = "";
@@ -160,7 +202,6 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$_SESSION['search_longitude'] = $user_longitude;
 			$availableRestaurant = array();
 			$adresseUser = $user_latitude.','.$user_longitude;
-			$modelUser = new Model_User();
 			foreach ($restaurants as $restaurant) {
 				if ($restaurant->latitude != 0 && $restaurant->longitude != 0) {
 					$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
@@ -171,10 +212,9 @@ class Controller_Restaurant extends Controller_Default_Template {
 						if ($distanceRestoKm < $distanceKm) {
 							$restaurant->distance = $distanceRestoKm;
 							$availableRestaurant[] = $restaurant;
+							$recherche->addRestaurant($restaurant);
 						}
 					}
-					$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
-					$restaurant->has_livreur_dispo = count($livreurs) > 0;
 				}
 			}
 			$restaurants = $availableRestaurant;
@@ -185,6 +225,8 @@ class Controller_Restaurant extends Controller_Default_Template {
 		} else {
 			$request->adressError = true;
 		}
+		$recherche->save();
+		
 		$request->ouvert = true;
 		$request->distance = $distanceKm;
 		$request->ville = $city;

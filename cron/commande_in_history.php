@@ -8,6 +8,9 @@
 	include_once ROOT_PATH."models/User.php";
 	include_once ROOT_PATH."models/Restaurant.php";
 	include_once ROOT_PATH."models/CommandeHistory.php";
+	include_once ROOT_PATH."models/Menu.php";
+	include_once ROOT_PATH."models/Formule.php";
+	include_once ROOT_PATH."models/Contenu.php";
 	include_once ROOT_PATH."models/Carte.php";
 	include_once ROOT_PATH."models/Format.php";
 	include_once ROOT_PATH."models/Categorie.php";

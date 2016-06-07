@@ -6,11 +6,6 @@
 	<?php if ($request->panier) : ?>
 		<form method="post" enctype="x-www-form-urlencoded" id="panierForm" action="">
 			<input type="hidden" id="id_panier" name="id_panier" value="<?php echo $request->panier->id; ?>" />
-			<input id="commande_adresse" class="form-control" name="adresse" type="text" value="<?php echo $request->adresse; ?>" disabled>
-			<input id="rue" name="rue" type="text" value="<?php echo $request->rue; ?>" hidden="hidden">
-			<input id="ville" name="ville" type="text" value="<?php echo $request->ville; ?>" hidden="hidden">
-			<input id="code_postal" name="code_postal" type="text" value="<?php echo $request->codePostal; ?>" hidden="hidden">
-			<input id="telephone" class="form-control" name="telephone" type="text" value="<?php echo $request->_auth->telephone; ?>" placeholder="Numéro de téléphone">
 			<?php
 				$current_heure = date('G')+1;
 				$current_minute = date('i');
@@ -18,9 +13,11 @@
 			?>
 			<div>
 				<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
-					<span style="color : red;">Les restaurant est actuellement fermé</span><br />
-					<span style="color : red;">Ouverture de <?php echo $horaire->heure_debut; ?>:<?php echo $horaire->minute_debut; ?> à <?php echo $horaire->heure_fin; ?>:<?php echo $horaire->minute_fin; ?></span><br />
-					<span>heure de commande</span>
+					<span style="color : red;">
+						Le <?php echo utf8_encode($request->panier->restaurant->nom); ?> est actuellement fermé. Ouverture
+							de <?php echo formatHeureMinute($horaire->heure_debut, $horaire->minute_debut); ?> 
+							à <?php echo formatHeureMinute($horaire->heure_fin, $horaire->minute_fin); ?></span><br /><br />
+					<span><b>heure de livraison souhaité : </b></span>
 					<?php 
 						if ($horaire->heure_debut < $current_heure) {
 							$beginHour = $current_heure;
@@ -60,12 +57,12 @@
 						<?php endfor; ?>
 					</select>
 				<?php endif; ?>
-			</div>
+			</div><br />
 			<div class="panel panel-default panel-primary">
 				<div class="panel-heading">
 					Restaurant <?php echo utf8_encode($request->panier->restaurant->nom); ?>
 				</div>
-				<div>
+				<div style="max-height : 300px; overflow : auto;">
 					<?php $totalQte = 0; ?>
 					<?php $totalPrix = 0; ?>
 					<table class="table table-striped">
@@ -75,7 +72,6 @@
 								<th>Quantité</th>
 								<th>prix</th>
 								<th></th>
-								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -84,7 +80,6 @@
 									<td><?php echo utf8_encode($carte->nom); ?></td>
 									<td><?php echo $carte->quantite; ?></td>
 									<td><?php echo $carte->prix; ?> €</td>
-									<td><a class="carte-item-show" data-id="<?php echo $carte->id; ?>"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a></td>
 									<td><a class="carte-item-delete" data-id="<?php echo $carte->id; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
 								</tr>
 								<?php $totalQte += $carte->quantite; ?>
@@ -95,7 +90,6 @@
 									<td><?php echo utf8_encode($menu->nom); ?></td>
 									<td><?php echo $menu->quantite; ?></td>
 									<td><?php echo $menu->prix; ?> €</td>
-									<td><a class="menu-item-show" data-id="<?php echo $menu->id; ?>"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a></td>
 									<td><a class="menu-item-delete" data-id="<?php echo $menu->id; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
 								</tr>
 								<?php $totalQte += $menu->quantite; ?>
@@ -112,7 +106,6 @@
 								<td></td>
 								<td><?php echo $prix_livraison; ?> €</td>
 								<td></td>
-								<td></td>
 							</tr>
 							<?php $totalPrix += $prix_livraison; ?>
 						</tbody>
@@ -122,14 +115,10 @@
 								<th><?php echo $totalQte; ?></th>
 								<th><?php echo $totalPrix; ?> €</th>
 								<td></td>
-								<td></td>
 							</tr>
 						</tfoot>
 					</table>
 				</div>
-			</div>
-			<div>
-				<input type="checkbox" /> Avant de continuer, vous devez accepter les <a href="?action=cgv">conditions générales de vente</a>.
 			</div>
 		</form>
 	<?php else : ?>
@@ -139,7 +128,7 @@
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
 	<?php if ($request->panier) : ?>
-		<?php if ($request->panier->prix_minimum > $totalPrix) : ?>
+		<?php if ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
 			<div class="alert alert-danger" role="alert">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 				<span class="sr-only">Error:</span>
@@ -153,19 +142,29 @@
 			<?php endif; ?>
 		<?php endif; ?>
 	<?php endif; ?>
+	<div id="accept_cgv_error_message" class="alert alert-danger" role="alert" style="display : none;">
+		<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		<span class="sr-only">Error:</span>
+		Vous devez accepter les conditions générales de vente pour pouvoir continuer
+	</div>
 </div>
 <script type="text/javascript">
 	$("#command").click(function(event) {
 		event.preventDefault();
-		$.ajax({
-			type: "POST",
-			url: "?controler=panier&action=commande",
-			dataType: "html",
-			data: $("#panierForm").serialize()
-		}).done(function( msg ) {
-			$("#panier-modal").modal('hide');
-			document.location.href="?controler=paypal"
-		});
+		document.location.href="?controler=panier&action=validate";
+		/*if ($("#accept_cgv").is(":checked")) {
+			$.ajax({
+				type: "POST",
+				url: "?controler=panier&action=commande",
+				dataType: "html",
+				data: $("#panierForm").serialize()
+			}).done(function( msg ) {
+				$("#panier-modal").modal('hide');
+				document.location.href="?controler=paypal"
+			});
+		} else {
+			$("#accept_cgv_error_message").show();
+		}*/
 	});
 	$(".carte-item-show").click(function(event) {
 		var id_panier = $("#id_panier").val();

@@ -12,6 +12,7 @@ class Model_Dispo extends Model_Template {
 	private $perimetre;
 	private $vehicule;
 	private $id_jour;
+	private $jour;
 	private $heure_debut;
 	private $minute_debut;
 	private $heure_fin;

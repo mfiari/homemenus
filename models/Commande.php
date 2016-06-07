@@ -431,7 +431,7 @@ class Model_Commande extends Model_Template {
 		$this->livreur->id = $value['id_livreur'];
 		$this->livreur->prenom = $value['prenom_livreur'];
 		$this->livreur->latitude = $value['lat_livreur'];
-		$this->livreur->lon_livreur = $value['lon_livreur'];
+		$this->livreur->longitude = $value['lon_livreur'];
 		$this->livreur->is_ready = $value['livreur_ready'];
 		$this->date_commande = $value['date_commande'];
 		$this->heure_souhaite = $value['heure_souhaite'];
@@ -485,7 +485,69 @@ class Model_Commande extends Model_Template {
 			$this->cartes[] = $carte;
 		}
 		
-		$sql = "SELECT menu.id, menu.nom, cm.quantite
+		
+		$sql = "SELECT cm.id AS id, menu.id AS id_menu, menu.nom AS nom_menu, format.id AS id_format, format.nom AS nom_format, cm.quantite, mf.prix
+		FROM commande_menu cm
+		JOIN menus menu ON menu.id = cm.id_menu
+		JOIN restaurant_format format ON format.id = cm.id_format
+		JOIN menu_format mf ON mf.id_menu = menu.id AND mf.id_format = format.id
+		WHERE cm.id_commande = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			var_dump($stmt->errorInfo());
+			return false;
+		}
+		$listCommandeMenu = $stmt->fetchAll();
+		foreach ($listCommandeMenu as $commandeMenu) {
+			$menu = new Model_Menu(false);
+			$menu->id = $commandeMenu['id_menu'];
+			$menu->nom = $commandeMenu['nom_menu'];
+			$menu->quantite = $commandeMenu['quantite'];
+			$menu->prix = $commandeMenu['prix'] * $commandeMenu['quantite'];
+			
+			$format = new Model_Format();
+			$format->id = $commandeMenu['id_format'];
+			$format->nom = $commandeMenu['nom_format'];
+			
+			$menu->addFormat($format);
+			
+			$formule = new Model_Formule();
+			$formule->id = 0;
+			$formule->nom = 'formule';
+			
+			$menu->addFormule($formule);
+			
+			$sql = "SELECT cmc.id AS id, menu_cat.id AS id_categorie, menu_cat.nom AS nom_categorie, carte.id AS id_carte, carte.nom AS nom_carte
+			FROM commande_menu_contenu cmc 
+			JOIN menu_contenu mc ON mc.id = cmc.id_contenu
+			JOIN menu_categorie menu_cat ON menu_cat.id = mc.id_menu_categorie
+			JOIN carte ON carte.id = mc.id_carte
+			WHERE cmc.id_commande_menu = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $commandeMenu['id']);
+			if (!$stmt->execute()) {
+				var_dump($stmt->errorInfo());
+				return false;
+			}
+			$listCommandeContenu = $stmt->fetchAll();
+			foreach ($listCommandeContenu as $commandeContenu) {
+				$categorie = new Model_Categorie(false);
+				$categorie->id = $commandeContenu['id_categorie'];
+				$categorie->nom = $commandeContenu['nom_categorie'];
+				
+				$contenu = new Model_Contenu(false);
+				$contenu->id = $commandeContenu['id_carte'];
+				$contenu->nom = $commandeContenu['nom_carte'];
+				
+				$categorie->addContenu($contenu);
+				
+				$formule->addCategorie($categorie);
+			}
+			$this->menus[] = $menu;
+		}
+		
+		/*$sql = "SELECT menu.id, menu.nom, cm.quantite
 		FROM commande_menu cm 
 		JOIN menus menu ON menu.id = cm.id_menu
 		WHERE cm.id_commande = :id";
@@ -501,6 +563,7 @@ class Model_Commande extends Model_Template {
 			$menu->id = $m['id'];
 			$menu->nom = $m['nom'];
 			$menu->quantite = $m['quantite'];
+			$menu->prix = $commandeMenu['prix'] * $commandeMenu['quantite'];
 			
 			$sql = "SELECT carte.id, carte.nom, mc.limite_supplement
 			FROM commande_menu_contenu cmc
@@ -522,15 +585,18 @@ class Model_Commande extends Model_Template {
 				$menu->addContenu($contenu);
 			}
 			$this->menus[] = $menu;
-		}
+		}*/
 		
 		return $this;
 	}
 	
 	public function getLivreur () {
-		$sql = "SELECT livreur.uid, livreur.nom, livreur.prenom, livreur.gcm_token, livreur.is_login FROM commande
+		$sql = "SELECT livreur.uid, livreur.nom, livreur.prenom, us.gcm_token, livreur.is_login 
+		FROM commande
 		JOIN users livreur ON livreur.uid = commande.id_livreur
-		WHERE commande.id = :id";
+		JOIN user_session us ON us.uid = livreur.uid AND us.date_logout = '0000-00-00 00:00:00'
+		WHERE commande.id = :id
+		LIMIT 1";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -551,9 +617,11 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getClient () {
-		$sql = "SELECT client.uid, client.nom, client.prenom, client.gcm_token, client.is_login FROM commande
+		$sql = "SELECT client.uid, client.nom, client.prenom, us.gcm_token, client.is_login FROM commande
 		JOIN users client ON client.uid = commande.uid
-		WHERE commande.id = :id";
+		JOIN user_session us ON us.uid = livreur.uid AND us.date_logout = '0000-00-00 00:00:00'
+		WHERE commande.id = :id
+		LIMIT 1";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -989,7 +1057,8 @@ class Model_Commande extends Model_Template {
 	public function getCommandeRestaurant () {
 		$sql = "SELECT com.id, liv.uid, liv.nom, liv.prenom, com.heure_souhaite, com.minute_souhaite, com.heure_restaurant, com.minute_restaurant, com.prix, 
 		com.prix_livraison, com.etape, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_commande, 
-		resto.id AS id_resto, resto.nom AS nom_resto, resto.rue AS rue_resto, resto.ville AS ville_resto, resto.code_postal AS cp_resto, resto.telephone AS tel_resto
+		resto.id AS id_resto, resto.nom AS nom_resto, resto.rue AS rue_resto, resto.ville AS ville_resto, resto.code_postal AS cp_resto, 
+		resto.telephone AS tel_resto, resto.pourcentage AS pourcentage
 		FROM commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		LEFT JOIN users liv ON liv.uid = com.id_livreur
@@ -1016,6 +1085,7 @@ class Model_Commande extends Model_Template {
 		$restaurant->ville = $value["ville_resto"];
 		$restaurant->code_postal = $value["cp_resto"];
 		$restaurant->telephone = $value["tel_resto"];
+		$restaurant->pourcentage = $value["pourcentage"];
 		$this->restaurant = $restaurant;
 		
 		$this->prix = $value['prix'];
@@ -1061,12 +1131,12 @@ class Model_Commande extends Model_Template {
 			
 			$menu->addFormule($formule);
 			
-			$sql = "SELECT cc.id AS id, rc.id AS id_categorie, rc.nom AS nom_categorie, carte.id AS id_carte, carte.nom AS nom_carte
-			FROM commande_contenu cc 
-			JOIN contenu_menu cm ON cm.id = cc.id_contenu
-			JOIN restaurant_categorie rc ON rc.id = cm.id_categorie
-			JOIN carte ON carte.id = cm.id_carte
-			WHERE cc.id_commande_menu = :id";
+			$sql = "SELECT cmc.id AS id, menu_cat.id AS id_categorie, menu_cat.nom AS nom_categorie, carte.id AS id_carte, carte.nom AS nom_carte
+			FROM commande_menu_contenu cmc 
+			JOIN menu_contenu mc ON mc.id = cmc.id_contenu
+			JOIN menu_categorie menu_cat ON menu_cat.id = mc.id_menu_categorie
+			JOIN carte ON carte.id = mc.id_carte
+			WHERE cmc.id_commande_menu = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeMenu['id']);
 			if (!$stmt->execute()) {
@@ -1205,22 +1275,15 @@ class Model_Commande extends Model_Template {
 		return $value['count'];
 	}
 	
-	public function getCommandeRestaurantByDate ($debut = null, $fin = null) {
+	public function getAllCommandesRestaurant () {
 		$sql = "SELECT com.id AS id_commande, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.date_validation_restaurant, 
 		com.date_fin_preparation_restaurant, com.prix, com.etape, com.is_premium, liv.uid, liv.nom, liv.prenom
 		FROM commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		JOIN user_restaurant ur ON ur.id_restaurant = resto.id
 		LEFT JOIN users liv ON liv.uid = com.id_livreur
-		WHERE ur.uid = :uid";
-		if ($debut === null) {
-			$sql .= " AND DATE(com.date_commande) = DATE(NOW())";
-		} else if ($debut !== null && $fin === null) {
-			$sql .= " AND DATE(com.date_commande) >= ".$debut;
-		} else {
-			$sql .= " AND DATE(com.date_commande) BETWEEN '".$debut."' AND '".$fin."'";
-		}
-		$sql .= " ORDER BY com.date_commande DESC";
+		WHERE ur.uid = :uid
+		ORDER BY com.date_commande DESC";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
@@ -1371,12 +1434,12 @@ class Model_Commande extends Model_Template {
 			
 			$menu->addFormule($formule);
 			
-			$sql = "SELECT cc.id AS id, rc.id AS id_categorie, rc.nom AS nom_categorie, carte.id AS id_carte, carte.nom AS nom_carte
-			FROM commande_contenu cc 
-			JOIN contenu_menu cm ON cm.id = cc.id_contenu
-			JOIN restaurant_categorie rc ON rc.id = cm.id_categorie
-			JOIN carte ON carte.id = cm.id_carte
-			WHERE cc.id_commande_menu = :id";
+			$sql = "SELECT cmc.id AS id, menu_cat.id AS id_categorie, menu_cat.nom AS nom_categorie, carte.id AS id_carte, carte.nom AS nom_carte
+			FROM commande_menu_contenu cmc 
+			JOIN menu_contenu mc ON mc.id = cmc.id_contenu
+			JOIN menu_categorie menu_cat ON menu_cat.id = mc.id_menu_categorie
+			JOIN carte ON carte.id = mc.id_carte
+			WHERE cmc.id_commande_menu = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeMenu['id']);
 			if (!$stmt->execute()) {
@@ -1551,7 +1614,7 @@ class Model_Commande extends Model_Template {
 		resto.id AS id_restaurant, resto.nom AS nom_restaurant, resto.rue AS rue_restaurant, resto.ville AS ville_restaurant, 
 		resto.code_postal AS cp_restaurant, resto.telephone AS tel_restaurant, resto.latitude AS latitude_restaurant, resto.longitude AS longitude_restaurant, 
 		com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison, com.distance, com.date_validation_restaurant, 
-		com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.date_livraison, com.etape, com.note, com.commentaire
+		com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.date_livraison, com.etape, com.note, com.commentaire, com.is_premium
 		FROM commande com
 		JOIN users user ON user.uid = com.uid
 		JOIN user_client uc ON uc.uid = user.uid
@@ -1586,6 +1649,7 @@ class Model_Commande extends Model_Template {
 			$commande->etape = $c["etape"];
 			$commande->note = $c["note"];
 			$commande->commentaire = $c["commentaire"];
+			$commande->is_premium = $c["is_premium"];
 			
 			$user = new Model_User();
 			$user->id = $c["id_client"];
@@ -1652,15 +1716,14 @@ class Model_Commande extends Model_Template {
 				
 				$menu->addFormule($formule);
 				
-				$sql = "SELECT cc.id, rc.id AS id_categorie, rc.nom AS nom_categorie, parent.id AS id_parent, parent.nom AS nom_parent, carte.id AS id_carte, 
-				carte.nom AS nom_carte, carte.commentaire AS commentaire_carte, mc.obligatoire AS contenu_obligatoire, mc.limite_supplement, mc.limite_accompagnement, 
+				$sql = "SELECT cmc.id, menu_cat.id AS id_categorie, menu_cat.nom AS nom_categorie, carte.id AS id_carte, carte.nom AS nom_carte, 
+				carte.commentaire AS commentaire_carte, mc.obligatoire AS contenu_obligatoire, mc.limite_supplement, mc.limite_accompagnement, 
 				mc.commentaire AS contenu_commentaire
-				FROM commande_contenu cc 
-				JOIN menu_contenu mc ON mc.id = cc.id_contenu
-				JOIN restaurant_categorie rc ON rc.id = mc.id_categorie
-				LEFT JOIN restaurant_categorie parent ON parent.id = rc.parent_categorie
+				FROM commande_menu_contenu cmc 
+				JOIN menu_contenu mc ON mc.id = cmc.id_contenu
+				JOIN menu_categorie menu_cat ON menu_cat.id = mc.id_menu_categorie
 				JOIN carte ON carte.id = mc.id_carte
-				WHERE cc.id_commande_menu = :id";
+				WHERE cmc.id_commande_menu = :id";
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id", $commandeMenu['id']);
 				if (!$stmt->execute()) {
@@ -1672,12 +1735,6 @@ class Model_Commande extends Model_Template {
 					$categorie = new Model_Categorie(false);
 					$categorie->id = $commandeContenu['id_categorie'];
 					$categorie->nom = $commandeContenu['nom_categorie'];
-					
-					$parentCategorie = new Model_Categorie(false);
-					$parentCategorie->id = $commandeContenu['id_parent'];
-					$parentCategorie->nom = $commandeContenu['nom_parent'];
-					
-					$categorie->parent_categorie = $parentCategorie;
 					
 					$contenu = new Model_Contenu(false);
 					$contenu->id = $commandeContenu['id_carte'];
@@ -1834,7 +1891,7 @@ class Model_Commande extends Model_Template {
 		}
 		$result = $stmt->fetchAll();
 		foreach ($result as $value) {
-			$sql = "DELETE FROM commande_contenu WHERE id_commande_menu = :id";
+			$sql = "DELETE FROM commande_menu_contenu WHERE id_commande_menu = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
@@ -1930,7 +1987,8 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotal () {
-		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix) + SUM(prix_livraison) AS total_prix FROM commande";
+		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, 
+		SUM(prix + prix_livraison) AS total_prix FROM commande";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			var_dump($stmt->errorInfo());
@@ -1944,7 +2002,9 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotalByLivreur () {
-		$sql = "SELECT livreur.uid AS id_livreur, livreur.login AS nom, COUNT(*) AS total_commande, SUM(commande.prix) + SUM(commande.prix_livraison) AS total_prix 
+		$sql = "SELECT livreur.uid AS id_livreur, livreur.login AS nom, COUNT(*) AS total_commande, 
+		SUM(commande.prix - ((commande.prix * commande.part_restaurant) / 100)) AS part_restaurant, SUM(commande.prix_livraison) AS part_livreur, 
+		SUM(commande.prix + commande.prix_livraison) AS total_prix
 		FROM commande 
 		LEFT JOIN users livreur ON livreur.uid = commande.id_livreur
 		GROUP BY livreur.uid";
@@ -1957,7 +2017,9 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotalByRestaurant () {
-		$sql = "SELECT resto.id AS id_restaurant, resto.nom AS nom, COUNT(*) AS total_commande, SUM(commande.prix) + SUM(commande.prix_livraison) AS total_prix 
+		$sql = "SELECT resto.id AS id_restaurant, resto.nom AS nom, COUNT(*) AS total_commande, 
+		SUM(commande.prix - ((commande.prix * commande.part_restaurant) / 100)) AS part_restaurant, SUM(commande.prix_livraison) AS part_livreur, 
+		SUM(commande.prix + commande.prix_livraison) AS total_prix
 		FROM commande 
 		JOIN restaurants resto ON resto.id = commande.id_restaurant
 		GROUP BY resto.id";
@@ -1971,7 +2033,9 @@ class Model_Commande extends Model_Template {
 	
 	public function getTotalByClient () {
 		$sql = "SELECT client.uid AS id_livreur, client.nom AS nom, client.prenom AS prenom, COUNT(*) AS total_commande, 
-		SUM(commande.prix) + SUM(commande.prix_livraison) AS total_prix FROM commande 
+		SUM(commande.prix - ((commande.prix * commande.part_restaurant) / 100)) AS part_restaurant, SUM(commande.prix_livraison) AS part_livreur, 
+		SUM(commande.prix + commande.prix_livraison) AS total_prix
+		FROM commande 
 		JOIN users client ON client.uid = commande.uid
 		GROUP BY client.uid";
 		$stmt = $this->db->prepare($sql);
@@ -1983,7 +2047,10 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotalByVille () {
-		$sql = "SELECT ville AS nom, code_postal AS cp, COUNT(*) AS total_commande, SUM(commande.prix) + SUM(commande.prix_livraison) AS total_prix FROM commande
+		$sql = "SELECT ville AS nom, code_postal AS cp, COUNT(*) AS total_commande, 
+		SUM(commande.prix - ((commande.prix * commande.part_restaurant) / 100)) AS part_restaurant, SUM(commande.prix_livraison) AS part_livreur, 
+		SUM(commande.prix + commande.prix_livraison) AS total_prix
+		FROM commande 
 		GROUP BY ville";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {

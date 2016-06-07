@@ -19,6 +19,11 @@ class Default_Manager {
 					$controller = new Controller_Commande();
 					$controller->manage($request);
 					break;
+				case "compte" :
+					include_once WEBSITE_PATH."modules/livreur/controllers/Compte.php";
+					$controller = new Controller_Compte();
+					$controller->manage($request);
+					break;
 			}
 		} else {
 			include_once WEBSITE_PATH."modules/livreur/controllers/Index.php";

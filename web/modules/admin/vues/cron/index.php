@@ -17,5 +17,13 @@
 			<span>Pre commande</span>
 			<a href="?controler=cron&action=runPreCommande">Lancer</a>
 		</div>
+		<div class="row">
+			<span>Update distance restaurant</span>
+			<a href="?controler=cron&action=updateDistanceRestaurant">Lancer</a>
+		</div>
+		<div class="row">
+			<span>Dump database</span>
+			<a href="?controler=cron&action=dumpDatabase">Lancer</a>
+		</div>
 	</div>
 </div>
