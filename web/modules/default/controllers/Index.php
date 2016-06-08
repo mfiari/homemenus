@@ -3,6 +3,10 @@
 include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/User.php";
 include_once ROOT_PATH."models/Restaurant.php";
+include_once ROOT_PATH."models/Horaire.php";
+include_once ROOT_PATH."models/Categorie.php";
+include_once ROOT_PATH."models/Contenu.php";
+include_once ROOT_PATH."models/Menu.php";
 
 class Controller_Index extends Controller_Default_Template {
 	
@@ -21,6 +25,12 @@ class Controller_Index extends Controller_Default_Template {
 					break;
 				case "faq" :
 					$this->faq($request);
+					break;
+				case "restaurants_partenaire" :
+					$this->restaurants_partenaire($request);
+					break;
+				case "restaurant_partenaire" :
+					$this->restaurant_partenaire($request);
 					break;
 				case "inscription" :
 					$this->signin($request);
@@ -84,6 +94,21 @@ class Controller_Index extends Controller_Default_Template {
 	public function faq ($request) {
 		$request->title = "HoMe Menus - FAQ";
 		$request->vue = $this->render("faq.php");
+	}
+	
+	public function restaurants_partenaire ($request) {
+		$request->title = "HoMe Menus - Restaurants partenaire";
+		$modelRestaurant = new Model_Restaurant();
+		$request->restaurants = $modelRestaurant->getAll();
+		$request->vue = $this->render("restaurants_partenaire.php");
+	}
+	
+	public function restaurant_partenaire ($request) {
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id'];
+		$request->restaurant = $modelRestaurant->loadAll();
+		$request->title = "HoMe Menus - Restaurant ".utf8_encode($request->restaurant->nom);
+		$request->vue = $this->render("restaurant_partenaire.php");
 	}
 	
 	public function signin ($request) {

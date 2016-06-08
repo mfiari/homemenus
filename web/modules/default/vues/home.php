@@ -5,7 +5,7 @@
 			<p>HoMe Menus est un service de livraison de plats de vos restaurants préférés proches ou éloignés de chez vous.</p>
 			<p>Notre objectif principal est de vous permettre de savourer et déguster la cuisine des meilleurs restaurants aux environs de chez vous 
 				en vous les livrant. Génial non ?! évidemment !</p>
-			<p>Vous souhaitez en savoir plus sur l'entreprise, rendez-vous sur notre page <a href="">qui sommes nous</a></p>
+			<p>Vous souhaitez en savoir plus sur l'entreprise, rendez-vous sur notre page <a href="?action=qui_sommes_nous">qui sommes nous</a></p>
 			<p>Vous avez des quesions sur le site et son fonctionnnement. Rendez-vous sur la page <a href="?action=faq">FAQ</a> pour avoir tous les renseignements.</p>
 		</div>
 		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
