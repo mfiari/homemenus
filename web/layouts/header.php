@@ -1,7 +1,8 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="HoMe Menus, livraison de plats de restaurants"/>
+	<meta name="description" content="HoMe Menus, livraison à domicile de plats de restaurants dans les Yvelines 78 à Mantes la jolie. 
+	Restaurants japonais, Italien, Indien, provençale."/>
 	<link rel="icon" href="res/img/favicon.ico" />
 	<title><?php echo $request->title; ?></title>
 	<script type="text/javascript" src="res/js/jquery-2.1.1.js"></script>
@@ -29,13 +30,15 @@
 			}
 		}
 	?>
-	<script>
-		/*(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	<?php if (ENVIRONNEMENT == "PROD") : ?>
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-		ga('create', 'UA-75124157-1', 'auto');
-		ga('send', 'pageview');*/
-	</script>
+			ga('create', 'UA-75124157-1', 'auto');
+			ga('send', 'pageview');
+		</script>
+	<?php endif; ?>
 </head>

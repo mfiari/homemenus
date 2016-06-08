@@ -4,7 +4,7 @@
 	<div class="container">
 		<div>
 			<a href="?action=index">
-				<img id="logo" src="res/img/logo.png">
+				<img id="logo" src="res/img/logo.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
 			</a>
 			<ul class="menu">
 				<?php if ($request->_auth) : ?>

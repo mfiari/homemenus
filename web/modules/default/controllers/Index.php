@@ -13,8 +13,8 @@ class Controller_Index extends Controller_Default_Template {
 				case "index" :
 					$this->home($request);
 					break;
-				case "comment_ca_marche" :
-					$this->how_it_work($request);
+				case "qui_sommes_nous" :
+					$this->qui_sommes_nous($request);
 					break;
 				case "premium" :
 					$this->premium($request);
@@ -71,9 +71,9 @@ class Controller_Index extends Controller_Default_Template {
 		$request->vue = $this->render("home.php");
 	}
 	
-	public function how_it_work ($request) {
-		$request->title = "Comment ça marche";
-		$request->vue = $this->render("how_it_work.php");
+	public function qui_sommes_nous ($request) {
+		$request->title = "HoMe Menus - qui sommes nous";
+		$request->vue = $this->render("qui_somme_nous.php");
 	}
 	
 	public function premium ($request) {
@@ -82,7 +82,7 @@ class Controller_Index extends Controller_Default_Template {
 	}
 	
 	public function faq ($request) {
-		$request->title = "FAQ";
+		$request->title = "HoMe Menus - FAQ";
 		$request->vue = $this->render("faq.php");
 	}
 	

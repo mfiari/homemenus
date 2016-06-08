@@ -8,9 +8,9 @@
 				<span class="icon-bar"></span>
 			</button>
 			<a href="?action=index" class="logo">
-				<img id="logo" src="res/img/logo.png">
+				<img id="logo" src="res/img/logo.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
 			</a>
-			<img id="slogan" src="res/img/slogan.png">
+			<img id="slogan" src="res/img/slogan.png" alt="HoMe Menus - livraison - slogan" title="slogan HoMe Menus">
 		</div>
 		<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
 			<ul class="menu nav navbar-nav">

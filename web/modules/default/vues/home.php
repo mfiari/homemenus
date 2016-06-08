@@ -1,12 +1,27 @@
 <div class="col-md-12 even">
+	<h2>HoMe Menus</h2>
+	<div class="row">
+		<div class="col-md-9 col-sm-9 col-xs-9">
+			<p>HoMe Menus est un service de livraison de plats de vos restaurants préférés proches ou éloignés de chez vous.</p>
+			<p>Notre objectif principal est de vous permettre de savourer et déguster la cuisine des meilleurs restaurants aux environs de chez vous 
+				en vous les livrant. Génial non ?! évidemment !</p>
+			<p>Vous souhaitez en savoir plus sur l'entreprise, rendez-vous sur notre page <a href="">qui sommes nous</a></p>
+			<p>Vous avez des quesions sur le site et son fonctionnnement. Rendez-vous sur la page <a href="?action=faq">FAQ</a> pour avoir tous les renseignements.</p>
+		</div>
+		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/logo_mail.png" alt="HoMe Menus - livraison" Title="HoMe Menus">
+		</div>
+	</div>
+</div>
+<div class="col-md-12 odd">
 	<h2>Commande spéciale</h2>
 	<div class="row">
+		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/special.jpg" alt="HoMe Menus - livraison - commande spéciale" Title="Commande spéciale HoMe Menus">
+		</div>
 		<div class="col-md-9 col-sm-9 col-xs-9">
 			<p>Besoin d’organiser un repas d’anniversaire, une réunion, un événement, 
 			<a href="?controler=contact&action=evenement">contactez nous</a> afin que nous satisfaisions vos envies.</p>
-		</div>
-		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/special.jpg">
 		</div>
 	</div>
 </div>
@@ -30,7 +45,7 @@
 			<p>Contactez-nous dès maintenant via notre <a href="?controler=contact&action=entreprise">page de contact</a></p>
 		</div>
 		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/entreprise.png">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/entreprise.png" alt="HoMe Menus - livraison - entreprise" Title="Entreprises">
 		</div>
 	</div>
 </div>
@@ -38,7 +53,7 @@
 	<h2>Devenir Livreur</h2>
 	<div class="row">
 		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/livreur.jpg">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/livreur.jpg" alt="HoMe Menus - livraison - livreur" Title="Livreur">
 		</div>
 		<div class="col-md-9 col-sm-9 col-xs-9">
 			<p>Vous  êtes sportif, dynamique et avez envie de vous faire un extra, rejoignez l’aventure HoMe Menus. 
@@ -56,7 +71,7 @@
 				<p>Contactez-nous dès maintenant via notre <a href="?controler=contact&action=restaurant">page de contact</a></p>
 		</div>
 		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/partenaire.jpg">
+			<img style="max-width : 90%; max-height : 90%;" src="res/img/partenaire.jpg" alt="HoMe Menus - livraison - restaurant" Title="Restaurant partenaire">
 		</div>
 	</div>
 </div>
