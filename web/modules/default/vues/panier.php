@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
 	<?php if ($request->panier) : ?>
-		<form method="post" enctype="x-www-form-urlencoded" id="panierForm" action="">
+		<form method="post" enctype="x-www-form-urlencoded" id="panierFormModal" action="">
 			<input type="hidden" id="id_panier" name="id_panier" value="<?php echo $request->panier->id; ?>" />
 			<?php
 				$current_heure = date('G')+1;
@@ -13,6 +13,7 @@
 			?>
 			<div>
 				<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
+					<input type="hidden" name="type_commande" value="pre_commande">
 					<span style="color : red;">
 						Le <?php echo utf8_encode($request->panier->restaurant->nom); ?> est actuellement fermé. Ouverture
 							de <?php echo formatHeureMinute($horaire->heure_debut, $horaire->minute_debut); ?> 
@@ -36,8 +37,8 @@
 						<?php endfor; ?>
 					</select>
 				<?php else : ?>
-					<input type="radio" name="type" value="now" checked>Au plus tôt
-					<input type="radio" name="type" value="pre_commande">Pré-commande
+					<input type="radio" name="type_commande" value="now" checked>Au plus tôt
+					<input type="radio" name="type_commande" value="pre_commande">Pré-commande
 					<span>heure de commande</span>
 					<?php 
 						if ($horaire->heure_debut < $current_heure) {
@@ -151,7 +152,16 @@
 <script type="text/javascript">
 	$("#command").click(function(event) {
 		event.preventDefault();
-		document.location.href="?controler=panier&action=validate";
+		var type_commande = $('#panierFormModal input[name=type_commande]').val();
+		var heure_commande = $('#panierFormModal select[name=heure_commande]').val();
+		var minute_commande = $('#panierFormModal select[name=minute_commande]').val();
+		
+		$("#panier-info-modal #type_commande").val(type_commande);
+		$("#panier-info-modal #heure_commande").val(heure_commande);
+		$("#panier-info-modal #minute_commande").val(minute_commande);
+		$("#panier-info-modal").modal();
+		/*event.preventDefault();
+		document.location.href="?controler=panier&action=validate";*/
 		/*if ($("#accept_cgv").is(":checked")) {
 			$.ajax({
 				type: "POST",

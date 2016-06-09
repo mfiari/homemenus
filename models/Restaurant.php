@@ -261,6 +261,29 @@ class Model_Restaurant extends Model_Template {
 		return $list;
 	}
 	
+	public function getAllRestaurantEnable () {
+		$sql = "SELECT id, nom, rue, code_postal, ville, latitude, longitude, enabled FROM restaurants WHERE enabled = true Order by ville, nom";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			return false;
+		}
+		$restaurants = $stmt->fetchAll();
+		$list = array();
+		foreach ($restaurants as $key => $value) {
+			$restaurant = new Model_Restaurant(false);
+			$restaurant->id = $value['id'];
+			$restaurant->nom = $value['nom'];
+			$restaurant->rue = $value['rue'];
+			$restaurant->code_postal = $value['code_postal'];
+			$restaurant->ville = $value['ville'];
+			$restaurant->latitude = $value['latitude'];
+			$restaurant->longitude = $value['longitude'];
+			$restaurant->is_enable = $value['enabled'];
+			$list[] = $restaurant;
+		}
+		return $list;
+	}
+	
 	public function enable () {
 		$sql = "UPDATE restaurants SET enabled = true WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
@@ -283,6 +306,18 @@ class Model_Restaurant extends Model_Template {
 			return false;
 		}
 		return true;
+	}
+	
+	public function getPrixLivraison () {
+		$sql = "SELECT prix FROM prix_livraison WHERE :distance BETWEEN distance_min AND distance_max";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":distance", $this->distance);
+		if (!$stmt->execute()) {
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		$prixLivraison = $value['prix'];
+		return $prixLivraison;
 	}
 	
 	public function filter ($filters) {

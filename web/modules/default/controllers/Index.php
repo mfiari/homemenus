@@ -99,7 +99,7 @@ class Controller_Index extends Controller_Default_Template {
 	public function restaurants_partenaire ($request) {
 		$request->title = "HoMe Menus - Restaurants partenaire";
 		$modelRestaurant = new Model_Restaurant();
-		$request->restaurants = $modelRestaurant->getAll();
+		$request->restaurants = $modelRestaurant->getAllRestaurantEnable();
 		$request->vue = $this->render("restaurants_partenaire.php");
 	}
 	

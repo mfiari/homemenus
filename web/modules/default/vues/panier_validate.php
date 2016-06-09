@@ -200,29 +200,29 @@
 	</div>
 </div>
 <div>
-	<input id="accept_cgv" type="checkbox" /> Avant de continuer, vous devez accepter les <a href="?action=cgv">conditions générales de vente</a>.
+	<input id="accept_cgv" type="checkbox" /> Avant de continuer, vous devez accepter les <a href="?action=cgv" target="_blank">conditions générales de vente</a>.
 </div>
-<div id="accept_cgv_error_message" class="alert alert-danger" role="alert" style="display : none;">
+<div id="accept_cgv_error_message" class="alert alert-danger" role="alert">
 	<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 	<span class="sr-only">Error:</span>
 	Vous devez accepter les conditions générales de vente pour pouvoir continuer
 </div>
 <div>
-	<div class="row">
+	<div id="paiementsForm" class="row" style="display : none;">
 		<div class="col-md-offset-2 col-md-4">
 			<form id="payPaypal" action="?controler=paypal" method="POST">
 				<input id="command" class="btn btn-primary" type="submit" value="Payer avec paypal">
 			</form>
 		</div>
 		<div class="col-md-4">
-			<form id="payCard" action="" method="POST">
+			<form id="payCard" action="?controler=panier&action=valideCarte" method="POST">
 			  <script
 				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
 				data-label="Payer par carte"
-				data-key="pk_live_BHrLI0OtgE1bdpDgBsHJJV1u"
-				data-amount="100"
+				data-key="<?php echo STRIPE_PUBLIC_KEY; ?>"
+				data-amount="<?php echo ($totalPrix * 100); ?>"
 				data-name="HoMe Menus"
-				data-description="Paiement de la commande #1"
+				data-description="Paiement de la commande"
 				data-image="/web/res/img/logo_mail.png"
 				data-locale="auto"
 				data-zip-code="true"
@@ -233,7 +233,16 @@
 	</div>
 </div>
 <script type="text/javascript">
-	$("#payPaypal").submit(function(event) {
+	$("#accept_cgv").click(function () {
+		if ($("#accept_cgv").is(":checked")) {
+			$("#accept_cgv_error_message").hide();
+			$("#paiementsForm").show();
+		} else {
+			$("#accept_cgv_error_message").show();
+			$("#paiementsForm").hide();
+		}
+	});
+	/*$("#payPaypal").submit(function(event) {
 		event.preventDefault();
 		if ($("#accept_cgv").is(":checked")) {
 			$.ajax({
@@ -250,8 +259,8 @@
 		}
 	});
 	$("#payCard").submit(function(event) {
-		event.preventDefault();
 		if ($("#accept_cgv").is(":checked")) {
+			return true;
 			$.ajax({
 				type: "POST",
 				url: "?controler=panier&action=commande",
@@ -263,6 +272,7 @@
 			});
 		} else {
 			$("#accept_cgv_error_message").show();
+			event.preventDefault();
 		}
-	});
+	});*/
 </script>

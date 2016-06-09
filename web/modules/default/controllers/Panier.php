@@ -51,6 +51,9 @@ class Controller_Panier extends Controller_Default_Template {
 				case "commande" :
 					$this->commande($request);
 					break;
+				case "valideCarte" :
+					$this->valideCarte($request);
+					break;
 			}
 		}
 	}
@@ -370,7 +373,7 @@ class Controller_Panier extends Controller_Default_Template {
 		$request->vue = $this->render("panier_validate.php");
 	}
 	
-	public function valideCarte () {
+	public function valideCarte ($request) {
 		
 		$panier = new Model_Panier();
 		$panier->uid = $request->_auth->id;
@@ -390,7 +393,7 @@ class Controller_Panier extends Controller_Default_Template {
 		
 		require_once WEBSITE_PATH.'res/lib/stripe/init.php';
 		if (isset($_POST['stripeToken'])) {
-			\Stripe\Stripe::setApiKey("sk_live_SMEkTXt4kmuUgkQoBdGBSaOD");
+			\Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
 
 			// Get the credit card details submitted by the form
 			$token = $_POST['stripeToken'];

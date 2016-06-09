@@ -24,8 +24,8 @@
 								<span>Ouvert de <?php echo formatHeureMinute($horaire->heure_debut,$horaire->minute_debut); ?> à <?php echo formatHeureMinute($horaire->heure_fin,$horaire->minute_fin); ?></span>
 							<?php endif; ?>
 						</p>
-						<p>Distance : </p>
-						<p>Prix de livraison : </p>
+						<p>Distance : <?php echo $restaurant->distance; ?> km</p>
+						<p>Prix de livraison : <?php echo formatPrix($request->prix_livraison); ?></p>
 					</div>
 				</div>
 				<div class="col-md-6">
@@ -268,7 +268,6 @@
 		</div>
 	</div>
 </div>
-<?php include(WEBSITE_PATH.'layouts/panier_info.php'); ?>
 <script type="text/javascript">
 	$(function() {
 		initialize();

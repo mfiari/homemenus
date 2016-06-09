@@ -78,11 +78,15 @@ class Controller_Restaurant extends Controller_Default_Template {
 			if ($result['status'] == "OK") {
 				$distanceRestoKm = $result['distance'] / 1000;
 				$request->restaurant->distance = $distanceRestoKm;
+				$request->prix_livraison = $request->restaurant->getPrixLivraison();
 			}
 			
-			$panier = new Model_Panier();
-			$panier->uid = $request->_auth->id;
-			$request->panier = $panier->loadPanier();
+			if ($request->_auth) {
+				$panier = new Model_Panier();
+				$panier->uid = $request->_auth->id;
+				$request->panier = $panier->loadPanier();
+			}
+			
 			if (isset($_SESSION['search_adresse'])) {
 				$request->adresse = $_SESSION['search_adresse'];
 			}
