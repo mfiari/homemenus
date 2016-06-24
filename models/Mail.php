@@ -58,7 +58,7 @@ class Model_Mail extends Model_Template {
 		$stmt->bindValue(":date", $this->date_envoi);
 		$stmt->bindValue(":send", $this->is_send);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
@@ -68,12 +68,16 @@ class Model_Mail extends Model_Template {
 	/*
 	* Récupère les mails
 	*/
-	public function getAll () {
+	public function getAll ($dateDebut, $dateFin) {
 		$sql = "SELECT id, email_to, sujet, attachements, date_envoie, is_send
-		FROM mails ORDER BY date_envoie DESC LIMIT 50";
+		FROM mails 
+		WHERE date_envoie BETWEEN :date_debut AND :date_fin
+		ORDER BY date_envoie DESC LIMIT 50";
 		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -100,7 +104,7 @@ class Model_Mail extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);

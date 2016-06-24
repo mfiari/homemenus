@@ -1,6 +1,7 @@
 <?php
 
 include_once ROOT_PATH."models/Template.php";
+include_once ROOT_PATH."models/User.php";
 include_once ROOT_PATH."models/Panier.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Horaire.php";
@@ -16,6 +17,7 @@ include_once ROOT_PATH."models/Format.php";
 include_once ROOT_PATH."models/Option.php";
 include_once ROOT_PATH."models/OptionValue.php";
 include_once ROOT_PATH."models/Accompagnement.php";
+include_once ROOT_PATH."models/CodePromo.php";
 
 
 class Controller_Panier extends Controller_Default_Template {
@@ -45,6 +47,9 @@ class Controller_Panier extends Controller_Default_Template {
 				case "validate" :
 					$this->validate($request);
 					break;
+				case "finalisation_inscription" :
+					$this->finalisation_inscription($request);
+					break;
 				case "finalisation" :
 					$this->finalisation($request);
 					break;
@@ -53,6 +58,9 @@ class Controller_Panier extends Controller_Default_Template {
 					break;
 				case "valideCarte" :
 					$this->valideCarte($request);
+					break;
+				case "addCodePromo" :
+					$this->addCodePromo($request);
 					break;
 			}
 		}
@@ -80,7 +88,11 @@ class Controller_Panier extends Controller_Default_Template {
 	
 	private function initPanier ($request, $id_restaurant) {
 		$panier = new Model_Panier();
-		$panier->uid = $request->_auth->id;
+		if ($request->_auth) {
+			$panier->uid = $request->_auth->id;
+		} else {
+			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+		}
 		$panier->init();
 		if ($panier->id_restaurant == -1) {
 			$restaurant = new Model_Restaurant();
@@ -117,10 +129,10 @@ class Controller_Panier extends Controller_Default_Template {
 			$this->error(405, "Method not allowed");
 			return;
 		}
-		if (!$request->_auth) {
+		/*if (!$request->_auth) {
 			$this->error(403, "Not authorized");
 			return;
-		}
+		}*/
 		if (!isset($_POST['id_carte'])) {
 			$this->error(409, "Conflict");
 		}
@@ -163,10 +175,10 @@ class Controller_Panier extends Controller_Default_Template {
 			$this->error(405, "Method not allowed");
 			return;
 		}
-		if (!$request->_auth) {
+		/*if (!$request->_auth) {
 			$this->error(403, "Not authorized");
 			return;
-		}
+		}*/
 		if (!isset($_POST['id_panier'])) {
 			$this->error(400, "Bad request");
 		}
@@ -176,7 +188,11 @@ class Controller_Panier extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		$panier = new Model_Panier();
-		$panier->uid = $request->_auth->id;
+		if ($request->_auth) {
+			$panier->uid = $request->_auth->id;
+		} else {
+			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+		}
 		$panier->id = $_POST['id_panier'];
 		$id_panier_carte = $_POST['id_panier_carte'];
 		if (!$panier->removePanierCarte($id_panier_carte)) {
@@ -192,9 +208,9 @@ class Controller_Panier extends Controller_Default_Template {
 		if ($request->request_method != "POST") {
 			$this->error(405, "Method not allowed");
 		}
-		if (!$request->_auth) {
+		/*if (!$request->_auth) {
 			$this->error(403, "Not authorized");
-		}
+		}*/
 		if (!isset($_POST['id_menu'])) {
 			$this->error(400, "Bad request");
 		}
@@ -227,10 +243,10 @@ class Controller_Panier extends Controller_Default_Template {
 			$this->error(405, "Method not allowed");
 			return;
 		}
-		if (!$request->_auth) {
+		/*if (!$request->_auth) {
 			$this->error(403, "Not authorized");
 			return;
-		}
+		}*/
 		if (!isset($_POST['id_panier'])) {
 			$this->error(400, "Bad request");
 		}
@@ -240,7 +256,11 @@ class Controller_Panier extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		$panier = new Model_Panier();
-		$panier->uid = $request->_auth->id;
+		if ($request->_auth) {
+			$panier->uid = $request->_auth->id;
+		} else {
+			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+		}
 		$panier->id = $_POST['id_panier'];
 		$id_panier_menu = $_POST['id_panier_menu'];
 		if (!$panier->removePanierMenu($id_panier_menu)) {
@@ -255,10 +275,6 @@ class Controller_Panier extends Controller_Default_Template {
 	public function validate ($request) {
 		if ($request->request_method != "POST") {
 			$this->error(405, "Method not allowed");
-			return;
-		}
-		if (!$request->_auth) {
-			$this->error(403, "Not authorized");
 			return;
 		}
 		$rue = "";
@@ -284,8 +300,11 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 		
 		$panier = new Model_Panier();
-		$panier->uid = $request->_auth->id;
-		
+		if ($request->_auth) {
+			$panier->uid = $request->_auth->id;
+		} else {
+			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+		}
 		
 		$restaurant = new Model_Restaurant();
 		$restaurant->id = $panier->getRestaurant();
@@ -311,7 +330,6 @@ class Controller_Panier extends Controller_Default_Template {
 			if ($result['status'] == "OK") {
 				$distance = $result['distance'] / 1000;
 			}
-			
 			
 			$panier->validate($rue, $ville, $code_postal, $telephone, $heure_commande, $minute_commande, $distance);
 			
@@ -366,7 +384,135 @@ class Controller_Panier extends Controller_Default_Template {
 		$panier->validate($rue, $ville, $code_postal, $telephone, $heure_commande, $minute_commande);
 	}
 	
+	public function finalisation_inscription ($request) {
+		if ($request->request_method == "POST") {
+			if (isset($_POST['subscribeButton'])) {
+				$errorMessageSubscribe = array();
+				if (!isset($_POST["nom"]) || trim($_POST["nom"]) == "") {
+					$errorMessageSubscribe["EMPTY_NOM"] = "Le nom ne peut être vide";
+				} else {
+					$request->fieldNom = $_POST["nom"];
+				}
+				if (!isset($_POST["prenom"]) || trim($_POST["prenom"]) == "") {
+					$errorMessageSubscribe["EMPTY_PRENOM"] = "Le prénom ne peut être vide";
+				} else {
+					$request->fieldPrenom = $_POST["prenom"];
+				}
+				if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
+					$errorMessageSubscribe["EMPTY_LOGIN"] = "Le login ne peut être vide";
+				} else {
+					$request->fieldEmail = $_POST["login"];
+				}
+				if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
+					$errorMessageSubscribe["EMPTY_PASSWORD"] = "Le mot de passe ne peut être vide";
+				}
+				if (count($errorMessageSubscribe) == 0) {
+					$panier = new Model_Panier();
+					$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+					$panier->get();
+					$model = new Model_User();
+					$model->nom = trim($_POST["nom"]);
+					$model->prenom = trim($_POST["prenom"]);
+					$model->login = trim($_POST["login"]);
+					$model->email = trim($_POST["login"]);
+					$model->password = trim($_POST["password"]);
+					$model->status = USER_CLIENT;
+					$model->rue = $panier->rue;
+					$model->ville = $panier->ville;
+					$model->code_postal = $panier->code_postal;
+					$model->inscription_token = generateToken();
+					$model->telephone = $panier->telephone;
+					if ($model->isLoginAvailable()) {
+						$model->beginTransaction();
+						if ($model->save()) {
+							
+							$panier->associate($model);
+							
+							$model->enable();
+							$model->login($model->login, $model->password);
+							$_SESSION["uid"] = $model->id;
+							$_SESSION["session"] = $model->session;
+							
+							$messageContent =  file_get_contents (ROOT_PATH.'mails/create_compte.html');
+							$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
+							$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
+							$messageContent = str_replace("[LOGIN]", $model->login, $messageContent);
+							
+							send_mail ($model->email, "Création de votre compte", $messageContent);
+							
+							
+							$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription_admin.html');
+							$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
+							$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
+							if ($model->ville != '') {
+								$messageContent = str_replace("[ADRESSE]", $model->ville.' ('.$model->code_postal.')', $messageContent);
+							} else {
+								$messageContent = str_replace("[ADRESSE]", "(adresse non renseignée)", $messageContent);
+							}
+							send_mail (MAIL_ADMIN, "création de compte", $messageContent);
+							
+							$this->redirect("finalisation", "panier");
+						} else {
+							$request->errorMessageSubscribe = array("CREATE_ERROR" => "Une erreur s'est produite, veuillez réessayé ultérieurement.");
+						}
+						$model->endTransaction();
+					} else {
+						$request->errorMessageSubscribe = array("USER_EXISTS" => "l'email ".$model->email." existe déjà");
+					}
+				} else {
+					$request->errorMessageSubscribe = $errorMessageSubscribe;
+				}
+			} else if (isset($_POST['loginButton'])) {
+				$errorMessageLogin = array();
+				if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
+					$errorMessageLogin["EMPTY_LOGIN"] = "Le login ne peut être vide";
+				} else {
+					$request->fieldEmail = $_POST["login"];
+				}
+				if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
+					$errorMessageLogin["EMPTY_PASSWORD"] = "Le mot de passe ne peut être vide";
+				}
+				if (count($errorMessageLogin) == 0) {
+					$login = $_POST["login"];
+					$password = $_POST["password"];
+					$user = new Model_User();
+					if (!$user->login($login, $password)) {
+						$errorMessageLogin["LOGIN_NOT_FOUND"] = "Le login ou le mot de passe est incorrecte";
+					} else if (!$user->is_enable) {
+						$errorMessageLogin["NOT_ENABLE"] = "Votre compte est désactivé";
+					} else {
+						$_SESSION["uid"] = $user->id;
+						$_SESSION["session"] = $user->session;
+						
+						$panier = new Model_Panier();
+						$panier->uid = $user->id;
+						if ($panier->init() !== false) {
+							$panier->remove();
+						}
+						
+						$panier = new Model_Panier();
+						$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+						$panier->get();
+						
+						$panier->associate($user);
+								
+						$this->redirect("finalisation", "panier");
+					}
+					$request->errorMessageLogin = $errorMessageLogin;
+				} else {
+					$request->errorMessageLogin = $errorMessageLogin;
+				}
+			}
+		}
+		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/inscription_panier.js");
+		$request->title = "Inscription";
+		$request->vue = $this->render("finalisation_inscription.php");
+	}
+	
 	public function finalisation ($request) {
+		if (!$request->_auth) {
+			$this->redirect("finalisation_inscription", "panier");
+		}
 		$panier = new Model_Panier();
 		$panier->uid = $request->_auth->id;
 		$request->panier = $panier->load();
@@ -451,5 +597,46 @@ class Controller_Panier extends Controller_Default_Template {
 				
 			}
 		}
+	}
+	
+	public function addCodePromo ($request) {
+		$codePromo = $_POST['code_promo'];
+		
+		$request->disableLayout = true;
+		$request->noRender = true;
+		
+		$modelCodePromo = new Model_CodePromo();
+		$modelCodePromo->code = $codePromo;
+		if ($modelCodePromo->getByCode() === false) {
+			$this->error(404, "Not found");
+		}
+		
+		if ($modelCodePromo->isPrivate()) {
+			if ($request->_auth === false) {
+				$this->error(403, "Forbidden");
+			}
+			if (!$modelCodePromo->isBoundToUser($request->_auth->id)) {
+				$this->error(401, "Unauthorized");
+			}
+			if ($modelCodePromo->hasBeenUseByUser($request->_auth->id)) {
+				$this->error(410, "Gone");
+			}
+		}
+		
+		$panier = new Model_Panier();
+		if ($request->_auth) {
+			$panier->uid = $request->_auth->id;
+		} else {
+			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+		}
+		$panier->init();
+		
+		if ($modelCodePromo->surRestaurant()) {
+			if (!$modelCodePromo->isBoundToRestaurant($panier->id_restaurant)) {
+				$this->error(400, "Bad Request");
+			}
+		}
+		
+		$panier->setCodePromo ($modelCodePromo->id);
 	}
 }

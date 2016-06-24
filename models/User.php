@@ -63,7 +63,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":login", $this->login);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -76,7 +76,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -92,13 +92,13 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":login", $this->login);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null || $value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : confirm", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -127,7 +127,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":status", $this->status);
 		$stmt->bindValue(":token", $this->inscription_token);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : insert", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -151,7 +151,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":code_postal", $this->code_postal);
 		$stmt->bindValue(":telephone", $this->telephone);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : insertUser", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -164,7 +164,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":uid", $this->id);
 		$stmt->bindValue(":telephone", $this->telephone);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : insert", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -177,7 +177,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":uid", $this->id);
 		$stmt->bindValue(":id_restaurant", $this->id_restaurant);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : insertUser", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -190,13 +190,13 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":id", $this->id);
 		$stmt->bindValue(":token", $this->inscription_token);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : confirm", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null || $value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : confirm", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -204,7 +204,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : confirm", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -217,7 +217,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":password", $this->password);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : confirm", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -229,7 +229,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : enable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -241,7 +241,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : disable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -253,7 +253,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : disable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -266,13 +266,13 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":login", $login);
 		$stmt->bindValue(":password", $password);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null || $value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -287,7 +287,7 @@ class Model_User extends Model_Template {
 			$stmt->bindValue(":uid", $value["uid"]);
 			$stmt->bindValue(":key", $token);
 			if (!$stmt->execute()) {
-				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				$this->sqlHasFailed = true;
 				return false;
 			}
@@ -296,7 +296,7 @@ class Model_User extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":uid", $value["uid"]);
 			if (!$stmt->execute()) {
-				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				$this->sqlHasFailed = true;
 				return false;
 			}
@@ -313,7 +313,7 @@ class Model_User extends Model_Template {
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id", $this->id);
 				if (!$stmt->execute()) {
-					writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					$this->sqlHasFailed = true;
 					return false;
 				}
@@ -328,13 +328,13 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null || $value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -342,7 +342,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -350,7 +350,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -360,7 +360,7 @@ class Model_User extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $this->id);
 			if (!$stmt->execute()) {
-				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				$this->sqlHasFailed = true;
 				return false;
 			}
@@ -376,13 +376,13 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getById", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null ||$value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getById", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -409,13 +409,13 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":uid", $uid);
 		$stmt->bindValue(":session", $session);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getBySession", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null ||$value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getBySession", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -439,13 +439,13 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":login", $login);
 		$stmt->bindValue(":password", $password);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null || $value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : login", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -458,7 +458,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":password", $newPassword);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : livreurReady", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -473,7 +473,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $id_restaurant);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getByRestaurant", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -498,7 +498,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $uid);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : livreurReady", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -509,7 +509,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $uid);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : livreurLogout", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -528,7 +528,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":code_postal", $codePostal);
 		$stmt->bindValue(":ville", $ville);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getLivreurAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -553,7 +553,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $restaurant->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getLivreurAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -584,7 +584,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":restaurant_code_postal", $restaurant->code_postal);
 		$stmt->bindValue(":restaurant_ville", $restaurant->ville);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getLivreurAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -615,7 +615,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $commande->restaurant->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getLivreurAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -654,7 +654,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":restaurant_code_postal", $commande->restaurant->code_postal);
 		$stmt->bindValue(":restaurant_ville", $commande->restaurant->ville);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getLivreurAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -679,7 +679,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":code_postal", $code_postal);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getLivreurPerimetre", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -702,7 +702,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $id_restaurant);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getRestaurantUsers", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -724,7 +724,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":id", $this->id);
 		$stmt->bindValue(":session_key", $this->session);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : registerToGcm", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -737,7 +737,7 @@ class Model_User extends Model_Template {
 		ORDER BY user.is_enable DESC";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getRestaurantUsers", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -762,7 +762,7 @@ class Model_User extends Model_Template {
 		FROM users user JOIN user_client uc ON uc.uid = user.uid WHERE user.status = 'USER'";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getRestaurantUsers", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -789,13 +789,13 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getClient", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null ||$value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getClient", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -817,13 +817,13 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getClient", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null ||$value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getClient", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -841,7 +841,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getLivreur", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -873,7 +873,7 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : updateLivreurPosition", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -883,7 +883,7 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":latitude", $this->latitude);
 		$stmt->bindValue(":longitude", $this->longitude);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : updateLivreurPosition", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}

@@ -24,7 +24,7 @@
 <?php endif; ?>
 <div class="row">
 	<div class="col-md-10 col-md-offset-1">
-		<p style="text-align : center;">Envoyez-nous vos coordonnées et nous vous contacterons rapidement.</p>
+		<p style="text-align : center;">Vous êtes sportif, dynamique et avez envie de vous faire un extra, rejoignez l’aventure HoMe Menus. Envoyez-nous vos coordonnées et nous vous contacterons rapidement.</p>
 		<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="">
 			<fieldset>
 				<h3>Vos coordonnées</h3>

@@ -57,7 +57,7 @@ class Model_Recherche extends Model_Template {
 			$stmt->bindValue(":id_user", $this->user->id);
 		}
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
@@ -67,16 +67,21 @@ class Model_Recherche extends Model_Template {
 			$stmt->bindValue(":id_recherche", $this->id);
 			$stmt->bindValue(":id_restaurant", $restaurant->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
 	}
 	
-	public function getAll () {
-		$sql = "SELECT id, recherche, distance, ville, nb_restaurant, id_user, date_recherche FROM recherches ORDER BY date_recherche DESC";
+	public function getAll ($dateDebut, $dateFin) {
+		$sql = "SELECT id, recherche, distance, ville, nb_restaurant, id_user, date_recherche FROM recherches 
+		WHERE date_recherche BETWEEN :date_debut AND :date_fin
+		ORDER BY date_recherche DESC";
 		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$resultats = $stmt->fetchAll();

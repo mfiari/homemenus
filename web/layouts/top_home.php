@@ -54,3 +54,4 @@
 		</div>
 	</div>
 </header>
+<h3>Nous ne livrons qu’à partir de 19h mais vous pouvez précommander dès maintenant</h3>

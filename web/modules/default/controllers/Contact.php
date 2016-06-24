@@ -96,7 +96,7 @@ class Controller_Contact extends Controller_Default_Template {
 		}
 		$request->sujets = $sujets;
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/contact.js", "https://www.google.com/recaptcha/api.js");
-		$request->title = "Contact";
+		$request->title = "HoMe Menus - Contact";
 		$request->vue = $this->render("contact/contact.php");
 	}
 	
@@ -191,7 +191,7 @@ class Controller_Contact extends Controller_Default_Template {
 			}
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/livreur.js", "https://www.google.com/recaptcha/api.js");
-		$request->title = "Contact";
+		$request->title = "HoMe Menus - Contact livreur";
 		$request->vue = $this->render("contact/livreur.php");
 	}
 	
@@ -282,7 +282,7 @@ class Controller_Contact extends Controller_Default_Template {
 			}
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/restaurant.js", "https://www.google.com/recaptcha/api.js");
-		$request->title = "Contact";
+		$request->title = "HoMe Menus - Devenir restaurant partenaire";
 		$request->vue = $this->render("contact/restaurant.php");
 	}
 	
@@ -385,7 +385,7 @@ class Controller_Contact extends Controller_Default_Template {
 			}
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/entreprise.js", "https://www.google.com/recaptcha/api.js");
-		$request->title = "Contact";
+		$request->title = "HoMe Menus - Pour les entreprises";
 		$request->vue = $this->render("contact/entreprise.php");
 	}
 	
@@ -546,7 +546,7 @@ class Controller_Contact extends Controller_Default_Template {
 			}
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/evenement.js", "https://www.google.com/recaptcha/api.js");
-		$request->title = "Contact";
+		$request->title = "HoMe Menus - Commande speciale";
 		$request->vue = $this->render("contact/evenements.php");
 	}
 	

@@ -7,10 +7,12 @@ include_once ROOT_PATH."models/Horaire.php";
 include_once ROOT_PATH."models/Categorie.php";
 include_once ROOT_PATH."models/Contenu.php";
 include_once ROOT_PATH."models/Menu.php";
+include_once ROOT_PATH."models/Certificat.php";
 
 class Controller_Index extends Controller_Default_Template {
 	
 	public function manage ($request) {
+		$this->request = $request;
 		if (isset($_GET["action"])) {
 			$action = $_GET["action"];
 			switch ($action) {
@@ -53,15 +55,6 @@ class Controller_Index extends Controller_Default_Template {
 				case "cgv" :
 					$this->cgv($request);
 					break;
-				case "paiement" :
-					$this->paiement($request);
-					break;
-				case "paiement2" :
-					$this->paiement2($request);
-					break;
-				case "recaptcha" :
-					$this->recaptcha($request);
-					break;
 				case "404" :
 					$this->error_404($request);
 					break;
@@ -74,33 +67,43 @@ class Controller_Index extends Controller_Default_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('index/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('index/'.$vue.'.php');
+	}
+	
 	public function home ($request) {
 		$request->home = true;
-		$request->title = "HoMe Menus";
-		$request->javascripts = array("res/js/home.js");
-		$request->vue = $this->render("home.php");
+		$request->title = "HoMe Menus - vos envies sont servies";
+		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places", "res/js/home.js");
+		$request->vue = $this->render("home");
 	}
 	
 	public function qui_sommes_nous ($request) {
-		$request->title = "HoMe Menus - qui sommes nous";
-		$request->vue = $this->render("qui_somme_nous.php");
+		$request->title = "HoMe Menus - Qui sommes-nous";
+		$request->vue = $this->render("qui_somme_nous");
 	}
 	
 	public function premium ($request) {
 		$request->title = "premium";
-		$request->vue = $this->render("premium.php");
+		$request->vue = $this->render("premium");
 	}
 	
 	public function faq ($request) {
 		$request->title = "HoMe Menus - FAQ";
-		$request->vue = $this->render("faq.php");
+		$request->vue = $this->render("faq");
 	}
 	
 	public function restaurants_partenaire ($request) {
 		$request->title = "HoMe Menus - Restaurants partenaire";
 		$modelRestaurant = new Model_Restaurant();
 		$request->restaurants = $modelRestaurant->getAllRestaurantEnable();
-		$request->vue = $this->render("restaurants_partenaire.php");
+		$request->vue = $this->render("restaurants_partenaire");
 	}
 	
 	public function restaurant_partenaire ($request) {
@@ -108,7 +111,7 @@ class Controller_Index extends Controller_Default_Template {
 		$modelRestaurant->id = $_GET['id'];
 		$request->restaurant = $modelRestaurant->loadAll();
 		$request->title = "HoMe Menus - Restaurant ".utf8_encode($request->restaurant->nom);
-		$request->vue = $this->render("restaurant_partenaire.php");
+		$request->vue = $this->render("restaurant_partenaire");
 	}
 	
 	public function signin ($request) {
@@ -186,65 +189,60 @@ class Controller_Index extends Controller_Default_Template {
 				$request->errorMessage = $errorMessage;
 			}
 		}
-		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/compte.js");
-		$request->title = "Inscription";
-		$request->vue = $this->render("signin.php");
+		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places", "res/js/jquery.validate.min.js", "res/js/compte.js");
+		$request->title = "HoMe Menus - Inscription";
+		$request->vue = $this->render("signin");
 	}
 	
 	public function signin_success ($request) {
-		$request->vue = $this->render("signin_success.php");
+		$request->_noindex = true;
+		$request->title = "Inscription réussie";
+		$request->vue = $this->render("signin_success");
 	}
 	
 	public function login ($request) {
-		$request->disableLayout = true;
-		$request->noRender = true;
-		if (!isset($_POST['login']) || !isset($_POST['password'])) {
-			$this->error(400, "bad request");
+		if ($request->request_method == "POST") {
+			$request->disableLayout = true;
+			$request->noRender = true;
+			if (!isset($_POST['login']) || !isset($_POST['password'])) {
+				$this->error(400, "bad request");
+			}
+			$login = trim($_POST['login']);
+			$password = trim($_POST['password']);
+			if ($login == '') {
+				$this->error(400, "bad request");
+			}
+			if ($password == '') {
+				$this->error(400, "bad request");
+			}
+			$user = new Model_User();
+			if (!$user->login($login, $password)) {
+				$this->error(404, "Not found");
+			}
+			if (!$user->is_enable) {
+				$this->error(403, "Not authorized");
+			}
+			$_SESSION["uid"] = $user->id;
+			$_SESSION["session"] = $user->session;
+		} else {
+			$request->title = "Connexion";
+			$request->vue = $this->render("connexion");
 		}
-		$login = trim($_POST['login']);
-		$password = trim($_POST['password']);
-		if ($login == '') {
-			$this->error(400, "bad request");
-		}
-		if ($password == '') {
-			$this->error(400, "bad request");
-		}
-		$user = new Model_User();
-		if (!$user->login($login, $password)) {
-			$this->error(404, "Not found");
-		}
-		if (!$user->is_enable) {
-			$this->error(403, "Not authorized");
-		}
-		$_SESSION["uid"] = $user->id;
-		$_SESSION["session"] = $user->session;
 	}
 	
 	public function mention_legal ($request) {
-		$request->vue = $this->render("mention_legal.php");
+		$request->title = "Mentions légales";
+		$request->vue = $this->render("mention_legal");
 	}
 	
 	public function cgu ($request) {
-		$request->vue = $this->render("cgu.php");
+		$request->title = "Conditions générales d'utilisation";
+		$request->vue = $this->render("cgu");
 	}
 	
 	public function cgv ($request) {
-		$request->vue = $this->render("cgv.php");
-	}
-	
-	public function paiement ($request) {
-		require_once WEBSITE_PATH.'res/lib/braintree/Braintree.php';
-		\Braintree_Configuration::environment('sandbox');
-		\Braintree_Configuration::merchantId('f67spz3sxb4rdvfs');
-		\Braintree_Configuration::publicKey('nzng9z3d8dmyw84g');
-		\Braintree_Configuration::privateKey('39f185c352f34549e1fbc7017e881184');
-		$clientToken = Braintree_ClientToken::generate();
-		var_dump($clientToken); die();
-		$request->vue = $this->render("paiement.php");
-	}
-	
-	public function paiement2 ($request) {
-		$request->vue = $this->render("paiement2.php");
+		$request->title = "Conditions générales de vente";
+		$request->vue = $this->render("cgv");
 	}
 	
 	public function recaptcha ($request) {
@@ -254,7 +252,8 @@ class Controller_Index extends Controller_Default_Template {
 	}
 	
 	public function error_404 ($request) {
-		$request->vue = $this->render("404.php");
+		$request->title = "Page non trouvée";
+		$request->vue = $this->render("404");
 	}
 	
 	public function logout ($request) {

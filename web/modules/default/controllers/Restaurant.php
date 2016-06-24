@@ -19,10 +19,13 @@ include_once ROOT_PATH."models/Option.php";
 include_once ROOT_PATH."models/OptionValue.php";
 include_once ROOT_PATH."models/Accompagnement.php";
 include_once ROOT_PATH."models/Recherche.php";
+include_once ROOT_PATH."models/Certificat.php";
+include_once ROOT_PATH."models/CodePromo.php";
 
 class Controller_Restaurant extends Controller_Default_Template {
 	
 	public function manage ($request) {
+		$this->request = $request;
 		if (isset($_GET["action"])) {
 			$action = $_GET["action"];
 			switch ($action) {
@@ -34,9 +37,6 @@ class Controller_Restaurant extends Controller_Default_Template {
 					break;
 				case "categories" :
 					$this->categories($request);
-					break;
-				case "view" :
-					$this->view($request);
 					break;
 				case "carte" :
 					$this->carte($request);
@@ -50,6 +50,9 @@ class Controller_Restaurant extends Controller_Default_Template {
 				case "autocompleteRestaurant" :
 					$this->autocompleteRestaurant($request);
 					break;
+				case "panier" :
+					$this->panier($request);
+					break;
 				default :
 					$this->redirect('404');
 					break;
@@ -57,6 +60,16 @@ class Controller_Restaurant extends Controller_Default_Template {
 		} else {
 			$this->redirect('404');
 		}
+	}
+	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('restaurant/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('restaurant/'.$vue.'.php');
 	}
 	
 	public function index ($request) {
@@ -81,11 +94,13 @@ class Controller_Restaurant extends Controller_Default_Template {
 				$request->prix_livraison = $request->restaurant->getPrixLivraison();
 			}
 			
+			$panier = new Model_Panier();
 			if ($request->_auth) {
-				$panier = new Model_Panier();
 				$panier->uid = $request->_auth->id;
-				$request->panier = $panier->loadPanier();
+			} else {
+				$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
 			}
+			$request->panier = $panier->loadPanier();
 			
 			if (isset($_SESSION['search_adresse'])) {
 				$request->adresse = $_SESSION['search_adresse'];
@@ -101,7 +116,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			}
 			$request->search_adresse = $_SESSION['search_adresse'];
 			$request->javascripts = array("res/js/menu.js");
-			$request->vue = $this->render("restaurant/restaurant.php");
+			$request->vue = $this->render("restaurant");
 		} else {
 			$this->redirect();
 		}		
@@ -236,11 +251,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 		$request->ville = $city;
 		$request->villes = array_unique(array_object_column($restaurants, 'ville'));
 		$request->restaurants = $restaurants;
-		$request->vue = $this->render("restaurants.php");
-	}
-	
-	private function view ($request) {
-		
+		$request->vue = $this->render("restaurants");
 	}
 	
 	private function categories ($request) {
@@ -259,7 +270,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$restaurant->addCategorie($children);
 		}
 		$request->restaurant = $restaurant;
-		$request->vue = $this->render("categories.php");
+		$request->vue = $this->render("categories");
 	}
 	
 	private function carte ($request) {
@@ -281,7 +292,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
 			$request->has_livreur_dispo = count($livreurs) > 0;
 			
-			$request->vue = $this->render("carteDetail.php");
+			$request->vue = $this->render("carteDetail");
 		} else {
 			$modelRestaurant = new Model_Restaurant();
 			$modelRestaurant->id = $_GET['id'];
@@ -358,6 +369,24 @@ class Controller_Restaurant extends Controller_Default_Template {
 			}
 			echo json_encode($suggestions);
 		}
+	}
+	
+	private function panier ($request) {
+		if (isset($_GET["type"]) && $_GET["type"] == "ajax") {
+			$request->disableLayout = true;
+		} else if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$request->disableLayout = false;
+		} else {
+			$request->disableLayout = true;
+		}
+		$panier = new Model_Panier();
+		if ($request->_auth) {
+			$panier->uid = $request->_auth->id;
+		} else {
+			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+		}
+		$request->panier = $panier->loadPanier();
+		$request->vue = $this->render("panier");
 	}
 	
 	private function getLogo ($restaurant) {

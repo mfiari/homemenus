@@ -1,6 +1,10 @@
 <div class="row">
 	<div class="col-md-12">
 		<h2>Liste des commandes</h2>
+		<ul class="nav nav-tabs">
+			<li role="presentation" class="active"><a>Commande du jour</a></li>
+			<li role="presentation"><a href="?controler=commande&action=history">Historique des commandes</a></li>
+		</ul>
 		<div id="commandes">
 			<table class="table table-striped">
 				<thead>

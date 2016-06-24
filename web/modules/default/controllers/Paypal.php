@@ -6,13 +6,17 @@ include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Horaire.php";
 include_once ROOT_PATH."models/Carte.php";
 include_once ROOT_PATH."models/Format.php";
+include_once ROOT_PATH."models/Formule.php";
 include_once ROOT_PATH."models/Supplement.php";
 include_once ROOT_PATH."models/Menu.php";
+include_once ROOT_PATH."models/Categorie.php";
+include_once ROOT_PATH."models/Contenu.php";
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/GCMPushMessage.php";
 include_once ROOT_PATH."models/PDF.php";
 include_once ROOT_PATH."models/Paypal.php";
 include_once ROOT_PATH."models/PaypalItem.php";
+include_once ROOT_PATH."models/CodePromo.php";
 
 
 class Controller_Paypal extends Controller_Default_Template {

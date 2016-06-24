@@ -113,6 +113,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	
 	public function edit ($request) {
 		if ($request->request_method == "POST") {
+			$id_restaurant = $_POST['id_restaurant'];
 			$nom = $_POST['nom'];
 			$telephone = $_POST['telephone'];
 			$pourcentage = $_POST['pourcentage'];
@@ -148,6 +149,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				$longitude = $coord->{'lng'};
 				
 				$modelRestaurant = new Model_Restaurant();
+				$modelRestaurant->id = $id_restaurant;
 				$modelRestaurant->nom = $nom;
 				$modelRestaurant->rue = $rue;
 				$modelRestaurant->ville = $ville;
@@ -199,6 +201,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				$modelRestaurant->id = $_GET['id_restaurant'];
 				$request->restaurant = $modelRestaurant->getOne();
 			}
+			$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
 			$request->vue = $this->render("restaurant/edit.php");
 		}
 	}

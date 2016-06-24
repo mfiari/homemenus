@@ -59,7 +59,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
@@ -87,7 +87,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt->bindValue(":distance", $this->distance);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -102,7 +102,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt->bindValue(":format", $format);
 		$stmt->bindValue(":quantite", $quantite);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $this->db->lastInsertId();
@@ -115,7 +115,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt->bindValue(":option", $id_option);
 		$stmt->bindValue(":value", $id_value);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $this->db->lastInsertId();
@@ -127,7 +127,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt->bindValue(":commande_carte", $id_commande_carte);
 		$stmt->bindValue(":accompagnement", $id_carte);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $this->db->lastInsertId();
@@ -139,7 +139,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt->bindValue(":commande_carte", $id_commande_carte);
 		$stmt->bindValue(":supplement", $id_supplement);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $this->db->lastInsertId();
@@ -151,7 +151,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt->bindValue(":uid", $this->uid);
 		$stmt->bindValue(":month", $month);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -176,7 +176,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt->bindValue(":month", $month);
 		$stmt->bindValue(":day", $day);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -200,7 +200,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -230,7 +230,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -268,7 +268,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -286,7 +286,7 @@ class Model_Pre_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $this->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$supplements = $stmt->fetchAll();
@@ -307,7 +307,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$menus = $stmt->fetchAll();
@@ -325,7 +325,7 @@ class Model_Pre_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $this->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$contenus = $stmt->fetchAll();
@@ -349,7 +349,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -370,7 +370,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -379,14 +379,14 @@ class Model_Pre_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$sql = "DELETE FROM pre_commande_menu WHERE id = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -394,7 +394,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -403,14 +403,14 @@ class Model_Pre_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$sql = "DELETE FROM pre_commande_carte WHERE id = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -418,7 +418,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -431,7 +431,7 @@ class Model_Pre_Commande extends Model_Template {
 		$stmt->bindValue(":payment", $this->payment);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -444,7 +444,7 @@ class Model_Pre_Commande extends Model_Template {
 		WHERE com.validation = false";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -465,7 +465,7 @@ class Model_Pre_Commande extends Model_Template {
 		$sql = "SELECT id FROM pre_commande WHERE date_commande = CURRENT_DATE AND validation = true";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();

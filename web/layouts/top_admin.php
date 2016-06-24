@@ -17,12 +17,22 @@
 				<li><a href="?controler=restaurant">Restaurants</a></li>
 				<li><a href="?controler=user&action=livreurs">Livreurs</a></li>
 				<li><a href="?controler=user&action=clients">Clients</a></li>
+				<li><a href="?controler=panier">Panier</a></li>
 				<li><a href="?controler=commande">Commandes</a></li>
-				<li><a href="?controler=recherche">recherches</a></li>
-				<li><a href="?controler=mail">mails</a></li>
-				<li><a href="?controler=log">Log</a></li>
-				<li><a href="?controler=cron">Cron</a></li>
-				<li><a href="?action=logout">deconnexion</a></li>
+				<li>
+					<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+						<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="?controler=codePromo">code promo</a></li>
+						<li><a href="?controler=recherche">recherches</a></li>
+						<li><a href="?controler=mail">mails</a></li>
+						<li><a href="?controler=log">Log</a></li>
+						<li><a href="?controler=cron">Cron</a></li>
+						<li><a href="?action=logout">deconnexion</a></li>
+					</ul>
+				</li>
 			</ul>
 		</nav>
 	</div>

@@ -17,8 +17,10 @@
 					<span style="color : red;">
 						Le <?php echo utf8_encode($request->panier->restaurant->nom); ?> est actuellement fermé. Ouverture
 							de <?php echo formatHeureMinute($horaire->heure_debut, $horaire->minute_debut); ?> 
-							à <?php echo formatHeureMinute($horaire->heure_fin, $horaire->minute_fin); ?></span><br /><br />
-					<span><b>heure de livraison souhaité : </b></span>
+							à <?php echo formatHeureMinute($horaire->heure_fin, $horaire->minute_fin); ?><br />
+						Précommande possible dès maintenant.
+					</span><br /><br />
+					<span><b>Heure de livraison souhaitée : </b></span>
 					<?php 
 						if ($horaire->heure_debut < $current_heure) {
 							$beginHour = $current_heure;
@@ -38,7 +40,7 @@
 					</select>
 				<?php else : ?>
 					<input type="radio" name="type_commande" value="now" checked>Au plus tôt
-					<input type="radio" name="type_commande" value="pre_commande">Pré-commande
+					<input type="radio" name="type_commande" value="pre_commande">Précommander
 					<span>heure de commande</span>
 					<?php 
 						if ($horaire->heure_debut < $current_heure) {
@@ -80,7 +82,7 @@
 								<tr id="tr_carte_<?php echo $carte->id; ?>">
 									<td><?php echo utf8_encode($carte->nom); ?></td>
 									<td><?php echo $carte->quantite; ?></td>
-									<td><?php echo $carte->prix; ?> €</td>
+									<td><?php echo formatPrix($carte->prix); ?></td>
 									<td><a class="carte-item-delete" data-id="<?php echo $carte->id; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
 								</tr>
 								<?php $totalQte += $carte->quantite; ?>
@@ -90,7 +92,7 @@
 								<tr>
 									<td><?php echo utf8_encode($menu->nom); ?></td>
 									<td><?php echo $menu->quantite; ?></td>
-									<td><?php echo $menu->prix; ?> €</td>
+									<td><?php echo formatPrix($menu->prix); ?></td>
 									<td><a class="menu-item-delete" data-id="<?php echo $menu->id; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
 								</tr>
 								<?php $totalQte += $menu->quantite; ?>
@@ -105,20 +107,75 @@
 							<tr>
 								<td>prix de livraison</td>
 								<td></td>
-								<td><?php echo $prix_livraison; ?> €</td>
+								<td>
+									<?php 
+										if ($request->panier->code_promo->surPrixLivraison()) {
+											if ($request->panier->code_promo->estGratuit()) {
+												echo "OFFERT";
+												$prix_livraison = 0;
+											} else {
+												$prix_livraison -= $request->panier->code_promo->valeur_prix_livraison;
+												$totalPrix += $prix_livraison;
+												echo formatPrix($prix_livraison);
+											}
+										} else {
+											echo formatPrix($prix_livraison);
+											$totalPrix += $prix_livraison;
+										}
+									?>
+								</td>
 								<td></td>
 							</tr>
 							<?php $totalPrix += $prix_livraison; ?>
 						</tbody>
 						<tfoot>
+							<?php if ($request->panier->code_promo->description != '') : ?>
+								<tr>
+									<th>Promo :</th>
+									<td colspan="3"><?php echo utf8_encode($request->panier->code_promo->description); ?></td>
+								</tr>
+							<?php endif; ?>
 							<tr>
 								<th>Total :</th>
 								<th><?php echo $totalQte; ?></th>
-								<th><?php echo $totalPrix; ?> €</th>
+								<th>
+									<?php 
+										if ($request->panier->code_promo->surPrixTotal()) {
+											if ($request->panier->code_promo->estGratuit()) {
+												echo "OFFERT";
+											} else {
+												$prixReduc = $totalPrix;
+												if ($request->panier->code_promo->valeur_prix_total != -1) {
+													$prixReduc -= $request->panier->code_promo->valeur_prix_total;
+												}
+												if ($request->panier->code_promo->pourcentage_prix_total != -1) {
+													$prixReduc -= ($prixReduc * $request->panier->code_promo->pourcentage_prix_total) / 100;
+												}
+												echo formatPrix($prixReduc);
+											}
+										} else {
+											echo formatPrix($totalPrix);
+										}
+									?>
+								</th>
 								<td></td>
 							</tr>
 						</tfoot>
 					</table>
+					<div id="codePromoPanierBlock" style="margin-bottom : 20px;">
+						<span>Code promo : </span>
+						<input id="code_promo" name="code_promo" type="text" maxlength="10">
+						<button id="codePromoPanierButton" class="btn btn-primary" type="button">Valider</button>
+						<div style="display : none;" class="alert alert-success" role="alert">
+							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+							Votre code promo a été validé.
+						</div>
+						<div style="display : none;" class="alert alert-danger" role="alert">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							<span class="sr-only">Error:</span>
+							<span class="message"></span>
+						</div>
+					</div>
 				</div>
 			</div>
 		</form>
@@ -133,11 +190,11 @@
 			<div class="alert alert-danger" role="alert">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 				<span class="sr-only">Error:</span>
-				Le montant minimum pour commander est de <?php echo $request->panier->prix_minimum; ?> €
+				Le montant minimum pour commander est de <?php echo $request->panier->prix_minimum; ?> € (hors prix de livraison)
 			</div>
 		<?php else : ?>
 			<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
-				<button id="command" class="btn btn-primary" type="submit">Pré-Commande</button>
+				<button id="command" class="btn btn-primary" type="submit">Précommander</button>
 			<?php else : ?>
 				<button id="command" class="btn btn-primary" type="submit">Commander</button>
 			<?php endif; ?>
@@ -160,21 +217,6 @@
 		$("#panier-info-modal #heure_commande").val(heure_commande);
 		$("#panier-info-modal #minute_commande").val(minute_commande);
 		$("#panier-info-modal").modal();
-		/*event.preventDefault();
-		document.location.href="?controler=panier&action=validate";*/
-		/*if ($("#accept_cgv").is(":checked")) {
-			$.ajax({
-				type: "POST",
-				url: "?controler=panier&action=commande",
-				dataType: "html",
-				data: $("#panierForm").serialize()
-			}).done(function( msg ) {
-				$("#panier-modal").modal('hide');
-				document.location.href="?controler=paypal"
-			});
-		} else {
-			$("#accept_cgv_error_message").show();
-		}*/
 	});
 	$(".carte-item-show").click(function(event) {
 		var id_panier = $("#id_panier").val();
@@ -216,6 +258,42 @@
 			openCard ();
 		}).error(function(msg) {
 			alert("error");
+		});
+	});
+	$("#codePromoPanierButton").click(function () {
+		$("#loading-modal").modal();
+		var codePromo = $("#code_promo").val();
+		$.ajax({
+			type: "POST",
+			url: "?controler=panier&action=addCodePromo",
+			dataType: "html",
+			data: {code_promo : codePromo}
+		}).done(function( msg ) {
+			$("#loading-modal").modal('hide');
+			openCard ();
+		}).error(function(jqXHR, textStatus, errorThrown) {
+			switch (jqXHR.status) {
+				case 400 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Le code promo n'est pas applicable sur ce restaurant.");
+					break;
+				case 401 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Vous n'êtes pas autorisé à utiliser ce code promo.");
+					break;
+				case 403 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Veuillez vous connecter pour utiliser ce code promo.");
+					break;
+				case 404 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Ce code promo n'existe pas.");
+					break;
+				case 410 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Vous avez déjà utilisé ce code promo.");
+					break;
+				default :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Une erreur est survenu, veuillez réessayé.");
+					break;
+			}
+			$("#codePromoPanierBlock div.alert-danger").css('display', 'block');
+			$("#loading-modal").modal('hide');
 		});
 	});
 </script>

@@ -56,6 +56,10 @@ span.glyphicon-ok {
 	color : #00FF00;
 }
 
+span.glyphicon {
+	cursor : pointer;
+}
+
 /* header */
 
 header.home {
@@ -386,7 +390,7 @@ table .glyphicon {
 }
 
 .stepper-button {
-	background-color:#768d87;
+	background-color:#337ab7;
 	-moz-border-radius:16px;
 	-webkit-border-radius:16px;
 	border-radius:16px;
@@ -401,10 +405,13 @@ table .glyphicon {
 	text-decoration:none;
 	text-shadow:0px 1px 0px #2b665e;
 }
+
 .stepper-button:hover {
-	background-color:#6c7c7c;
+	background-color:#286090;
+	color:#ffffff;
 	text-decoration:none;
 }
+
 .stepper-button:active {
 	position:relative;
 	top:1px;
@@ -422,11 +429,15 @@ footer {
 	text-align : center;
 }
 
+footer h3 {
+	color : #23527C;
+}
+
 footer a {
 	color : #FFF;
 }
 
-img.social-media {
+footer img.social-media {
 	width : 50px;
 }
 

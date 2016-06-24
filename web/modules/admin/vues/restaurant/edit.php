@@ -8,10 +8,10 @@
 				<?php else : ?>
 					<legend>Ajouter un restaurant</legend>
 				<?php endif; ?>
-				<input type="text" name="id_restaurant" hidden="hidden" value="<?php echo $edit ? $request->restaurant->id : 0; ?>">
+				<input type="text" name="id_restaurant" hidden="hidden" value="<?php echo $edit ? $request->restaurant->id : -1; ?>">
 				<div class="form-group">
 					<label for="nom">Nom : </label>
-					<input class="form-control" name="nom" type="text" value="<?php echo $edit ? $request->restaurant->nom : ""; ?>" />
+					<input class="form-control" name="nom" type="text" value="<?php echo $edit ? utf8_encode($request->restaurant->nom) : ""; ?>" />
 				</div>
 				<div class="form-group">
 					<label for="login">Logo : </label>
@@ -22,7 +22,7 @@
 				</div>
 				<div class="form-group">
 					<label for="adresse">Adresse : </label>
-					<input id="full_address" class="form-control" name="adresse" type="text" value="<?php echo $edit ? $request->restaurant->rue.', '.$request->restaurant->code_postal.' '.$request->restaurant->ville : ""; ?>" placeholder="Entrez votre adresse">
+					<input id="full_address" class="form-control" name="adresse" type="text" value="<?php echo $edit ? utf8_encode($request->restaurant->rue).', '.$request->restaurant->code_postal.' '.utf8_encode($request->restaurant->ville) : ""; ?>" placeholder="Entrez votre adresse">
 					<input id="rue" name="rue" type="text" value="<?php echo $edit ? $request->restaurant->rue : ""; ?>" hidden="hidden">
 					<input id="ville" name="ville" type="text" value="<?php echo $edit ? $request->restaurant->ville : ""; ?>" hidden="hidden">
 					<input id="code_postal" name="code_postal" type="text" value="<?php echo $edit ? $request->restaurant->code_postal : ""; ?>" hidden="hidden">
@@ -47,11 +47,11 @@
 				</div>
 				<div class="form-group">
 					<label for="short_desc">Description courte : </label>
-					<input class="form-control" name="short_desc" type="text" value="<?php echo $edit ? $request->restaurant->short_desc : ""; ?>" />
+					<input class="form-control" name="short_desc" type="text" value="<?php echo $edit ? utf8_encode($request->restaurant->short_desc) : ""; ?>" />
 				</div>
 				<div class="form-group">
 					<label for="long_desc">Description : </label>
-					<textarea class="form-control" name="long_desc" ><?php echo $edit ? $request->restaurant->long_desc : ""; ?></textarea>
+					<textarea class="form-control" name="long_desc" ><?php echo $edit ? utf8_encode($request->restaurant->long_desc) : ""; ?></textarea>
 				</div>
 				<div id="horraires">
 				<span>Horaires</span>

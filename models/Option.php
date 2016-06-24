@@ -36,6 +36,7 @@ class Model_Option extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -47,6 +48,7 @@ class Model_Option extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$optionValues = $stmt->fetchAll();
@@ -65,7 +67,7 @@ class Model_Option extends Model_Template {
 		$stmt->bindValue(":restaurant", $this->id_restaurant);
 		$stmt->bindValue(":nom", $this->nom);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
@@ -78,7 +80,7 @@ class Model_Option extends Model_Template {
 		$stmt->bindValue(":option", $this->id);
 		$stmt->bindValue(":nom", $optionValue->nom);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$optionValue->id = $this->db->lastInsertId();
@@ -90,7 +92,7 @@ class Model_Option extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;

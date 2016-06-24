@@ -37,7 +37,7 @@ class Model_Formule extends Model_Template {
 		$stmt->bindValue(":restaurant", $this->id_restaurant);
 		$stmt->bindValue(":nom", $this->nom);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
@@ -49,7 +49,7 @@ class Model_Formule extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;

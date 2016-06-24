@@ -82,7 +82,7 @@ class Model_Carte extends Model_Template {
 		$stmt->bindValue(":ordre", $this->ordre);
 		$stmt->bindValue(":commentaire", $this->commentaire);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
@@ -95,7 +95,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":prix", $format->prix);
 			$stmt->bindValue(":temps_preparation", $format->temps_preparation);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -106,7 +106,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":limite", $accompagnement->limite);
 			$stmt->bindValue(":categorie", $accompagnement->id_categorie);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$accompagnement->id = $this->db->lastInsertId();
@@ -116,7 +116,7 @@ class Model_Carte extends Model_Template {
 				$stmt->bindValue(":id", $accompagnement->id);
 				$stmt->bindValue(":carte", $carte->id);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -127,7 +127,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":carte", $this->id);
 			$stmt->bindValue(":supplement", $supplement->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -137,7 +137,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":carte", $this->id);
 			$stmt->bindValue(":option", $option->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -147,7 +147,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":carte", $this->id);
 			$stmt->bindValue(":horaire", $horaire->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -163,14 +163,14 @@ class Model_Carte extends Model_Template {
 		$stmt->bindValue(":commentaire", $this->commentaire);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$sql = "DELETE FROM carte_format WHERE id_carte = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		foreach ($this->formats as $format) {
@@ -182,7 +182,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":prix", $format->prix);
 			$stmt->bindValue(":temps_preparation", $format->temps_preparation);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -190,7 +190,7 @@ class Model_Carte extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$accompagnements = $stmt->fetchAll();
@@ -199,7 +199,7 @@ class Model_Carte extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $acc["id"]);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -207,7 +207,7 @@ class Model_Carte extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		foreach ($this->accompagnements as $accompagnement) {
@@ -217,7 +217,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":limite", $accompagnement->limite);
 			$stmt->bindValue(":categorie", $accompagnement->id_categorie);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$accompagnement->id = $this->db->lastInsertId();
@@ -227,7 +227,7 @@ class Model_Carte extends Model_Template {
 				$stmt->bindValue(":id", $accompagnement->id);
 				$stmt->bindValue(":carte", $carte->id);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -238,7 +238,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":carte", $this->id);
 			$stmt->bindValue(":supplement", $supplement->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -248,7 +248,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":carte", $this->id);
 			$stmt->bindValue(":option", $option->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -258,7 +258,7 @@ class Model_Carte extends Model_Template {
 			$stmt->bindValue(":carte", $this->id);
 			$stmt->bindValue(":horaire", $horaire->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -290,8 +290,7 @@ class Model_Carte extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			echo "formats  : ";
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$formats = $stmt->fetchAll();
@@ -308,7 +307,7 @@ class Model_Carte extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$accompagnements = $stmt->fetchAll();
@@ -323,7 +322,7 @@ class Model_Carte extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $accompagnement->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$cartes = $stmt->fetchAll();
@@ -344,8 +343,7 @@ class Model_Carte extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			echo "supplements  : ";
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$supplements = $stmt->fetchAll();
@@ -365,7 +363,7 @@ class Model_Carte extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$options = $stmt->fetchAll();
@@ -378,7 +376,7 @@ class Model_Carte extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $option->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$values = $stmt->fetchAll();
@@ -402,7 +400,7 @@ class Model_Carte extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$supplements = $stmt->fetchAll();

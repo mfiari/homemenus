@@ -25,9 +25,23 @@ class Controller_Mail extends Controller_Admin_Template {
 	}
 	
 	public function index ($request) {
+		if (isset($_POST['date_debut'])) {
+			$request->date_debut = $_POST['date_debut'];
+		} else {
+			$request->date_debut = date('d/m/Y');
+		}
+		$dateDebut = datepickerToDatetime($request->date_debut).' 00:00:00';
+		
+		if (isset($_POST['date_fin'])) {
+			$request->date_fin = $_POST['date_fin'];
+		} else {
+			$request->date_fin = date('d/m/Y');
+		}
+		$dateFin = datepickerToDatetime($request->date_fin).' 23:59:59';
+		
 		$request->title = "Administration";
 		$modelMail = new Model_Mail();
-		$request->mails = $modelMail->getAll();
+		$request->mails = $modelMail->getAll($dateDebut, $dateFin);
 		$request->vue = $this->render("mails/index.php");
 	}
 	

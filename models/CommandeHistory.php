@@ -3,12 +3,14 @@
 class Model_Commande_History extends Model_Template {
 	
 	private $id;
+	private $id_commande;
 	private $uid;
 	private $client;
 	private $rue;
 	private $ville;
 	private $code_postal;
 	private $prix;
+	private $prix_livraison;
 	private $note;
 	private $carte;
 	private $cartes;
@@ -96,7 +98,7 @@ class Model_Commande_History extends Model_Template {
 		$stmt->bindValue(":note", $commande->note);
 		$stmt->bindValue(":commentaire", $commande->commentaire);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$id_commande_history = $this->db->lastInsertId();
@@ -112,7 +114,7 @@ class Model_Commande_History extends Model_Template {
 			$stmt->bindValue(":commentaire_menu", $menu->commentaire);
 			$stmt->bindValue(":quantite", $menu->quantite);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$id_commande_menu = $this->db->lastInsertId();
@@ -137,7 +139,7 @@ class Model_Commande_History extends Model_Template {
 				$stmt->bindValue(":contenu_limite_supplement", $contenu->limite_supplement);
 				$stmt->bindValue(":commentaire_contenu", $contenu->commentaire);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -158,7 +160,7 @@ class Model_Commande_History extends Model_Template {
 			$stmt->bindValue(":parent_nom", $carte->categorie->parent_categorie->nom);
 			$stmt->bindValue(":commentaire_carte", $carte->commentaire);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$id_commande_carte = $this->db->lastInsertId();
@@ -173,7 +175,7 @@ class Model_Commande_History extends Model_Template {
 				$stmt->bindValue(":prix_supplement", $supplement->prix);
 				$stmt->bindValue(":commentaire_supplement", $supplement->commentaire);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -192,7 +194,7 @@ class Model_Commande_History extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -218,12 +220,207 @@ class Model_Commande_History extends Model_Template {
 		return $listCommande;
 	}
 	
-	public function getTotal () {
-		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, 
-		SUM(prix + prix_livraison) AS total_prix FROM commande_history";
+	public function getAll ($dateDebut, $dateFin) {
+		$sql = "SELECT id, id_commande, id_user AS id_client, id_livreur, login_livreur AS login, id_restaurant, nom_restaurant, 
+		code_postal_restaurant AS cp_restaurant, ville_restaurant, date_commande, prix, prix_livraison, note
+		FROM commande_history
+		WHERE date_commande BETWEEN :date_debut AND :date_fin
+		ORDER BY date_commande ASC";
 		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$listCommande = array();
+		foreach ($result as $c) {
+			$commande = new Model_Commande();
+			$commande->id = $c["id"];
+			$commande->id_commande = $c["id_commande"];
+			$commande->date_commande = $c["date_commande"];
+			$commande->prix = $c["prix"] + $c["prix_livraison"];
+			$commande->note = $c["note"];
+			
+			$client = new Model_User();
+			$client->id = $c["id_client"];
+			
+			$commande->client = $client;
+			
+			$livreur = new Model_User();
+			$livreur->id = $c["id_livreur"];
+			$livreur->login = $c["login"];
+			
+			$commande->livreur = $livreur;
+			
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $c["id_restaurant"];
+			$restaurant->nom = $c["nom_restaurant"];
+			$restaurant->ville = $c["ville_restaurant"];
+			$restaurant->code_postal = $c["cp_restaurant"];
+			
+			$commande->restaurant = $restaurant;
+			
+			$listCommande[] = $commande;
+		}
+		return $listCommande;
+	}
+	
+	public function load () {
+		$sql = "
+		SELECT 
+			id_commande, id_user AS uid, nom_user AS cnom, prenom_user AS cprenom, telephone_commande AS ctel, rue_commande AS com_rue, ville_commande AS com_ville, 
+			code_postal_commande AS com_cp, id_restaurant AS id_resto, nom_restaurant AS nom_resto, rue_restaurant AS rue_resto, 
+			ville_restaurant AS ville_resto, code_postal_restaurant AS cp_resto, id_livreur, prenom_livreur, date_commande, heure_souhaite, minute_souhaite, 
+			date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, prix, prix_livraison, distance
+		FROM commande_history
+		WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return;
+		}
+		$this->id_commande = $value['id_commande'];
+		$this->client = new Model_User(false);
+		$this->client->id = $value['uid'];
+		$this->client->nom = $value['cnom'];
+		$this->client->prenom = $value['cprenom'];
+		$this->client->telephone = $value['ctel'];
+		$this->rue = $value['com_rue'];
+		$this->ville = $value['com_ville'];
+		$this->code_postal = $value['com_cp'];
+		$this->id_livreur = $value['id_livreur'];
+		$this->restaurant = new Model_Restaurant(false);
+		$this->restaurant->id = $value['id_resto'];
+		$this->restaurant->nom = $value['nom_resto'];
+		$this->restaurant->rue = $value['rue_resto'];
+		$this->restaurant->ville = $value['ville_resto'];
+		$this->restaurant->code_postal = $value['cp_resto'];
+		$this->livreur = new Model_User(false);
+		$this->livreur->id = $value['id_livreur'];
+		$this->livreur->prenom = $value['prenom_livreur'];
+		$this->date_commande = $value['date_commande'];
+		$this->heure_souhaite = $value['heure_souhaite'];
+		$this->minute_souhaite = $value['minute_souhaite'];
+		$this->date_validation_restaurant = $value['date_validation_restaurant'];
+		$this->date_fin_preparation_restaurant = $value['date_fin_preparation_restaurant'];
+		$this->date_recuperation_livreur = $value['date_recuperation_livreur'];
+		$this->prix = $value['prix'];
+		$this->prix_livraison = $value['prix_livraison'];
+		$this->distance = $value['distance'];
+		
+		$this->cartes = array();
+		
+		$sql = "SELECT id_carte AS id, nom_carte AS nom, id_categorie, quantite, 0 AS prix
+		FROM commande_carte_history 
+		WHERE id_commande = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		foreach ($result as $c) {
+			$carte = new Model_Carte(false);
+			$carte->id = $c['id'];
+			$carte->nom = $c['nom'];
+			$carte->quantite = $c['quantite'];
+			$carte->prix = $c['prix'] * $c['quantite'];
+			
+			$sql = "SELECT id_supplement AS id, nom_supplement AS nom, prix_supplement AS prix
+			FROM commande_carte_supplement_history
+			WHERE id_commande_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $carte->id);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$supplements = $stmt->fetchAll();
+			foreach ($supplements as $sup) {
+				$supplement = new Model_Supplement(false);
+				$supplement->id = $sup["id"];
+				$supplement->nom = $sup["nom"];
+				$supplement->prix = $sup["prix"];
+				$carte->addSupplement($supplement);
+			}
+			$this->cartes[] = $carte;
+		}
+		
+		
+		$sql = "SELECT id, id_menu, nom_menu, id_format, nom_format, quantite, prix
+		FROM commande_menu_history
+		WHERE id_commande = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$listCommandeMenu = $stmt->fetchAll();
+		foreach ($listCommandeMenu as $commandeMenu) {
+			$menu = new Model_Menu(false);
+			$menu->id = $commandeMenu['id_menu'];
+			$menu->nom = $commandeMenu['nom_menu'];
+			$menu->quantite = $commandeMenu['quantite'];
+			$menu->prix = $commandeMenu['prix'] * $commandeMenu['quantite'];
+			
+			$format = new Model_Format();
+			$format->id = $commandeMenu['id_format'];
+			$format->nom = $commandeMenu['nom_format'];
+			
+			$menu->addFormat($format);
+			
+			$formule = new Model_Formule();
+			$formule->id = 0;
+			$formule->nom = 'formule';
+			
+			$menu->addFormule($formule);
+			
+			$sql = "SELECT id, id_categorie, nom_categorie, id_carte, nom_carte
+			FROM commande_menu_contenu_history 
+			WHERE id_commande_menu = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $commandeMenu['id']);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$listCommandeContenu = $stmt->fetchAll();
+			foreach ($listCommandeContenu as $commandeContenu) {
+				$categorie = new Model_Categorie(false);
+				$categorie->id = $commandeContenu['id_categorie'];
+				$categorie->nom = $commandeContenu['nom_categorie'];
+				
+				$contenu = new Model_Contenu(false);
+				$contenu->id = $commandeContenu['id_carte'];
+				$contenu->nom = $commandeContenu['nom_carte'];
+				
+				$categorie->addContenu($contenu);
+				
+				$formule->addCategorie($categorie);
+			}
+			$this->menus[] = $menu;
+		}
+		return $this;
+	}
+	
+	public function getTotal ($dateDebut, $dateFin) {
+		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, 
+		SUM(prix + prix_livraison) AS total_prix FROM commande_history
+		WHERE date_commande BETWEEN :date_debut AND :date_fin";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -233,53 +430,65 @@ class Model_Commande_History extends Model_Template {
 		return $value;
 	}
 	
-	public function getTotalByLivreur () {
+	public function getTotalByLivreur ($dateDebut, $dateFin) {
 		$sql = "SELECT id_livreur, login_livreur AS nom, COUNT(*) AS total_commande, 
 		SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, SUM(prix + prix_livraison) AS total_prix 
 		FROM commande_history
+		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		GROUP BY id_livreur";
 		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetchAll();;
 	}
 	
-	public function getTotalByRestaurant () {
+	public function getTotalByRestaurant ($dateDebut, $dateFin) {
 		$sql = "SELECT id_restaurant, nom_restaurant AS nom, COUNT(*) AS total_commande, 
 		SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, SUM(prix + prix_livraison) AS total_prix 
 		FROM commande_history 
+		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		GROUP BY id_restaurant";
 		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetchAll();;
 	}
 	
-	public function getTotalByClient () {
+	public function getTotalByClient ($dateDebut, $dateFin) {
 		$sql = "SELECT id_user, nom_user AS nom, prenom_user AS prenom, COUNT(*) AS total_commande, 
 		SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, SUM(prix + prix_livraison) AS total_prix 
 		FROM commande_history 
+		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		GROUP BY id_user";
 		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetchAll();;
 	}
 	
-	public function getTotalByVille () {
+	public function getTotalByVille ($dateDebut, $dateFin) {
 		$sql = "SELECT ville_commande AS nom, code_postal_commande AS cp, COUNT(*) AS total_commande, 
 		SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, SUM(prix + prix_livraison) AS total_prix 
 		FROM commande_history
+		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		GROUP BY ville_commande";
 		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetchAll();;

@@ -1,5 +1,7 @@
 <?php
 
+include_once ROOT_PATH."models/Log.php";
+
 class Controller_Log extends Controller_Admin_Template {
 	
 	public function manage ($request) {
@@ -50,9 +52,14 @@ class Controller_Log extends Controller_Admin_Template {
 	
 	public function sql ($request) {
 		$request->title = "Administration - Log";
-		$today = date('Y-m-d');
+		if (isset($_POST['date'])) {
+			$request->date_log = $_POST['date'];
+		} else {
+			$request->date_log = date('d/m/Y');
+		}
+		$today = datepickerToDatetime($request->date_log);
 		if (file_exists(ROOT_PATH.'log/sql/log_'.$today)) {
-			$request->logs = file (ROOT_PATH.'log/sql/log_'.$today);
+			$request->logs = Model_Log::parse(ROOT_PATH.'log/sql/log_'.$today);
 		}
 		$request->vue = $this->render("log/sql.php");
 	}
@@ -91,7 +98,8 @@ class Controller_Log extends Controller_Admin_Template {
 		$isText = false;
 		while ($line = fgets($handle)) {
 			if ($line == "[BEGIN_LOG]") {
-				$logObj = array();
+				//$logObj = array();
+				$logObj = new Model_Log();
 			} else if ($line == "[END_LOG]") {
 				$array[] = $logObj;
 			} else {
@@ -102,6 +110,7 @@ class Controller_Log extends Controller_Admin_Template {
 					$value = "";
 					if (trim($key) == "TEXT" && trim($value) == '') {
 						$logObj[$key] = array();
+						$isText = true;
 					} else {
 						$logObj[$key] = $value;
 					}

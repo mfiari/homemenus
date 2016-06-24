@@ -8,6 +8,7 @@
 						<th></th>
 						<th>Nom</th>
 						<th>Adresse</th>
+						<th>Actif</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -17,6 +18,7 @@
 							<td><img src="<?php echo getLogoRestaurant ($restaurant->id); ?>" alt="logo" height="50" width="50"></td>
 							<td><a href="?controler=restaurant&action=view&id_restaurant=<?php echo $restaurant->id; ?>"><?php echo utf8_encode($restaurant->nom); ?></a></td>
 							<td><?php echo utf8_encode($restaurant->rue); ?>, <?php echo $restaurant->code_postal; ?> <?php echo utf8_encode($restaurant->ville); ?></td>
+							<td><?php echo $restaurant->is_enable ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
 							<td>
 								<a href="?controler=restaurant&action=view&id_restaurant=<?php echo $restaurant->id; ?>">
 									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>

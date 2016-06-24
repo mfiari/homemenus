@@ -2,8 +2,10 @@
 
 abstract class Controller_Template {
 	
+	protected $request;
+	
 	public function __construct () {
-		
+		$this->request = null;
 	}
 	
 	protected function error ($code, $message = "") {

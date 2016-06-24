@@ -86,7 +86,7 @@
 														<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 													</a>
 													<a href="?controler=restaurant&action=deleteCategorie&id_categorie=<?php echo $children->id; ?>">
-														<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+														<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 													</a>
 												</td>
 											</tr>
@@ -103,7 +103,7 @@
 													<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 												</a>
 												<a href="?controler=restaurant&action=deleteCategorie&id_categorie=<?php echo $categorie->id; ?>">
-													<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+													<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 												</a>
 											</td>
 										</tr>
@@ -160,7 +160,7 @@
 												<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 											</a>
 											<a href="?controler=restaurant&action=deleteMenu&id_menu=<?php echo $menu->id; ?>">
-												<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>
@@ -193,7 +193,7 @@
 										<td>
 											<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 											<a href="?controler=restaurant&action=deleteTag&id_restaurant=<?php echo $request->restaurant->id; ?>&id_tag=<?php echo $tag->id; ?>">
-												<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>
@@ -236,7 +236,7 @@
 											<?php if ($format->nom != '') : ?>
 												<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 												<a href="?controler=restaurant&action=deleteFormat&id_restaurant=<?php echo $request->restaurant->id; ?>&id_format=<?php echo $format->id; ?>">
-													<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+													<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 												</a>
 											<?php endif; ?>
 										</td>
@@ -279,7 +279,7 @@
 										<td>
 											<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 											<a href="?controler=restaurant&action=deleteFormule&id_restaurant=<?php echo $request->restaurant->id; ?>&id_formule=<?php echo $formule->id; ?>">
-												<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>
@@ -325,7 +325,7 @@
 										<td>
 											<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 											<a href="?controler=restaurant&action=deleteSupplement&id_supplement=<?php echo $supplement->id; ?>">
-												<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>
@@ -375,7 +375,7 @@
 										<td>
 											<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 											<a href="?controler=restaurant&action=deleteOption&id=<?php echo $option->id; ?>">
-												<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>

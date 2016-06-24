@@ -21,6 +21,7 @@ class Model_Restaurant extends Model_Template {
 	private $virement;
 	private $horaires;
 	private $horaire;
+	private $certificats;
 	private $categories;
 	private $formats;
 	private $formules;
@@ -42,6 +43,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$this->id = -1;
 		$this->horaires = array();
+		$this->certificats = array();
 		$this->categories = array();
 		$this->formats = array();
 		$this->formules = array();
@@ -73,9 +75,15 @@ class Model_Restaurant extends Model_Template {
 		$this->categories[] = $categorie;
 	}
 	
+	public function addCertificat ($certificat) {
+		$this->certificats[] = $certificat;
+	}
+	
 	public function save () {
 		if ($this->id == -1) {
 			$this->insert();
+		} else {
+			$this->update();
 		}
 	}
 	
@@ -95,7 +103,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt->bindValue(":score", 0);
 		$stmt->bindValue(":pourcentage", $this->pourcentage);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
@@ -110,7 +118,7 @@ class Model_Restaurant extends Model_Template {
 			$stmt->bindValue(":heure_fin", $horaire->heure_fin);
 			$stmt->bindValue(":minute_fin", $horaire->minute_fin);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -119,8 +127,52 @@ class Model_Restaurant extends Model_Template {
 		$stmt->bindValue(":id", $this->id);
 		$stmt->bindValue(":nom", '');
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
+		}
+	}
+	
+	public function update () {
+		$sql = "UPDATE restaurants SET nom = :nom, rue = :rue, ville = :ville, code_postal = :cp, telephone = :tel, latitude = :lat, longitude = :lon, 
+		short_desc = :short, long_desc = :long, score = :score, pourcentage = :pourcentage WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":nom", $this->nom);
+		$stmt->bindValue(":rue", $this->rue);
+		$stmt->bindValue(":ville", $this->ville);
+		$stmt->bindValue(":cp", $this->code_postal);
+		$stmt->bindValue(":tel", $this->telephone);
+		$stmt->bindValue(":lat", $this->latitude);
+		$stmt->bindValue(":lon", $this->longitude);
+		$stmt->bindValue(":short", $this->short_desc);
+		$stmt->bindValue(":long", $this->long_desc);
+		$stmt->bindValue(":score", 0);
+		$stmt->bindValue(":pourcentage", $this->pourcentage);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$sql = "DELETE FROM restaurant_horaires WHERE id_restaurant = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		foreach ($this->horaires as $horaire) {
+			$sql = "INSERT INTO restaurant_horaires (id_restaurant, id_jour, heure_debut, minute_debut, heure_fin, minute_fin) 
+			VALUES(:id_restaurant, :id_jour, :heure_debut, :minute_debut, :heure_fin, :minute_fin)";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id_restaurant", $this->id);
+			$stmt->bindValue(":id_jour", $horaire->id_jour);
+			$stmt->bindValue(":heure_debut", $horaire->heure_debut);
+			$stmt->bindValue(":minute_debut", $horaire->minute_debut);
+			$stmt->bindValue(":heure_fin", $horaire->heure_fin);
+			$stmt->bindValue(":minute_fin", $horaire->minute_fin);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
 		}
 	}
 	
@@ -133,6 +185,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -154,6 +207,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $uid);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -170,6 +224,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt->bindValue(":table", "restaurants");
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$modifications = $stmt->fetchAll();
@@ -188,6 +243,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -201,6 +257,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -222,6 +279,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$horaires = $stmt->fetchAll();
@@ -242,6 +300,7 @@ class Model_Restaurant extends Model_Template {
 		$sql = "SELECT id, nom, rue, code_postal, ville, latitude, longitude, enabled FROM restaurants Order by ville, nom";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$restaurants = $stmt->fetchAll();
@@ -265,6 +324,7 @@ class Model_Restaurant extends Model_Template {
 		$sql = "SELECT id, nom, rue, code_postal, ville, latitude, longitude, enabled FROM restaurants WHERE enabled = true Order by ville, nom";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$restaurants = $stmt->fetchAll();
@@ -289,7 +349,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : enable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -301,7 +361,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : disable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -313,6 +373,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":distance", $this->distance);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -352,7 +413,7 @@ class Model_Restaurant extends Model_Template {
 			$stmt->bindValue(":$key", $filter);
 		}
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$restaurants = $stmt->fetchAll();
@@ -374,6 +435,32 @@ class Model_Restaurant extends Model_Template {
 			$horaire->heure_fin = $value['heure_fin'];
 			$horaire->minute_fin = $value['minute_fin'];
 			$restaurant->horaire = $horaire;
+			
+			$sql = "SELECT certif.id, certif.nom, certif.description AS description_certif, certif.logo, rc.url, rc.description AS description
+			FROM certificats certif
+			JOIN restaurant_certificat rc ON rc.id_certificat = certif.id
+			WHERE rc.id_restaurant = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $restaurant->id);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$certificats = $stmt->fetchAll();
+			foreach ($certificats as $certif) {
+				$certificat = new Model_Certificat();
+				$certificat->id = $certif["id"];
+				$certificat->nom = $certif["nom"];
+				if ($certif["description"] != '') {
+					$certificat->description = $certif["description"];
+				} else {
+					$certificat->description = $certif["description_certif"];
+				}
+				$certificat->logo = $certif["logo"];
+				$certificat->url = $certif["url"];
+				$restaurant->addCertificat($certificat);
+			}
+			
 			$list[] = $restaurant;
 		}
 		return $list;
@@ -391,6 +478,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -411,10 +499,36 @@ class Model_Restaurant extends Model_Template {
 		$horaire->minute_fin = $value['minute_fin'];
 		$this->horaire = $horaire;
 		
+		$sql = "SELECT certif.id, certif.nom, certif.description AS description_certif, certif.logo, rc.url, rc.description AS description
+		FROM certificats certif
+		JOIN restaurant_certificat rc ON rc.id_certificat = certif.id
+		WHERE rc.id_restaurant = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$certificats = $stmt->fetchAll();
+		foreach ($certificats as $certif) {
+			$certificat = new Model_Certificat();
+			$certificat->id = $certif["id"];
+			$certificat->nom = $certif["nom"];
+			if ($certif["description"] != '') {
+				$certificat->description = $certif["description"];
+			} else {
+				$certificat->description = $certif["description_certif"];
+			}
+			$certificat->logo = $certif["logo"];
+			$certificat->url = $certif["url"];
+			$this->certificats[] = $certificat;
+		}
+		
 		$sql = "SELECT id, nom FROM restaurant_categorie WHERE id_restaurant = :id AND parent_categorie = 0 ORDER BY ordre";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$categories = $stmt->fetchAll();
@@ -440,6 +554,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$menus = $stmt->fetchAll();
@@ -467,6 +582,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -500,13 +616,13 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $uid);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, null, $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null ||$value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_WARNING, null, $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_WARNING, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -535,6 +651,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$horaires = $stmt->fetchAll();
@@ -556,6 +673,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$categories = $stmt->fetchAll();
@@ -573,6 +691,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -586,6 +705,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$cartes = $stmt->fetchAll();
@@ -609,6 +729,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$categories = $stmt->fetchAll();
@@ -627,6 +748,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$menus = $stmt->fetchAll();
@@ -645,6 +767,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$formats = $stmt->fetchAll();
@@ -662,6 +785,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$formules = $stmt->fetchAll();
@@ -679,6 +803,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$categories = $stmt->fetchAll();
@@ -691,6 +816,7 @@ class Model_Restaurant extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id_categorie", $categorie->id);
 			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$contenus = $stmt->fetchAll();
@@ -711,6 +837,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$supplements = $stmt->fetchAll();
@@ -734,7 +861,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$horaires = $stmt->fetchAll();
@@ -757,6 +884,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$tags = $stmt->fetchAll();
@@ -776,6 +904,7 @@ class Model_Restaurant extends Model_Template {
 		GROUP BY tag.id";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$list = array();
@@ -793,6 +922,7 @@ class Model_Restaurant extends Model_Template {
 		$sql = "SELECT id, nom FROM restaurants WHERE nom LIKE '%".$filtre."%' AND id IN (".implode(',', $restaurants).")";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$list = array();
@@ -811,6 +941,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$options = $stmt->fetchAll();
@@ -828,6 +959,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -837,7 +969,7 @@ class Model_Restaurant extends Model_Template {
 		$sql = "SELECT id, nom, ville, short_desc FROM restaurants WHERE is_top = true";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$restaurants = $stmt->fetchAll();
@@ -858,7 +990,7 @@ class Model_Restaurant extends Model_Template {
 		$sql = "SELECT id, nom FROM tags";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$tags = $stmt->fetchAll();
@@ -878,7 +1010,7 @@ class Model_Restaurant extends Model_Template {
 		JOIN update_distance_restaurant udr ON udr.id_restaurant = resto.id";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$restaurants = $stmt->fetchAll();
@@ -898,7 +1030,7 @@ class Model_Restaurant extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}

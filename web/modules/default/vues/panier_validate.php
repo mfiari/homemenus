@@ -66,9 +66,9 @@
 	<h3>Votre commande</h3>
 	<div class="row">
 		<?php if ($request->panier->heure_souhaite == -1) : ?>
-			<span>Heure souhaité : Au plus tôt</span>
+			<span>Heure souhaitée : Au plus tôt</span>
 		<?php else : ?>
-			<span>Heure souhaité : <?php echo utf8_encode($request->panier->heure_souhaite); ?>h<?php echo utf8_encode($request->panier->minute_souhaite); ?></span>
+			<span>Heure souhaitée : <?php echo utf8_encode($request->panier->heure_souhaite); ?>h<?php echo utf8_encode($request->panier->minute_souhaite); ?></span>
 		<?php endif; ?>
 	</div>
 	<div class="panel panel-default panel-primary">
@@ -141,7 +141,7 @@
 								</div>
 							</td>
 							<td><?php echo $carte->quantite; ?></td>
-							<td><?php echo $carte->prix; ?> €</td>
+							<td><?php echo formatPrix($carte->prix); ?></td>
 						</tr>
 						<?php $totalQte += $carte->quantite; ?>
 						<?php $totalPrix += $carte->prix; ?>
@@ -170,7 +170,7 @@
 									</div>
 								</div>
 							<td><?php echo $menu->quantite; ?></td>
-							<td><?php echo $menu->prix; ?> €</td>
+							<td><?php echo formatPrix($menu->prix); ?></td>
 						</tr>
 						<?php $totalQte += $menu->quantite; ?>
 						<?php $totalPrix += $menu->prix; ?>
@@ -184,15 +184,55 @@
 					<tr>
 						<td>prix de livraison</td>
 						<td></td>
-						<td><?php echo $prix_livraison; ?> €</td>
+						<td>
+							<?php 
+								if ($request->panier->code_promo->surPrixLivraison()) {
+									if ($request->panier->code_promo->estGratuit()) {
+										echo "OFFERT";
+										$prix_livraison = 0;
+									} else {
+										$prix_livraison -= $request->panier->code_promo->valeur_prix_livraison;
+										$totalPrix += $prix_livraison;
+										echo formatPrix($prix_livraison);
+									}
+								} else {
+									echo formatPrix($prix_livraison);
+									$totalPrix += $prix_livraison;
+								}
+							?>
+						</td>
 					</tr>
-					<?php $totalPrix += $prix_livraison; ?>
 				</tbody>
 				<tfoot>
+					<?php if ($request->panier->code_promo->description != '') : ?>
+						<tr>
+							<th>Promo :</th>
+							<td colspan="3"><?php echo utf8_encode($request->panier->code_promo->description); ?></td>
+						</tr>
+					<?php endif; ?>
 					<tr>
 						<th>Total :</th>
 						<th><?php echo $totalQte; ?></th>
-						<th><?php echo $totalPrix; ?> €</th>
+						<th>
+							<?php 
+								if ($request->panier->code_promo->surPrixTotal()) {
+									if ($request->panier->code_promo->estGratuit()) {
+										echo "OFFERT";
+										$totalPrix = 0;
+									} else {
+										if ($request->panier->code_promo->valeur_prix_total != -1) {
+											$totalPrix -= $request->panier->code_promo->valeur_prix_total;
+										}
+										if ($request->panier->code_promo->pourcentage_prix_total != -1) {
+											$totalPrix -= ($totalPrix * $request->panier->code_promo->pourcentage_prix_total) / 100;
+										}
+										echo formatPrix($totalPrix);
+									}
+								} else {
+									echo formatPrix($totalPrix);
+								}
+							?>
+						</th>
 					</tr>
 				</tfoot>
 			</table>
@@ -218,6 +258,8 @@
 			<form id="payCard" action="?controler=panier&action=valideCarte" method="POST">
 			  <script
 				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+				data-email="<?php echo $request->_auth->login; ?>"
+				data-allow-remember-me="false"
 				data-label="Payer par carte"
 				data-key="<?php echo STRIPE_PUBLIC_KEY; ?>"
 				data-amount="<?php echo ($totalPrix * 100); ?>"
@@ -237,6 +279,8 @@
 		if ($("#accept_cgv").is(":checked")) {
 			$("#accept_cgv_error_message").hide();
 			$("#paiementsForm").show();
+			$("#payCard .stripe-button-el span").css("min-height", "0");
+			$("#payCard .stripe-button-el").removeClass("stripe-button-el").addClass("btn btn-primary");
 		} else {
 			$("#accept_cgv_error_message").show();
 			$("#paiementsForm").hide();

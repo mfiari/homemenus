@@ -4,6 +4,7 @@ include_once ROOT_PATH."function.php";
 
 include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Commande.php";
+include_once ROOT_PATH."models/CommandeHistory.php";
 include_once ROOT_PATH."models/Carte.php";
 include_once ROOT_PATH."models/Supplement.php";
 include_once ROOT_PATH."models/Menu.php";
@@ -29,6 +30,12 @@ class Controller_Commande extends Controller_Admin_Template {
 					break;
 				case "updateLivreur" :
 					$this->updateLivreur($request);
+					break;
+				case "history" :
+					$this->history($request);
+					break;
+				case "viewHistory" :
+					$this->viewHistory($request);
 					break;
 			}
 		} else {
@@ -94,5 +101,34 @@ class Controller_Commande extends Controller_Admin_Template {
 			}
 		}
 		$this->redirect('index', 'commande');
+	}
+	
+	public function history ($request) {
+		if (isset($_POST['date_debut'])) {
+			$request->date_debut = $_POST['date_debut'];
+		} else {
+			$request->date_debut = '01/06/2016';
+		}
+		$dateDebut = datepickerToDatetime($request->date_debut);
+		
+		if (isset($_POST['date_fin'])) {
+			$request->date_fin = $_POST['date_fin'];
+		} else {
+			$request->date_fin = '30/06/2016';
+		}
+		$dateFin = datepickerToDatetime($request->date_fin);
+		$modelCommande = new Model_Commande_History();
+		$request->commandes = $modelCommande->getAll($dateDebut, $dateFin);
+		$request->title = "Administration - commandes";
+		$request->vue = $this->render("commande/history.php");
+	}
+	
+	public function viewHistory ($request) {
+		if (isset($_GET["id_commande"])) {
+			$commande = new Model_Commande_History();
+			$commande->id = $_GET["id_commande"];
+			$request->commande = $commande->load();
+			$request->vue = $this->render("commande/viewHistory.php");
+		}
 	}
 }

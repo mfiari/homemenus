@@ -24,9 +24,19 @@ class Admin_Manager {
 					$controller = new Controller_User();
 					$controller->manage($request);
 					break;
+				case "panier" :
+					include_once WEBSITE_PATH."modules/admin/controllers/Panier.php";
+					$controller = new Controller_Panier();
+					$controller->manage($request);
+					break;
 				case "commande" :
 					include_once WEBSITE_PATH."modules/admin/controllers/Commande.php";
 					$controller = new Controller_Commande();
+					$controller->manage($request);
+					break;
+				case "codePromo" :
+					include_once WEBSITE_PATH."modules/admin/controllers/CodePromo.php";
+					$controller = new Controller_CodePromo();
 					$controller->manage($request);
 					break;
 				case "recherche" :

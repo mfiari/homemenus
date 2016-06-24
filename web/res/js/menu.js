@@ -230,7 +230,10 @@ function resume () {
 			})
 		).append(
 			$('<button />').addClass('btn btn-primary').html('Valider').click(function () {
-				
+				var validationButton = this;
+				var loadingGlyphicon = $('<span />').addClass('glyphicon glyphicon-refresh glyphicon-refresh-animate');
+				$(validationButton).css('display', 'none');
+				$("#menu-resume div").append(loadingGlyphicon);
 				var sendData = {};
 				sendData.id_menu = formContent.id_menu;
 				sendData.id_restaurant = formContent.id_restaurant;
@@ -247,15 +250,27 @@ function resume () {
 					dataType: "html",
 					data: sendData
 				}).done(function( msg ) {
-					$("#menu-modal .modal-footer .glyphicon-refresh-animate").css('display', 'none');
+					$("#menu-resume").html('<div class="alert alert-success" role="alert">'
+						+'<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>'
+						+'Votre menu a bien été ajouté au panier'
+						+'</div>');
 					$("#menu-modal .modal-footer div.alert-success").css('display', 'inline-block');
+					$.ajax({
+						type: "GET",
+						url: '?controler=restaurant&action=panier',
+						dataType: "html"
+					}).done(function( msg ) {
+						$("#panier-content").html(msg);
+						initDeleteCarteItem ();
+						initDeleteMenuItem ();
+						initPanierCommande();
+					});
 					setTimeout(function(){ 
 						$("#menu-modal").modal('hide');
-						location.reload();
 					}, 2000);
 				}).error(function(msg) {
-					$("#menu-modal .modal-footer .glyphicon-refresh-animate").css('display', 'none');
-					$("#menu-modal .modal-footer div.alert-danger").css('display', 'inline-block');
+					validationButton.css('display', 'inline-block');
+					loadingGlyphicon.css('display', 'none');
 				});
 			})
 		)

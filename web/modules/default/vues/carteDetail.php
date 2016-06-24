@@ -116,9 +116,19 @@
 		}).done(function( msg ) {
 			$("#carte-modal .modal-footer .glyphicon-refresh-animate").css('display', 'none');
 			$("#carte-modal .modal-footer div.alert-success").css('display', 'inline-block');
+			$.ajax({
+				type: "GET",
+				url: '?controler=restaurant&action=panier',
+				dataType: "html"
+			}).done(function( msg ) {
+				$("#panier-content").html(msg);
+				initDeleteCarteItem ();
+				initDeleteMenuItem ();
+				initPanierCommande();
+			});
 			setTimeout(function(){ 
 				$("#carte-modal").modal('hide');
-				location.reload();
+				//location.reload();
 			}, 2000);
 		}).error(function(msg) {
 			$("#carte-modal .modal-footer .glyphicon-refresh-animate").css('display', 'none');

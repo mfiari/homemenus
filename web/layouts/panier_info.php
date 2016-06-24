@@ -1,9 +1,9 @@
 <div id="panier-info-modal" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-md">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Veuillez renseignez vos informations de livraison</h4>
+				<h4 class="modal-title">Veuillez renseigner vos informations de livraison</h4>
 			</div>
 			<div class="modal-body">
 				<form method="post" enctype="x-www-form-urlencoded" id="panierInfoForm" action="?controler=panier&action=validate">

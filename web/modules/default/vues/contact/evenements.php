@@ -24,7 +24,7 @@
 <?php endif; ?>
 <div class="row">
 	<div class="col-md-10 col-md-offset-1">
-		<p style="text-align : center;">Envoyez-nous vos coordonnées et nous vous contacterons rapidement.</p>
+		<p style="text-align : center;">Besoin d’organiser un repas d’anniversaire, une réunion, un événement. Envoyez-nous vos coordonnées et nous vous contacterons rapidement.</p>
 		<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="">
 			<fieldset>
 				<div class="form-group">

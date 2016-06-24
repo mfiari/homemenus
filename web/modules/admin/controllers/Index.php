@@ -46,12 +46,27 @@ class Controller_Index extends Controller_Admin_Template {
 	
 	public function stats_history ($request) {
 		$request->title = "Administration";
+		
+		if (isset($_POST['date_debut'])) {
+			$request->date_debut = $_POST['date_debut'];
+		} else {
+			$request->date_debut = '01/06/2016';
+		}
+		$dateDebut = datepickerToDatetime($request->date_debut);
+		
+		if (isset($_POST['date_fin'])) {
+			$request->date_fin = $_POST['date_fin'];
+		} else {
+			$request->date_fin = '30/06/2016';
+		}
+		$dateFin = datepickerToDatetime($request->date_fin);
+		
 		$modelCommande = new Model_Commande_History();
-		$request->resultats = $modelCommande->getTotal();
-		$request->livreurs = $modelCommande->getTotalByLivreur();
-		$request->restaurants = $modelCommande->getTotalByRestaurant();
-		$request->clients = $modelCommande->getTotalByClient();
-		$request->villes = $modelCommande->getTotalByVille();
+		$request->resultats = $modelCommande->getTotal($dateDebut, $dateFin);
+		$request->livreurs = $modelCommande->getTotalByLivreur($dateDebut, $dateFin);
+		$request->restaurants = $modelCommande->getTotalByRestaurant($dateDebut, $dateFin);
+		$request->clients = $modelCommande->getTotalByClient($dateDebut, $dateFin);
+		$request->villes = $modelCommande->getTotalByVille($dateDebut, $dateFin);
 		$request->vue = $this->render("resultats/history.php");
 	}
 	

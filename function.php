@@ -98,20 +98,26 @@ function writeLog ($type, $texte, $level = LOG_LEVEL_INFO, $message = null) {
 	$logfile = fopen(ROOT_PATH.$directory.$filename, "a");
 	$debug = debug_backtrace();
 	fwrite($logfile, "[BEGIN_LOG]\n");
-	fwrite($logfile, 'LEVEL : '.$level);
-	fwrite($logfile, 'DATE : ' .date('Y-m-d h:i:s'));
+	fwrite($logfile, "[LEVEL]\n");
+	fwrite($logfile, $level."\n");
+	fwrite($logfile, "[DATE]\n");
+	fwrite($logfile, date('Y-m-d h:i:s')."\n");
 	$mailMessage .= 'date : ' .date('Y-m-d h:i:s').'<br /><br />';
-	fwrite($logfile, 'FILE : '.$debug[0]['file']."\n");
+	fwrite($logfile, "[FILE]\n");
+	fwrite($logfile, $debug[0]['file']."\n");
 	$mailMessage .= 'file : '.$debug[0]['file'].'<br /><br />';
-	fwrite($logfile, 'FUNCTION : '.$debug[0]['function']."\n");
+	fwrite($logfile, "[FUNCTION]\n");
+	fwrite($logfile, $debug[0]['function']."\n");
 	$mailMessage .= 'function : '.$debug[0]['function'].'<br /><br />';
-	fwrite($logfile, 'LINE : '.$debug[0]['line']."\n");
+	fwrite($logfile, "[LINE]\n");
+	fwrite($logfile, $debug[0]['line']."\n");
 	$mailMessage .= 'line : '.$debug[0]['line'].'<br /><br />';
 	if ($message !== null) {
-		fwrite($logfile, 'MESSAGE : '.$message."\n");
+		fwrite($logfile, "[MESSAGE]\n");
+		fwrite($logfile, $message."\n");
 		$mailMessage .= 'message : '.$message.'<br /><br />';
 	}
-	fwrite($logfile, 'TEXT : ');
+	fwrite($logfile, "[TEXT]\n");
 	$mailMessage .= 'text : <br />';
 	if (is_array($texte)) {
 		foreach ($texte as $key => $value) {
@@ -127,6 +133,9 @@ function writeLog ($type, $texte, $level = LOG_LEVEL_INFO, $message = null) {
 	fclose($logfile);
 	if ($level == LOG_LEVEL_ERROR) {
 		send_mail ("informatique@homemenus.fr", "Erreur de type ".$type, $mailMessage);
+	}
+	if (ENVIRONNEMENT == "DEV" || ENVIRONNEMENT == "TEST") {
+		var_dump($texte);
 	}
 }
 

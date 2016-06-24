@@ -62,7 +62,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $panier->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$id_commande = $this->db->lastInsertId();
@@ -77,7 +77,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $panier->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$listPanierMenu = $stmt->fetchAll();
@@ -91,7 +91,7 @@ class Model_Commande extends Model_Template {
 			$stmt->bindValue(":formule", $panierMenu['id_formule']);
 			$stmt->bindValue(":quantite", $panierMenu['quantite']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$id_commande_menu = $this->db->lastInsertId();
@@ -100,7 +100,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $panierMenu['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listPanierContenu = $stmt->fetchAll();
@@ -110,7 +110,7 @@ class Model_Commande extends Model_Template {
 				$stmt->bindValue(":id", $id_commande_menu);
 				$stmt->bindValue(":id_contenu", $panierContenu['id_contenu']);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -122,7 +122,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $panier->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$listPanierCarte = $stmt->fetchAll();
@@ -135,7 +135,7 @@ class Model_Commande extends Model_Template {
 			$stmt->bindValue(":id_format", $panierCarte['id_format']);
 			$stmt->bindValue(":quantite", $panierCarte['quantite']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$id_commande_carte = $this->db->lastInsertId();
@@ -144,7 +144,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $panierCarte['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listPanierOption = $stmt->fetchAll();
@@ -155,7 +155,7 @@ class Model_Commande extends Model_Template {
 				$stmt->bindValue(":option", $panierOption['id_option']);
 				$stmt->bindValue(":value", $panierOption['id_value']);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -166,7 +166,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $panierCarte['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listPanierSupplement = $stmt->fetchAll();
@@ -177,7 +177,7 @@ class Model_Commande extends Model_Template {
 				$stmt->bindValue(":id", $id_commande_carte);
 				$stmt->bindValue(":id_supplement", $panierSupplement['id_supplement']);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -186,7 +186,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $panierCarte['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listPanierAccompagnement = $stmt->fetchAll();
@@ -196,7 +196,7 @@ class Model_Commande extends Model_Template {
 				$stmt->bindValue(":id", $id_commande_carte);
 				$stmt->bindValue(":accompagnement", $panierAccompagnement['id_accompagnement']);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -207,7 +207,7 @@ class Model_Commande extends Model_Template {
 		$stmt->bindValue(":id", $id_commande);
 		$stmt->bindValue(":prix", $total);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -222,8 +222,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $commande->id);
 		if (!$stmt->execute()) {
-			writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$id_commande = $this->db->lastInsertId();
@@ -238,8 +237,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $commande->id);
 		if (!$stmt->execute()) {
-			writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$listCommandeMenu = $stmt->fetchAll();
@@ -253,8 +251,7 @@ class Model_Commande extends Model_Template {
 			$stmt->bindValue(":formule", $commandeMenu['id_formule']);
 			$stmt->bindValue(":quantite", $commandeMenu['quantite']);
 			if (!$stmt->execute()) {
-				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$id_commande_menu = $this->db->lastInsertId();
@@ -263,8 +260,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeMenu['id']);
 			if (!$stmt->execute()) {
-				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeContenu = $stmt->fetchAll();
@@ -274,8 +270,7 @@ class Model_Commande extends Model_Template {
 				$stmt->bindValue(":id", $id_commande_menu);
 				$stmt->bindValue(":id_contenu", $commandeContenu['id_contenu']);
 				if (!$stmt->execute()) {
-					writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -287,8 +282,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $commande->id);
 		if (!$stmt->execute()) {
-			writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$listCommandeCarte = $stmt->fetchAll();
@@ -301,8 +295,7 @@ class Model_Commande extends Model_Template {
 			$stmt->bindValue(":id_format", $commandeCarte['id_format']);
 			$stmt->bindValue(":quantite", $commandeCarte['quantite']);
 			if (!$stmt->execute()) {
-				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$id_commande_carte = $this->db->lastInsertId();
@@ -311,8 +304,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeCarte['id']);
 			if (!$stmt->execute()) {
-				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeOption = $stmt->fetchAll();
@@ -323,8 +315,7 @@ class Model_Commande extends Model_Template {
 				$stmt->bindValue(":option", $commandeOption['id_option']);
 				$stmt->bindValue(":value", $commandeOption['id_value']);
 				if (!$stmt->execute()) {
-					writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -335,8 +326,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeCarte['id']);
 			if (!$stmt->execute()) {
-				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeSupplement = $stmt->fetchAll();
@@ -347,8 +337,7 @@ class Model_Commande extends Model_Template {
 				$stmt->bindValue(":id", $id_commande_carte);
 				$stmt->bindValue(":id_supplement", $commandeSupplement['id_supplement']);
 				if (!$stmt->execute()) {
-					writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -357,8 +346,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeCarte['id']);
 			if (!$stmt->execute()) {
-				writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeAccompagnement = $stmt->fetchAll();
@@ -368,8 +356,7 @@ class Model_Commande extends Model_Template {
 				$stmt->bindValue(":id", $id_commande_carte);
 				$stmt->bindValue(":accompagnement", $commandeAccompagnement['id_accompagnement']);
 				if (!$stmt->execute()) {
-					writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 			}
@@ -380,8 +367,7 @@ class Model_Commande extends Model_Template {
 		$stmt->bindValue(":id", $id_commande);
 		$stmt->bindValue(":prix", $total);
 		if (!$stmt->execute()) {
-			writeLog (CRON_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR);
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -405,7 +391,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -453,7 +439,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -471,7 +457,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $this->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$supplements = $stmt->fetchAll();
@@ -495,7 +481,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$listCommandeMenu = $stmt->fetchAll();
@@ -527,7 +513,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeMenu['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeContenu = $stmt->fetchAll();
@@ -600,7 +586,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -625,7 +611,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -646,7 +632,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -661,7 +647,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -677,7 +663,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -692,7 +678,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -717,7 +703,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -745,7 +731,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $listCommande;
@@ -759,7 +745,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -782,7 +768,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -816,7 +802,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -856,7 +842,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -896,7 +882,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -941,7 +927,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":livreur", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -971,7 +957,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":livreur", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $listCommande;
@@ -987,7 +973,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":livreur", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1017,7 +1003,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -1048,7 +1034,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $listCommande;
@@ -1066,7 +1052,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1108,7 +1094,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$listCommandeMenu = $stmt->fetchAll();
@@ -1140,7 +1126,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeMenu['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeContenu = $stmt->fetchAll();
@@ -1169,7 +1155,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$listCommandeCarte = $stmt->fetchAll();
@@ -1193,7 +1179,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeCarte['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeCarteSupplement = $stmt->fetchAll();
@@ -1213,7 +1199,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeCarte['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeCarteOption = $stmt->fetchAll();
@@ -1238,7 +1224,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeCarte['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeCarteAccompagnement = $stmt->fetchAll();
@@ -1265,7 +1251,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1287,7 +1273,76 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$listCommande = array();
+		foreach ($result as $c) {
+			$commande = new Model_Commande();
+			$commande->id = $c["id_commande"];
+			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
+			$commande->prix = $c["prix"];
+			$commande->heure_souhaite = $c["heure_souhaite"];
+			$commande->minute_souhaite = $c["minute_souhaite"];
+			$commande->etape = $c["etape"];
+			$commande->is_premium = $c["is_premium"];
+			
+			$commande->livreur = new Model_User();
+			$commande->livreur->id = $c['uid'];
+			$commande->livreur->nom = $c['nom'];
+			$commande->livreur->prenom = $c['prenom'];
+			$listCommande[] = $commande;
+		}
+		return $listCommande;
+	}
+	
+	public function getAllCommandesEntrepriseGroupe () {
+		$sql = "SELECT com.id AS id_commande, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.date_validation_restaurant, 
+		com.date_fin_preparation_restaurant, com.prix, com.etape, com.is_premium, liv.uid, liv.nom, liv.prenom
+		FROM commande com
+		LEFT JOIN users liv ON liv.uid = com.id_livreur
+		WHERE com.uid IN (SELECT users.uid FROM users JOIN user_entreprise ue ON ue.uid = users.uid WHERE ue.id_groupe = 
+		(SELECT id_groupe FROM user_entreprise WHERE uid = :uid))
+		ORDER BY com.date_commande DESC";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->uid);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$listCommande = array();
+		foreach ($result as $c) {
+			$commande = new Model_Commande();
+			$commande->id = $c["id_commande"];
+			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
+			$commande->prix = $c["prix"];
+			$commande->heure_souhaite = $c["heure_souhaite"];
+			$commande->minute_souhaite = $c["minute_souhaite"];
+			$commande->etape = $c["etape"];
+			$commande->is_premium = $c["is_premium"];
+			
+			$commande->livreur = new Model_User();
+			$commande->livreur->id = $c['uid'];
+			$commande->livreur->nom = $c['nom'];
+			$commande->livreur->prenom = $c['prenom'];
+			$listCommande[] = $commande;
+		}
+		return $listCommande;
+	}
+	
+	public function getAllCommandesEntreprise () {
+		$sql = "SELECT com.id AS id_commande, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.date_validation_restaurant, 
+		com.date_fin_preparation_restaurant, com.prix, com.etape, com.is_premium, liv.uid, liv.nom, liv.prenom
+		FROM commande com
+		LEFT JOIN users liv ON liv.uid = com.id_livreur
+		WHERE com.uid = :uid
+		ORDER BY com.date_commande DESC";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->uid);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -1317,7 +1372,7 @@ class Model_Commande extends Model_Template {
 		$stmt->bindValue(":livreur", $this->uid);
 		$stmt->bindValue(":commande", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -1333,7 +1388,7 @@ class Model_Commande extends Model_Template {
 		$stmt->bindValue(":commande", $this->id);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -1349,7 +1404,7 @@ class Model_Commande extends Model_Template {
 		$stmt->bindValue(":commande", $this->id);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -1367,7 +1422,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -1411,7 +1466,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$listCommandeMenu = $stmt->fetchAll();
@@ -1443,7 +1498,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeMenu['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeContenu = $stmt->fetchAll();
@@ -1472,7 +1527,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$listCommandeCarte = $stmt->fetchAll();
@@ -1496,7 +1551,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeCarte['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeCarteSupplement = $stmt->fetchAll();
@@ -1516,7 +1571,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeCarte['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeCarteOption = $stmt->fetchAll();
@@ -1541,7 +1596,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commandeCarte['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeCarteAccompagnement = $stmt->fetchAll();
@@ -1568,7 +1623,7 @@ class Model_Commande extends Model_Template {
 		$stmt->bindValue(":commande", $this->id);
 		$stmt->bindValue(":livreur", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -1583,7 +1638,7 @@ class Model_Commande extends Model_Template {
 		$stmt->bindValue(":commande", $this->id);
 		$stmt->bindValue(":livreur", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -1600,7 +1655,7 @@ class Model_Commande extends Model_Template {
 		$stmt->bindValue(":commande", $this->id);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -1622,7 +1677,7 @@ class Model_Commande extends Model_Template {
 		JOIN restaurants resto ON resto.id = com.id_restaurant";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -1693,7 +1748,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commande->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeMenu = $stmt->fetchAll();
@@ -1727,7 +1782,7 @@ class Model_Commande extends Model_Template {
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id", $commandeMenu['id']);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 				$listCommandeContenu = $stmt->fetchAll();
@@ -1747,7 +1802,7 @@ class Model_Commande extends Model_Template {
 					$stmt = $this->db->prepare($sql);
 					$stmt->bindValue(":id", $commandeContenu['id']);
 					if (!$stmt->execute()) {
-						var_dump($stmt->errorInfo());
+						writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 						return false;
 					}
 					$listCommandeContenuSupplement = $stmt->fetchAll();
@@ -1768,7 +1823,7 @@ class Model_Commande extends Model_Template {
 					$stmt = $this->db->prepare($sql);
 					$stmt->bindValue(":id", $commandeContenu['id']);
 					if (!$stmt->execute()) {
-						var_dump($stmt->errorInfo());
+						writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 						return false;
 					}
 					$listCommandeContenuAccompagnement = $stmt->fetchAll();
@@ -1801,7 +1856,7 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $commande->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$listCommandeCarte = $stmt->fetchAll();
@@ -1839,7 +1894,7 @@ class Model_Commande extends Model_Template {
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id", $commandeCarte['id']);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 				$listCommandeCarteSupplement = $stmt->fetchAll();
@@ -1860,7 +1915,7 @@ class Model_Commande extends Model_Template {
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id", $commandeCarte['id']);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 				$listCommandeCarteAccompagnement = $stmt->fetchAll();
@@ -1886,7 +1941,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -1895,14 +1950,14 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$sql = "DELETE FROM commande_menu WHERE id = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -1910,7 +1965,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -1919,14 +1974,14 @@ class Model_Commande extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$sql = "DELETE FROM commande_carte WHERE id = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -1934,7 +1989,7 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
@@ -1949,7 +2004,7 @@ class Model_Commande extends Model_Template {
 		ORDER BY com.date_commande ASC";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$result = $stmt->fetchAll();
@@ -1991,7 +2046,7 @@ class Model_Commande extends Model_Template {
 		SUM(prix + prix_livraison) AS total_prix FROM commande";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -2010,7 +2065,7 @@ class Model_Commande extends Model_Template {
 		GROUP BY livreur.uid";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetchAll();;
@@ -2025,7 +2080,7 @@ class Model_Commande extends Model_Template {
 		GROUP BY resto.id";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetchAll();;
@@ -2040,7 +2095,7 @@ class Model_Commande extends Model_Template {
 		GROUP BY client.uid";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetchAll();;
@@ -2054,7 +2109,7 @@ class Model_Commande extends Model_Template {
 		GROUP BY ville";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetchAll();;

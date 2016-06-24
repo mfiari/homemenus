@@ -118,8 +118,8 @@ class GCMPushMessage {
         }
  
         $fields = array(
-            'to'  => $topic,
-            'data'              => array( "message" => $message ),
+            'to'   => $topic,
+            'data' => array( "message" => $message ),
         );
  
         if ($time_to_live != null) {

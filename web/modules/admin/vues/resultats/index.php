@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col-md-10  col-md-offset-1">
-		<h2>Résultats</h2>
+		<h2>Résultats du jour</h2>
 		<ul class="nav nav-tabs">
 			<li role="presentation" class="active"><a href="?action=stats">Résultats du jour</a></li>
 			<li role="presentation"><a href="?action=stats_history">Historique</a></li>

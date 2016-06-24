@@ -6,6 +6,7 @@ var longitude;
 var autocomplete;
 
 $(function() {
+	$('[data-toggle="tooltip"]').tooltip();
 	$("#logout").click(function (evt) {
 		$.ajax({
 			type: "POST",
@@ -136,6 +137,9 @@ function getParameterByName(name) {
 }
 
 function initialize() {
+	if (typeof(google) == "undefined") {
+		return;
+	}
 	latitude = 48.99329;
 	longitude = 1.8455;
 	geocoder = new google.maps.Geocoder();
@@ -196,6 +200,9 @@ function codeAddress(address, content, bounds, displayWindow, icon) {
 }
 
 function boundToPoints (list) {
+	if (typeof(google) == "undefined") {
+		return;
+	}
 	var bounds = new google.maps.LatLngBounds();
 	for (var i = 0; i < list.length; i++) {
 		var point = list[i];

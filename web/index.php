@@ -7,12 +7,18 @@ include_once "../config.php";
 include_once WEBSITE_PATH."core/Request.php";
 include_once ROOT_PATH."function.php";
 
+require_once WEBSITE_PATH.'res/lib/Mobile-Detect/Mobile_Detect.php';
+
 session_start();
 
 $request = new Request();
 
 $request->request_method = $_SERVER['REQUEST_METHOD'];
 $request->home = false;
+
+$mobileDetect = new Mobile_Detect;
+
+$request->mobileDetect = $mobileDetect;
 
 if (isset($_SESSION["uid"]) && isset($_SESSION["session"])) {
 	include_once ROOT_PATH."models/Template.php";
@@ -78,17 +84,23 @@ if (isset($_GET["module"])) {
 	$manager->dispatch($request);
 } else {
 	if ($request->_auth) {
-		if ($request->_auth->status == "ADMIN") {
+		if ($request->_auth->status == USER_ADMIN) {
 			include_once WEBSITE_PATH."modules/admin/Manager.php";
 			$manager = new Admin_Manager();
-		} else if ($request->_auth->status == "LIVREUR") {
+		} else if ($request->_auth->status == USER_LIVREUR) {
 			include_once WEBSITE_PATH."modules/livreur/Manager.php";
 			$manager = new Default_Manager();
-		} else if ($request->_auth->status == "RESTAURANT") {
+		} else if ($request->_auth->status == USER_RESTAURANT) {
 			include_once WEBSITE_PATH."modules/restaurant/Manager.php";
 			$manager = new Default_Manager();
-		} else if ($request->_auth->status == "ADMIN_RESTAURANT") {
+		} else if ($request->_auth->status == USER_ADMIN_RESTAURANT) {
 			include_once WEBSITE_PATH."modules/admin_restaurant/Manager.php";
+			$manager = new Default_Manager();
+		} else if ($request->_auth->status == USER_ENTREPRISE) {
+			include_once WEBSITE_PATH."modules/entreprise/Manager.php";
+			$manager = new Default_Manager();
+		} else if ($request->_auth->status == USER_ADMIN_ENTREPRISE) {
+			include_once WEBSITE_PATH."modules/entreprise/Manager.php";
 			$manager = new Default_Manager();
 		} else {
 			include_once WEBSITE_PATH."modules/default/Manager.php";
@@ -105,7 +117,12 @@ if ($request->noRender === false) {
 	if ($request->disableLayout) {
 		require $request->vue;
 	} else {
-		require WEBSITE_PATH.'layouts/page.php';
+		if ($mobileDetect->isMobile() && !$mobileDetect->isTablet()) {
+			require WEBSITE_PATH.'layouts/page_mobile.php';
+		} else {
+			//require WEBSITE_PATH.'layouts/page_mobile.php';
+			require WEBSITE_PATH.'layouts/page.php';
+		}
 	}
 }
 

@@ -43,7 +43,7 @@ class Model_Modification extends Model_Template {
 		$stmt->bindValue(":type", $type);
 		$stmt->bindValue(":user", $user);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -56,7 +56,7 @@ class Model_Modification extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getByRestaurant", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -68,7 +68,7 @@ class Model_Modification extends Model_Template {
 			$stmt->bindValue(":".$modification["field"], $modification["new_value"]);
 			$stmt->bindValue(":id", $modification["id_column"]);
 			if (!$stmt->execute()) {
-				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getByRestaurant", $sql);
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				$this->sqlHasFailed = true;
 				return false;
 			}
@@ -77,7 +77,7 @@ class Model_Modification extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $modification["id_column"]);
 			if (!$stmt->execute()) {
-				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getByRestaurant", $sql);
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				$this->sqlHasFailed = true;
 				return false;
 			}
@@ -96,7 +96,7 @@ class Model_Modification extends Model_Template {
 		$stmt->bindValue(":user", $modification["id_user"]);
 		$stmt->bindValue(":date", $modification["date_modification"]);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -104,7 +104,7 @@ class Model_Modification extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $modification["id"]);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -115,7 +115,7 @@ class Model_Modification extends Model_Template {
 		$sql = "SELECT id, tables, id_column, field, old_value, new_value, types, id_user, date_modification FROM modifications";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getByRestaurant", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -128,7 +128,7 @@ class Model_Modification extends Model_Template {
 				$stmt->bindValue(":".$modification["field"], $modification["new_value"]);
 				$stmt->bindValue(":id", $modification["id_column"]);
 				if (!$stmt->execute()) {
-					writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getByRestaurant", $sql);
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					$this->sqlHasFailed = true;
 					return false;
 				}
@@ -137,7 +137,7 @@ class Model_Modification extends Model_Template {
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id", $modification["id_column"]);
 				if (!$stmt->execute()) {
-					writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getByRestaurant", $sql);
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					$this->sqlHasFailed = true;
 					return false;
 				}
@@ -156,7 +156,7 @@ class Model_Modification extends Model_Template {
 			$stmt->bindValue(":user", $modification["id_user"]);
 			$stmt->bindValue(":date", $modification["date_modification"]);
 			if (!$stmt->execute()) {
-				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				$this->sqlHasFailed = true;
 				return false;
 			}
@@ -164,7 +164,7 @@ class Model_Modification extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $modification["id"]);
 			if (!$stmt->execute()) {
-				writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				$this->sqlHasFailed = true;
 				return false;
 			}
@@ -177,7 +177,7 @@ class Model_Modification extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : isLoginAvailable", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}

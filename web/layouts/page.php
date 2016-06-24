@@ -5,11 +5,11 @@
 		<?php 
 			if ($request->_auth) {
 				include('panier.html');
-				include(WEBSITE_PATH.'layouts/panier_info.php');
 			} else {
 				include('login.html');
 				include('forgot_password.php');
 			}
+			include(WEBSITE_PATH.'layouts/panier_info.php');
 		 ?>
 		<div id="page-container">
 			<?php 

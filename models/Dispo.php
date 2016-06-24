@@ -50,7 +50,7 @@ class Model_Dispo extends Model_Template {
 		$stmt->bindValue(":heure_fin", $this->heure_fin);
 		$stmt->bindValue(":minute_fin", $this->minute_fin);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
@@ -64,7 +64,7 @@ class Model_Dispo extends Model_Template {
 		WHERE user.status = 'LIVREUR' AND user.is_enable = true";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), "Model_User : getRestaurantUsers", $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
@@ -92,7 +92,7 @@ class Model_Dispo extends Model_Template {
 		$stmt->bindValue(":id_dispo", $id_dispo);
 		$stmt->bindValue(":perimetre", $perimetre);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;

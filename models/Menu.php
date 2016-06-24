@@ -66,7 +66,7 @@ class Model_Menu extends Model_Template {
 		$stmt->bindValue(":ordre", $this->ordre);
 		$stmt->bindValue(":commentaire", $this->commentaire);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
@@ -79,7 +79,7 @@ class Model_Menu extends Model_Template {
 			$stmt->bindValue(":prix", $format->prix);
 			$stmt->bindValue(":temps_preparation", $format->temps_preparation);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -89,7 +89,7 @@ class Model_Menu extends Model_Template {
 			$stmt->bindValue(":menu", $this->id);
 			$stmt->bindValue(":horaire", $horaire->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -99,7 +99,7 @@ class Model_Menu extends Model_Template {
 			$stmt->bindValue(":menu", $this->id);
 			$stmt->bindValue(":formule", $formule->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 		}
@@ -111,7 +111,7 @@ class Model_Menu extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -125,7 +125,7 @@ class Model_Menu extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$formats = $stmt->fetchAll();
@@ -145,7 +145,7 @@ class Model_Menu extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$formules = $stmt->fetchAll();
@@ -161,7 +161,7 @@ class Model_Menu extends Model_Template {
 			$stmt->bindValue(":id_formule", $formule->id);
 			$stmt->bindValue(":id_menu", $this->id);
 			if (!$stmt->execute()) {
-				var_dump($stmt->errorInfo());
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
 			$categories = $stmt->fetchAll();
@@ -177,7 +177,7 @@ class Model_Menu extends Model_Template {
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id", $categorie->id);
 				if (!$stmt->execute()) {
-					var_dump($stmt->errorInfo());
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
 				}
 				$contenus = $stmt->fetchAll();
@@ -207,6 +207,7 @@ class Model_Menu extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -218,6 +219,7 @@ class Model_Menu extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $id_restaurant);
 		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$restaurants = $stmt->fetchAll();
@@ -242,7 +244,7 @@ class Model_Menu extends Model_Template {
 		$stmt->bindValue(":id_formule", $id_formule);
 		$stmt->bindValue(":id_menu", $this->id);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return $stmt->fetchAll();
@@ -256,7 +258,7 @@ class Model_Menu extends Model_Template {
 		$stmt->bindValue(":categorie", $categorie->nom);
 		$stmt->bindValue(":quantite", $categorie->quantite);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		$categorie->id = $this->db->lastInsertId();	
@@ -273,7 +275,7 @@ class Model_Menu extends Model_Template {
 		$stmt->bindValue(":accompagnement", $accompagnement);
 		$stmt->bindValue(":commentaire", $commentaire);
 		if (!$stmt->execute()) {
-			var_dump($stmt->errorInfo());
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
 		return true;
