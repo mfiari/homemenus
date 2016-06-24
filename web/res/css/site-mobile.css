@@ -1,0 +1,432 @@
+
+body  {
+	font-size: 28px !important;
+	background-color: #cfd6da;
+	margin:auto;
+}
+
+.pac-item {
+	font-size : 50px;
+	line-height : 60px;
+}
+
+.pac-item-query {
+	font-size : 50px;
+}
+
+.navbar {
+	min-height: 100px !important;
+}
+
+.navbar-toggle {
+    display: block;
+}
+
+.navbar-collapse.collapse {
+    display: none !important;
+}
+
+.navbar-collapse.collapse.in {
+    display: block !important;
+	max-height : 700px;
+}
+
+.navbar-header {
+	float : none;
+}
+
+.navbar-toggle .icon-bar {
+	height : 20px;
+	width : 100px;
+}
+
+.navbar-nav {
+	float : none;
+	text-align : right;
+}
+
+.navbar-nav > li {
+	float : none;
+}
+
+h1, h2, h3 {
+	text-align : center;
+}
+
+.h1, h1 {
+	font-size : 48px;
+}
+
+.h2, h2 {
+	font-size : 40px;
+}
+
+.h3, h3 {
+	font-size : 36px;
+}
+
+hr {
+	border-top: 1px solid #222 !important;
+}
+
+div.center {
+	text-align : center;
+}
+
+.btn.btn-primary, .btn.btn-default {
+	font-size : 50px;
+}
+
+input[type="checkbox"], input[type="radio"] {
+    margin: 20px 10px 0;
+    transform: scale(2);
+}
+
+@media (orientation: landscape) {
+	.modal-content {
+		max-height : 350px;
+		overflow : auto;
+	}
+}
+
+#page-container {
+	background-color: #EEEEFF;
+	width : 100%;
+}
+
+span.glyphicon-remove {
+	color : #FF0000;
+}
+
+span.glyphicon-ok {
+	color : #00FF00;
+}
+
+header a.logo {
+	float: left;
+	font-size: 18px;
+	line-height: 13px;
+	padding: 4px 10px 0 5px;
+}
+
+@media (orientation: portrait) {
+
+	header a.logo {
+		height: 170px;
+	}
+	 
+	#logo {
+		width : 350px;
+	}
+	
+	header ul.menu li a {
+		font-size: 90px;
+		line-height: 90px;
+	}
+}
+
+@media (orientation: landscape) {
+
+	header a.logo {
+		height: 130px;
+	}
+	 
+	#logo {
+		width : 250px;
+	}
+	
+	header ul.menu li a {
+		font-size: 50px;
+		line-height: 50px;
+	}
+}
+
+
+header h1 {
+	color : #FFFFFF;
+	margin-top : 120px;
+}
+
+div#adress-search {
+	margin-top : 80px;
+}
+
+form#adress-form {
+	margin : 0 auto;
+}
+
+#adress-form button.btn {
+	font-size : 60px;
+	height : 150px;
+	margin-top : 50px;
+	width : 100%;
+}
+
+#adress-form #full_address {
+	height : 150px;
+	font-size : 60px;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	color: black;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+::-moz-placeholder { /* Firefox 19+ */
+	color: black;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+:-ms-input-placeholder { /* IE 10+ */
+	color: black;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+	color: black;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+/* fin header */
+
+/* Main content */
+
+#main-content {
+	margin-top : 170px;
+}
+
+#subscribeForm input {
+	padding: 10px;
+    border: 1px solid #757575;
+    margin: 0 0 10px;
+}
+
+#password {
+    padding: 10px;
+    border: 1px solid #000;
+    margin: 0 0 10px;
+}
+
+div.pass-container {
+    height: 30px;
+}
+
+div.pass-bar {
+    height: 11px;
+    margin-top: 2px;
+}
+div.pass-hint {
+    font-family: arial;
+    font-size: 11px;
+}
+
+div.odd {
+	background-color: #FFFFFF;
+}
+
+div.even {
+	background-color: #EEEEEE;
+}
+
+.badge.wait{
+    background-color: #f0385a;
+}
+
+.badge.process{
+    background-color: #00FF00;
+}
+
+.badge.coming{
+    background-color: #0000FF;
+}
+
+.item {
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.item .title {
+	text-align : center;
+}
+
+.item .vignette {
+    text-align: center;
+}
+
+.item .vignette img {
+	height: 200px;
+    width: 200px;
+}
+
+input.error {
+	border-color: #ff0000 !important;
+}
+
+label.error {
+	color : #FF0000;
+}
+
+#horraires .form-control {
+	display : inline;
+	width : auto;
+}
+
+div.mobile {
+	text-align : center;
+}
+
+div.mobile img {
+	width : 50%;
+}
+
+div.partenaire img {
+	width : 80%;
+}
+
+span.disponible {
+	background-color: #00ff00;
+    border-radius: 10px;
+    float: right;
+    height: 15px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 15px;
+}
+
+span.closed {
+	background-color: #ff0000;
+    border-radius: 10px;
+    float: right;
+    height: 15px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 15px;
+}
+
+/*.logo_restaurant img {
+	width : 100px;
+}*/
+
+.required {
+    color: #ff0000;
+    margin-left: 5px;
+}
+
+.search-block {
+	display: block;
+    position: relative;
+}
+
+table .glyphicon {
+	margin-right : 20px;
+	font-size : 20px;
+}
+
+#stars-default {
+	text-align : center;
+}
+
+.search-block .glyphicon-refresh-animate {
+	display : none;
+	position: absolute !important;
+    right: 10px;
+    top: 10px !important;
+    z-index: 10;
+}
+
+.pac-container {
+	z-index: 1051 !important;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -ms-animation: spin .7s infinite linear;
+    -webkit-animation: spinw .7s infinite linear;
+    -moz-animation: spinm .7s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+  
+@-webkit-keyframes spinw {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@-moz-keyframes spinm {
+    from { -moz-transform: rotate(0deg);}
+    to { -moz-transform: rotate(360deg);}
+}
+
+.stepper {
+	float : right;
+}
+
+.stepper-value {
+	font-size: 20px;
+    margin-left: 7px;
+    margin-right: 5px;
+    width: 35px;
+}
+
+.stepper-button {
+	background-color:#337ab7;
+	-moz-border-radius:16px;
+	-webkit-border-radius:16px;
+	border-radius:16px;
+	border:1px solid #566963;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:28px;
+	font-weight:bold;
+	padding:2px 18px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #2b665e;
+}
+.stepper-button:hover {
+	background-color:#6c7c7c;
+	text-decoration:none;
+}
+.stepper-button:active {
+	position:relative;
+	top:1px;
+}
+
+.modal-lg {
+	width : 90%;
+}
+
+/* fin Main content */
+
+/* footer */
+
+footer {
+	background-image : linear-gradient(#222, #222);
+	clear : both;
+	color : #FFF;
+	margin-top : 20px;
+	text-align : center;
+}
+
+footer h3 {
+	color : #23527C;
+}
+
+footer a {
+	color : #FFF;
+}
+
+footer img.social-media {
+	width : 150px;
+}
+
+/* fin footer */
+
