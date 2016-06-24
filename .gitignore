@@ -1,0 +1,7 @@
+# ignore log directory
+/log
+# ignore files directory
+/files
+# ignore restaurant image directory except default
+/web/res/img/restaurant
+!/web/res/img/restaurant/default
