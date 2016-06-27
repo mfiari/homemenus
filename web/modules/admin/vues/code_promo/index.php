@@ -36,4 +36,7 @@
 			</table>
 		</div>
 	</div>
+	<div class="col-md-12">
+		<a href="?controler=codePromo&action=edit" class="btn btn-primary">Ajouter un code promo</a>
+	</div>
 </div>

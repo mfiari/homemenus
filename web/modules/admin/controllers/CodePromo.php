@@ -25,17 +25,14 @@ class Controller_CodePromo extends Controller_Admin_Template {
 				case "index" :
 					$this->index($request);
 					break;
+				case "edit" :
+					$this->edit($request);
+					break;
 				case "view" :
 					$this->view($request);
 					break;
-				case "updateLivreur" :
-					$this->updateLivreur($request);
-					break;
-				case "history" :
-					$this->history($request);
-					break;
-				case "viewHistory" :
-					$this->viewHistory($request);
+				case "addUser" :
+					$this->addUser($request);
 					break;
 			}
 		} else {
@@ -50,85 +47,99 @@ class Controller_CodePromo extends Controller_Admin_Template {
 		$request->vue = $this->render("code_promo/index.php");
 	}
 	
-	public function view ($request) {
-		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande();
-			$commande->id = $_GET["id_commande"];
-			$request->commande = $commande->load();
-			$modelUser = new Model_User();
-			$request->livreurs = $modelUser->getLivreurAvailableForCommande($commande);
-			$request->vue = $this->render("commande/view.php");
+	public function edit ($request) {
+		if ($request->request_method == "POST") {
+			$id_code_promo = $_POST['id_code_promo'];
+			$code = $_POST['code'];
+			$description = $_POST['description'];
+			$date_debut = datepickerToDatetime($_POST['date_debut']);
+			$date_fin = datepickerToDatetime($_POST['date_fin']).' 23:59:59';
+			$publique = (isset($_POST['publique']) && $_POST['publique'] == 'on');
+			$sur_restaurant = (isset($_POST['sur_restaurant']) && $_POST['sur_restaurant'] == 'on');
+			$type_reduction = $_POST['type_reduction'];
+			$sur_prix_livraison = (isset($_POST['sur_prix_livraison']) && $_POST['sur_prix_livraison'] == 'on');
+			$valeur_prix_livraison = $_POST['valeur_prix_livraison'];
+			$sur_prix_total = (isset($_POST['sur_prix_total']) && $_POST['sur_prix_total'] == 'on');
+			$valeur_prix_total = $_POST['valeur_prix_total'];
+			$pourcentage_prix_total = $_POST['pourcentage_prix_total'];
+			
+			$modelCodePromo = new Model_CodePromo();
+			$modelCodePromo->id = $id_code_promo;
+			$modelCodePromo->code = $code;
+			$modelCodePromo->description = $description;
+			$modelCodePromo->date_debut = $date_debut;
+			$modelCodePromo->date_fin = $date_fin;
+			$modelCodePromo->publique = $publique;
+			$modelCodePromo->sur_restaurant = $sur_restaurant;
+			$modelCodePromo->type_reduc = $type_reduction;
+			$modelCodePromo->sur_prix_livraison = $sur_prix_livraison;
+			$modelCodePromo->valeur_prix_livraison = $valeur_prix_livraison;
+			$modelCodePromo->sur_prix_total = $sur_prix_total;
+			$modelCodePromo->valeur_prix_total = $valeur_prix_total;
+			$modelCodePromo->pourcentage_prix_total = $pourcentage_prix_total;
+			if (!$modelCodePromo->save()) {
+				
+			}
+			$this->redirect('', 'codePromo');
+		} else {
+			$request->title = "Administration - code promo";
+			if (isset($_GET['id_code_promo'])) {
+				$modelCodePromo = new Model_CodePromo();
+				$modelCodePromo->id = $_GET['id_code_promo'];
+				$request->codePromo = $modelCodePromo->load();
+			}
+			$request->vue = $this->render("code_promo/edit.php");
 		}
 	}
 	
-	public function updateLivreur ($request) {
-		if (isset($_POST["id_commande"])) {
-			$id_livreur = $_POST["livreur"];
-			$commande = new Model_Commande();
-			$commande->id = $_POST["id_commande"];
-			$livreur = $commande->getLivreur();
-			if ($livreur === false ||$livreur->id != $id_livreur) {
+	public function view ($request) {
+		if (isset($_GET["id"])) {
+			$modelCodePromo = new Model_CodePromo();
+			$modelCodePromo->id = $_GET['id'];
+			$request->codePromo = $modelCodePromo->load();
+			$modelUser = new Model_User();
+			$request->clients = $modelUser->getAllClients();
+			$request->vue = $this->render("code_promo/view.php");
+		}
+	}
+	
+	public function addUser ($request) {
+		if ($request->request_method == "POST") {
+			$id_code_promo = $_POST['id_code_promo'];
+			$id_user = $_POST['id_user'];
+			
+			$modelCodePromo = new Model_CodePromo();
+			$modelCodePromo->id = $id_code_promo;
+			if ($modelCodePromo->addClient($id_user)) {
+				$modelCodePromo->getById();
 				$modelUser = new Model_User();
-				$modelUser->id = $id_livreur;
-				$modelUser->get();
-				$commande->uid = $modelUser->id;
-				if ($commande->attributionLivreur()) {
-					$gcm = new GCMPushMessage(GOOGLE_API_KEY);
-					$message = "Vous avez reçu une nouvelle commande";
-					// listre des utilisateurs à notifier
-					$gcm->setDevices(array($modelUser->gcm_token));
-					// Le titre de la notification
-					$data = array(
-						"title" => "Nouvelle commande",
-						"key" => "livreur-new-commande",
-						"id_commande" => $commande->id
-					);
-					// On notifie nos utilisateurs
-					$result = $gcm->send($message, $data);
+				$modelUser->id = $id_user;
+				$modelUser->getById();
+				
+				$messageContent =  file_get_contents (ROOT_PATH.'mails/code_promo.html');
+			
+				$messageContent = str_replace("[WEBSITE_URL]", WEBSITE_URL, $messageContent);
+				$messageContent = str_replace("[DATE_DEBUT]", formatTimestampToDateHeure($modelCodePromo->date_debut), $messageContent);
+				$messageContent = str_replace("[DATE_FIN]", formatTimestampToDateHeure($modelCodePromo->date_fin), $messageContent);
+				$messageContent = str_replace("[DESCRIPTION]", $modelCodePromo->description, $messageContent);
+				
+				$restaurants = "";
+				if ($modelCodePromo->surRestaurant()) {
 					
-					$message = "Une commande vous a été retiré";
-					// listre des utilisateurs à notifier
-					$gcm->setDevices(array($livreur->gcm_token));
-					// Le titre de la notification
-					$data = array(
-						"title" => "Changement commande",
-						"key" => "livreur-change-commande",
-						"id_commande" => $commande->id
-					);
-					// On notifie nos utilisateurs
-					$result = $gcm->send($message, $data);
+				} else {
+					$restaurants = "Tous les restaurants";
+				}
+				$messageContent = str_replace("[RESTAURANTS]", $restaurants, $messageContent);
+				$messageContent = str_replace("[CODE_PROMO]", $modelCodePromo->code, $messageContent);
+				
+				if (send_mail ($modelUser->email, "Code promotionnel", $messageContent)) {
+					$request->mailSuccess = true;
+				} else {
+					$request->mailSuccess = false;
 				}
 			}
+			$this->redirect('view', 'codePromo', '', array("id" => $id_code_promo));
 		}
-		$this->redirect('index', 'commande');
-	}
-	
-	public function history ($request) {
-		if (isset($_POST['date_debut'])) {
-			$request->date_debut = $_POST['date_debut'];
-		} else {
-			$request->date_debut = '01/06/2016';
-		}
-		$dateDebut = datepickerToDatetime($request->date_debut);
-		
-		if (isset($_POST['date_fin'])) {
-			$request->date_fin = $_POST['date_fin'];
-		} else {
-			$request->date_fin = '30/06/2016';
-		}
-		$dateFin = datepickerToDatetime($request->date_fin);
-		$modelCommande = new Model_Commande_History();
-		$request->commandes = $modelCommande->getAll($dateDebut, $dateFin);
-		$request->title = "Administration - commandes";
-		$request->vue = $this->render("commande/history.php");
-	}
-	
-	public function viewHistory ($request) {
-		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande_History();
-			$commande->id = $_GET["id_commande"];
-			$request->commande = $commande->load();
-			$request->vue = $this->render("commande/viewHistory.php");
-		}
+		$this->redirect('', 'codePromo');
 	}
 }
