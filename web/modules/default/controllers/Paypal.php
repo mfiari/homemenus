@@ -102,10 +102,34 @@ class Controller_Paypal extends Controller_Default_Template {
 		
 		$paypal->addItem($item);
 		
+		$shippingDiscount = 0;
+		
+		if ($panier->code_promo->surPrixLivraison()) {
+			if ($request->panier->code_promo->estGratuit()) {
+				$shippingDiscount -= $panier->prix_livraison;
+			} else {
+				$shippingDiscount -= $panier->code_promo->valeur_prix_livraison;
+			}
+		}
+		
+		if ($panier->code_promo->surPrixTotal()) {
+			if ($panier->code_promo->estGratuit()) {
+				$shippingDiscount -= $totalPrix;
+			} else {
+				if ($panier->code_promo->valeur_prix_total != -1) {
+					$shippingDiscount -= $panier->code_promo->valeur_prix_total;
+				}
+				if ($panier->code_promo->pourcentage_prix_total != -1) {
+					$shippingDiscount -= ($totalPrix * $panier->code_promo->pourcentage_prix_total) / 100;
+				}
+			}
+		}
+		
 		$paypal->cancelUrl = WEBSITE_URL."index.php?controler=paypal&action=cancel";
 		$paypal->returnUrl = WEBSITE_URL."index.php?controler=paypal&action=return";
 		
 		$paypal->amount = $totalPrix;
+		$paypal->shippingDiscount = $shippingDiscount;
 		
 		$paypal->adresse_name = $request->_auth->nom.' '.$request->_auth->prenom;
 		$paypal->adresse_rue = $panier->rue;

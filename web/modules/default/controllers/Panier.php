@@ -535,7 +535,26 @@ class Controller_Panier extends Controller_Default_Template {
 			$totalPrix += $menu->prix;
 		}
 		
-		$totalPrix += $panier->prix_livraison;
+		if ($panier->code_promo->surPrixLivraison()) {
+			if (!$request->panier->code_promo->estGratuit()) {
+				$totalPrix += ($panier->prix_livraison - $panier->code_promo->valeur_prix_livraison);
+			}
+		} else {
+			$totalPrix += $panier->prix_livraison;
+		}
+		
+		if ($panier->code_promo->surPrixTotal()) {
+			if ($panier->code_promo->estGratuit()) {
+				$totalPrix = 0;
+			} else {
+				if ($panier->code_promo->valeur_prix_total != -1) {
+					$totalPrix -= $panier->code_promo->valeur_prix_total;
+				}
+				if ($panier->code_promo->pourcentage_prix_total != -1) {
+					$totalPrix -= ($totalPrix * $panier->code_promo->pourcentage_prix_total) / 100;
+				}
+			}
+		}
 		
 		require_once WEBSITE_PATH.'res/lib/stripe/init.php';
 		if (isset($_POST['stripeToken'])) {
