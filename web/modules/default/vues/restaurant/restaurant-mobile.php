@@ -113,7 +113,6 @@
 </div>
 <script type="text/javascript">
 	$(function() {
-		
 		$(".carte-item").click(function () {
 			$("#loading-modal").modal();
 			var id_carte = $(this).attr('data-id');
@@ -142,91 +141,10 @@
 				initMenu (data);
 			});
 		});
-		
-		initDeleteCarteItem ();
-		initDeleteMenuItem ();
-		initPanierCommande();
-		initCodePromo ();
-		
 	});
 	
-	function initDeleteCarteItem () {
-		$(".carte-item-delete").click(function(event) {
-			$("#loading-modal").modal();
-			var id_panier = $("#id_panier").val();
-			var id = $(this).attr('data-id');
-			$.ajax({
-				type: "POST",
-				url: "?controler=panier&action=removeCarte",
-				dataType: "html",
-				data: {id_panier : id_panier, id_panier_carte : id}
-			}).done(function( msg ) {
-				reloadPanier ();
-				$("#loading-modal").modal('hide');
-			}).error(function(msg) {
-				alert("error");
-				$("#loading-modal").modal('hide');
-			});
-		});
-	}
-	
-	function initDeleteMenuItem () {
-		$(".menu-item-delete").click(function(event) {
-			$("#loading-modal").modal();
-			var id_panier = $("#id_panier").val();
-			var id = $(this).attr('data-id');
-			$.ajax({
-				type: "POST",
-				url: "?controler=panier&action=removeMenu",
-				dataType: "html",
-				data: {id_panier : id_panier, id_panier_menu : id}
-			}).done(function( msg ) {
-				reloadPanier ();
-				$("#loading-modal").modal('hide');
-			}).error(function(msg) {
-				alert("error");
-				$("#loading-modal").modal('hide');
-			});
-		});
-	}
-	
-	function initCodePromo () {
-		$("#codePromoButton").click(function () {
-			$("#loading-modal").modal();
-			var codePromo = $("#code_promo").val();
-			$.ajax({
-				type: "POST",
-				url: "?controler=panier&action=addCodePromo",
-				dataType: "html",
-				data: {code_promo : codePromo}
-			}).done(function( msg ) {
-				reloadPanier ();
-				$("#loading-modal").modal('hide');
-			}).error(function(jqXHR, textStatus, errorThrown) {
-				switch (jqXHR.status) {
-					case 400 :
-						$("#codePromoBlock div.alert-danger span.message").html("Le code promo n'est pas applicable sur ce restaurant.");
-						break;
-					case 401 :
-						$("#codePromoBlock div.alert-danger span.message").html("Vous n'êtes pas autorisé à utiliser ce code promo.");
-						break;
-					case 403 :
-						$("#codePromoBlock div.alert-danger span.message").html("Veuillez vous connecter pour utiliser ce code promo.");
-						break;
-					case 404 :
-						$("#codePromoBlock div.alert-danger span.message").html("Ce code promo n'existe pas.");
-						break;
-					case 410 :
-						$("#codePromoBlock div.alert-danger span.message").html("Vous avez déjà utilisé ce code promo.");
-						break;
-					default :
-						$("#codePromoBlock div.alert-danger span.message").html("Une erreur est survenu, veuillez réessayé.");
-						break;
-				}
-				$("#codePromoBlock div.alert-danger").css('display', 'block');
-				$("#loading-modal").modal('hide');
-			});
-		});
+	function reloadPanier () {
+		
 	}
 	
 	$('#carte-modal').on('shown.bs.modal', function() {
