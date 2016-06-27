@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /web/modules/admin/
+Disallow: /web/modules/admin_restaurant/
+Disallow: /web/modules/restaurant/
+Disallow: /web/modules/livreur/
+Disallow: /webservices/
+Sitemap: <lien url="https://homemenus.fr/sitemap.xml">https://homemenus.fr/sitemap.xml</lien>

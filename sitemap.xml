@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<urlset xmlns="http://www.google.com/schemas/sitemap/0.84">
+	<url>
+		<loc>https://homemenus.fr</loc>
+		<lastmod>2016-06-28</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>1.0</priority>
+	</url>
+	<url>
+		<loc>https://homemenus.fr/web</loc>
+		<lastmod>2016-06-28</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>1.0</priority>
+	</url>
+</urlset>
