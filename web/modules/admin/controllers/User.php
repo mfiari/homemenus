@@ -87,6 +87,7 @@ class Controller_User extends Controller_Admin_Template {
 		$modelCommandeHistory->uid = $_GET['id_user'];
 		$request->commandesHistory = $modelCommandeHistory->loadCommandeLivreur();
 		$request->title = "Administration - livreur";
+		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
 		$request->vue = $this->render("user/livreur.php");
 	}
 	
