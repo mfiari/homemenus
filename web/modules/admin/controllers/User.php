@@ -41,6 +41,9 @@ class Controller_User extends Controller_Admin_Template {
 				case "add_dispo" :
 					$this->add_dispo($request);
 					break;
+				case "deleteDispo" :
+					$this->deleteDispo($request);
+					break;
 			}
 		}
 	}
@@ -171,9 +174,19 @@ class Controller_User extends Controller_Admin_Template {
 			$dispo->minute_fin = $_POST['minute_fin'];
 			
 			$dispo->save();
+			
+			$dispo->addUpdateDispo($dispo->id);
+			
 			$this->redirect('livreurs', 'user');
 		} else {
 			$this->redirect('livreurs', 'user');
 		}
+	}
+	
+	public function deleteDispo ($request) {
+		$dispo = new Model_Dispo();
+		$dispo->id = $_GET['id_dispo'];
+		$dispo->remove();
+		$this->redirect('livreur', 'user', '', array('id_user' => $_GET['id_user']));
 	}
 }

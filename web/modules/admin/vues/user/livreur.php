@@ -26,12 +26,17 @@
 				<tbody>
 					<?php foreach ($request->livreur->dispos as $dispo) : ?>
 						<tr>
-							<td><?php echo $dispo->rue; ?>, <?php echo $dispo->code_postal; ?> <?php echo $dispo->ville; ?></td>
+							<td><?php echo utf8_encode($dispo->rue); ?>, <?php echo $dispo->code_postal; ?> <?php echo utf8_encode($dispo->ville); ?></td>
 							<td><?php echo $dispo->id_jour; ?></td>
 							<td><?php echo $dispo->heure_debut; ?>h<?php echo $dispo->minute_debut; ?></td>
 							<td><?php echo $dispo->heure_fin; ?>h<?php echo $dispo->minute_fin; ?></td>
 							<td><?php echo $dispo->vehicule; ?></td>
 							<td><?php echo $dispo->perimetre; ?> km</td>
+							<td>
+								<a href="?controler=user&action=deleteDispo&id_dispo=<?php echo $dispo->id; ?>&id_user=<?php echo $request->livreur->id; ?>">
+									<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+								</a>
+							</td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>

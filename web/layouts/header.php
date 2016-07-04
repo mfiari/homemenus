@@ -1,5 +1,6 @@
 
 <head>
+	<title><?php echo $request->title; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="description" content="HoMe Menus, site de livraison à domicile de plats de restaurants dans les Yvelines 78 à Mantes la jolie. 
 	Restaurants japonais, Italien, Indien, provençale."/>
@@ -8,15 +9,14 @@
 	<?php if ($request->_noindex) : ?>
 		<meta name="robots" content="none" />
 		<meta name="googlebot" content="none" />
+	<?php else : ?>
+		<meta name="robots" content="all" />
 	<?php endif; ?>
 	<link rel="icon" href="res/img/favicon.ico" />
-	<title><?php echo $request->title; ?></title>
 	<script type="text/javascript" src="res/js/jquery-2.1.1.js"></script>
 	<script type="text/javascript" src="res/jquery-ui/jquery-ui.js"></script>
 	<script type="text/javascript" src="res/js/site.js"></script>
 	<script type="text/javascript" src="res/bootstrap/js/bootstrap.js"></script>
-	<!--<script type="text/javascript" src="res/js/bootstrap-star-rating.js"></script>
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>-->
 	<?php 
 		if ($request->hasProperty('javascripts')) {
 			foreach ($request->javascripts as $js) {

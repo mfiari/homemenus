@@ -37,6 +37,15 @@ class Controller_Commande extends Controller_Admin_Template {
 				case "viewHistory" :
 					$this->viewHistory($request);
 					break;
+				case "annule" :
+					$this->annule($request);
+					break;
+				case "renew" :
+					$this->renew($request);
+					break;
+				case "remove" :
+					$this->remove($request);
+					break;
 			}
 		} else {
 			$this->index($request);
@@ -56,7 +65,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			$commande->id = $_GET["id_commande"];
 			$request->commande = $commande->load();
 			$modelUser = new Model_User();
-			$request->livreurs = $modelUser->getLivreurAvailableForCommande($commande);
+			$request->livreurs = $modelUser->getLivreurAvailableForCommandeAdmin($commande);
 			$request->vue = $this->render("commande/view.php");
 		}
 	}
@@ -129,6 +138,33 @@ class Controller_Commande extends Controller_Admin_Template {
 			$commande->id = $_GET["id_commande"];
 			$request->commande = $commande->load();
 			$request->vue = $this->render("commande/viewHistory.php");
+		}
+	}
+	
+	public function annule ($request) {
+		if (isset($_GET["id_commande"])) {
+			$commande = new Model_Commande();
+			$commande->id = $_GET["id_commande"];
+			$commande->annule();
+			$this->redirect('index', 'commande');
+		}
+	}
+	
+	public function renew ($request) {
+		if (isset($_GET["id_commande"])) {
+			$commande = new Model_Commande();
+			$commande->id = $_GET["id_commande"];
+			$commande->renew();
+			$this->redirect('index', 'commande');
+		}
+	}
+	
+	public function remove ($request) {
+		if (isset($_GET["id_commande"])) {
+			$commande = new Model_Commande();
+			$commande->id = $_GET["id_commande"];
+			$commande->remove();
+			$this->redirect('index', 'commande');
 		}
 	}
 }

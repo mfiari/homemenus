@@ -7,13 +7,16 @@
 	include_once ROOT_PATH."models/Restaurant.php";
 	include_once ROOT_PATH."models/Dispo.php";
 	
+	/* On récupère tous les restaurants */
 	$modelRestaurant = new Model_Restaurant();
-	$restaurants = $modelRestaurant->getRestaurantsCalculeDistance();
+	$restaurants = $modelRestaurant->getAll();
 	
+	/* On récupère tous les livreurs dont la dispo a été modifiée */
 	$modelDispo = new Model_Dispo();
-	$dispos = $modelDispo->getAllActifLivreursDispo();
-	foreach ($restaurants as $restaurant) {
-		foreach ($dispos as $dispo) {
+	$dispos = $modelDispo->getUpdateDispoLivreur();
+	
+	foreach ($dispos as $dispo) {
+		foreach ($restaurants as $restaurant) {
 			$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
 			$adresseDispo = $dispo->latitude.','.$dispo->longitude;
 			$result = getDistance($adresseDispo, $adresseResto);
@@ -26,5 +29,5 @@
 				writeLog(CRON_LOG, $result, LOG_LEVEL_ERROR);
 			}
 		}
-		$modelDispo->removeUpdateRestaurant($restaurant->id);
+		$modelDispo->removeUpdateDispo($dispo->id);
 	}

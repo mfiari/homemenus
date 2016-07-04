@@ -38,8 +38,14 @@
 								<a href="?controler=commande&action=view&id_commande=<?php echo $commande->id; ?>">
 									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 								</a>
-								<a href="?controler=user&action=delete&id_user=<?php echo $commande->id; ?>">
+								<a href="?controler=commande&action=annule&id_commande=<?php echo $commande->id; ?>">
 									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								</a>
+								<a href="?controler=commande&action=renew&id_commande=<?php echo $commande->id; ?>">
+									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+								</a>
+								<a href="?controler=commande&action=remove&id_commande=<?php echo $commande->id; ?>">
+									<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 								</a>
 							</td>
 						</tr>

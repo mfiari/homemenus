@@ -48,15 +48,21 @@ class Model_Commande_History extends Model_Template {
 	
 	public function save ($commande) {
 		$sql = "INSERT INTO commande_history (id_commande, id_user, nom_user, prenom_user, email_user, rue_user, ville_user, code_postal_user,
-		rue_commande, ville_commande, code_postal_commande, latitude_commande, longitude_commande, telephone_commande, id_livreur, nom_livreur,
-		prenom_livreur, login_livreur, id_restaurant, nom_restaurant, rue_restaurant, ville_restaurant, code_postal_restaurant, telephone_restaurant,
-		latitude_restaurant, longitude_restaurant, date_commande, heure_souhaite, minute_souhaite, prix, prix_livraison, distance, 
-		date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, etape, note, commentaire)
+		rue_commande, ville_commande, code_postal_commande, complement_commande, latitude_commande, longitude_commande, telephone_commande, id_livreur, 
+		nom_livreur, prenom_livreur, login_livreur, id_restaurant, nom_restaurant, rue_restaurant, ville_restaurant, code_postal_restaurant, telephone_restaurant,
+		latitude_restaurant, longitude_restaurant, date_commande, heure_souhaite, minute_souhaite, prix, prix_livraison, part_restaurant, distance, 
+		date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, etape, note, commentaire, is_premium, 
+		id_code_promo, code_promo, description_code_promo, date_debut_code_promo, date_fin_code_promo, publique_code_promo, sur_restaurant_code_promo, 
+		type_reduc_code_promo, sur_prix_livraison_code_promo, valeur_prix_livraison_code_promo, sur_prix_total_code_promo, valeur_prix_total_code_promo, 
+		pourcentage_prix_total_code_promo)
 		VALUE (:id_commande, :id_user, :nom_user, :prenom_user, :email_user, :rue_user, :ville_user, :code_postal_user,
-		:rue_commande, :ville_commande, :code_postal_commande, :latitude_commande, :longitude_commande, :telephone_commande, :id_livreur, :nom_livreur,
-		:prenom_livreur, :login_livreur, :id_restaurant, :nom_restaurant, :rue_restaurant, :ville_restaurant, :code_postal_restaurant, :telephone_restaurant,
-		:latitude_restaurant, :longitude_restaurant, :date_commande, :heure_souhaite, :minute_souhaite, :prix, :prix_livraison, :distance, 
-		:date_validation_restaurant, :date_fin_preparation_restaurant, :date_recuperation_livreur, :date_livraison, :etape, :note, :commentaire)";
+		:rue_commande, :ville_commande, :code_postal_commande, :complement_commande, :latitude_commande, :longitude_commande, :telephone_commande, :id_livreur, 
+		:nom_livreur, :prenom_livreur, :login_livreur, :id_restaurant, :nom_restaurant, :rue_restaurant, :ville_restaurant, :code_postal_restaurant, 
+		:telephone_restaurant, :latitude_restaurant, :longitude_restaurant, :date_commande, :heure_souhaite, :minute_souhaite, :prix, :prix_livraison, 
+		:part_restaurant, :distance, :date_validation_restaurant, :date_fin_preparation_restaurant, :date_recuperation_livreur, :date_livraison, :etape, :note, 
+		:commentaire, :is_premium, :id_code_promo, :code_promo, :description_code_promo, :date_debut_code_promo, :date_fin_code_promo, :publique_code_promo, 
+		:sur_restaurant_code_promo, :type_reduc_code_promo, :sur_prix_livraison_code_promo, :valeur_prix_livraison_code_promo, :sur_prix_total_code_promo, 
+		:valeur_prix_total_code_promo, :pourcentage_prix_total_code_promo)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id_commande", $commande->id);
 		$stmt->bindValue(":id_user", $commande->client->id);
@@ -69,6 +75,7 @@ class Model_Commande_History extends Model_Template {
 		$stmt->bindValue(":rue_commande", $commande->rue);
 		$stmt->bindValue(":ville_commande", $commande->ville);
 		$stmt->bindValue(":code_postal_commande", $commande->code_postal);
+		$stmt->bindValue(":complement_commande", $commande->complement_commande);
 		$stmt->bindValue(":latitude_commande", $commande->latitude);
 		$stmt->bindValue(":longitude_commande", $commande->longitude);
 		$stmt->bindValue(":telephone_commande", $commande->telephone);
@@ -89,6 +96,7 @@ class Model_Commande_History extends Model_Template {
 		$stmt->bindValue(":minute_souhaite", $commande->minute_souhaite);
 		$stmt->bindValue(":prix", $commande->prix);
 		$stmt->bindValue(":prix_livraison", $commande->prix_livraison);
+		$stmt->bindValue(":part_restaurant", $commande->part_restaurant);
 		$stmt->bindValue(":distance", $commande->distance);
 		$stmt->bindValue(":date_validation_restaurant", $commande->date_validation_restaurant);
 		$stmt->bindValue(":date_fin_preparation_restaurant", $commande->date_fin_preparation_restaurant);
@@ -97,6 +105,20 @@ class Model_Commande_History extends Model_Template {
 		$stmt->bindValue(":etape", $commande->etape);
 		$stmt->bindValue(":note", $commande->note);
 		$stmt->bindValue(":commentaire", $commande->commentaire);
+		$stmt->bindValue(":is_premium", $commande->is_premium);
+		$stmt->bindValue(":id_code_promo", $commande->codePromo->id);
+		$stmt->bindValue(":code_promo", $commande->codePromo->code);
+		$stmt->bindValue(":description_code_promo", $commande->codePromo->description);
+		$stmt->bindValue(":date_debut_code_promo", $commande->codePromo->date_debut);
+		$stmt->bindValue(":date_fin_code_promo", $commande->codePromo->date_fin);
+		$stmt->bindValue(":publique_code_promo", $commande->codePromo->publique);
+		$stmt->bindValue(":sur_restaurant_code_promo", $commande->codePromo->sur_restaurant);
+		$stmt->bindValue(":type_reduc_code_promo", $commande->codePromo->type_reduc);
+		$stmt->bindValue(":sur_prix_livraison_code_promo", $commande->codePromo->sur_prix_livraison);
+		$stmt->bindValue(":valeur_prix_livraison_code_promo", $commande->codePromo->valeur_prix_livraison);
+		$stmt->bindValue(":sur_prix_total_code_promo", $commande->codePromo->sur_prix_total);
+		$stmt->bindValue(":valeur_prix_total_code_promo", $commande->codePromo->valeur_prix_total);
+		$stmt->bindValue(":pourcentage_prix_total_code_promo", $commande->codePromo->pourcentage_prix_total);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
@@ -104,15 +126,21 @@ class Model_Commande_History extends Model_Template {
 		$id_commande_history = $this->db->lastInsertId();
 		
 		foreach ($commande->menus as $menu) {
-			$sql = "INSERT INTO commande_menu_history (id_commande, id_commande_menu, id_menu, nom_menu, commentaire_menu, quantite)
-			VALUES (:id_commande, :id_commande_menu, :id_menu, :nom_menu, :commentaire_menu, :quantite)";
+			$sql = "INSERT INTO commande_menu_history 
+			(id_commande, id_menu, nom_menu, commentaire_menu, id_format, nom_format, id_formule, nom_formule quantite, prix, temps_preparation)
+			VALUES (:id_commande, :id_menu, :nom_menu, :commentaire_menu, :id_format, :nom_format, :id_formule, :nom_formule, :quantite, :prix, :temps_preparation)";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id_commande", $id_commande_history);
-			$stmt->bindValue(":id_commande_menu", $menu->id_commande);
 			$stmt->bindValue(":id_menu", $menu->id);
 			$stmt->bindValue(":nom_menu", $menu->nom);
 			$stmt->bindValue(":commentaire_menu", $menu->commentaire);
+			$stmt->bindValue(":id_format", $menu->getFormat(0)->id);
+			$stmt->bindValue(":nom_format", $menu->getFormat(0)->nom);
+			$stmt->bindValue(":id_formule", $menu->getFormule(0)->id);
+			$stmt->bindValue(":nom_formule", $menu->getFormule(0)->nom);
 			$stmt->bindValue(":quantite", $menu->quantite);
+			$stmt->bindValue(":prix", $menu->prix);
+			$stmt->bindValue(":temps_preparation", $menu->temps_preparation);
 			if (!$stmt->execute()) {
 				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
@@ -120,13 +148,12 @@ class Model_Commande_History extends Model_Template {
 			$id_commande_menu = $this->db->lastInsertId();
 		
 			foreach ($menu->contenus as $contenu) {
-				$sql = "INSERT INTO commande_contenu_history (id_commande_menu, id_contenu, id_categorie, nom_categorie, parent_categorie, parent_nom, 
-				id_carte, nom_carte, commentaire_carte, contenu_obligatoire, contenu_supplement, contenu_limite_supplement, commentaire_contenu)
-				VALUES (:id_commande_menu, :id_contenu, :id_categorie, :nom_categorie, :parent_categorie, :parent_nom, 
-				:id_carte, :nom_carte, :commentaire_carte, :contenu_obligatoire, :contenu_supplement, :contenu_limite_supplement, :commentaire_contenu)";
+				$sql = "INSERT INTO commande_menu_contenu_history (id_commande_menu, id_categorie, nom_categorie, parent_categorie, parent_nom, 
+				id_carte, nom_carte, commentaire_carte, contenu_obligatoire, contenu_limite_supplement, contenu_limite_accompagnement, commentaire_contenu)
+				VALUES (:id_commande_menu, :id_categorie, :nom_categorie, :parent_categorie, :parent_nom, 
+				:id_carte, :nom_carte, :commentaire_carte, :contenu_obligatoire, :contenu_limite_supplement, :contenu_limite_accompagnement, :commentaire_contenu)";
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id_commande_menu", $id_commande_menu);
-				$stmt->bindValue(":id_contenu", $contenu->id);
 				$stmt->bindValue(":id_categorie", $contenu->categorie->id);
 				$stmt->bindValue(":nom_categorie", $contenu->categorie->nom);
 				$stmt->bindValue(":parent_categorie", $contenu->categorie->parent_cat->id);
@@ -135,8 +162,8 @@ class Model_Commande_History extends Model_Template {
 				$stmt->bindValue(":nom_carte", $contenu->carte->nom);
 				$stmt->bindValue(":commentaire_carte", $contenu->carte->commentaire);
 				$stmt->bindValue(":contenu_obligatoire", $contenu->obligatoire);
-				$stmt->bindValue(":contenu_supplement", $contenu->supplement);
 				$stmt->bindValue(":contenu_limite_supplement", $contenu->limite_supplement);
+				$stmt->bindValue(":contenu_limite_accompagnement", $contenu->limite_accompagnement);
 				$stmt->bindValue(":commentaire_contenu", $contenu->commentaire);
 				if (!$stmt->execute()) {
 					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
@@ -146,12 +173,17 @@ class Model_Commande_History extends Model_Template {
 		}
 		
 		foreach ($commande->cartes as $carte) {
-			$sql = "INSERT INTO commande_carte_history (id_commande, quantite, id_carte, nom_carte, id_categorie, nom_categorie, parent_categorie, parent_nom, 
-			commentaire_carte)
-			VALUES (:id_commande, :quantite, :id_carte, :nom_carte, :id_categorie, :nom_categorie, :parent_categorie, :parent_nom, :commentaire_carte)";
+			$sql = "INSERT INTO commande_carte_history (id_commande, quantite, id_format, nom_format, prix, temps_preparation, id_carte, nom_carte, id_categorie, 
+			nom_categorie, parent_categorie, parent_nom, commentaire_carte)
+			VALUES (:id_commande, :quantite, :id_format, :nom_format, :prix, :temps_preparation, :id_carte, :nom_carte, :id_categorie, :nom_categorie, 
+			:parent_categorie, :parent_nom, :commentaire_carte)";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id_commande", $id_commande_history);
 			$stmt->bindValue(":quantite", $carte->quantite);
+			$stmt->bindValue(":id_format", $carte->format->id);
+			$stmt->bindValue(":nom_format", $carte->format->nom);
+			$stmt->bindValue(":prix", $carte->prix);
+			$stmt->bindValue(":temps_preparation", $carte->temps_preparation);
 			$stmt->bindValue(":id_carte", $carte->id);
 			$stmt->bindValue(":nom_carte", $carte->nom);
 			$stmt->bindValue(":id_categorie", $carte->categorie->id);
@@ -167,7 +199,7 @@ class Model_Commande_History extends Model_Template {
 		
 			foreach ($carte->supplements as $supplement) {
 				$sql = "INSERT INTO commande_carte_supplement_history (id_commande_carte, id_supplement, nom_supplement, prix_supplement, commentaire_supplement)
-				VALUES (:id_commande_carte, id_supplement, nom_supplement, prix_supplement, commentaire_supplement)";
+				VALUES (:id_commande_carte, :id_supplement, :nom_supplement, :prix_supplement, :commentaire_supplement)";
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id_commande_carte", $id_commande_carte);
 				$stmt->bindValue(":id_supplement", $supplement->id);
@@ -177,6 +209,43 @@ class Model_Commande_History extends Model_Template {
 				if (!$stmt->execute()) {
 					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 					return false;
+				}
+			}
+		
+			foreach ($carte->accompagnements as $accompagnement) {
+				$sql = "INSERT INTO commande_carte_accompagnement_history (id_commande_carte, id_accompagnement, nom_accompagnement, id_categorie, nom_categorie, 
+				parent_categorie, parent_nom, commentaire_accompagnement)
+				VALUES (:id_commande_carte, :id_accompagnement, :nom_accompagnement, :id_categorie, :nom_categorie, :parent_categorie, :parent_nom, 
+				:commentaire_accompagnement)";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id_commande_carte", $id_commande_carte);
+				$stmt->bindValue(":id_accompagnement", $accompagnement->id);
+				$stmt->bindValue(":nom_accompagnement", $accompagnement->nom);
+				$stmt->bindValue(":id_categorie", $accompagnement->categorie->id);
+				$stmt->bindValue(":nom_categorie", $accompagnement->categorie->nom);
+				$stmt->bindValue(":parent_categorie", $accompagnement->categorie->parent_cat->id);
+				$stmt->bindValue(":parent_nom", $accompagnement->categorie->parent_cat->nom);
+				$stmt->bindValue(":commentaire_accompagnement", $accompagnement->commentaire);
+				if (!$stmt->execute()) {
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+					return false;
+				}
+			}
+		
+			foreach ($carte->options as $option) {
+				foreach ($option->values as $optionValue) {
+					$sql = "INSERT INTO commande_carte_option_history (id_commande_carte, id_option, nom_option, id_value, nom_value)
+					VALUES (:id_commande_carte, :id_option, :nom_option, :id_value, :nom_value)";
+					$stmt = $this->db->prepare($sql);
+					$stmt->bindValue(":id_commande_carte", $id_commande_carte);
+					$stmt->bindValue(":id_option", $option->id);
+					$stmt->bindValue(":nom_option", $option->nom);
+					$stmt->bindValue(":id_value", $optionValue->id);
+					$stmt->bindValue(":nom_value", $optionValue->nom);
+					if (!$stmt->execute()) {
+						writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+						return false;
+					}
 				}
 			}
 		}

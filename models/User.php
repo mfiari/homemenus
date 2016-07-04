@@ -262,18 +262,13 @@ class Model_User extends Model_Template {
 	
 	public function login($login, $password) {
 		$sql = "SELECT uid, nom, prenom, status, is_enable FROM users WHERE login = :login AND password = sha1(:password)";
-		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":login", $login);
-		$stmt->bindValue(":password", $password);
-		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
-			$this->sqlHasFailed = true;
-			return false;
-		}
-		$value = $stmt->fetch(PDO::FETCH_ASSOC);
-		if ($value == null || $value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
-			$this->sqlHasFailed = true;
+		
+		$params = array (
+			":login" => $login,
+			":password" => $password
+		);
+		$value = $this->executeSql($sql, $params, PDO::FETCH_ASSOC);
+		if ($value === false) {
 			return false;
 		}
 		
@@ -435,21 +430,12 @@ class Model_User extends Model_Template {
 	
 	public function getByLoginAndPassword($login, $password) {
 		$sql = "SELECT uid, nom, prenom, status, is_enable FROM users WHERE login = :login AND password = sha1(:password)";
-		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":login", $login);
-		$stmt->bindValue(":password", $password);
-		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
-			$this->sqlHasFailed = true;
-			return false;
-		}
-		$value = $stmt->fetch(PDO::FETCH_ASSOC);
-		if ($value == null || $value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
-			$this->sqlHasFailed = true;
-			return false;
-		}
-		return true;
+		$params = array (
+			":login" => $login,
+			":password" => $password
+		);
+		$value = $this->executeSql($sql, $params, PDO::FETCH_ASSOC);
+		return $value !== false;
 	}
 	
 	public function modifyPassword ($newPassword) {
@@ -607,10 +593,10 @@ class Model_User extends Model_Template {
 		JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
 		WHERE user.is_enable = 1 AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1) ";
 		if ($commande->heure_souhaite == -1) {
-			"AND (uld.heure_debut > HOUR(CURRENT_TIME) OR (uld.heure_debut < HOUR(CURRENT_TIME) AND uld.heure_fin >= HOUR(CURRENT_TIME)))";
+			$sql.= "AND (uld.heure_debut > HOUR(CURRENT_TIME) OR (uld.heure_debut < HOUR(CURRENT_TIME) AND uld.heure_fin >= HOUR(CURRENT_TIME)))";
 		} else {
 			$heure = $commande->heure_souhaite;
-			"AND (uld.heure_debut > ".$heure." OR (uld.heure_debut < ".$heure." AND uld.heure_fin > ".$heure."))";
+			$sql.= "AND (uld.heure_debut > ".$heure." OR (uld.heure_debut < ".$heure." AND uld.heure_fin > ".$heure."))";
 		}
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $commande->restaurant->id);
@@ -653,6 +639,41 @@ class Model_User extends Model_Template {
 		$stmt->bindValue(":user_ville", $commande->ville);
 		$stmt->bindValue(":restaurant_code_postal", $commande->restaurant->code_postal);
 		$stmt->bindValue(":restaurant_ville", $commande->restaurant->ville);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$livreurs = $stmt->fetchAll();
+		$list = array();
+		foreach ($livreurs as $livreur) {
+			$user = new Model_User(false);
+			$user->id = $livreur['uid'];
+			$user->login = $livreur['login'];
+			$user->is_login = $livreur['is_login'];
+			$user->gcm_token = $livreur['gcm_token'];
+			$list[] = $user;
+		}
+		return $list;
+	}
+	
+	public function getLivreurAvailableForCommandeAdmin ($commande) {
+		$sql = "SELECT user.uid, user.login, user.is_login, us.gcm_token, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin
+		FROM users user
+		JOIN user_livreur ul ON ul.uid = user.uid
+		JOIN user_livreur_dispo uld ON uld.uid = user.uid
+		JOIN distance_livreur_resto dlr ON dlr.id_restaurant = :restaurant AND dlr.id_dispo = uld.id AND dlr.perimetre <= uld.perimetre
+		JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
+		WHERE user.is_enable = 1 AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1) ";
+		if ($commande->heure_souhaite == -1) {
+			$sql.= "AND (uld.heure_debut > HOUR(CURRENT_TIME) OR (uld.heure_debut < HOUR(CURRENT_TIME) AND uld.heure_fin >= HOUR(CURRENT_TIME)))";
+		} else {
+			$heure = $commande->heure_souhaite;
+			$sql.= "AND (uld.heure_debut > ".$heure." OR (uld.heure_debut < ".$heure." AND uld.heure_fin > ".$heure."))";
+		}
+		$sql.= " GROUP BY user.login";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":restaurant", $commande->restaurant->id);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;

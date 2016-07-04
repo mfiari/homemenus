@@ -132,6 +132,9 @@ class Model_Categorie extends Model_Template {
 		WHERE id_categorie = :id AND is_visible = 1 ORDER BY ordre";*/
 		$sql = "SELECT carte.id, carte.nom, carte.commentaire, (SELECT MIN(cf.prix) FROM carte_format cf WHERE cf.id_carte = carte.id) AS prix
 		FROM carte
+		JOIN carte_disponibilite cd ON cd.id_carte = carte.id
+		JOIN restaurant_horaires rh ON rh.id = cd.id_horaire AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
+		OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin > HOUR(CURRENT_TIME)))
 		WHERE id_categorie = :id AND is_visible = 1 ORDER BY ordre";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);

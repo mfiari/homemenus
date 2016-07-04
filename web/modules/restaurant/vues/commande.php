@@ -81,6 +81,35 @@
 						</div>
 					</div>
 				<?php endif; ?>
+				<?php if (count($carte->options) > 0) : ?>
+					<div class="row">
+						<div class="col-md-offset-1 col-md-11">
+							<?php foreach ($carte->options as $option) : ?>
+								<?php foreach ($option->values as $value) : ?>
+									<div class="row">
+										<span><?php echo utf8_encode($option->nom); ?> : <?php echo utf8_encode($value->nom); ?></span>
+									</div>
+								<?php endforeach; ?>
+							<?php endforeach; ?>
+						</div>
+					</div>
+				<?php endif; ?>
+				<?php if (count($carte->accompagnements) > 0) : ?>
+					<div class="row">
+						<div class="col-md-offset-1 col-md-11">
+							<span>accompagnements : </span>
+							<div class="row">
+								<div class="col-md-offset-1 col-md-11">
+									<?php foreach ($carte->accompagnements as $accompagnement) : ?>
+										<?php foreach ($accompagnement->cartes as $carteAccompagnement) : ?>
+											<span><?php echo utf8_encode($carteAccompagnement->nom); ?></span>
+										<?php endforeach; ?>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
 			</div>
 			<div class="col-md-4">
 				<div class="row">

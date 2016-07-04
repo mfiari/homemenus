@@ -4,6 +4,7 @@ class Model_Dispo extends Model_Template {
 	
 	private $id;
 	private $id_livreur;
+	private $livreur;
 	private $rue;
 	private $ville;
 	private $code_postal;
@@ -84,6 +85,77 @@ class Model_Dispo extends Model_Template {
 		return $list;
 	}
 	
+	public function getUpdateDispoLivreur () {
+		$sql = "SELECT uld.id, user.uid, uld.rue, uld.ville, uld.code_postal, uld.latitude, uld.longitude
+		FROM users user
+		JOIN user_livreur_dispo uld ON uld.uid = user.uid
+		JOIN update_distance_dispo udd ON udd.id_dispo = uld.id
+		WHERE user.status = 'LIVREUR' AND user.is_enable = true";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$users = $stmt->fetchAll();
+		$list = array();
+		foreach ($users as $usr) {
+			$dispo = new Model_Dispo(false);
+			$dispo->id = $usr['id'];
+			$dispo->id_livreur = $usr['uid'];
+			$dispo->rue = $usr['rue'];
+			$dispo->ville = $usr['ville'];
+			$dispo->code_postal = $usr['code_postal'];
+			$dispo->latitude = $usr['latitude'];
+			$dispo->longitude = $usr['longitude'];
+			$list[] = $dispo;
+		}
+		return $list;
+	}
+	
+	public function getDispoByDay ($day) {
+		$sql = "SELECT dispo.id, user.uid, user.nom, user.prenom, user.login, user.email, dispo.rue, dispo.ville, dispo.code_postal, dispo.latitude, 
+		dispo.longitude, dispo.perimetre, dispo.vehicule, dispo.heure_debut, dispo.minute_debut, dispo.heure_fin, dispo.minute_fin
+		FROM user_livreur_dispo dispo
+		JOIN users user ON user.uid = dispo.uid
+		WHERE dispo.id_jour = :day";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$resultats = $stmt->fetchAll();
+		$list = array();
+		foreach ($resultats as $resultat) {
+			$dispo = new Model_Dispo(false);
+			$dispo->id = $resultat['id'];
+			$dispo->rue = $resultat['rue'];
+			$dispo->ville = $resultat['ville'];
+			$dispo->code_postal = $resultat['code_postal'];
+			$dispo->latitude = $resultat['latitude'];
+			$dispo->longitude = $resultat['longitude'];
+			$dispo->perimetre = $resultat['perimetre'];
+			$dispo->vehicule = $resultat['vehicule'];
+			$dispo->heure_debut = $resultat['heure_debut'];
+			$dispo->minute_debut = $resultat['minute_debut'];
+			$dispo->heure_fin = $resultat['heure_fin'];
+			$dispo->minute_fin = $resultat['minute_fin'];
+			
+			$livreur = new Model_User(false);
+			$liveur->uid = $resultat['uid'];
+			$liveur->nom = $resultat['nom'];
+			$liveur->prenom = $resultat['prenom'];
+			$liveur->login = $resultat['login'];
+			$liveur->email = $resultat['email'];
+			
+			$dispo->livreur = $livreur;
+			
+			$list[] = $dispo;
+		}
+		return $list;
+	}
+	
 	public function addDistanceLivreurResto ($id_restaurant, $id_dispo, $perimetre) {
 		$sql = "INSERT INTO distance_livreur_resto (id_restaurant, id_dispo, perimetre) 
 		VALUES (:id_restaurant, :id_dispo, :perimetre)";
@@ -91,6 +163,68 @@ class Model_Dispo extends Model_Template {
 		$stmt->bindValue(":id_restaurant", $id_restaurant);
 		$stmt->bindValue(":id_dispo", $id_dispo);
 		$stmt->bindValue(":perimetre", $perimetre);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function addUpdateRestaurant ($id_restaurant) {
+		$sql = "INSERT INTO update_distance_restaurant (id_restaurant) VALUES (:id_restaurant)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id_restaurant", $id_restaurant);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function removeUpdateRestaurant ($id_restaurant) {
+		$sql = "DELETE FROM update_distance_restaurant WHERE id_restaurant = :id_restaurant";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id_restaurant", $id_restaurant);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function addUpdateDispo ($id_dispo) {
+		$sql = "INSERT INTO update_distance_dispo (id_dispo) VALUES (:id_dispo)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id_dispo", $id_dispo);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function removeUpdateDispo ($id_dispo) {
+		$sql = "DELETE FROM update_distance_dispo WHERE id_dispo = :id_dispo";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id_dispo", $id_dispo);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function remove () {
+		$sql = "DELETE FROM distance_livreur_resto WHERE id_dispo = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$sql = "DELETE FROM user_livreur_dispo WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;

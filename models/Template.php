@@ -35,4 +35,33 @@ abstract class Model_Template {
 	public function request ($sql, $params) {
 		
 	}
+	
+	public function executeSql ($sql, $params, $mode) {
+		$stmt = $this->db->prepare($sql);
+		foreach ($params as $key => $value) {
+			$stmt->bindValue($key, $value);
+		}
+		if (!$stmt->execute()) {
+			foreach ($params as $key => $value) {
+				$sql = str_replace($key, $value, $sql);
+			}
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		if ($mode == PDO::FETCH_ASSOC) {
+			$value = $stmt->fetch(PDO::FETCH_ASSOC);
+			if ($value == null || $value == false) {
+				foreach ($params as $key => $value) {
+					$sql = str_replace($key, $value, $sql);
+				}
+				writeLog(SQL_LOG, 'Aucun résultats requete', LOG_LEVEL_ERROR, $sql);
+				$this->sqlHasFailed = true;
+				return false;
+			}
+			return $value;
+		}
+		
+		return true;
+	}
 }

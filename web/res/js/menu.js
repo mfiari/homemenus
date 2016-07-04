@@ -98,18 +98,36 @@ function validateFormat (menu) {
 
 function initFormule (menu) {
 	if (menu.formules.length > 1) {
-		var formuleDiv = $('<div />').attr('id', 'step-').append('<h3>Choisissez votre formule</h3>');
+		var formuleDiv = $('<div />').css('max-height', '500px').css('overflow-y', 'auto').attr('id', 'step-').append('<h3>Choisissez votre formule</h3>');
 		for (var i = 0 ; i < menu.formules.length ; i++) {
 			formuleDiv.append(
-				$('<div />').append(
+				$('<div />').addClass('col-md-12').append(
 					$('<div />').append(
-						$('<input />').attr('name', 'id_format').attr('type', 'radio').val(menu.formules[i].id)
-					).append(menu.formules[i].nom)
+						$('<input />').attr('name', 'id_formule').attr('type', 'radio').val(menu.formules[i].id).click(
+							{formule : menu.formules[i]},
+							function (event) {
+								chooseFormule (event.data.formule);
+							}
+						)
+					).append(
+						$('<span />').html(menu.formules[i].nom).css('margin-left', '10px')
+					)
 				)
 			);
 		}
 		formuleDiv.append('<button class="btn btn-primary">Précédent</button>');
-		formuleDiv.append('<button class="btn btn-primary">Suivant</button>');
+		formuleDiv.append(
+			$('<button />').addClass('btn btn-primary').html('Suivant').click(
+				function (event) {
+					if (!formContent.formule) {
+						alert('contenu non choisit');
+					} else {
+						validateFormule ();
+					}
+				}
+			)
+		);
+		$('#menu-content').html('');
 		$('#menu-content').append(formuleDiv);
 	} else {
 		chooseFormule (menu.formules[0]);
@@ -121,17 +139,20 @@ function chooseFormule (formule) {
 	formContent.formule = {};
 	formContent.formule.id = formule.id;
 	formContent.formule.nom = formule.nom;
+	formContent.formule.categories = formule.categories;
 	formContent.chooseFormule = true;
 	console.log(formContent.formule);
 }
 
-function validateFormule (formule) {
+function validateFormule () {
 	$('#menu-resume').append(
 		$('<hr />')
 	).append(
+		$('<h4 />').html('Formule')
+	).append(
 		$('<span />').html(formContent.formule.nom)
 	);
-	initCategorie (formule, 0);
+	initCategorie (formContent.formule, 0);
 }
 
 function initCategorie (formule, index) {

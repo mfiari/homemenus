@@ -228,7 +228,7 @@ class Model_Panier extends Model_Template {
 		$paniers = $stmt->fetchAll();
 		$list = array();
 		foreach ($paniers as $key => $value) {
-			$panier = new Model_Panier(false);
+			$panier = new Model_Panier();
 			$panier->id = $value['id'];
 			$panier->adresse_ip = $value['adresse_ip'];
 		

@@ -94,7 +94,7 @@ class PDF extends FPDF {
 			}
 			$this->Cell($width,10,$name,0,0);
 			$this->Cell($width,10,' X '.$menu->quantite,0,0);
-			$this->Cell($width,10,$menu->prix.' euro',0,1);
+			$this->Cell($width,10,$menu->prix.' '.chr(128),0,1);
 			foreach ($menu->formules as $formule) {
 				$this->Cell(0,10,utf8_encode($formule->nom),0,1);
 				foreach ($formule->categories as $categorie) {
@@ -115,7 +115,7 @@ class PDF extends FPDF {
 			}
 			$this->Cell($width,10,$name,0,0);
 			$this->Cell($width,10,' X '.$carte->quantite,0,0);
-			$this->Cell($width,10,$carte->prix.' euro',0,1);
+			$this->Cell($width,10,$carte->prix.' '.chr(128),0,1);
 			if (count($carte->supplements) > 0) {
 				$this->Cell(0,10,'Suppléments : ',0,1);
 				foreach ($carte->supplements as $supplement) {
@@ -128,12 +128,12 @@ class PDF extends FPDF {
 		}
 		$this->Cell($width,10,'Prix de livraison :',0,0);
 		$this->Cell($width,10,'',0,0);
-		$this->Cell($width,10,$commande->prix_livraison.' euro',0,1);
+		$this->Cell($width,10,$commande->prix_livraison.' '.chr(128),0,1);
 		$totalPrix += $commande->prix_livraison;
 		$this->Cell(0,5,'','B',1);
 		$this->Cell($width,10,'Total :',0,0);
 		$this->Cell($width,10,$totalQte,0,0);
-		$this->Cell($width,10,$totalPrix.' euro',0,1);
+		$this->Cell($width,10,$totalPrix.' '.chr(128),0,1);
 	}
 	
 	public function generateFactureRestaurant ($commande) {
@@ -178,7 +178,7 @@ class PDF extends FPDF {
 			}
 			$this->Cell($width,10,$name,0,0);
 			$this->Cell($width,10,' X '.$menu->quantite,0,0);
-			$this->Cell($width,10,$menu->prix.' euros',0,1);
+			$this->Cell($width,10,$menu->prix.' '.chr(128),0,1);
 			foreach ($menu->formules as $formule) {
 				foreach ($formule->categories as $categorie) {
 					$this->Cell(20,10,'',0,0);
@@ -199,11 +199,31 @@ class PDF extends FPDF {
 			}
 			$this->Cell($width,10,$name,0,0);
 			$this->Cell($width,10,' X '.$carte->quantite,0,0);
-			$this->Cell($width,10,$carte->prix.' euros',0,1);
+			$this->Cell($width,10,$carte->prix.' '.chr(128),0,1);
 			if (count($carte->supplements) > 0) {
-				$this->Cell(0,10,'Suppléments : ',0,1);
+				$this->Cell(20,10,'',0,0);
+				$this->Cell(0,10,'Supplements : ',0,1);
 				foreach ($carte->supplements as $supplement) {
+					$this->Cell(40,10,'',0,0);
 					$this->Cell(0,10,$supplement->nom,0,1);
+				}
+			}
+			if (count($carte->options) > 0) {
+				foreach ($carte->options as $option) {
+					foreach ($option->values as $value) {
+						$this->Cell(20,10,'',0,0);
+						$this->Cell(0,10,utf8_encode($option->nom).' : '.utf8_encode($value->nom),0,1);
+					}
+				}
+			}
+			if (count($carte->accompagnements) > 0) {
+				$this->Cell(20,10,'',0,0);
+				$this->Cell(0,10,utf8_encode('accompagnements : '),0,1);
+				foreach ($carte->accompagnements as $accompagnement) {
+					foreach ($accompagnement->cartes as $carteAccompagnement) {
+						$this->Cell(40,10,'',0,0);
+						$this->Cell(0,10,$carteAccompagnement->nom,0,1);
+					}
 				}
 			}
 			$this->Cell(0,5,'','B',1);
@@ -215,15 +235,15 @@ class PDF extends FPDF {
 		
 		$this->Cell($width,10,'Total commande :',0,0);
 		$this->Cell($width,10,$totalQte,0,0);
-		$this->Cell($width,10,$totalPrix.' euros',0,1);
+		$this->Cell($width,10,$totalPrix.' '.chr(128),0,1);
 		
 		$this->Cell($width,10,'Part HoMe Menus :',0,0);
 		$this->Cell($width,10,'',0,0);
-		$this->Cell($width,10,($totalPrix * $pourcentage / 100).' euros',0,1);
+		$this->Cell($width,10,($totalPrix * $pourcentage / 100).' '.chr(128),0,1);
 		
 		$this->Cell($width,10,'Total gain:',0,0);
 		$this->Cell($width,10,'',0,0);
-		$this->Cell($width,10,($totalPrix - ($totalPrix * $pourcentage / 100)).' euros',0,1);
+		$this->Cell($width,10,($totalPrix - ($totalPrix * $pourcentage / 100)).' '.chr(128).' TTC',0,1);
 	}
 	
 	public function render ($dest = "I", $filename = "doc.pdf") {

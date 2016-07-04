@@ -174,7 +174,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				}
 				
 				$modelRestaurant->save();
-				if (isset($_FILES) && isset($_FILES['logo'])) {
+				if (isset($_FILES) && isset($_FILES['logo']) && $_FILES['logo']['name'] != '') {
 					$logo = $_FILES['logo'];
 					$ext = pathinfo($logo['name'],  PATHINFO_EXTENSION);
 					
@@ -187,7 +187,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 					$uploadfile = $uploaddir.$modelRestaurant->id.'/logo'.'.'.$ext;
 					
 					if (!move_uploaded_file($logo['tmp_name'], $uploadfile)) {
-						writeLog (SERVER_LOG, "erreur upload file $uploadfile");
+						writeLog (SERVER_LOG, "erreur upload file $uploadfile", LOG_LEVEL_WARNING);
 					}
 				}
 				$this->redirect('index', 'restaurant');
@@ -472,16 +472,14 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				}
 			}
 			$modelCarte->save();
-			
-			if (isset($_FILES) && isset($_FILES['logo'])) {
+			if (isset($_FILES) && isset($_FILES['logo']) && $_FILES['logo']['name'] != '') {
 				$logo = $_FILES['logo'];
 				$ext = pathinfo($logo['name'],  PATHINFO_EXTENSION);
-				
 				$uploaddir = WEBSITE_PATH.'res/img/restaurant/';
 				$uploadfile = $uploaddir.$modelRestaurant->id.'/contenus/'.$modelCarte->id.'.'.$ext;
 				
 				if (!move_uploaded_file($logo['tmp_name'], $uploadfile)) {
-					writeLog (SERVER_LOG, "erreur upload file $uploadfile");
+					writeLog (SERVER_LOG, "erreur upload file $uploadfile", LOG_LEVEL_WARNING);
 				}
 			}
 			$this->redirect('viewCategorie', 'restaurant', '', array ('id_restaurant' => $modelRestaurant->id, 'id_categorie' => $id_categorie));

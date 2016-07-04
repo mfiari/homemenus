@@ -11,6 +11,7 @@ include_once MODEL_PATH."GCMPushMessage.php";
 include_once MODEL_PATH."Option.php";
 include_once MODEL_PATH."OptionValue.php";
 include_once MODEL_PATH."Accompagnement.php";
+include_once MODEL_PATH."PDF.php";
 
 class Controller_Commande extends Controller_Template {
 	
@@ -77,6 +78,9 @@ class Controller_Commande extends Controller_Template {
 					break;
 				case "send" :
 					$this->send();
+					break;
+				case "factureRestaurant" :
+					$this->factureRestaurant();
 					break;
 			}
 		}
@@ -429,5 +433,16 @@ class Controller_Commande extends Controller_Template {
 		$chat->sender = $sender;
 		$chat->message = $message;
 		$chat->save();
+	}
+	
+	public function factureRestaurant () {
+		
+		$commande = new Model_Commande();
+		$commande->id = $_GET["commande"];
+		$commande->getCommandeRestaurant();
+		
+		$pdf = new PDF ();
+		$pdf->generateFactureRestaurant($commande);
+		$pdf->render();
 	}
 }

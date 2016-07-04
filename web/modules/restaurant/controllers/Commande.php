@@ -9,6 +9,10 @@ include_once ROOT_PATH."models/Menu.php";
 include_once ROOT_PATH."models/Formule.php";
 include_once ROOT_PATH."models/Categorie.php";
 include_once ROOT_PATH."models/Contenu.php";
+include_once ROOT_PATH."models/Supplement.php";
+include_once ROOT_PATH."models/Option.php";
+include_once ROOT_PATH."models/OptionValue.php";
+include_once ROOT_PATH."models/Accompagnement.php";
 include_once ROOT_PATH."models/PDF.php";
 
 class Controller_Commande extends Controller_Restaurant_Template {

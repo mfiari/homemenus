@@ -49,8 +49,16 @@ class Model_Menu extends Model_Template {
 		$this->formats[] = $format;
 	}
 	
+	public function getFormat ($indice) {
+		return $this->formats[$indice];
+	}
+	
 	public function addFormule ($formule) {
 		$this->formules[] = $formule;
+	}
+	
+	public function getFormule ($indice) {
+		return $this->formules[$indice];
 	}
 	
 	public function addHoraire ($horaire) {

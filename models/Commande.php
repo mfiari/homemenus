@@ -373,6 +373,158 @@ class Model_Commande extends Model_Template {
 		return true;
 	}
 	
+	public function renew ($commande) {
+		$sql = "INSERT INTO commande (uid, rue, ville, code_postal, telephone, id_restaurant, date_commande, heure_souhaite, minute_souhaite, 
+		prix, prix_livraison, distance, etape, is_premium) 
+		(SELECT uid, rue, ville, code_postal, telephone, id_restaurant, now(), heure_souhaite, minute_souhaite, prix, prix_livraison, distance, 0, is_premium
+		FROM commande WHERE id = :id)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $commande->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$id_commande = $this->db->lastInsertId();
+		$this->id = $id_commande;
+		
+		$total = 0;
+		
+		$sql = "SELECT pm.id, pm.id_menu, pm.id_format, pm.id_formule, pm.quantite, mf.prix 
+		FROM panier_menu pm
+		JOIN menu_format mf ON mf.id_format = pm.id_format AND mf.id_menu = pm.id_menu
+		WHERE pm.id_panier = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $panier->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$listPanierMenu = $stmt->fetchAll();
+		foreach ($listPanierMenu as $panierMenu) {
+			$total += $panierMenu['prix'] * $panierMenu['quantite'];
+			$sql = "INSERT INTO commande_menu (id_commande, id_menu, id_format, id_formule, quantite) 
+			(SELECT $id_commande, id_menu)
+			VALUES (:id, :menu, :format, :formule, :quantite)";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $id_commande);
+			$stmt->bindValue(":menu", $panierMenu['id_menu']);
+			$stmt->bindValue(":format", $panierMenu['id_format']);
+			$stmt->bindValue(":formule", $panierMenu['id_formule']);
+			$stmt->bindValue(":quantite", $panierMenu['quantite']);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$id_commande_menu = $this->db->lastInsertId();
+			
+			$sql = "SELECT id_contenu FROM panier_menu_contenu WHERE id_panier_menu = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $panierMenu['id']);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$listPanierContenu = $stmt->fetchAll();
+			foreach ($listPanierContenu as $panierContenu) {
+				$sql = "INSERT INTO commande_menu_contenu (id_commande_menu, id_contenu) VALUES (:id, :id_contenu)";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $id_commande_menu);
+				$stmt->bindValue(":id_contenu", $panierContenu['id_contenu']);
+				if (!$stmt->execute()) {
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+					return false;
+				}
+			}
+		}
+		
+		$sql = "SELECT pc.id, pc.id_carte, pc.id_format, pc.quantite, cf.prix FROM panier_carte pc
+		JOIN carte_format cf ON cf.id_format = pc.id_format AND cf.id_carte = pc.id_carte
+		WHERE id_panier = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $panier->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$listPanierCarte = $stmt->fetchAll();
+		foreach ($listPanierCarte as $panierCarte) {
+			$total += $panierCarte['prix'] * $panierCarte['quantite'];
+			$sql = "INSERT INTO commande_carte (id_commande, id_carte, id_format, quantite) VALUES (:id, :id_carte, :id_format, :quantite)";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $id_commande);
+			$stmt->bindValue(":id_carte", $panierCarte['id_carte']);
+			$stmt->bindValue(":id_format", $panierCarte['id_format']);
+			$stmt->bindValue(":quantite", $panierCarte['quantite']);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$id_commande_carte = $this->db->lastInsertId();
+			
+			$sql = "SELECT id_option, id_value FROM panier_carte_option WHERE id_panier_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $panierCarte['id']);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$listPanierOption = $stmt->fetchAll();
+			foreach ($listPanierOption as $panierOption) {
+				$sql = "INSERT INTO commande_carte_option (id_commande_carte, id_option, id_value) VALUES (:id, :option, :value)";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $id_commande_carte);
+				$stmt->bindValue(":option", $panierOption['id_option']);
+				$stmt->bindValue(":value", $panierOption['id_value']);
+				if (!$stmt->execute()) {
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+					return false;
+				}
+			}
+			
+			$sql = "SELECT pcs.id_supplement, supp.prix FROM panier_carte_supplement pcs
+			JOIN supplements supp ON supp.id = pcs.id_supplement
+			WHERE id_panier_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $panierCarte['id']);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$listPanierSupplement = $stmt->fetchAll();
+			foreach ($listPanierSupplement as $panierSupplement) {
+				$total += $panierSupplement['prix'];
+				$sql = "INSERT INTO commande_carte_supplement (id_commande_carte, id_supplement) VALUES (:id, :id_supplement)";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $id_commande_carte);
+				$stmt->bindValue(":id_supplement", $panierSupplement['id_supplement']);
+				if (!$stmt->execute()) {
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+					return false;
+				}
+			}
+			
+			$sql = "SELECT id_accompagnement FROM panier_carte_accompagnement WHERE id_panier_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $panierCarte['id']);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$listPanierAccompagnement = $stmt->fetchAll();
+			foreach ($listPanierAccompagnement as $panierAccompagnement) {
+				$sql = "INSERT INTO commande_carte_accompagnement (id_commande_carte, id_accompagnement) VALUES (:id, :accompagnement)";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $id_commande_carte);
+				$stmt->bindValue(":accompagnement", $panierAccompagnement['id_accompagnement']);
+				if (!$stmt->execute()) {
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	public function load () {
 		$sql = "
 		SELECT 
@@ -2039,6 +2191,17 @@ class Model_Commande extends Model_Template {
 			$listCommande[] = $commande;
 		}
 		return $listCommande;
+	}
+	
+	public function annule () {
+		$sql = "UPDATE commande SET annule = true WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
 	}
 	
 	public function getTotal () {

@@ -20,22 +20,12 @@
 			<img style="max-width : 90%; max-height : 90%;" src="res/img/special.jpg" alt="HoMe Menus - livraison - commande spéciale" Title="Commande spéciale HoMe Menus">
 		</div>
 		<div class="col-md-9 col-sm-9 col-xs-9">
-			<p>Besoin d’organiser un repas d’anniversaire, une réunion, un événement, 
-			<a href="?controler=contact&action=evenement">contactez-nous</a> afin que nous satisfaisions vos envies.</p>
+			<p>Besoin d’organiser un repas d’anniversaire, une réunion, un événement, la commande spéciale est faite pour vous.</p>
+			<p>Avec HoMe Menus vous avez la possibilité de commander et vous faire livrer vos plats pour toutes vos occasions.</p>
+			<p><a href="?controler=contact&action=evenement">Contactez-nous</a> afin que nous satisfaisions vos envies.</p>
 		</div>
 	</div>
 </div>
-<!--<div class="col-md-12 odd">
-	<h2>Pour les plus exigeants</h2>
-	<div class="row">
-		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/special.png">
-		</div>
-		<div class="col-md-9 col-sm-9 col-xs-9">
-			<p>Un compte spécial pour les grands gourmands, pensé et imaginé par des gourmands. <a href="?action=premium">Venez découvrir les avantages du compte premium</a> !</p>
-		</div>
-	</div>
-</div>-->
 <div class="col-md-12 even">
 	<h2>Pour les entreprises</h2>
 	<div class="row">
@@ -75,12 +65,3 @@
 		</div>
 	</div>
 </div>
-<!--<div class="col-md-12 odd">
-	<h2>Nous somme présent sur mobile</h2>
-	<div class="col-md-6 mobile">
-		<a href=""><img src="res/img/app_store.png"></a>
-	</div>
-	<div class="col-md-6 mobile">
-		<a href="https://play.google.com/apps/testing/homemenus.projet"><img src="res/img/google_play.jpg"></a>
-	</div>
-</div>-->

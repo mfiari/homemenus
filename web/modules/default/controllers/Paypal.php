@@ -105,7 +105,7 @@ class Controller_Paypal extends Controller_Default_Template {
 		$shippingDiscount = 0;
 		
 		if ($panier->code_promo->surPrixLivraison()) {
-			if ($request->panier->code_promo->estGratuit()) {
+			if ($panier->code_promo->estGratuit()) {
 				$shippingDiscount -= $panier->prix_livraison;
 			} else {
 				$shippingDiscount -= $panier->code_promo->valeur_prix_livraison;

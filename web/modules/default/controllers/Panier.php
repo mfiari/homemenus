@@ -536,7 +536,7 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 		
 		if ($panier->code_promo->surPrixLivraison()) {
-			if (!$request->panier->code_promo->estGratuit()) {
+			if (!$panier->code_promo->estGratuit()) {
 				$totalPrix += ($panier->prix_livraison - $panier->code_promo->valeur_prix_livraison);
 			}
 		} else {

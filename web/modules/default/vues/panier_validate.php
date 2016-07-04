@@ -130,7 +130,9 @@
 													<div class="row">
 														<div class="col-md-offset-1 col-md-11">
 															<?php foreach ($carte->accompagnements as $accompagnement) : ?>
-																<span><?php echo utf8_encode($accompagnement->nom); ?></span>
+																<?php foreach ($accompagnement->cartes as $carteAccompagnement) : ?>
+																	<span><?php echo utf8_encode($carteAccompagnement->nom); ?></span>
+																<?php endforeach; ?>
 															<?php endforeach; ?>
 														</div>
 													</div>
