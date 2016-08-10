@@ -51,20 +51,20 @@
 		"menu_formule",
 		"menu_categorie",
 		"menu_contenu",
-		"entreprises",
+		/*"entreprises",
 		"entreprise_site",
-		"entreprise_groupe",
+		"entreprise_groupe",*/
 		"users",
-		"user_session",
+		/*"user_session",*/
 		"user_client",
 		"user_client_information",
 		"user_client_premium",
 		"user_livreur",
 		"user_livreur_dispo",
-		"user_livreur_position",
+		/*"user_livreur_position",*/
 		"user_livreur_virement",
 		"user_restaurant",
-		"user_entreprise",
+		/*"user_entreprise",*/
 		"distance_livreur_resto",
 		"update_distance_dispo",
 		"update_distance_restaurant",

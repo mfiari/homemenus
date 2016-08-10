@@ -1080,5 +1080,6 @@ class Model_Panier extends Model_Template {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
+		return true;
 	}
 }

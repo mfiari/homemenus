@@ -101,8 +101,8 @@ function writeLog ($type, $texte, $level = LOG_LEVEL_INFO, $message = null) {
 	fwrite($logfile, "[LEVEL]\n");
 	fwrite($logfile, $level."\n");
 	fwrite($logfile, "[DATE]\n");
-	fwrite($logfile, date('Y-m-d h:i:s')."\n");
-	$mailMessage .= 'date : ' .date('Y-m-d h:i:s').'<br /><br />';
+	fwrite($logfile, date('Y-m-d H:i:s')."\n");
+	$mailMessage .= 'date : ' .date('Y-m-d H:i:s').'<br /><br />';
 	fwrite($logfile, "[FILE]\n");
 	fwrite($logfile, $debug[0]['file']."\n");
 	$mailMessage .= 'file : '.$debug[0]['file'].'<br /><br />';

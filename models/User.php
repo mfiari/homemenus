@@ -72,7 +72,11 @@ class Model_User extends Model_Template {
 	}
 	
 	public function get () {
-		$sql = "SELECT nom, prenom, gcm_token FROM users WHERE uid = :uid";
+		$sql = "SELECT user.nom, user.prenom, us.gcm_token
+		FROM users user
+		JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
+		WHERE user.uid = :uid
+		LIMIT 1";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {

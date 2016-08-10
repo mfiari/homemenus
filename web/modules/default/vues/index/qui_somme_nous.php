@@ -30,6 +30,7 @@
 					<p>Vous souhaitez devenir restaurant partenaire. Envoyez-nous votre demande via notre <a href="?controler=contact&action=restaurant">page de contact pour les restaurants</a>.</p>
 					<p>Vous souhaitez créer un compte entreprise pour vos salariés. Envoyez-nous votre demande via notre <a href="?controler=contact&action=entreprise">page de contact pour les entreprises</a>.</p>
 					<p>Vous souhaitez organiser un évènement. Contactez-nous via notre <a href="?controler=contact&action=evenement">page de contact</a>.</p>
+					<p>Nous sommes également joignable par téléphone tous les jours de 10h à 23h au 06 61 45 97 33</p>
 				</div>
 				<div class="col-md-4">
 					<h3>Nos locaux</h3>

@@ -237,13 +237,13 @@ class PDF extends FPDF {
 		$this->Cell($width,10,$totalQte,0,0);
 		$this->Cell($width,10,$totalPrix.' '.chr(128),0,1);
 		
-		$this->Cell($width,10,'Part HoMe Menus :',0,0);
+		/*$this->Cell($width,10,'Part HoMe Menus :',0,0);
 		$this->Cell($width,10,'',0,0);
 		$this->Cell($width,10,($totalPrix * $pourcentage / 100).' '.chr(128),0,1);
 		
 		$this->Cell($width,10,'Total gain:',0,0);
 		$this->Cell($width,10,'',0,0);
-		$this->Cell($width,10,($totalPrix - ($totalPrix * $pourcentage / 100)).' '.chr(128).' TTC',0,1);
+		$this->Cell($width,10,($totalPrix - ($totalPrix * $pourcentage / 100)).' '.chr(128).' TTC',0,1);*/
 	}
 	
 	public function render ($dest = "I", $filename = "doc.pdf") {

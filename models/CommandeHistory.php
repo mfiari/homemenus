@@ -180,8 +180,8 @@ class Model_Commande_History extends Model_Template {
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id_commande", $id_commande_history);
 			$stmt->bindValue(":quantite", $carte->quantite);
-			$stmt->bindValue(":id_format", $carte->format->id);
-			$stmt->bindValue(":nom_format", $carte->format->nom);
+			$stmt->bindValue(":id_format", $carte->getFormat(0)->id);
+			$stmt->bindValue(":nom_format", $carte->getFormat(0)->nom);
 			$stmt->bindValue(":prix", $carte->prix);
 			$stmt->bindValue(":temps_preparation", $carte->temps_preparation);
 			$stmt->bindValue(":id_carte", $carte->id);

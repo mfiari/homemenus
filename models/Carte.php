@@ -7,6 +7,7 @@ class Model_Carte extends Model_Template {
 	private $nom;
 	private $prix;
 	private $quantite;
+	private $temps_preparation;
 	private $ordre;
 	private $commentaire;
 	private $is_visible;
@@ -46,6 +47,10 @@ class Model_Carte extends Model_Template {
 	
 	public function addFormat ($format) {
 		$this->formats[] = $format;
+	}
+	
+	public function getFormat ($indice) {
+		return $this->formats[$indice];
 	}
 	
 	public function addHoraire ($horaire) {

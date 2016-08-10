@@ -23,10 +23,12 @@ class Model_Commande extends Model_Template {
 	private $minute_souhaite;
 	private $livreur;
 	private $restaurant;
+	private $codePromo;
 	private $etape;
 	private $etapeLibelle;
 	private $is_modif;
 	private $is_premium;
+	private $part_restaurant;
 	
 	public function __construct($callParent = true) {
 		if ($callParent) {
@@ -1315,7 +1317,8 @@ class Model_Commande extends Model_Template {
 			$carte = new Model_Carte(false);
 			$carte->id = $commandeCarte['id_carte'];
 			$carte->nom = $commandeCarte['nom_carte'];
-			$carte->prix = $commandeCarte['prix'] * $commandeCarte['quantite'];
+			$carte->prix = $commandeCarte['prix'];
+			//$carte->prix = $commandeCarte['prix'] * $commandeCarte['quantite'];
 			$carte->quantite = $commandeCarte['quantite'];
 			
 			$format = new Model_Format();
@@ -1523,6 +1526,22 @@ class Model_Commande extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":livreur", $this->uid);
 		$stmt->bindValue(":commande", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+	* Le restaurant valide que la préparation de la commande à commencer
+	*/
+	public function annulationRestaurant () {
+		$sql = "UPDATE commande SET date_validation_restaurant = NOW(), etape = -1 WHERE id = :commande AND id_restaurant = 
+		(SELECT id_restaurant FROM user_restaurant WHERE uid = :uid)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":commande", $this->id);
+		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
@@ -1820,13 +1839,16 @@ class Model_Commande extends Model_Template {
 		com.telephone AS tel_commande, livreur.uid AS id_livreur, livreur.nom AS nom_livreur, livreur.prenom AS prenom_livreur, livreur.login AS login_livreur, 
 		resto.id AS id_restaurant, resto.nom AS nom_restaurant, resto.rue AS rue_restaurant, resto.ville AS ville_restaurant, 
 		resto.code_postal AS cp_restaurant, resto.telephone AS tel_restaurant, resto.latitude AS latitude_restaurant, resto.longitude AS longitude_restaurant, 
-		com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison, com.distance, com.date_validation_restaurant, 
-		com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.date_livraison, com.etape, com.note, com.commentaire, com.is_premium
+		com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison, com.part_restaurant, com.distance, com.date_validation_restaurant, 
+		com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.date_livraison, com.etape, com.note, com.commentaire, com.is_premium,
+		cp.id AS id_code_promo, cp.code, cp.description, cp.date_debut, cp.date_fin, cp.publique, cp.sur_restaurant, cp.type_reduc, cp.sur_prix_livraison, 
+		cp.valeur_prix_livraison, cp.sur_prix_total, cp.valeur_prix_total, cp.pourcentage_prix_total	
 		FROM commande com
 		JOIN users user ON user.uid = com.uid
 		JOIN user_client uc ON uc.uid = user.uid
 		LEFT JOIN users livreur ON livreur.uid = com.id_livreur
-		JOIN restaurants resto ON resto.id = com.id_restaurant";
+		JOIN restaurants resto ON resto.id = com.id_restaurant
+		LEFT JOIN code_promo cp ON cp.id = com.id_code_promo";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
@@ -1848,6 +1870,7 @@ class Model_Commande extends Model_Template {
 			$commande->minute_souhaite = $c["minute_souhaite"];
 			$commande->prix = $c["prix"];
 			$commande->prix_livraison = $c["prix_livraison"];
+			$commande->part_restaurant = $c["part_restaurant"];
 			$commande->distance = $c["distance"];
 			$commande->date_validation_restaurant = $c["date_validation_restaurant"];
 			$commande->date_fin_preparation_restaurant = $c["date_fin_preparation_restaurant"];
@@ -1890,6 +1913,18 @@ class Model_Commande extends Model_Template {
 			$restaurant->longitude = $c["longitude_restaurant"];
 			
 			$commande->restaurant = $restaurant;
+		
+			$codePromo = new Model_CodePromo(false);
+			$codePromo->id = $c['id_code_promo'];
+			$codePromo->code = $c['code'];
+			$codePromo->description = $c['description'];
+			$codePromo->type_reduc = $c['type_reduc'];
+			$codePromo->sur_prix_livraison = $c['sur_prix_livraison'];
+			$codePromo->valeur_prix_livraison = $c['valeur_prix_livraison'];
+			$codePromo->sur_prix_total = $c['sur_prix_total'];
+			$codePromo->valeur_prix_total = $c['valeur_prix_total'];
+			$codePromo->pourcentage_prix_total = $c['pourcentage_prix_total'];
+			$commande->codePromo = $codePromo;
 			
 			$sql = "SELECT cm.id, menu.id AS id_menu, menu.nom AS nom_menu, menu.commentaire AS commentaire_menu, rf.id AS id_format, rf.nom AS nom_format, cm.quantite, mf.prix
 			FROM commande_menu cm
@@ -2123,6 +2158,20 @@ class Model_Commande extends Model_Template {
 		$result = $stmt->fetchAll();
 		foreach ($result as $value) {
 			$sql = "DELETE FROM commande_carte_supplement WHERE id_commande_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $value['id']);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$sql = "DELETE FROM commande_carte_option WHERE id_commande_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $value['id']);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$sql = "DELETE FROM commande_carte_accompagnement WHERE id_commande_carte = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $value['id']);
 			if (!$stmt->execute()) {

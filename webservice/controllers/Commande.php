@@ -40,6 +40,9 @@ class Controller_Commande extends Controller_Template {
 				case "commandeRestaurant" :
 					$this->commandeRestaurant();
 					break;
+				case "annulationRestaurant" :
+					$this->annulationRestaurant();
+					break;
 				case "validationRestaurant" :
 					$this->validationRestaurant();
 					break;
@@ -147,6 +150,38 @@ class Controller_Commande extends Controller_Template {
 			require 'vue/restaurant/commande_get.'.$ext.'.php';
 		} else {
 			var_dump("file not exists ".'vue/restaurant/commande_get.'.$ext.'.php');
+		}
+	}
+	
+	private function annulationRestaurant () {
+		if (!isset($_POST["id_user_restaurant"])) {
+			die();
+		}
+		if (!isset($_POST["id_commande"])) {
+			die();
+		}
+		$commande = new Model_Commande();
+		$commande->id = $_POST["id_commande"];
+		$commande->uid = $_POST["id_user_restaurant"];
+		if ($commande->annulationRestaurant()) {
+			$livreur = $commande->getLivreur();
+			if ($livreur->is_login) {
+				if ($livreur->gcm_token) {
+					$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+					$registatoin_ids = array($livreur->gcm_token);
+					$message = "La commande #".$commande->id." a été refusé par le restaurant";
+					// listre des utilisateurs à notifier
+					$gcm->setDevices($registatoin_ids);
+					// Le titre de la notification
+					$data = array(
+						"title" => "Commande refusé",
+						"key" => "livreur-validation-commande",
+						"id_commande" => $commande->id
+					);
+					// On notifie nos utilisateurs
+					$result = $gcm->send($message, $data);
+				}
+			}
 		}
 	}
 	

@@ -120,6 +120,7 @@ class Model_Dispo extends Model_Template {
 		JOIN users user ON user.uid = dispo.uid
 		WHERE dispo.id_jour = :day";
 		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":day", $day);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
@@ -143,11 +144,11 @@ class Model_Dispo extends Model_Template {
 			$dispo->minute_fin = $resultat['minute_fin'];
 			
 			$livreur = new Model_User(false);
-			$liveur->uid = $resultat['uid'];
-			$liveur->nom = $resultat['nom'];
-			$liveur->prenom = $resultat['prenom'];
-			$liveur->login = $resultat['login'];
-			$liveur->email = $resultat['email'];
+			$livreur->id = $resultat['uid'];
+			$livreur->nom = $resultat['nom'];
+			$livreur->prenom = $resultat['prenom'];
+			$livreur->login = $resultat['login'];
+			$livreur->email = $resultat['email'];
 			
 			$dispo->livreur = $livreur;
 			

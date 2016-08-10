@@ -277,7 +277,6 @@
 											</td>
 											<td></td>
 										</tr>
-										<?php $totalPrix += $prix_livraison; ?>
 									</tbody>
 									<tfoot>
 										<?php if ($request->panier->code_promo->description != '') : ?>
