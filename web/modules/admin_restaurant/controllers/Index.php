@@ -36,6 +36,7 @@ class Controller_Index extends Controller_Admin_Restaurant_Template {
 		$request->restaurant = $modelRestaurant->loadByUser($uid);
 		$modelUser = new Model_User();
 		$request->users = $modelUser->getByRestaurant($request->_restaurant->id);
+		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
 		$request->vue = $this->render("index.php");
 	}
 	

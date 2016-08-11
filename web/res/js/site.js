@@ -232,6 +232,18 @@ function boundToPoints (list) {
 				bounds = bounds.extend(position);
 				map.fitBounds(bounds);
 			}
+		} else if (point.type == "CIRCLE") {
+			var circle = new google.maps.Circle({
+				strokeColor: '#FF0000',
+				strokeOpacity: 0.8,
+				strokeWeight: 2,
+				fillColor: '#FF0000',
+				fillOpacity: 0.35,
+				map: map,
+				center: {lat: point.latitude, lng: point.longitude},
+				radius: point.radius
+			});
+			map.fitBounds(circle.getBounds());
 		}
 	}
 }

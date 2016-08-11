@@ -608,7 +608,7 @@ class Model_Restaurant extends Model_Template {
 	public function loadByUser ($uid) {
 		$sql = "SELECT user.nom AS user_nom, user.prenom AS user_prenom, user.email AS user_email, resto.id AS id_resto, resto.nom AS resto_nom, 
 		resto.rue AS resto_rue, resto.ville AS resto_ville, resto.code_postal AS resto_cp, resto.telephone AS resto_tel, resto.short_desc, 
-		resto.long_desc, resto.pourcentage, resto.virement
+		resto.long_desc, resto.latitude, resto.longitude, resto.pourcentage, resto.virement
 		FROM users user 
 		JOIN user_restaurant ur ON ur.uid = user.uid
 		JOIN restaurants resto ON resto.id = ur.id_restaurant
@@ -634,6 +634,8 @@ class Model_Restaurant extends Model_Template {
 		$this->telephone = $value['resto_tel'];
 		$this->short_desc = $value['short_desc'];
 		$this->long_desc = $value['long_desc'];
+		$this->latitude = $value['latitude'];
+		$this->longitude = $value['longitude'];
 		$this->pourcentage = $value['pourcentage'];
 		$this->virement = $value['virement'];
 		$user = new Model_User();

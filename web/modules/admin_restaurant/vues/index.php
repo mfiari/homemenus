@@ -96,5 +96,37 @@
 				</div>
 			</div>
 		</div>
+		<div class="row">
+			<h3>Votre périmètre de livraison</h3>
+			<div class="row">
+				<div class="col-md-12" style="padding : 30px;">
+					<div id="googleMap" class="col-md-10 col-md-offset-1" style="height:500px; margin-top : 10px;"></div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	$(function() {
+		initialize();
+		var list = [];
+		
+		var restoPoint = {};
+		restoPoint.type = "ADRESSE";
+		restoPoint.adresse = "<?php echo $request->restaurant->rue.', '.$request->restaurant->ville; ?>";
+		restoPoint.content = "<?php echo utf8_encode($request->restaurant->nom); ?>";
+		
+		var circle = {};
+		circle.type = "CIRCLE";
+		circle.radius = 15000;
+		circle.latitude = <?php echo $request->restaurant->latitude; ?>;
+		circle.longitude = <?php echo $request->restaurant->longitude; ?>;
+		
+		list.push(restoPoint);
+		list.push(circle);
+		
+		boundToPoints(list);
+		
+	});
+</script>
