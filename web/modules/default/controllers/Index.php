@@ -111,6 +111,7 @@ class Controller_Index extends Controller_Default_Template {
 		$modelRestaurant->id = $_GET['id'];
 		$request->restaurant = $modelRestaurant->loadAll();
 		$request->title = "HoMe Menus - Restaurant ".utf8_encode($request->restaurant->nom);
+		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
 		$request->vue = $this->render("restaurant_partenaire");
 	}
 	
