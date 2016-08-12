@@ -378,8 +378,15 @@
 		restoPoint.adresse = "<?php echo $restaurant->rue.', '.$restaurant->ville; ?>";
 		restoPoint.content = "<?php echo utf8_encode($restaurant->nom); ?>";
 		
+		var circle = {};
+		circle.type = "CIRCLE";
+		circle.radius = 10000;
+		circle.latitude = <?php echo $restaurant->latitude; ?>;
+		circle.longitude = <?php echo $restaurant->longitude; ?>;
+		
 		list.push(homePoint);
 		list.push(restoPoint);
+		list.push(circle);
 		
 		boundToPoints(list);
 		

@@ -115,7 +115,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 				$request->rue = $_SESSION['search_rue'];
 			}
 			$request->search_adresse = $_SESSION['search_adresse'];
-			$request->javascripts = array("res/js/menu.js");
+			$request->javascripts = array("res/js/menu.js", "https://maps.googleapis.com/maps/api/js?libraries=places");
 			$request->vue = $this->render("restaurant");
 		} else {
 			$this->redirect();
