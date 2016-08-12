@@ -26,6 +26,7 @@
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 			<span class="sr-only">Error:</span>
 			Votre recherche n'a retourné aucun résultat. Peut-être devriez-vous augmenter la distance de recherche.
+			<p>Rendez-vous sur notre page <a href="?action=restaurants_partenaire">restaurants partenaires</a> afin de voir les restaurants avec lesquels nous travaillons</p>
 		</div>
 	<?php else : ?>
 		<?php
@@ -84,6 +85,37 @@
 		</table>
 	</div>
 <?php endif; ?>
+<div style="margin-top : 50px;">
+	<h3>Vous ne trouvez pas votre restaurant, faites nous part de vos suggestions</h3>
+	<p style="text-align : center">Nous vous communiquerons lorsqu'un restaurant ouvrira ses portes près de chez vous.</p>
+	<p style="text-align : center">Abonnées vous à nos réseaux sociaux Facebook et Twitter pour suivre notre actualité.</p>
+	<p style="text-align : center">Rendez-vous sur notre page <a href="?action=restaurants_partenaire">restaurants partenaires</a> afin de voir les restaurants avec lesquels nous travaillons</p>
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+			<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="?controler=contact&action=avis">
+				<fieldset>
+					<div class="form-group">
+						<label for="sujet">Nom du restaurant<span class="required">*</span> : </label>
+						<input class="form-control" name="nom" type="text" value="" required>
+					</div>
+					<div class="form-group">
+						<label for="sujet">Ville du restaurant<span class="required">*</span> : </label>
+						<input class="form-control" name="ville" type="text" value="" required>
+					</div>
+					<div class="form-group">
+						<label for="sujet">Votre ville<span class="required">*</span> : </label>
+						<input class="form-control" name="ville_user" type="text" value="" required>
+					</div>
+					<div class="form-group">
+						<label for="email">Votre email<span class="required">*</span> : </label>
+						<input class="form-control" name="email" type="email" value="" required>
+					</div>
+					<button class="btn btn-primary" type="submit">Envoyer</button>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
 <script type="text/javascript">
 	$(function() {
 		enableAutocomplete("full_address");
