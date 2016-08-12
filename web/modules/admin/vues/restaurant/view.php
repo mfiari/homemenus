@@ -426,7 +426,7 @@
 		
 		var circle = {};
 		circle.type = "CIRCLE";
-		circle.radius = 15000;
+		circle.radius = 10000;
 		circle.latitude = <?php echo $request->restaurant->latitude; ?>;
 		circle.longitude = <?php echo $request->restaurant->longitude; ?>;
 		
