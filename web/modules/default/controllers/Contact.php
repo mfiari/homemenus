@@ -568,6 +568,11 @@ class Controller_Contact extends Controller_Default_Template {
 			} else {
 				$ville_user = $_POST["ville_user"];
 			}
+			if (!isset($_POST["email"]) || trim($_POST["email"]) == "") {
+				$errorMessage["EMPTY_EMAIL"] = "Veuillez renseigner votre adresse email.";
+			} else {
+				$email = $_POST["email"];
+			}
 			if (count($errorMessage) == 0) {
 			
 				$messageContent =  file_get_contents (ROOT_PATH.'mails/avis.html');
@@ -575,6 +580,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$messageContent = str_replace("[RESTAURANT]", $restaurant, $messageContent);
 				$messageContent = str_replace("[VILLE]", $ville, $messageContent);
 				$messageContent = str_replace("[VILLEUSER]", $ville_user, $messageContent);
+				$messageContent = str_replace("[EMAIL]", $email, $messageContent);
 				if (send_mail (MAIL_CONTACT, "Avis", $messageContent)) {
 					$request->mailSuccess = true;
 				} else {

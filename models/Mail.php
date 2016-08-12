@@ -39,7 +39,7 @@ class Model_Mail extends Model_Template {
 	
 	public function save () {
 		$sql = "INSERT INTO mails (email_from, email_to, sujet, contenu, attachements, id_user, date_envoie, is_send) 
-		VALUES (:from, :to, :sujet, :contenu, :attachements, :user, :date, :send)";
+		VALUES (:from, :to, :sujet, :contenu, :attachements, :user, now(), :send)";
 		$stmt = $this->db->prepare($sql);
 		
 		$attachements = '';
@@ -55,8 +55,7 @@ class Model_Mail extends Model_Template {
 		$stmt->bindValue(":contenu", $this->contenu);
 		$stmt->bindValue(":attachements", $attachements);
 		$stmt->bindValue(":user", $this->id_user);
-		$stmt->bindValue(":date", $this->date_envoi);
-		$stmt->bindValue(":send", $this->is_send);
+		$stmt->bindValue(":send", $this->is_send ? 1 : 0);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
