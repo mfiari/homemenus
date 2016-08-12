@@ -230,7 +230,10 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		
 		$modelRestaurant = new Model_Restaurant();
 		$modelRestaurant->id = $_GET['id_restaurant'];
-		$request->restaurant = $modelRestaurant->loadMinInformation();
+		$fields = array(
+			"nom", "rue", "code_postal", "ville", "latitude", "longitude"
+		);
+		$request->restaurant = $modelRestaurant->get($fields);
 		$request->restaurant->loadCategories();
 		$request->restaurant->loadMenus();
 		$request->restaurant->loadTags();
@@ -238,6 +241,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		$request->restaurant->loadFormule();
 		$request->restaurant->loadSupplements();
 		$request->restaurant->loadOptions();
+		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
 		$request->vue = $this->render("restaurant/view.php");
 	}
 	
