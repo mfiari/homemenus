@@ -251,6 +251,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 		$request->ville = $city;
 		$request->villes = array_unique(array_object_column($restaurants, 'ville'));
 		$request->restaurants = $restaurants;
+		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
 		$request->vue = $this->render("restaurants");
 	}
 	
