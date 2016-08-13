@@ -33,7 +33,7 @@ class Model_Mail extends Model_Template {
 		return $this;
 	}
 	
-	public function addAttachement ($attachement) {
+	public function addAttachment ($attachement) {
 		$this->attachements[] = $attachement;
 	}
 	
