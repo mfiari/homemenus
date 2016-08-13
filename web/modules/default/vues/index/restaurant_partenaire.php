@@ -112,6 +112,32 @@
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 	</a>
 </div>
+<div id="recherche-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<h3>Afin de commander dans ce restaurant, vous devez saisir votre adresse afin de vérifier que vous pouvez vous faire livrer le restaurant</h3>
+				<form id="adress-form" action="?controler=restaurant&action=recherche" method="POST">
+					<div class="input-group">
+						<div class="search-block">
+							<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Saisissez votre adresse de livraison">
+							<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+						</div>
+						<span class="input-group-btn">
+							<button class="btn btn-primary" type="submit">Trouvez des restaurants</button>
+						</span>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
 <script type="text/javascript">
 	$(function() {
 		initialize();
@@ -132,6 +158,14 @@
 		list.push(circle);
 		
 		boundToPoints(list);
+		
+		$(".carte-item").click(function () {
+			$("#recherche-modal").modal();
+		});
+		
+		$(".menu-item").click(function () {
+			$("#recherche-modal").modal();
+		});
 	});
 </script>
 <style>
