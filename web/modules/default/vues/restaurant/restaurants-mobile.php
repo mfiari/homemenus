@@ -62,7 +62,7 @@
 		<?php endif; ?>
 	<?php endif; ?>
 </div>
-<?php if ($totalRestaurantOuvert < $totalRestaurant) : ?>
+<?php if ((count($request->restaurants) > 0) && ($totalRestaurantOuvert < $totalRestaurant)) : ?>
 	<div style="margin-top : 100px;">
 		<h4>Restaurants fermé aujourd'hui mais correspondant à votre recherche</h4>
 		<table class="table table-striped">
@@ -87,9 +87,9 @@
 <?php endif; ?>
 <div style="margin-top : 50px;">
 	<h3>Vous ne trouvez pas votre restaurant, faites nous part de vos suggestions</h3>
-	<p style="text-align : center">Nous vous communiquerons lorsqu'un restaurant ouvrira ses portes près de chez vous.</p>
-	<p style="text-align : center">Abonnées vous à nos réseaux sociaux Facebook et Twitter pour suivre notre actualité.</p>
-	<p style="text-align : center">Rendez-vous sur notre page <a href="?action=restaurants_partenaire">restaurants partenaires</a> afin de voir les restaurants avec lesquels nous travaillons</p>
+	<p style="font-size : 16px; text-align : center">Nous vous communiquerons lorsqu'un restaurant ouvrira ses portes près de chez vous.</p>
+	<p style="font-size : 16px; text-align : center">Abonnées vous à nos réseaux sociaux Facebook et Twitter pour suivre notre actualité.</p>
+	<p style="font-size : 16px; text-align : center">Rendez-vous sur notre page <a href="?action=restaurants_partenaire">restaurants partenaires</a> afin de voir les restaurants avec lesquels nous travaillons</p>
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="?controler=contact&action=avis">
