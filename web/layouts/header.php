@@ -24,8 +24,11 @@
 			}
 		}
 	?>
-		
-	<link rel="stylesheet" href="res/css/site.css" type="text/css"/>
+	<?php if ($request->mobileDetect->isTablet()) : ?>
+		<link rel="stylesheet" href="res/css/site-tablet.css" type="text/css"/>
+	<?php else : ?>
+		<link rel="stylesheet" href="res/css/site.css" type="text/css"/>
+	<?php endif; ?>
 	<link rel="stylesheet" href="res/css/live-chat.css" type="text/css"/>
 	<link rel="stylesheet" href="res/jquery-ui/jquery-ui.css" type="text/css"/>
 	<link rel="stylesheet" href="res/bootstrap/css/bootstrap.min.css" type="text/css"/>
