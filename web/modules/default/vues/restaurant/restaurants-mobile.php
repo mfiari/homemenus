@@ -14,6 +14,12 @@
 	</form>
 </div>
 <div id="restaurants">
+	<?php if (isset($_GET['avis_send']) && $_GET['avis_send'] == 'success') : ?>
+		<div class="alert alert-success" role="alert">
+			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+			Votre suggestion a bien été transmise aux équipes d'HoMe Menus
+		</div>
+	<?php endif; ?>
 	<?php $restaurantIds = array(); ?>
 	<?php if ($request->adressError) : ?>
 		<div class="alert alert-danger" role="alert">
@@ -87,9 +93,9 @@
 <?php endif; ?>
 <div style="margin-top : 50px;">
 	<h3>Vous ne trouvez pas votre restaurant, faites nous part de vos suggestions</h3>
-	<p style="font-size : 16px; text-align : center">Nous vous communiquerons lorsqu'un restaurant ouvrira ses portes près de chez vous.</p>
-	<p style="font-size : 16px; text-align : center">Abonnées vous à nos réseaux sociaux Facebook et Twitter pour suivre notre actualité.</p>
-	<p style="font-size : 16px; text-align : center">Rendez-vous sur notre page <a href="?action=restaurants_partenaire">restaurants partenaires</a> afin de voir les restaurants avec lesquels nous travaillons</p>
+	<p style="font-size : 14px; text-align : center">Nous vous communiquerons lorsqu'un restaurant ouvrira ses portes près de chez vous.</p>
+	<p style="font-size : 14px; text-align : center">Abonnées vous à nos réseaux sociaux Facebook et Twitter pour suivre notre actualité.</p>
+	<p style="font-size : 14px; text-align : center">Rendez-vous sur notre page <a href="?action=restaurants_partenaire">restaurants partenaires</a> afin de voir les restaurants avec lesquels nous travaillons</p>
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="?controler=contact&action=avis">
