@@ -18,6 +18,7 @@ include_once ROOT_PATH."models/Option.php";
 include_once ROOT_PATH."models/OptionValue.php";
 include_once ROOT_PATH."models/Accompagnement.php";
 include_once ROOT_PATH."models/CodePromo.php";
+include_once ROOT_PATH."models/PDF.php";
 
 
 class Controller_Panier extends Controller_Default_Template {
@@ -603,12 +604,64 @@ class Controller_Panier extends Controller_Default_Template {
 						//$result = $gcm->send('/topics/restaurant-commande',$message, $data);
 					}
 					
-					$messageContent =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
+					$commande->load();
 					
-					$messageContent = str_replace("[COMMANDE_ID]", $commande->id, $messageContent);
+					$today = date('Y-m-d');
 					
-					send_mail (MAIL_ADMIN, "Nouvelle commande", $messageContent);
+					$clientDir = ROOT_PATH.'files/commandes/'.$today.'/client/';
 					
+					if(!is_dir($clientDir)){
+					   mkdir($clientDir, 0777, true);
+					}
+					
+					$pdf = new PDF();
+					$pdf->generateFactureClient($commande);
+					$pdf->render('F', $clientDir.'commande'.$commande->id.'.pdf');
+					
+					$attachments = array(
+						$clientDir.'commande'.$commande->id.'.pdf'
+					);
+					
+					$messageContentAdmin =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
+					
+					$messageContentAdmin = str_replace("[COMMANDE_ID]", $commande->id, $messageContentAdmin);
+					$messageContentAdmin = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentAdmin);
+					$messageContentAdmin = str_replace("[CLIENT]", $commande->client->nom.' '.$commande->client->prenom, $messageContentAdmin);
+					$messageContentAdmin = str_replace("[TOTAL]", $commande->prix, $messageContentAdmin);
+					$messageContentAdmin = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentAdmin);
+					
+					send_mail (MAIL_ADMIN, "Nouvelle commande", $messageContentAdmin, MAIL_FROM_DEFAULT, $attachments);
+					
+					$messageContentClient =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_client.html');
+					
+					$messageContentClient = str_replace("[COMMANDE_ID]", $commande->id, $messageContentClient);
+					$messageContentClient = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentClient);
+					$messageContentClient = str_replace("[TOTAL]", $commande->prix, $messageContentClient);
+					$messageContentClient = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentClient);
+					
+					send_mail ($request->_auth->login, "Nouvelle commande", $messageContentClient, MAIL_FROM_DEFAULT, $attachments);
+					
+					$restaurantDir = ROOT_PATH.'files/commandes/'.$today.'/restaurant/';
+					
+					if(!is_dir($restaurantDir)){
+					   mkdir($restaurantDir, 0777, true);
+					}
+					
+					$pdf2 = new PDF();
+					$pdf2->generateFactureRestaurant($commande);
+					$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
+					
+					$messageContentRestaurant =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_restaurant.html');
+					
+					$messageContentRestaurant = str_replace("[COMMANDE_ID]", $commande->id, $messageContentRestaurant);
+					$messageContentRestaurant = str_replace("[TOTAL]", $commande->prix, $messageContentRestaurant);
+					
+					$attachments2 = array(
+						$restaurantDir.'commande'.$commande->id.'.pdf'
+					);
+					foreach ($restaurantUsers as $restaurantUser) {
+						send_mail ($restaurantUser->email, "Nouvelle commande", $messageContentRestaurant, MAIL_FROM_DEFAULT, $attachments2);
+					}
 				}
 				$request->vue = $this->render("paypal_success.php");
 				
