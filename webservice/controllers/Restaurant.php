@@ -7,6 +7,7 @@ include_once MODEL_PATH.'Restaurant.php';
 include_once MODEL_PATH.'Horaire.php';
 include_once MODEL_PATH.'Carte.php';
 include_once MODEL_PATH.'Categorie.php';
+include_once MODEL_PATH.'Certificat.php';
 
 class Controller_Restaurant extends Controller_Template {
 	
@@ -61,7 +62,7 @@ class Controller_Restaurant extends Controller_Template {
 			if (isset($_POST["distance"]) && $_POST["distance"] != "") {
 				$filter["distanceKm"] = $_POST["distance"];
 			} else {
-				$filter["distanceKm"] = 5;
+				$filter["distanceKm"] = 15;
 			}
 			$distanceKm = $filter["distanceKm"];
 			$modelRestaurant = new Model_Restaurant();
@@ -91,7 +92,7 @@ class Controller_Restaurant extends Controller_Template {
 					$coord = $rd->{'results'}[0]->{'geometry'}->{'location'};
 					$user_latitude = $coord->{'lat'};
 					$user_longitude = $coord->{'lng'};
-					
+					$adresseUser = $user_latitude.','.$user_longitude;
 				}
 			} else if (isset($_POST['latitude']) && isset($_POST['longitude'])) {
 				$user_latitude = $_POST['latitude'];
@@ -112,7 +113,7 @@ class Controller_Restaurant extends Controller_Template {
 						$availableRestaurant[] = $restaurant;
 					}
 				}
-				$livreurs = $modelUser->getLivreurAvailableForRestaurant($codePostal, $ville, $restaurant);
+				$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
 				$restaurant->has_livreur_dispo = count($livreurs) > 0;
 			}
 			$restaurants = $availableRestaurant;
@@ -123,48 +124,9 @@ class Controller_Restaurant extends Controller_Template {
 			
 			$result = $restaurants;
 			require 'vue/restaurants_get.'.$ext.'.php';
-		}
-		
-		if ($rd->{'status'} == "OK") {
-			$addressComponents = $rd->{'results'}[0]->{'address_components'};
-			$codePostal = "";
-			$ville = "";
-			$street_number = "";
-			$route = "";
-			for ($i = 0 ; $i < count($addressComponents) ; $i++) {
-				if ($addressComponents[$i]->{'types'}[0] == 'postal_code') {
-					$codePostal = $addressComponents[$i]->{'short_name'};
-				} else if ($addressComponents[$i]->{'types'}[0] == 'locality') {
-					$ville = $addressComponents[$i]->{'long_name'};
-				} else if ($addressComponents[$i]->{'types'}[0] == 'street_number') {
-					$street_number = $addressComponents[$i]->{'long_name'};
-				} else if ($addressComponents[$i]->{'types'}[0] == 'route') {
-					$route = $addressComponents[$i]->{'long_name'};
-				}
-			}
-			$_SESSION['search_adresse'] = $request->search_ardresse;
-			$_SESSION['search_ville'] = $ville;
-			$_SESSION['search_cp'] = $codePostal;
-			$_SESSION['search_rue'] = $street_number.' '.$route;
-			$coord = $rd->{'results'}[0]->{'geometry'}->{'location'};
-			$user_latitude = $coord->{'lat'};
-			$user_longitude = $coord->{'lng'};
-			$_SESSION['search_latitude'] = $user_latitude;
-			$_SESSION['search_longitude'] = $user_longitude;
-			$availableRestaurant = array();
-			$adresseUser = $user_latitude.','.$user_longitude;
-			
 		} else {
-			$request->adressError = true;
+			$this->error(405, "Method not allowed");
 		}
-		$request->ouvert = true;
-		$request->distance = $distanceKm;
-		$request->ville = $city;
-		$request->villes = array_unique(array_object_column($restaurants, 'ville'));
-		$request->restaurants = $restaurants;
-		$request->vue = $this->render("restaurants.php");
-		
-		
 	}
 	
 	private function getById () {
@@ -209,9 +171,15 @@ class Controller_Restaurant extends Controller_Template {
 		$modelCategorie->id = $_GET['id_categorie'];
 		$categorie = $modelCategorie->load();
 		$childrens = $modelCategorie->getChildren();
-		foreach ($childrens as $children) {
-			$children->loadContenu($id_restaurant, $imgSize);
-			$restaurant->addCategorie($children);
+		if (count($childrens) > 0) {
+			foreach ($childrens as $children) {
+				$children->loadContenu($this->id);
+				$children->parent_categorie = $categorie;
+				$restaurant->addCategorie($children);
+			}
+		} else {
+			$categorie->loadContenu($this->id);
+			$restaurant->addCategorie($categorie);
 		}
 		require 'vue/restaurant/categorie.'.$this->ext.'.php';
 	}
