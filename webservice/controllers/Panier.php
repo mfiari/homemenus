@@ -152,9 +152,13 @@ class Controller_Panier extends Controller_Template {
 		$modelPanier->remove($id_user, $id_menu);
 	}
 	
-	private function initPanier ($request, $id_user, $id_restaurant) {
+	private function initPanier ($id_user, $id_restaurant) {
 		$panier = new Model_Panier();
-		$panier->uid = $id_user;
+		if ($id_user !== false) {
+			$panier->uid = $id_user;
+		} else {
+			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+		}
 		$panier->init();
 		if ($panier->id_restaurant == -1) {
 			$panier->setRestaurant($id_restaurant);
@@ -171,7 +175,7 @@ class Controller_Panier extends Controller_Template {
 		require 'vue/panier/panier.'.$this->ext.'.php';
 	}
 	
-	public function addCarte ($request) {
+	public function addCarte () {
 		if ($_SERVER['REQUEST_METHOD'] != "POST") {
 			$this->error(405, "Method not allowed");
 		}
@@ -179,8 +183,12 @@ class Controller_Panier extends Controller_Template {
 			$this->error(409, "Conflict");
 		}
 		$id_restaurant = $_POST['id_restaurant'];
-		$id_user = $_POST['id_user'];
-		$panier = $this->initPanier ($request, $id_user, $id_restaurant);
+		if (isset($_POST['id_user'])) {
+			$id_user = $_POST['id_user'];
+		} else {
+			$id_user = false;
+		}
+		$panier = $this->initPanier ($id_user, $id_restaurant);
 		$quantite = $_POST['quantite'];
 		$id_carte = $_POST['id_carte'];
 		$format = $_POST['format'];
