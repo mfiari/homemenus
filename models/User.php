@@ -505,6 +505,32 @@ class Model_User extends Model_Template {
 		}
 	}
 	
+	public function getAllActifLivreur () {
+		$sql = "SELECT user.uid, user.login, user.is_login, us.gcm_token
+		FROM users user
+		JOIN user_livreur ul ON ul.uid = user.uid
+		LEFT JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
+		WHERE user.is_enable = 1 
+		GROUP BY user.login";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$livreurs = $stmt->fetchAll();
+		$list = array();
+		foreach ($livreurs as $livreur) {
+			$user = new Model_User(false);
+			$user->id = $livreur['uid'];
+			$user->login = $livreur['login'];
+			$user->is_login = $livreur['is_login'];
+			$user->gcm_token = $livreur['gcm_token'];
+			$list[] = $user;
+		}
+		return $list;
+	}
+	
 	public function getLivreurAvailable ($codePostal, $ville) {
 		$sql = "SELECT user.uid, ulh.heure_debut, ulh.heure_fin
 		FROM users user

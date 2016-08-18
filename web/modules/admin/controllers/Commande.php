@@ -65,7 +65,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			$commande->id = $_GET["id_commande"];
 			$request->commande = $commande->load();
 			$modelUser = new Model_User();
-			$request->livreurs = $modelUser->getLivreurAvailableForCommandeAdmin($commande);
+			$request->livreurs = $modelUser->getAllActifLivreur();
 			$request->vue = $this->render("commande/view.php");
 		}
 	}
