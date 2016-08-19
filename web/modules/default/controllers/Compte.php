@@ -20,6 +20,7 @@ include_once ROOT_PATH."models/PreCommande.php";
 class Controller_Compte extends Controller_Default_Template {
 	
 	public function manage ($request) {
+		$this->request = $request;
 		if (isset($_GET["action"])) {
 			$action = $_GET["action"];
 			switch ($action) {
@@ -50,13 +51,23 @@ class Controller_Compte extends Controller_Default_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('compte/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('compte/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
 		if ($request->_auth) {
 			$request->title = "Compte";
 			$modelUser = new Model_User();
 			$modelUser->id = $request->_auth->id;
 			$request->user = $modelUser->getById();
-			$request->vue = $this->render("compte.php");
+			$request->vue = $this->render("compte");
 		} else {
 			$this->redirect('inscription');
 		}
@@ -68,7 +79,7 @@ class Controller_Compte extends Controller_Default_Template {
 		$modelUser->id = $request->_auth->id;
 		$request->user = $modelUser->getById();
 		$request->javascripts = array("res/js/calendar.js");
-		$request->vue = $this->render("compte/calendrier.php");
+		$request->vue = $this->render("calendrier");
 	}
 	
 	public function activation ($request) {
@@ -90,9 +101,9 @@ class Controller_Compte extends Controller_Default_Template {
 			
 			$_SESSION["uid"] = $model->id;
 			$_SESSION["session"] = $model->session;
-			$request->vue = $this->render("confirmation_inscription_success.php");
+			$request->vue = $this->render("confirmation_inscription_success");
 		} else {
-			$request->vue = $this->render("confirmation_inscription_fail.php");
+			$request->vue = $this->render("confirmation_inscription_fail");
 		}
 	}
 	
@@ -143,12 +154,12 @@ class Controller_Compte extends Controller_Default_Template {
 			}
 			if (count($errors) > 0) {
 				$request->errorMessage = $errors;
-				$request->vue = $this->render("reset_password.php");
+				$request->vue = $this->render("reset_password");
 			} else {
-				$request->vue = $this->render("reset_password_succes.php");
+				$request->vue = $this->render("reset_password_succes");
 			}
 		} else if ($request->request_method == "GET") {
-			$request->vue = $this->render("reset_password.php");
+			$request->vue = $this->render("reset_password");
 		}
 	}
 }
