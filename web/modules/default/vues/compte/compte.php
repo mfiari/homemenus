@@ -57,16 +57,16 @@
 					<button class="btn btn-primary" type="button" id="userFormValidationButton" >Modifier</button>
 				</fieldset>
 			</form>
-			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=compte&action=reset_password">
+			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=compte&action=modify_password">
 				<h3>Modifier mon mot de passe</h3>
 				<fieldset>
 					<div class="form-group">
-						<label for="password">Ancien Mot de passe : </label>
-						<input class="form-control" id="password" name="password" type="password" maxlength="32" required>
+						<label for="old_password">Ancien Mot de passe : </label>
+						<input class="form-control" id="old_password" name="old_password" type="password" maxlength="32" required>
 					</div>
 					<div class="form-group">
-						<label for="password">Nouveau Mot de passe : </label>
-						<input class="form-control" id="password" name="password" type="password" maxlength="32" required>
+						<label for="new_password">Nouveau Mot de passe : </label>
+						<input class="form-control" id="new_password" name="new_password" type="password" maxlength="32" required>
 					</div>
 					<div class="form-group">
 						<label for="confirm_password">Confirmer Mot de passe : </label>

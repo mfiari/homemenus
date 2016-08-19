@@ -27,6 +27,9 @@ class Controller_Compte extends Controller_Default_Template {
 				case "index" :
 					$this->index($request);
 					break;
+				case "modify_password" :
+					$this->modify_password($request);
+					break;
 				case "activation" :
 					$this->activation($request);
 					break;
@@ -115,6 +118,39 @@ class Controller_Compte extends Controller_Default_Template {
 		} else {
 			$this->redirect('inscription');
 		}
+	}
+	
+	public function modify_password ($request) {
+		$modelUser = new Model_User();
+		$modelUser->id = $request->_auth->id;
+		if ($request->request_method == "POST") {
+			$errors = array();
+			$oldPassword = $_POST['old_password'];
+			$newPassword = $_POST['new_password'];
+			$confirmPassword = $_POST['confirm_password'];
+			$errors = array();
+			if ($newPassword != $confirmPassword) {
+				$errors["DIFFERENT_PASSWORD"] = "Les champs mot de passe et confirmations sont différents.";
+			} else {
+				
+				if ($modelUser->getByLoginAndPassword($request->_auth->login, $oldPassword) === false) {
+					$errors["WRONG_PASSWORD"] = "Le mot de passe saisie est incorrect";
+				} else {
+					if ($modelUser->modifyPassword($newPassword) === false) {
+						$errors["MODIFY_ERROR"] = "Erreur lors de la modification du mot de passe, veuillez réessayer";
+					} else {
+						$request->modifyPasswordSuccess = true;
+					}
+				}
+			}
+			if (count($errors) > 0) {
+				$request->errorMessage = $errors;
+			} else {
+				$request->successMessage = "Votre mot de passe a bien été modifié.";
+			}
+		}
+		$request->user = $modelUser->getById();
+		$request->vue = $this->render("compte");
 	}
 	
 	public function calendrier ($request) {
