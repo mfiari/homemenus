@@ -10,8 +10,14 @@
 				</div>
 			<?php endforeach; ?>
 		<?php endif; ?>
+		<?php if ($request->successMessage) : ?>
+			<div class="alert alert-success" role="alert">
+				<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+				<?php echo $request->successMessage; ?>
+			</div>
+		<?php endif; ?>
 		<div class="col-md-12">
-			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?action=compte">
+			<form method="post" enctype="x-www-form-urlencoded" id="userForm" action="">
 				<fieldset>
 					<div class="form-group">
 						<label for="nom">Nom : </label>
@@ -22,15 +28,19 @@
 						<input class="form-control" name="prenom" type="text" value="<?php echo $request->user->prenom; ?>" maxlength="32" required>
 					</div>
 					<div class="form-group">
-						<label for="login">email : </label>
+						<label for="login">Identifiant : </label>
 						<input class="form-control" name="login" type="email" value="<?php echo $request->user->login; ?>" maxlength="32" required>
+					</div>
+					<div class="form-group">
+						<label for="email">email : </label>
+						<input class="form-control" name="email" type="email" value="<?php echo $request->user->email; ?>" maxlength="32" required>
 					</div>
 					<div class="form-group">
 						<label for="rue">Adresse : </label>
 						<span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" 
 						title="L'adresse est facultative. Elle est utilisé pour facilité votre recherche."></span>
 						<div class="search-block">
-							<input id="full_address" class="form-control" name="adresse" type="text" value="<?php echo $request->user->rue.', '.$request->user->code_postal.' '.$request->user->ville; ?>" placeholder="Entrez votre adresse">
+							<input id="full_address" class="form-control" name="adresse" type="text" value="<?php echo utf8_encode($request->user->rue).', '.$request->user->code_postal.' '.utf8_encode($request->user->ville); ?>" placeholder="Entrez votre adresse">
 							<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
 						</div>
 						<input id="rue" name="rue" type="text" value="<?php $request->user->rue; ?>" hidden="hidden">
@@ -44,7 +54,7 @@
 						En aucun cas il ne sera communiqué à des tiers"></span>
 						<input class="form-control" name="telephone" type="text" value="<?php echo $request->user->telephone; ?>" maxlength="10" >
 					</div>
-					<button id="subscribe-button" class="btn btn-primary" type="button">Modifier</button>
+					<button class="btn btn-primary" type="button" id="userFormValidationButton" >Modifier</button>
 				</fieldset>
 			</form>
 			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=compte&action=reset_password">
@@ -65,6 +75,9 @@
 					<button id="subscribe-button" class="btn btn-primary" type="submit">Modifier</button>
 				</fieldset>
 			</form>
+			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=compte&action=parametrage">
+				<h3>Paramétrage</h3>
+			</form>
 			<!--<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=paypal&action=premium_subscribe">
 				<h3>Souscrire au compte premium</h3>
 				<fieldset>
@@ -80,3 +93,21 @@
 		</div>-->
 	</div>
 </div>
+<script type="text/javascript">
+	$(function() {
+		enableAutocomplete("full_address");
+		$("#userFormValidationButton").click(function(event) {
+			var addressComponents = getAdresseElements();
+			if (addressComponents !== false) {
+				var rue = addressComponents.street_number + ' ' + addressComponents.route;
+				var ville = addressComponents.locality;
+				var code_postal = addressComponents.postal_code;
+				
+				$('#rue').val(rue);
+				$('#ville').val(ville);
+				$('#code_postal').val(code_postal);
+			}
+			$("#userForm").submit();
+		});
+	});
+</script>

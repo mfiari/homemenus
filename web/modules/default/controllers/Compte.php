@@ -64,9 +64,53 @@ class Controller_Compte extends Controller_Default_Template {
 	public function index ($request) {
 		if ($request->_auth) {
 			$request->title = "Compte";
-			$modelUser = new Model_User();
-			$modelUser->id = $request->_auth->id;
-			$request->user = $modelUser->getById();
+			if ($request->request_method == "POST") {
+				$modelUser = new Model_User();
+				$modelUser->id = $request->_auth->id;
+				$oldUser = $modelUser->getById();
+				if (isset($_POST["nom"]) && trim($_POST["nom"]) != '') {
+					$modelUser->nom = $_POST["nom"];
+				}
+				if (isset($_POST["prenom"]) && trim($_POST["prenom"]) != '') {
+					$modelUser->prenom = $_POST["prenom"];
+				}
+				if (isset($_POST["login"]) && trim($_POST["login"]) != '') {
+					$modelUser->login = $_POST["login"];
+				}
+				if (isset($_POST["email"]) && trim($_POST["email"]) != '') {
+					$modelUser->email = $_POST["email"];
+				}
+				if (isset($_POST["adresse"]) && trim($_POST["adresse"]) == '') {
+					$modelUser->rue = '';
+					$modelUser->ville = '';
+					$modelUser->code_postal = '';
+				} else {
+					if (isset($_POST["rue"]) && trim($_POST["rue"]) != '') {
+						$modelUser->rue = $_POST["rue"];
+					}
+					if (isset($_POST["ville"]) && trim($_POST["ville"]) != '') {
+						$modelUser->ville = $_POST["ville"];
+					}
+					if (isset($_POST["code_postal"]) && trim($_POST["code_postal"]) != '') {
+						$modelUser->code_postal = $_POST["code_postal"];
+					}
+				}
+				if (isset($_POST["telephone"])) {
+					$modelUser->telephone = $_POST["telephone"];
+				}
+				if ($modelUser->save()) {
+					$request->user = $modelUser;
+					$request->successMessage = "Votre compte a bien été modifié.";
+				} else {
+					$request->errorMessage = array("Une erreur est survenue lors de la modification des données. Veuillez réessayer ultérieurement.");
+					$request->user = $oldUser;
+				}
+			} else {
+				$modelUser = new Model_User();
+				$modelUser->id = $request->_auth->id;
+				$request->user = $modelUser->getById();
+			}
+			$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
 			$request->vue = $this->render("compte");
 		} else {
 			$this->redirect('inscription');

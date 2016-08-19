@@ -115,6 +115,8 @@ class Model_User extends Model_Template {
 	public function save () {
 		if ($this->id == -1) {
 			return $this->insert();
+		} else {
+			return $this->update();
 		}
 		return false;
 	}
@@ -180,6 +182,45 @@ class Model_User extends Model_Template {
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		$stmt->bindValue(":id_restaurant", $this->id_restaurant);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
+	public function update() {
+		$sql = "UPDATE users SET nom = :nom, prenom = :prenom, login = :login, email = :email WHERE uid = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":nom", $this->nom);
+		$stmt->bindValue(":prenom", $this->prenom);
+		$stmt->bindValue(":login", $this->login);
+		$stmt->bindValue(":email", $this->email);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		if ($this->status == USER_LIVREUR) {
+			return $this->updateLivreur();
+		} else if ($this->status == USER_CLIENT) {
+			return $this->updateUser();
+		} else if ($this->status == USER_RESTAURANT || $this->status == USER_ADMIN_RESTAURANT) {
+			return $this->updateRestaurant();
+		}
+		return false;
+	}
+	
+	public function updateUser() {
+		$sql = "UPDATE user_client SET rue = :rue, ville = :ville, code_postal = :code_postal, telephone = :telephone WHERE uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":rue", $this->rue);
+		$stmt->bindValue(":ville", $this->ville);
+		$stmt->bindValue(":code_postal", $this->code_postal);
+		$stmt->bindValue(":telephone", $this->telephone);
+		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
