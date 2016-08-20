@@ -253,6 +253,7 @@ class Controller_Index extends Controller_Default_Template {
 	}
 	
 	public function error_404 ($request) {
+		$this->request = $request;
 		$request->title = "Page non trouvée";
 		$request->vue = $this->render("404");
 	}
