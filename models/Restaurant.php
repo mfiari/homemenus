@@ -1137,11 +1137,63 @@ class Model_Restaurant extends Model_Template {
 			
 			$list[] = $restaurant;
 		}
+		$sql = "SELECT resto.id AS id_restaurant, resto.nom AS restaurant, menus.id AS id_menu, menus.nom AS menu, com.id AS id_commentaire, com.note
+		FROM restaurants resto
+		JOIN commande_history history ON history.id_restaurant = resto.id AND history.id_user = :uid
+		JOIN commande_menu_history cmh ON cmh.id_commande = history.id
+		JOIN menus ON menus.id = cmh.id_menu
+		LEFT JOIN commentaire_menu com ON com.id_menu = menus.id AND com.uid = :uid
+		WHERE resto.enabled = 1
+		GROUP BY id_menu
+		ORDER BY restaurant";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->user->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$restaurants = $stmt->fetchAll();
+		foreach ($restaurants as $resto) {
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $resto['id_restaurant'];
+			$restaurant->nom = $resto['restaurant'];
+			
+			$menu = new Model_Menu();
+			$menu->id = $resto["id_menu"];
+			$menu->nom = $resto["menu"];
+			$menu->getLogo($restaurant->id);
+			
+			$commentaire = new Model_Commentaire();
+			$commentaire->id = $resto['id_commentaire'];
+			$commentaire->note = $resto['note'];
+			
+			$menu->commentaire = $commentaire;
+			
+			$restaurant->addMenu($menu);
+			
+			$list[] = $restaurant;
+		}
 		return $list;
 	}
 	
 	public function noterCarte () {
 		$sql = "INSERT INTO commentaire_carte (uid, id_carte, note, commentaire, commentaire_anonyme, date_commentaire)
+		VALUES (:uid, :id, :note, :commentaire, :anonyme, now())";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->user->id);
+		$stmt->bindValue(":id", $this->id);
+		$stmt->bindValue(":note", $this->commentaire->note);
+		$stmt->bindValue(":commentaire", $this->commentaire->commentaire);
+		$stmt->bindValue(":anonyme", $this->commentaire->anonyme);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function noterMenu () {
+		$sql = "INSERT INTO commentaire_menu (uid, id_menu, note, commentaire, commentaire_anonyme, date_commentaire)
 		VALUES (:uid, :id, :note, :commentaire, :anonyme, now())";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->user->id);
