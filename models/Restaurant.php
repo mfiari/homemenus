@@ -1041,6 +1041,66 @@ class Model_Restaurant extends Model_Template {
 		return $value !== false && $value['nb_menu'] > 0;
 	}
 	
+	public function getAllCommentaire () {
+		$sql = "SELECT resto.id AS id_restaurant, resto.nom, id_user, nom_user, prenom_user, com.id AS id_commentaire, com.note, com.commentaire, com.validation
+		FROM restaurants resto
+		JOIN commande_history history ON history.id_restaurant = resto.id
+		JOIN commentaire_restaurant com ON com.id_restaurant = resto.id AND com.uid = history.id_user
+		WHERE resto.enabled = 1";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$restaurants = $stmt->fetchAll();
+		$list = array();
+		foreach ($restaurants as $resto) {
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $resto['id_restaurant'];
+			$restaurant->nom = $resto['nom'];
+			
+			$client = new Model_User();
+			$client->id = $resto["id_user"];
+			$client->nom = $resto["nom_user"];
+			$client->prenom = $resto["prenom_user"];
+			
+			$restaurant->user = $client;
+			
+			$commentaire = new Model_Commentaire();
+			$commentaire->id = $resto['id_commentaire'];
+			$commentaire->note = $resto['note'];
+			$commentaire->commentaire = $resto['commentaire'];
+			$commentaire->validation = $resto['validation'];
+			
+			$restaurant->commentaire = $commentaire;
+			
+			$list[] = $restaurant;
+		}
+		return $list;
+	}
+	
+	public function disableCommentaire () {
+		$sql = "UPDATE commentaire_restaurant SET validation = 0 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function enableCommentaire () {
+		$sql = "UPDATE commentaire_restaurant SET validation = 1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
 	public function getCommentaireByUser () {
 		$sql = "SELECT resto.id AS id_restaurant, resto.nom, resto.rue, resto.ville, resto.code_postal, 
 		com.id AS id_commentaire, com.note

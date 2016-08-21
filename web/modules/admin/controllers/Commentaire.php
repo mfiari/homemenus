@@ -29,6 +29,12 @@ class Controller_Commentaire extends Controller_Admin_Template {
 				case "restaurants" :
 					$this->restaurants($request);
 					break;
+				case "annuleRestaurant" :
+					$this->annuleRestaurant($request);
+					break;
+				case "enableRestaurant" :
+					$this->enableRestaurant($request);
+					break;
 				case "noterRestaurant" :
 					$this->noterRestaurant($request);
 					break;
@@ -71,10 +77,22 @@ class Controller_Commentaire extends Controller_Admin_Template {
 	public function restaurants ($request) {
 		$request->title = "Notes";
 		$modelRestaurant = new Model_Restaurant();
-		$modelRestaurant->user = $request->_auth;
-		$request->restaurants = $modelRestaurant->getCommentaireByUser();
-		$request->javascripts = array("res/js/bootstrap-star-rating.js");
-		$request->vue = $this->render("restaurants");
+		$request->restaurants = $modelRestaurant->getAllCommentaire();
+		$request->vue = $this->render("commentaire/restaurants.php");
+	}
+	
+	public function annuleRestaurant ($request) {
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id_commentaire'];
+		$modelRestaurant->disableCommentaire();
+		$this->redirect('restaurants', 'commentaire');
+	}
+	
+	public function enableRestaurant ($request) {
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id_commentaire'];
+		$modelRestaurant->enableCommentaire();
+		$this->redirect('restaurants', 'commentaire');
 	}
 	
 	public function noterRestaurant ($request) {
