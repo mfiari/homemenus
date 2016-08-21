@@ -36,6 +36,7 @@ class Model_Restaurant extends Model_Template {
 	private $carteImg;
 	private $menuImg;
 	private $is_enable;
+	private $commentaire;
 	
 	public function __construct($callParent = true) {
 		if ($callParent) {
@@ -1038,6 +1039,55 @@ class Model_Restaurant extends Model_Template {
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		return $value !== false && $value['nb_menu'] > 0;
+	}
+	
+	public function getCommentaireByUser () {
+		$sql = "SELECT resto.id AS id_restaurant, resto.nom, resto.rue, resto.ville, resto.code_postal, 
+		com.id AS id_commentaire, com.note
+		FROM restaurants resto
+		LEFT JOIN commentaire_restaurant com ON com.id_restaurant = resto.id AND com.uid = :uid
+		WHERE resto.enabled = 1";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->user->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$restaurants = $stmt->fetchAll();
+		$list = array();
+		foreach ($restaurants as $resto) {
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $resto['id_restaurant'];
+			$restaurant->nom = $resto['nom'];
+			$restaurant->rue = $resto['rue'];
+			$restaurant->ville = $resto['ville'];
+			$restaurant->code_postal = $resto['code_postal'];
+			
+			$commentaire = new Model_Commentaire();
+			$commentaire->id = $resto['id_commentaire'];
+			$commentaire->note = $resto['note'];
+			
+			$restaurant->commentaire = $commentaire;
+			
+			$list[] = $restaurant;
+		}
+		return $list;
+	}
+	
+	public function noter () {
+		$sql = "INSERT INTO commentaire_restaurant (uid, id_restaurant, note, commentaire, commentaire_anonyme, date_commentaire)
+		VALUES (:uid, :id, :note, :commentaire, :anonyme, now())";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->user->id);
+		$stmt->bindValue(":id", $this->id);
+		$stmt->bindValue(":note", $this->commentaire->note);
+		$stmt->bindValue(":commentaire", $this->commentaire->commentaire);
+		$stmt->bindValue(":anonyme", $this->commentaire->anonyme);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
 	}
 	
 	public function isOpen () {

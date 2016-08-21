@@ -3,6 +3,7 @@
 include_once MODEL_PATH."Template.php";
 include_once MODEL_PATH."CommandeHistory.php";
 include_once MODEL_PATH."Restaurant.php";
+include_once MODEL_PATH."Commentaire.php";
 
 class Controller_Notes extends Controller_Default_Template {
 	
@@ -20,20 +21,17 @@ class Controller_Notes extends Controller_Default_Template {
 				case "noter" :
 					$this->noter($request);
 					break;
-				case "activation" :
-					$this->activation($request);
+				case "restaurants" :
+					$this->restaurants($request);
 					break;
-				case "forgot_password" :
-					$this->forgot_password($request);
+				case "noterRestaurant" :
+					$this->noterRestaurant($request);
 					break;
 				case "reset_password" :
 					$this->reset_password($request);
 					break;
 				case "solde" :
 					$this->solde($request);
-					break;
-				case "calendrier" :
-					$this->calendrier($request);
 					break;
 				default :
 					$this->redirect('404');
@@ -74,37 +72,26 @@ class Controller_Notes extends Controller_Default_Template {
 		}
 	}
 	
-	public function calendrier ($request) {
-		$request->title = "Compte";
-		$modelUser = new Model_User();
-		$modelUser->id = $request->_auth->id;
-		$request->user = $modelUser->getById();
-		$request->javascripts = array("res/js/calendar.js");
-		$request->vue = $this->render("calendrier");
+	public function restaurants ($request) {
+		$request->title = "Notes";
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->user = $request->_auth;
+		$request->restaurants = $modelRestaurant->getCommentaireByUser();
+		$request->javascripts = array("res/js/bootstrap-star-rating.js");
+		$request->vue = $this->render("restaurants");
 	}
 	
-	public function activation ($request) {
-		$model = new Model_User();
-		$model->id = trim($_GET["uid"]);
-		$model->inscription_token = trim($_GET["token"]);
-		if ($model->confirm()) {
-			$model->getById();
-			$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription_admin.html');
-					
-			$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
-			$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
-			if ($model->ville != '') {
-				$messageContent = str_replace("[ADRESSE]", $model->ville.' ('.$model->code_postal.')', $messageContent);
-			} else {
-				$messageContent = str_replace("[ADRESSE]", "(adresse non renseignée)", $messageContent);
-			}
-			send_mail (MAIL_ADMIN, "création de compte", $messageContent);
-			
-			$_SESSION["uid"] = $model->id;
-			$_SESSION["session"] = $model->session;
-			$request->vue = $this->render("confirmation_inscription_success");
-		} else {
-			$request->vue = $this->render("confirmation_inscription_fail");
+	public function noterRestaurant ($request) {
+		if ($request->request_method == "POST") {
+			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant->id = $_POST['id_restaurant'];
+			$modelRestaurant->user = $request->_auth;
+			$modelCommantaire= new Model_Commentaire();
+			$modelCommantaire->note = $_POST['note'];
+			$modelCommantaire->commentaire = $_POST['commentaire'];
+			$modelCommantaire->anonyme = $_POST['anonyme'] == 'true' ? true : false;
+			$modelRestaurant->commentaire = $modelCommantaire;
+			$modelRestaurant->noter();
 		}
 	}
 	
