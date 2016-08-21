@@ -55,6 +55,11 @@ class Default_Manager {
 					$controller = new Controller_Pre_Commande();
 					$controller->manage($request);
 					break;
+				case "notes" :
+					include_once WEBSITE_PATH."modules/default/controllers/Notes.php";
+					$controller = new Controller_Notes();
+					$controller->manage($request);
+					break;
 				default :
 					include_once WEBSITE_PATH."modules/default/controllers/Index.php";
 					$controller = new Controller_Index();
