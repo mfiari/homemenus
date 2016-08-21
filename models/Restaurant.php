@@ -1045,8 +1045,10 @@ class Model_Restaurant extends Model_Template {
 		$sql = "SELECT resto.id AS id_restaurant, resto.nom, resto.rue, resto.ville, resto.code_postal, 
 		com.id AS id_commentaire, com.note
 		FROM restaurants resto
+		JOIN commande_history history ON history.id_restaurant = resto.id AND history.id_user = :uid
 		LEFT JOIN commentaire_restaurant com ON com.id_restaurant = resto.id AND com.uid = :uid
-		WHERE resto.enabled = 1";
+		WHERE resto.enabled = 1
+		GROUP BY id_restaurant";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->user->id);
 		if (!$stmt->execute()) {
