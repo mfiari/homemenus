@@ -4,6 +4,8 @@ include_once MODEL_PATH."Template.php";
 include_once MODEL_PATH."CommandeHistory.php";
 include_once MODEL_PATH."Restaurant.php";
 include_once MODEL_PATH."Commentaire.php";
+include_once MODEL_PATH."Categorie.php";
+include_once MODEL_PATH."Contenu.php";
 
 class Controller_Notes extends Controller_Default_Template {
 	
@@ -27,11 +29,11 @@ class Controller_Notes extends Controller_Default_Template {
 				case "noterRestaurant" :
 					$this->noterRestaurant($request);
 					break;
-				case "reset_password" :
-					$this->reset_password($request);
+				case "plats" :
+					$this->plats($request);
 					break;
-				case "solde" :
-					$this->solde($request);
+				case "noterCarte" :
+					$this->noterCarte($request);
 					break;
 				default :
 					$this->redirect('404');
@@ -92,6 +94,29 @@ class Controller_Notes extends Controller_Default_Template {
 			$modelCommantaire->anonyme = $_POST['anonyme'] == 'true' ? true : false;
 			$modelRestaurant->commentaire = $modelCommantaire;
 			$modelRestaurant->noter();
+		}
+	}
+	
+	public function plats ($request) {
+		$request->title = "Notes";
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->user = $request->_auth;
+		$request->restaurants = $modelRestaurant->getCommentaireCarteByUser();
+		$request->javascripts = array("res/js/bootstrap-star-rating.js");
+		$request->vue = $this->render("cartes");
+	}
+	
+	public function noterCarte ($request) {
+		if ($request->request_method == "POST") {
+			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant->id = $_POST['id_carte'];
+			$modelRestaurant->user = $request->_auth;
+			$modelCommantaire= new Model_Commentaire();
+			$modelCommantaire->note = $_POST['note'];
+			$modelCommantaire->commentaire = $_POST['commentaire'];
+			$modelCommantaire->anonyme = $_POST['anonyme'] == 'true' ? true : false;
+			$modelRestaurant->commentaire = $modelCommantaire;
+			$modelRestaurant->noterCarte();
 		}
 	}
 	

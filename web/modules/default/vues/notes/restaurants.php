@@ -4,7 +4,7 @@
   <li role="presentation"><a href="?controler=notes&action=plats">Plats</a></li>
 </ul>
 <h2>Restaurants</h2>
-<div id="commandes">
+<div id="restaurants">
 	<table class="table table-striped">
 		<thead>
 			<tr>

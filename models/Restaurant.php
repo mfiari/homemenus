@@ -1092,6 +1092,70 @@ class Model_Restaurant extends Model_Template {
 		return true;
 	}
 	
+	public function getCommentaireCarteByUser () {
+		$sql = "SELECT resto.id AS id_restaurant, resto.nom AS restaurant, carte.id AS id_carte, carte.nom AS carte, cch.id_categorie, cch.nom_categorie, 
+		com.id AS id_commentaire, com.note
+		FROM restaurants resto
+		JOIN commande_history history ON history.id_restaurant = resto.id AND history.id_user = :uid
+		JOIN commande_carte_history cch ON cch.id_commande = history.id
+		JOIN carte ON carte.id = cch.id_carte
+		LEFT JOIN commentaire_carte com ON com.id_carte = carte.id AND com.uid = :uid
+		WHERE resto.enabled = 1 AND carte.is_visible = 1
+		GROUP BY id_carte
+		ORDER BY restaurant, nom_categorie";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->user->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$restaurants = $stmt->fetchAll();
+		$list = array();
+		foreach ($restaurants as $resto) {
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $resto['id_restaurant'];
+			$restaurant->nom = $resto['restaurant'];
+			
+			$categorie = new Model_Categorie();
+			$categorie->id = $resto["id_categorie"];
+			$categorie->nom = $resto["nom_categorie"];
+			
+			$contenu = new Model_Contenu();
+			$contenu->id = $resto["id_carte"];
+			$contenu->nom = $resto["carte"];
+			$contenu->getLogo($restaurant->id);
+			
+			$commentaire = new Model_Commentaire();
+			$commentaire->id = $resto['id_commentaire'];
+			$commentaire->note = $resto['note'];
+			
+			$contenu->commentaire = $commentaire;
+			
+			$categorie->addContenu($contenu);
+			
+			$restaurant->addCategorie($categorie);
+			
+			$list[] = $restaurant;
+		}
+		return $list;
+	}
+	
+	public function noterCarte () {
+		$sql = "INSERT INTO commentaire_carte (uid, id_carte, note, commentaire, commentaire_anonyme, date_commentaire)
+		VALUES (:uid, :id, :note, :commentaire, :anonyme, now())";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->user->id);
+		$stmt->bindValue(":id", $this->id);
+		$stmt->bindValue(":note", $this->commentaire->note);
+		$stmt->bindValue(":commentaire", $this->commentaire->commentaire);
+		$stmt->bindValue(":anonyme", $this->commentaire->anonyme);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
 	public function isOpen () {
 		return true;
 	}
