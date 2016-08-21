@@ -28,6 +28,7 @@
 						<li><a href="?controler=codePromo">code promo</a></li>
 						<li><a href="?controler=recherche">recherches</a></li>
 						<li><a href="?controler=mail">mails</a></li>
+						<li><a href="?controler=commentaire">Commentaire</a></li>
 						<li><a href="?controler=log">Log</a></li>
 						<li><a href="?controler=cron">Cron</a></li>
 						<li><a href="?action=logout">deconnexion</a></li>

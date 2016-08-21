@@ -14,6 +14,7 @@ class Model_Commande_History extends Model_Template {
 	private $note;
 	private $commentaire;
 	private $commentaire_anonyme;
+	private $validation_commentaire;
 	private $carte;
 	private $cartes;
 	private $menus;
@@ -618,6 +619,74 @@ class Model_Commande_History extends Model_Template {
 			return false;
 		}
 		return $stmt->fetchAll();;
+	}
+	
+	public function getAllCommentaire () {
+		$sql = "SELECT id, id_commande, id_user, nom_user, prenom_user, id_livreur, login_livreur, id_restaurant, nom_restaurant, date_commande, 
+		note, commentaire, validation_commentaire
+		FROM commande_history
+		WHERE commentaire != ''
+		ORDER BY date_commande ASC";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$listCommande = array();
+		foreach ($result as $c) {
+			$commande = new Model_Commande_History();
+			$commande->id = $c["id"];
+			$commande->id_commande = $c["id_commande"];
+			$commande->date_commande = $c["date_commande"];
+			$commande->note = $c["note"];
+			$commande->commentaire = $c["commentaire"];
+			$commande->validation_commentaire = $c["validation_commentaire"];
+			
+			$client = new Model_User();
+			$client->id = $c["id_user"];
+			$client->nom = $c["nom_user"];
+			$client->prenom = $c["prenom_user"];
+			
+			$commande->client = $client;
+			
+			$livreur = new Model_User();
+			$livreur->id = $c["id_livreur"];
+			$livreur->login = $c["login_livreur"];
+			
+			$commande->livreur = $livreur;
+			
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $c["id_restaurant"];
+			$restaurant->nom = $c["nom_restaurant"];
+			
+			$commande->restaurant = $restaurant;
+			
+			$listCommande[] = $commande;
+		}
+		return $listCommande;
+	}
+	
+	public function disableCommentaire () {
+		$sql = "UPDATE commande_history SET validation_commentaire = 0 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function enableCommentaire () {
+		$sql = "UPDATE commande_history SET validation_commentaire = 1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
 	}
 	
 }
