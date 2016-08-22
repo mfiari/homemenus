@@ -35,14 +35,20 @@ class Controller_Commentaire extends Controller_Admin_Template {
 				case "enableRestaurant" :
 					$this->enableRestaurant($request);
 					break;
-				case "noterRestaurant" :
-					$this->noterRestaurant($request);
-					break;
 				case "plats" :
 					$this->plats($request);
 					break;
-				case "noterCarte" :
-					$this->noterCarte($request);
+				case "annuleCarte" :
+					$this->annuleCarte($request);
+					break;
+				case "enableCarte" :
+					$this->enableCarte($request);
+					break;
+				case "annuleMenu" :
+					$this->annuleMenu($request);
+					break;
+				case "enableMenu" :
+					$this->enableMenu($request);
 					break;
 				default :
 					$this->redirect('404');
@@ -95,54 +101,38 @@ class Controller_Commentaire extends Controller_Admin_Template {
 		$this->redirect('restaurants', 'commentaire');
 	}
 	
-	public function noterRestaurant ($request) {
-		if ($request->request_method == "POST") {
-			$modelRestaurant = new Model_Restaurant();
-			$modelRestaurant->id = $_POST['id_restaurant'];
-			$modelRestaurant->user = $request->_auth;
-			$modelCommantaire= new Model_Commentaire();
-			$modelCommantaire->note = $_POST['note'];
-			$modelCommantaire->commentaire = $_POST['commentaire'];
-			$modelCommantaire->anonyme = $_POST['anonyme'] == 'true' ? true : false;
-			$modelRestaurant->commentaire = $modelCommantaire;
-			$modelRestaurant->noter();
-		}
-	}
-	
 	public function plats ($request) {
-		$request->title = "Notes";
+		$request->title = "Commentaire - plats";
 		$modelRestaurant = new Model_Restaurant();
-		$modelRestaurant->user = $request->_auth;
-		$request->restaurants = $modelRestaurant->getCommentaireCarteByUser();
-		$request->javascripts = array("res/js/bootstrap-star-rating.js");
-		$request->vue = $this->render("cartes");
+		$request->restaurants = $modelRestaurant->getAllCommentairePlats();
+		$request->vue = $this->render("commentaire/cartes.php");
 	}
 	
-	public function noterCarte ($request) {
-		if ($request->request_method == "POST") {
-			$modelRestaurant = new Model_Restaurant();
-			$modelRestaurant->id = $_POST['id_carte'];
-			$modelRestaurant->user = $request->_auth;
-			$modelCommantaire= new Model_Commentaire();
-			$modelCommantaire->note = $_POST['note'];
-			$modelCommantaire->commentaire = $_POST['commentaire'];
-			$modelCommantaire->anonyme = $_POST['anonyme'] == 'true' ? true : false;
-			$modelRestaurant->commentaire = $modelCommantaire;
-			$modelRestaurant->noterCarte();
-		}
+	public function annuleCarte ($request) {
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id_commentaire'];
+		$modelRestaurant->disableCommentaireCarte();
+		$this->redirect('plats', 'commentaire');
 	}
 	
-	public function noterMenu ($request) {
-		if ($request->request_method == "POST") {
-			$modelRestaurant = new Model_Restaurant();
-			$modelRestaurant->id = $_POST['id_menu'];
-			$modelRestaurant->user = $request->_auth;
-			$modelCommantaire= new Model_Commentaire();
-			$modelCommantaire->note = $_POST['note'];
-			$modelCommantaire->commentaire = $_POST['commentaire'];
-			$modelCommantaire->anonyme = $_POST['anonyme'] == 'true' ? true : false;
-			$modelRestaurant->commentaire = $modelCommantaire;
-			$modelRestaurant->noterMenu();
-		}
+	public function enableCarte ($request) {
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id_commentaire'];
+		$modelRestaurant->enableCommentaireCarte();
+		$this->redirect('plats', 'commentaire');
+	}
+	
+	public function annuleMenu ($request) {
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id_commentaire'];
+		$modelRestaurant->disableCommentaireMenu();
+		$this->redirect('plats', 'commentaire');
+	}
+	
+	public function enableMenu ($request) {
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id_commentaire'];
+		$modelRestaurant->enableCommentaireMenu();
+		$this->redirect('plats', 'commentaire');
 	}
 }

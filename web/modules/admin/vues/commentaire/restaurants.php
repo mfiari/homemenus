@@ -1,7 +1,7 @@
 <ul class="nav nav-tabs">
-  <li role="presentation"><a href="?controler=notes">Commandes</a></li>
+  <li role="presentation"><a href="?controler=commentaire">Commandes</a></li>
   <li role="presentation" class="active"><a href="#">Restaurants</a></li>
-  <li role="presentation"><a href="?controler=notes&action=plats">Plats</a></li>
+  <li role="presentation"><a href="?controler=commentaire&action=plats">Plats</a></li>
 </ul>
 <h2>Commentaire Restaurants</h2>
 <div id="restaurants">

@@ -1101,6 +1101,151 @@ class Model_Restaurant extends Model_Template {
 		return true;
 	}
 	
+	public function getAllCommentairePlats () {
+		$sql = "SELECT resto.id AS id_restaurant, resto.nom AS restaurant, id_user, nom_user, prenom_user, carte.id AS id_carte, carte.nom AS carte, 
+		cch.id_categorie, cch.nom_categorie, com.id AS id_commentaire, com.note, com.commentaire, com.validation
+		FROM restaurants resto
+		JOIN commande_history history ON history.id_restaurant = resto.id
+		JOIN commande_carte_history cch ON cch.id_commande = history.id
+		JOIN carte ON carte.id = cch.id_carte
+		JOIN commentaire_carte com ON com.id_carte = carte.id AND com.uid = history.id_user
+		WHERE resto.enabled = 1 AND carte.is_visible = 1
+		GROUP BY id_carte
+		ORDER BY restaurant, nom_categorie";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$restaurants = $stmt->fetchAll();
+		$list = array();
+		foreach ($restaurants as $resto) {
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $resto['id_restaurant'];
+			$restaurant->nom = $resto['restaurant'];
+			
+			$client = new Model_User();
+			$client->id = $resto["id_user"];
+			$client->nom = $resto["nom_user"];
+			$client->prenom = $resto["prenom_user"];
+			
+			$restaurant->user = $client;
+			
+			$categorie = new Model_Categorie();
+			$categorie->id = $resto["id_categorie"];
+			$categorie->nom = $resto["nom_categorie"];
+			
+			$contenu = new Model_Contenu();
+			$contenu->id = $resto["id_carte"];
+			$contenu->nom = $resto["carte"];
+			$contenu->getLogo($restaurant->id);
+			
+			$commentaire = new Model_Commentaire();
+			$commentaire->id = $resto['id_commentaire'];
+			$commentaire->note = $resto['note'];
+			$commentaire->commentaire = $resto['commentaire'];
+			$commentaire->validation = $resto['validation'];
+			
+			$contenu->commentaire = $commentaire;
+			
+			$categorie->addContenu($contenu);
+			
+			$restaurant->addCategorie($categorie);
+			
+			$list[] = $restaurant;
+		}
+		$sql = "SELECT resto.id AS id_restaurant, resto.nom AS restaurant, id_user, nom_user, prenom_user, menus.id AS id_menu, menus.nom AS menu, 
+		com.id AS id_commentaire, com.note, com.commentaire, com.validation
+		FROM restaurants resto
+		JOIN commande_history history ON history.id_restaurant = resto.id
+		JOIN commande_menu_history cmh ON cmh.id_commande = history.id
+		JOIN menus ON menus.id = cmh.id_menu
+		JOIN commentaire_menu com ON com.id_menu = menus.id AND com.uid = history.id_user
+		WHERE resto.enabled = 1
+		GROUP BY id_menu
+		ORDER BY restaurant";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$restaurants = $stmt->fetchAll();
+		foreach ($restaurants as $resto) {
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $resto['id_restaurant'];
+			$restaurant->nom = $resto['restaurant'];
+			
+			$client = new Model_User();
+			$client->id = $resto["id_user"];
+			$client->nom = $resto["nom_user"];
+			$client->prenom = $resto["prenom_user"];
+			
+			$restaurant->user = $client;
+			
+			$menu = new Model_Menu();
+			$menu->id = $resto["id_menu"];
+			$menu->nom = $resto["menu"];
+			$menu->getLogo($restaurant->id);
+			
+			$commentaire = new Model_Commentaire();
+			$commentaire->id = $resto['id_commentaire'];
+			$commentaire->note = $resto['note'];
+			$commentaire->commentaire = $resto['commentaire'];
+			$commentaire->validation = $resto['validation'];
+			
+			$menu->commentaire = $commentaire;
+			
+			$restaurant->addMenu($menu);
+			
+			$list[] = $restaurant;
+		}
+		return $list;
+	}
+	
+	public function disableCommentaireCarte () {
+		$sql = "UPDATE commentaire_carte SET validation = 0 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function enableCommentaireCarte () {
+		$sql = "UPDATE commentaire_carte SET validation = 1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function disableCommentaireMenu () {
+		$sql = "UPDATE commentaire_menu SET validation = 0 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function enableCommentaireMenu () {
+		$sql = "UPDATE commentaire_menu SET validation = 1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
 	public function getCommentaireByUser () {
 		$sql = "SELECT resto.id AS id_restaurant, resto.nom, resto.rue, resto.ville, resto.code_postal, 
 		com.id AS id_commentaire, com.note
