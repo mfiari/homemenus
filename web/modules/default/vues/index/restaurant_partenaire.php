@@ -22,13 +22,17 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-8">
 					<?php foreach ($restaurant->certificats as $certificat) : ?>
 						<a href="<?php echo $certificat->url; ?>" target="_blank" data-toggle="tooltip" title="<?php echo utf8_encode($certificat->description); ?>">
 							<img src="res/img/<?php echo $certificat->logo; ?>">
 							<span><?php echo utf8_encode($certificat->nom); ?></span>
 						</a>
 					<?php endforeach; ?>
+				</div>
+				<div class="col-md-4">
+					<?php echo $restaurant->note; ?> / 5
+					<?php echo $restaurant->commentaire; ?> commentaire(s)
 				</div>
 			</div>
 		</div>

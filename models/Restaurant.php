@@ -36,6 +36,7 @@ class Model_Restaurant extends Model_Template {
 	private $carteImg;
 	private $menuImg;
 	private $is_enable;
+	private $note;
 	private $commentaire;
 	
 	public function __construct($callParent = true) {
@@ -469,7 +470,9 @@ class Model_Restaurant extends Model_Template {
 	
 	public function loadAll () {
 		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.long_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, 
-		rh.heure_fin, rh.minute_fin
+		rh.heure_fin, rh.minute_fin,
+		(SELECT (SUM(note) / COUNT(*)) FROM commentaire_restaurant WHERE id_restaurant = :id) AS note,
+		(SELECT COUNT(*) FROM commentaire_restaurant WHERE id_restaurant = :id AND validation = 1) AS nb_commentaire
 		FROM restaurants r 
 		LEFT JOIN restaurant_horaires rh ON rh.id_restaurant = r.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
 		OR ((rh.heure_debut < HOUR(CURRENT_TIME) OR (rh.heure_debut = HOUR(CURRENT_TIME) AND rh.minute_debut <= MINUTE(CURRENT_TIME))) 
@@ -492,12 +495,16 @@ class Model_Restaurant extends Model_Template {
 		$this->long_desc = $value['long_desc'];
 		$this->latitude = $value['latitude'];
 		$this->longitude = $value['longitude'];
+		$this->note = $value['note'];
+		$this->commentaire = $value['nb_commentaire'];
+		
 		$horaire = new Model_Horaire(false);
 		$horaire->id_jour = $value['id_jour'];
 		$horaire->heure_debut = $value['heure_debut'];
 		$horaire->minute_debut = $value['minute_debut'];
 		$horaire->heure_fin = $value['heure_fin'];
 		$horaire->minute_fin = $value['minute_fin'];
+		
 		$this->horaire = $horaire;
 		
 		$sql = "SELECT certif.id, certif.nom, certif.description AS description_certif, certif.logo, rc.url, rc.description AS description
