@@ -37,6 +37,7 @@ class Model_Restaurant extends Model_Template {
 	private $menuImg;
 	private $is_enable;
 	private $note;
+	private $nb_note;
 	private $commentaire;
 	
 	public function __construct($callParent = true) {
@@ -472,6 +473,7 @@ class Model_Restaurant extends Model_Template {
 		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.long_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, 
 		rh.heure_fin, rh.minute_fin,
 		(SELECT (SUM(note) / COUNT(*)) FROM commentaire_restaurant WHERE id_restaurant = :id) AS note,
+		(SELECT COUNT(*) FROM commentaire_restaurant WHERE id_restaurant = :id) AS nb_note,
 		(SELECT COUNT(*) FROM commentaire_restaurant WHERE id_restaurant = :id AND validation = 1) AS nb_commentaire
 		FROM restaurants r 
 		LEFT JOIN restaurant_horaires rh ON rh.id_restaurant = r.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
@@ -496,6 +498,7 @@ class Model_Restaurant extends Model_Template {
 		$this->latitude = $value['latitude'];
 		$this->longitude = $value['longitude'];
 		$this->note = $value['note'];
+		$this->nb_note = $value['nb_note'];
 		$this->commentaire = $value['nb_commentaire'];
 		
 		$horaire = new Model_Horaire(false);
@@ -1086,6 +1089,42 @@ class Model_Restaurant extends Model_Template {
 		return $list;
 	}
 	
+	public function getCommentaireRestaurant () {
+		$sql = "SELECT user.uid AS id_user, user.nom AS nom_user, user.prenom AS prenom_user, com.id AS id_commentaire, com.note, com.commentaire, com.commentaire_anonyme,
+		com.date_commentaire
+		FROM commentaire_restaurant com
+		JOIN users user ON user.uid = com.uid
+		WHERE com.validation = 1 AND com.id_restaurant = :id
+		ORDER BY com.date_commentaire DESC";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$commentaires = $stmt->fetchAll();
+		$list = array();
+		foreach ($commentaires as $com) {
+			
+			$user = new Model_User();
+			$user->id = $com["id_user"];
+			$user->nom = $com["nom_user"];
+			$user->prenom = $com["prenom_user"];
+			
+			$commentaire = new Model_Commentaire();
+			$commentaire->id = $com['id_commentaire'];
+			$commentaire->note = $com['note'];
+			$commentaire->commentaire = $com['commentaire'];
+			$commentaire->anonyme = $com['commentaire_anonyme'];
+			$commentaire->date = $com['date_commentaire'];
+			
+			$commentaire->user = $user;
+			
+			$list[] = $commentaire;
+		}
+		return $list;
+	}
+	
 	public function disableCommentaire () {
 		$sql = "UPDATE commentaire_restaurant SET validation = 0 WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
@@ -1205,6 +1244,42 @@ class Model_Restaurant extends Model_Template {
 			$restaurant->addMenu($menu);
 			
 			$list[] = $restaurant;
+		}
+		return $list;
+	}
+	
+	public function getCommentaireCarte () {
+		$sql = "SELECT user.uid AS id_user, user.nom AS nom_user, user.prenom AS prenom_user, com.id AS id_commentaire, com.note, com.commentaire, com.commentaire_anonyme,
+		com.date_commentaire
+		FROM commentaire_carte com
+		JOIN users user ON user.uid = com.uid
+		WHERE com.validation = 1 AND com.id_carte = :id
+		ORDER BY com.date_commentaire DESC";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$commentaires = $stmt->fetchAll();
+		$list = array();
+		foreach ($commentaires as $com) {
+			
+			$user = new Model_User();
+			$user->id = $com["id_user"];
+			$user->nom = $com["nom_user"];
+			$user->prenom = $com["prenom_user"];
+			
+			$commentaire = new Model_Commentaire();
+			$commentaire->id = $com['id_commentaire'];
+			$commentaire->note = $com['note'];
+			$commentaire->commentaire = $com['commentaire'];
+			$commentaire->anonyme = $com['commentaire_anonyme'];
+			$commentaire->date = $com['date_commentaire'];
+			
+			$commentaire->user = $user;
+			
+			$list[] = $commentaire;
 		}
 		return $list;
 	}

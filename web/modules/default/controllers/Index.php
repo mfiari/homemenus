@@ -8,6 +8,7 @@ include_once ROOT_PATH."models/Categorie.php";
 include_once ROOT_PATH."models/Contenu.php";
 include_once ROOT_PATH."models/Menu.php";
 include_once ROOT_PATH."models/Certificat.php";
+include_once ROOT_PATH."models/Commentaire.php";
 
 class Controller_Index extends Controller_Default_Template {
 	

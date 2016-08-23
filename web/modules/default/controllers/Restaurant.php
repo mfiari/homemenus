@@ -21,6 +21,7 @@ include_once ROOT_PATH."models/Accompagnement.php";
 include_once ROOT_PATH."models/Recherche.php";
 include_once ROOT_PATH."models/Certificat.php";
 include_once ROOT_PATH."models/CodePromo.php";
+include_once ROOT_PATH."models/Commentaire.php";
 
 class Controller_Restaurant extends Controller_Default_Template {
 	

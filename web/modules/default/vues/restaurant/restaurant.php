@@ -37,13 +37,22 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-8">
 					<?php foreach ($restaurant->certificats as $certificat) : ?>
 						<a href="<?php echo $certificat->url; ?>" target="_blank" data-toggle="tooltip" title="<?php echo utf8_encode($certificat->description); ?>">
 							<img src="res/img/<?php echo $certificat->logo; ?>">
 							<span><?php echo utf8_encode($certificat->nom); ?></span>
 						</a>
 					<?php endforeach; ?>
+				</div>
+				<div class="col-md-4">
+					<?php if ($restaurant->commentaire == 0) : ?>
+						<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - 0 commentaire
+					<?php else : ?>
+						<a onclick="openCommentairesRestaurant(<?php echo $restaurant->id; ?>)">
+							<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - <?php echo $restaurant->commentaire; ?> commentaire(s)
+						</a>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>
@@ -122,6 +131,20 @@
 									</div>
 								</div>
 							</div>
+							<?php if ($contenu->supplement->note != '') : ?>
+								<div class="row">
+									<div class="col-md-12" style="text-align : center;">
+										<?php if ($contenu->supplement->commentaire == 0) : ?>
+											<?php echo $contenu->supplement->note; ?> / 5 (<?php echo $contenu->supplement->vote; ?> vote(s)) - 0 commentaire
+										<?php else : ?>
+											<a onclick="openCommentaires(<?php echo $contenu->id; ?>)">
+												<?php echo $contenu->supplement->note; ?> / 5 (<?php echo $contenu->supplement->vote; ?> vote(s))
+												- <?php echo $contenu->supplement->commentaire; ?> commentaire(s)
+											</a>
+										<?php endif; ?>
+									</div>
+								</div>
+							<?php endif; ?>
 						<?php endforeach; ?>
 					</div>
 				<?php endif; ?>
@@ -364,6 +387,21 @@
 		</div>
 	</div>
 </div>
+<div id="commentaire-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
 <script type="text/javascript">
 	$(function() {
 		initialize();
@@ -530,6 +568,32 @@
 			initDeleteMenuItem ();
 			initPanierCommande();
 			initCodePromo ();
+		});
+	}
+	
+	function openCommentairesRestaurant (id_resto) {
+		$("#loading-modal").modal();
+		$.ajax({
+			type: "GET",
+			url: '?controler=notes&action=viewRestaurant&id_restaurant='+id_resto,
+			dataType: "html"
+		}).done(function( msg ) {
+			$("#loading-modal").modal('hide');
+			$("#commentaire-modal .modal-body").html(msg);
+			$("#commentaire-modal").modal();
+		});
+	}
+	
+	function openCommentaires (id_carte) {
+		$("#loading-modal").modal();
+		$.ajax({
+			type: "GET",
+			url: '?controler=notes&action=viewCarte&id_carte='+id_carte,
+			dataType: "html"
+		}).done(function( msg ) {
+			$("#loading-modal").modal('hide');
+			$("#commentaire-modal .modal-body").html(msg);
+			$("#commentaire-modal").modal();
 		});
 	}
 </script>

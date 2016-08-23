@@ -29,11 +29,20 @@ class Controller_Notes extends Controller_Default_Template {
 				case "noterRestaurant" :
 					$this->noterRestaurant($request);
 					break;
+				case "viewRestaurant" :
+					$this->viewRestaurant($request);
+					break;
 				case "plats" :
 					$this->plats($request);
 					break;
 				case "noterCarte" :
 					$this->noterCarte($request);
+					break;
+				case "viewCarte" :
+					$this->viewCarte($request);
+					break;
+				case "noterMenu" :
+					$this->noterMenu($request);
 					break;
 				default :
 					$this->redirect('404');
@@ -97,6 +106,14 @@ class Controller_Notes extends Controller_Default_Template {
 		}
 	}
 	
+	public function viewRestaurant ($request) {
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id_restaurant'];
+		$request->commentaires = $modelRestaurant->getCommentaireRestaurant();
+		$request->disableLayout = true;
+		$request->vue = $this->render("commentaires");
+	}
+	
 	public function plats ($request) {
 		$request->title = "Notes";
 		$modelRestaurant = new Model_Restaurant();
@@ -118,6 +135,14 @@ class Controller_Notes extends Controller_Default_Template {
 			$modelRestaurant->commentaire = $modelCommantaire;
 			$modelRestaurant->noterCarte();
 		}
+	}
+	
+	public function viewCarte ($request) {
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $_GET['id_carte'];
+		$request->commentaires = $modelRestaurant->getCommentaireCarte();
+		$request->disableLayout = true;
+		$request->vue = $this->render("commentaires");
 	}
 	
 	public function noterMenu ($request) {

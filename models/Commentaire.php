@@ -4,11 +4,13 @@ class Model_Commentaire {
 	
 	private $id;
 	private $note;
+	private $vote;
 	private $commentaire;
 	private $anonyme;
 	private $social;
 	private $date;
 	private $validation;
+	private $user;
 	
 	public function __get($property) {
 		if (property_exists($this, $property)) {

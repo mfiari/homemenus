@@ -136,7 +136,10 @@ class Model_Categorie extends Model_Template {
 		JOIN restaurant_horaires rh ON rh.id = cd.id_horaire AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
 		OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin > HOUR(CURRENT_TIME)))
 		WHERE id_categorie = :id AND is_visible = 1 GROUP BY carte.id ORDER BY ordre";*/
-		$sql = "SELECT carte.id, carte.nom, carte.commentaire, (SELECT MIN(cf.prix) FROM carte_format cf WHERE cf.id_carte = carte.id) AS prix
+		$sql = "SELECT carte.id, carte.nom, carte.commentaire, (SELECT MIN(cf.prix) FROM carte_format cf WHERE cf.id_carte = carte.id) AS prix,
+		(SELECT (SUM(note) / COUNT(*)) FROM commentaire_carte WHERE id_carte = carte.id) AS note,
+		(SELECT COUNT(*) FROM commentaire_carte WHERE id_carte = carte.id) AS vote,
+		(SELECT COUNT(*) FROM commentaire_carte WHERE id_carte = carte.id AND validation = 1) AS nb_commentaire
 		FROM carte
 		WHERE id_categorie = :id AND is_visible = 1 GROUP BY carte.id ORDER BY ordre";
 		$stmt = $this->db->prepare($sql);
@@ -153,6 +156,14 @@ class Model_Categorie extends Model_Template {
 			$contenu->prix = $c["prix"];
 			$contenu->commentaire = $c["commentaire"];
 			$contenu->getLogo($id_restaurant, $directory);
+			
+			$commentaire = new Model_Commentaire();
+			$commentaire->note = $c['note'];
+			$commentaire->vote = $c['vote'];
+			$commentaire->commentaire = $c['nb_commentaire'];
+			
+			$contenu->supplement = $commentaire;
+			
 			$this->contenus[] = $contenu;
 		}
 		return $this;
