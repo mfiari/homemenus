@@ -15,7 +15,7 @@
 		<?php endif; ?>
 		<div class="col-md-3 col-sm-12 item">
 			<span class="title">
-				<a href="?action=restaurant_partenaire&id=<?php echo $restaurant->id; ?>">
+				<a href="restaurant-<?php echo $restaurant->id; ?>-<?php echo str_replace(' ', '-', $ville); ?>-<?php echo str_replace(' ', '-', utf8_encode($restaurant->nom)); ?>.html">
 					<?php echo utf8_encode($restaurant->nom); ?>
 				</a>
 			</span>

@@ -1,0 +1,8 @@
+# On suit les liens symboliques 
+Options +FollowSymlinks 
+# Activation du mod rewrite d'Apache 
+RewriteEngine On
+# Réécriture de index.html vers index.php 
+RewriteRule ^web/index\.html$ web/index.php [L]
+# Réécriture des URL des restaurants 
+RewriteRule ^web/restaurant-([0-9]+)-([a-zA-Z0-9\-]+)\.html$ web/index.php?action=restaurant_partenaire&id=$1 [L]
