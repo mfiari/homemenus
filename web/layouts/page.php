@@ -121,7 +121,7 @@
 					window.setInterval(function() {
 						$.ajax({
 							type: "GET",
-							url: '?controler=commande&action=hasChat&id_commande=<?php echo $id_commande; ?>',
+							url: 'index.php?controler=commande&action=hasChat&id_commande=<?php echo $id_commande; ?>',
 							dataType: "html"
 						}).done(function( msg ) {
 							if (msg != "" && msg != "0") {
