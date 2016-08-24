@@ -10,7 +10,7 @@
 			<!-- Wrapper for slides -->
 			<div class="carousel-inner" role="listbox">
 				<div class="item active">
-					<a href="?action=restaurant_partenaire&id=10">
+					<a href="restaurant-10-Mantes-la-Ville-La-Villa-Mantes.html">
 						<img style="height : 300px; width : 100%;" src="res/img/slider1.jpg" title="HoMe Menus - La villa Mantes la jolie" alt="HoMe Menus - La villa Mantes la jolie">
 						<div class="carousel-caption">
 							<h3>Ouverture de La Villa</h3>
