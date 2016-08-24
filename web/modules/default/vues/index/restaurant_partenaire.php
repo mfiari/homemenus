@@ -31,12 +31,14 @@
 					<?php endforeach; ?>
 				</div>
 				<div class="col-md-4">
-					<?php if ($restaurant->commentaire == 0) : ?>
-						<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - 0 commentaire
-					<?php else : ?>
-						<a onclick="openCommentairesRestaurant(<?php echo $restaurant->id; ?>)">
-							<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - <?php echo $restaurant->commentaire; ?> commentaire(s)
-						</a>
+					<?php if ($restaurant->note != '') : ?>
+						<?php if ($restaurant->commentaire == 0) : ?>
+							<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - 0 commentaire
+						<?php else : ?>
+							<a onclick="openCommentairesRestaurant(<?php echo $restaurant->id; ?>)">
+								<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - <?php echo $restaurant->commentaire; ?> commentaire(s)
+							</a>
+						<?php endif; ?>
 					<?php endif; ?>
 				</div>
 			</div>
