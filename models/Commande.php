@@ -759,7 +759,7 @@ class Model_Commande extends Model_Template {
 	public function getClient () {
 		$sql = "SELECT client.uid, client.nom, client.prenom, us.gcm_token, client.is_login FROM commande
 		JOIN users client ON client.uid = commande.uid
-		JOIN user_session us ON us.uid = livreur.uid AND us.date_logout = '0000-00-00 00:00:00'
+		LEFT JOIN user_session us ON us.uid = client.uid AND us.date_logout = '0000-00-00 00:00:00'
 		WHERE commande.id = :id
 		LIMIT 1";
 		$stmt = $this->db->prepare($sql);
