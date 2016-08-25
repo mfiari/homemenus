@@ -23,11 +23,43 @@ class Controller_Compte extends Controller_Livreur_Template {
 	}
 	
 	public function index ($request) {
-		$request->title = "Compte";
-		$modelUser = new Model_User();
-		$modelUser->id = $request->_auth->id;
-		$request->user = $modelUser->getLivreur();
-		$request->vue = $this->render("compte.php");
+		if ($request->_auth) {
+			$request->title = "Compte";
+			if ($request->request_method == "POST") {
+				$modelUser = new Model_User();
+				$modelUser->id = $request->_auth->id;
+				$oldUser = $modelUser->getLivreur();
+				if (isset($_POST["nom"]) && trim($_POST["nom"]) != '') {
+					$modelUser->nom = $_POST["nom"];
+				}
+				if (isset($_POST["prenom"]) && trim($_POST["prenom"]) != '') {
+					$modelUser->prenom = $_POST["prenom"];
+				}
+				if (isset($_POST["login"]) && trim($_POST["login"]) != '') {
+					$modelUser->login = $_POST["login"];
+				}
+				if (isset($_POST["email"]) && trim($_POST["email"]) != '') {
+					$modelUser->email = $_POST["email"];
+				}
+				if (isset($_POST["telephone"])) {
+					$modelUser->telephone = $_POST["telephone"];
+				}
+				if ($modelUser->save()) {
+					$request->user = $modelUser;
+					$request->successMessage = "Votre compte a bien été modifié.";
+				} else {
+					$request->errorMessage = array("Une erreur est survenue lors de la modification des données. Veuillez réessayer ultérieurement.");
+					$request->user = $oldUser;
+				}
+			} else {
+				$modelUser = new Model_User();
+				$modelUser->id = $request->_auth->id;
+				$request->user = $modelUser->getLivreur();
+			}
+			$request->vue = $this->render("compte.php");
+		} else {
+			$this->redirect();
+		}
 	}
 	
 	public function modifyPassword ($request) {

@@ -19,28 +19,31 @@
 		<div class="col-md-12">
 			<div class="row">
 				<h3>Mes informations</h3>
-				<fieldset>
-					<div class="form-group">
-						<label for="nom">Nom : </label>
-						<span><?php echo $request->user->nom; ?></span>
-					</div>
-					<div class="form-group">
-						<label for="prenom">Prénom : </label>
-						<span><?php echo $request->user->prenom; ?></span>
-					</div>
-					<div class="form-group">
-						<label for="prenom">Identifiant : </label>
-						<span><?php echo $request->user->login; ?></span>
-					</div>
-					<div class="form-group">
-						<label for="login">email : </label>
-						<span><?php echo $request->user->email; ?></span>
-					</div>
-					<div class="form-group">
-						<label for="telephone">Téléphone : </label>
-						<span><?php echo $request->user->telephone; ?></span>
-					</div>
-				</fieldset>
+				<form method="post" enctype="x-www-form-urlencoded" id="userForm" action="">
+					<fieldset>
+						<div class="form-group">
+							<label for="nom">Nom : </label>
+							<input class="form-control" name="nom" type="text" value="<?php echo $request->user->nom; ?>" maxlength="32" required>
+						</div>
+						<div class="form-group">
+							<label for="prenom">Prénom : </label>
+							<input class="form-control" name="prenom" type="text" value="<?php echo $request->user->prenom; ?>" maxlength="32" required>
+						</div>
+						<div class="form-group">
+							<label for="login">Identifiant : </label>
+							<input class="form-control" name="login" type="text" value="<?php echo $request->user->login; ?>" maxlength="32" required>
+						</div>
+						<div class="form-group">
+							<label for="email">email : </label>
+							<input class="form-control" name="email" type="email" value="<?php echo $request->user->email; ?>" maxlength="32" required>
+						</div>
+						<div class="form-group">
+							<label for="telephone">Téléphone : </label>
+							<input class="form-control" name="telephone" type="text" value="<?php echo $request->user->telephone; ?>" maxlength="10" >
+						</div>
+						<button class="btn btn-primary" type="submit" id="userFormValidationButton" >Modifier</button>
+					</fieldset>
+				</form>
 			</div>
 			<div class="row">
 				<h3>Mes horaires</h3>

@@ -229,6 +229,19 @@ class Model_User extends Model_Template {
 		return true;
 	}
 	
+	public function updateLivreur() {
+		$sql = "UPDATE user_livreur SET telephone = :telephone WHERE uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":telephone", $this->telephone);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
 	public function confirm () {
 		$sql = "SELECT uid, nom, prenom, status, is_enable FROM users WHERE uid = :id AND inscription_token = :token";
 		$stmt = $this->db->prepare($sql);
@@ -905,7 +918,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getLivreur () {
-		$sql = "SELECT user.uid, user.nom, user.prenom, user.login, user.email, user.is_enable, ul.telephone
+		$sql = "SELECT user.uid, user.nom, user.prenom, user.login, user.email, user.status, user.is_enable, ul.telephone
 		FROM users user JOIN user_livreur ul ON ul.uid = user.uid WHERE user.uid = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
@@ -924,6 +937,7 @@ class Model_User extends Model_Template {
 		$this->prenom = $value["prenom"];
 		$this->login = $value["login"];
 		$this->email = $value["email"];
+		$this->status = $value["status"];
 		$this->is_enable = $value["is_enable"];
 		$this->telephone = $value["telephone"];
 		
