@@ -16,7 +16,7 @@
 				Informations générales
 			</div>
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-6 col-sm-6">
 					<div style="margin-left : 10px; margin-top : 10px;">
 						<p><span>Adresse : </span><?php echo utf8_encode($restaurant->rue); ?>, <?php echo $restaurant->code_postal; ?> <?php echo $restaurant->ville; ?></p>
 						<p><?php echo utf8_encode($restaurant->short_desc); ?></p>
@@ -32,12 +32,12 @@
 						<p>Prix de livraison : <?php echo formatPrix($request->prix_livraison); ?></p>
 					</div>
 				</div>
-				<div class="col-md-6">
+				<div class="col-md-6  col-sm-6">
 					<div id="googleMap" class="col-md-10 col-md-offset-1" style="height:200px; margin-top : 10px;"></div>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-8">
+				<div class="col-md-8 col-sm-12">
 					<?php foreach ($restaurant->certificats as $certificat) : ?>
 						<a href="<?php echo $certificat->url; ?>" target="_blank" data-toggle="tooltip" title="<?php echo utf8_encode($certificat->description); ?>">
 							<img src="res/img/<?php echo $certificat->logo; ?>">
@@ -45,7 +45,7 @@
 						</a>
 					<?php endforeach; ?>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-4 col-sm-12" style="text-align : center;">
 					<?php if ($restaurant->commentaire == 0) : ?>
 						<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - 0 commentaire
 					<?php else : ?>
@@ -75,7 +75,7 @@
 		<?php endif; ?>
 	</div>
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-3 col-sm-12">
 			<?php foreach ($restaurant->categories as $categorie) : ?>
 				<?php if (count($categorie->contenus) > 0) : ?>
 					<div class="row">
@@ -96,7 +96,7 @@
 				</div>
 			<?php endif; ?>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-6 col-sm-7">
 			<?php foreach ($restaurant->categories as $categorie) : ?>
 				<?php if (count($categorie->contenus) > 0) : ?>
 					<div class="row">
@@ -114,7 +114,7 @@
 								<div class="col-md-12">
 									<p class="carte-item-title"><?php echo utf8_encode($contenu->nom); ?></p>
 									<div class="row">
-										<div class="col-md-4">
+										<div class="col-md-4 col-sm-4">
 											<div class="row">
 												<div class="vignette"><img src="<?php echo $contenu->logo; ?>"></div>
 											</div>
@@ -122,10 +122,10 @@
 												<span>Prix : <?php echo formatPrix($contenu->prix); ?></span>
 											</div>
 										</div>
-										<div class="col-md-6">
+										<div class="col-md-6 col-sm-6">
 											<?php echo utf8_encode($contenu->commentaire); ?>
 										</div>
-										<div class="col-md-2">
+										<div class="col-md-2 col-sm-2">
 											<span class="add-button" style="display : none;">+</span>
 										</div>
 									</div>
@@ -158,7 +158,7 @@
 							<div class="col-md-12">
 								<p class="carte-item-title"><?php echo utf8_encode($menu->nom); ?></p>
 								<div class="row">
-									<div class="col-md-4">
+									<div class="col-md-4 col-sm-4">
 										<div class="row">
 											<div class="vignette"><img src="<?php echo $menu->logo; ?>"></div>
 										</div>
@@ -166,10 +166,10 @@
 											<span>Prix : <?php echo formatPrix($menu->prix); ?></span>
 										</div>
 									</div>
-									<div class="col-md-6">
+									<div class="col-md-6 col-sm-6">
 										<?php echo utf8_encode($menu->commentaire); ?>
 									</div>
-									<div class="col-md-2">
+									<div class="col-md-2 col-sm-2">
 										<span class="add-button" style="display : none;">+</span>
 									</div>
 								</div>
@@ -179,7 +179,7 @@
 				</div>
 			<?php endif; ?>
 		</div>
-		<div id="panier" class="col-md-3">
+		<div id="panier" class="col-md-3 col-sm-5">
 			<h3>Panier</h3>
 			<div id="panier-content">
 				<?php if ($request->panier) : ?>

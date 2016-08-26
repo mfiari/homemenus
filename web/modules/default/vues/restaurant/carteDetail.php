@@ -26,7 +26,7 @@
 		<?php else : ?>
 			<div class="row">
 				<?php foreach ($request->carte->formats as $format) : ?>
-					<div class="col-md-4">
+					<div class="col-md-4 col-sm-12">
 						<div><input type="radio" name="format" value="<?php echo $format->id; ?>"><span style="margin-left : 10px;"><?php echo utf8_encode($format->nom); ?></span></div>
 						<div>Prix : <?php echo formatPrix($format->prix); ?></div>
 					</div>
