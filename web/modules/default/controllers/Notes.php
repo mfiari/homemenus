@@ -6,13 +6,11 @@ include_once MODEL_PATH."Restaurant.php";
 include_once MODEL_PATH."Commentaire.php";
 include_once MODEL_PATH."Categorie.php";
 include_once MODEL_PATH."Contenu.php";
+include_once MODEL_PATH."User.php";
 
 class Controller_Notes extends Controller_Default_Template {
 	
 	public function manage ($request) {
-		if (!$request->_auth) {
-			$this->redirect();
-		}
 		$this->request = $request;
 		if (isset($_GET["action"])) {
 			$action = $_GET["action"];
