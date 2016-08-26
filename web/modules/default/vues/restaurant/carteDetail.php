@@ -37,6 +37,7 @@
 			<?php if (count($request->carte->options) > 0) : ?>
 				<?php foreach ($request->carte->options as $option) : ?>
 					<h3>Choisissez votre <?php echo utf8_encode($option->nom); ?> </h3>
+					<input type="hidden" class="option_ids" value="<?php echo $option->id; ?>" />
 					<?php foreach ($option->values as $value) : ?>
 						<div style="margin-left : 20px;">
 							<input type="radio" name="check_option_<?php echo $option->id; ?>" value="<?php echo $value->id; ?>"/>
@@ -106,6 +107,30 @@
 	initStepper ("stepper");
 	$("#addtocard").click(function(event) {
 		event.preventDefault();
+		var format = '';
+		if ($('input[name=format]').is(':radio')) {
+			if ($('input[name=format]').is(':checked')) {
+				format = $("input[name=format]:checked").val();
+				console.log(format);
+			}
+		} else {
+			format = $('input[name=format]').val();
+		}
+		if (format == '') {
+			alert('Veuillez choisir le format');
+			return;
+		}
+		var optionChecked = true;
+		$( ".option_ids" ).each(function(index) {
+			var option_id = $(this).val();
+			if (!$('input[name=check_option_'+option_id+']').is(':checked')) {
+				optionChecked = false;
+			}
+		});
+		if (!optionChecked) {
+			alert('Vous n\'avez pas choisi vos option.');
+			return;
+		}
 		$("#addtocard").css('display', 'none');
 		$("#carte-modal .modal-footer .glyphicon-refresh-animate").css('display', 'inline-block');
 		$.ajax({
