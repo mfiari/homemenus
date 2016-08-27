@@ -77,5 +77,10 @@
 				}
 			?>
 		</div>
+		<script>
+			$(document).ready(function() {
+				$('#toggle-menu').sidr();
+			});
+		</script>
 	</body>
 </html>

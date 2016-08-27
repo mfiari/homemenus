@@ -1,6 +1,6 @@
 <header class="navbar navbar-inverse navbar-fixed-top" role="banner">
 	<div class="navbar-header">
-		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+		<button class="navbar-toggle" type="button" id="toggle-menu" href="#sidr">
 			<span class="sr-only">Toggle navigation</span>
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
@@ -10,7 +10,7 @@
 			<img id="logo" src="res/img/logo.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
 		</a>
 	</div>
-	<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+	<div id="sidr">
 		<ul class="menu nav navbar-nav">
 			<?php if ($request->_auth) : ?>
 				<li><a href="?controler=contact">Contact</a></li>
@@ -40,7 +40,7 @@
 				<li><a href="?action=faq">FAQ</a></li>
 			<?php endif; ?>
 		</ul>
-	</nav>
+	</div>
 </header>
 <div style="padding-top : 180px">
 	<div>

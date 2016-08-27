@@ -11,6 +11,7 @@
 	<script type="text/javascript" src="res/bootstrap/js/bootstrap.js"></script>
 	<script type="text/javascript" src="res/js/bootstrap-star-rating.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+	<script type="text/javascript" src="res/sidr/jquery.sidr.min.js"></script>
 	<?php 
 		if ($request->hasProperty('javascripts')) {
 			foreach ($request->javascripts as $js) {
@@ -22,6 +23,7 @@
 	<link rel="stylesheet" href="res/jquery-ui/jquery-ui.css" type="text/css"/>
 	<link rel="stylesheet" href="res/bootstrap/css/bootstrap.min.css" type="text/css"/>
 	<link rel="stylesheet" href="res/css/site-mobile.css" type="text/css"/>
+	<link rel="stylesheet" href="res/sidr/stylesheets/jquery.sidr.dark.min.css" type="text/css"/>
 	<?php
 		if ($request->hasProperty('stylesheets')) {
 			foreach ($request->stylesheets as $css) {
