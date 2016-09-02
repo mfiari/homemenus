@@ -63,6 +63,7 @@ class Controller_Index extends Controller_Admin_Template {
 		
 		$modelCommande = new Model_Commande_History();
 		$request->resultats = $modelCommande->getTotal($dateDebut, $dateFin);
+		$request->months = $modelCommande->getTotalByMonth($dateDebut, $dateFin);
 		$request->livreurs = $modelCommande->getTotalByLivreur($dateDebut, $dateFin);
 		$request->restaurants = $modelCommande->getTotalByRestaurant($dateDebut, $dateFin);
 		$request->clients = $modelCommande->getTotalByClient($dateDebut, $dateFin);

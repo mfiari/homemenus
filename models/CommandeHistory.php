@@ -543,6 +543,21 @@ class Model_Commande_History extends Model_Template {
 		return $value;
 	}
 	
+	public function getTotalByMonth ($dateDebut, $dateFin) {
+		$sql = "SELECT MONTH(date_commande) AS month, COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, 
+		SUM(prix + prix_livraison) AS total_prix FROM commande_history
+		WHERE date_commande BETWEEN :date_debut AND :date_fin
+		GROUP BY month";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return $stmt->fetchAll();
+	}
+	
 	public function getTotalByLivreur ($dateDebut, $dateFin) {
 		$sql = "SELECT id_livreur, login_livreur AS nom, COUNT(*) AS total_commande, 
 		SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, SUM(prix + prix_livraison) AS total_prix 
@@ -556,7 +571,7 @@ class Model_Commande_History extends Model_Template {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
-		return $stmt->fetchAll();;
+		return $stmt->fetchAll();
 	}
 	
 	public function getTotalByRestaurant ($dateDebut, $dateFin) {

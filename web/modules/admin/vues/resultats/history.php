@@ -39,6 +39,35 @@
 		</div>
 		<div class="col-md-10  col-md-offset-1">
 			<div class="row">
+				<h2>Total par mois</h2>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Mois</th>
+							<th>Nb de commande</th>
+							<th>Total restaurant</th>
+							<th>Total Livreur</th>
+							<th>Total HoMe Menus</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($request->months as $month) : ?>
+							<tr>
+								<td><?php echo $month['month']; ?></td>
+								<td><?php echo $month['total_commande']; ?></td>
+								<td><?php echo $month['part_restaurant']; ?></td>
+								<td><?php echo $month['part_livreur']; ?></td>
+								<td><?php echo $month['total_prix'] - $month['part_restaurant'] - $month['part_livreur']; ?></td>
+								<td><?php echo $month['total_prix']; ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-md-10  col-md-offset-1">
+			<div class="row">
 				<h2>Par livreur</h2>
 				<table class="table table-striped">
 					<thead>
