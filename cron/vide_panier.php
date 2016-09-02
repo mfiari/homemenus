@@ -5,6 +5,8 @@
 	include_once ROOT_PATH."function.php";
 	include_once ROOT_PATH."models/Template.php";
 	include_once ROOT_PATH."models/Panier.php";
+	include_once ROOT_PATH."models/User.php";
+	include_once ROOT_PATH."models/Restaurant.php";
 	
 	$modelPanier = new Model_Panier();
 	
