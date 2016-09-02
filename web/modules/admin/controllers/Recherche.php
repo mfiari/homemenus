@@ -2,6 +2,7 @@
 
 include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Recherche.php";
+include_once ROOT_PATH."models/Restaurant.php";
 
 class Controller_Recherche extends Controller_Admin_Template {
 	
@@ -47,9 +48,9 @@ class Controller_Recherche extends Controller_Admin_Template {
 	
 	public function detail ($request) {
 		$request->title = "Administration";
-		$modelMail = new Model_Mail();
-		$modelMail->id = $_GET['id'];
-		$request->mail = $modelMail->load();
+		$modelRecherche = new Model_Recherche();
+		$modelRecherche->id = $_GET['id'];
+		$request->recherche = $modelRecherche->load();
 		$request->vue = $this->render("recherche/detail.php");
 	}
 }

@@ -99,5 +99,41 @@ class Model_Recherche extends Model_Template {
 		return $list;
 	}
 	
+	public function load () {
+		$sql = "SELECT recherche, distance, ville, nb_restaurant, id_user, date_recherche FROM recherches 
+		WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return;
+		}
+		$this->recherche = $value['recherche'];
+		$this->distance = $value['distance'];
+		$this->ville = $value['ville'];
+		$this->nbRestaurant = $value['nb_restaurant'];
+		$this->date_recherche = $value['date_recherche'];
+		
+		$sql = "SELECT restaurants.id, nom FROM restaurants JOIN recherche_detail rd ON rd.id_restaurant = restaurants.id WHERE rd.id_recherche = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$resultats = $stmt->fetchAll();
+		foreach ($resultats as $resultat) {
+			$restaurant = new Model_Restaurant(false);
+			$restaurant->id = $resultat['id'];
+			$restaurant->nom = $resultat['nom'];
+			$this->restaurants[] = $restaurant;
+		}
+		return $this;
+	}
+	
 	
 }
