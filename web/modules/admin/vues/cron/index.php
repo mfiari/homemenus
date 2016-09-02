@@ -25,5 +25,9 @@
 			<span>Dump database</span>
 			<a href="?controler=cron&action=dumpDatabase">Lancer</a>
 		</div>
+		<div class="row">
+			<span>Vide panier</span>
+			<a href="?controler=cron&action=videPanier">Lancer</a>
+		</div>
 	</div>
 </div>

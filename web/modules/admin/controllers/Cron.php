@@ -27,6 +27,9 @@ class Controller_Cron extends Controller_Admin_Template {
 				case "dumpDatabase" :
 					$this->dumpDatabase($request);
 					break;
+				case "videPanier" :
+					$this->videPanier($request);
+					break;
 			}
 		} else {
 			$this->index($request);
@@ -65,6 +68,11 @@ class Controller_Cron extends Controller_Admin_Template {
 	
 	public function dumpDatabase ($request) {
 		exec('php '.ROOT_PATH.'cron/dump_database.php');
+		$this->redirect('index', 'cron');
+	}
+	
+	public function videPanier ($request) {
+		exec('php '.ROOT_PATH.'cron/vide_panier.php');
 		$this->redirect('index', 'cron');
 	}
 }
