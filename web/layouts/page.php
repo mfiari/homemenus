@@ -35,7 +35,16 @@
 			?>
 			<div id="main-content">
 				<div class="container">
-					<?php include($request->vue); ?>
+					<?php 
+						if (!$request->vue || $request->vue == '') {
+							$userStatus = "utilisateur non connecté";
+							if ($request->_auth) {
+								$userStatus = "compte ".$request->_auth->status;
+							}
+							writeLog(VIEW_LOG, "URL non trouvée : ".$_SERVER['REQUEST_URI'], LOG_LEVEL_ERROR, $userStatus);
+						}
+						include($request->vue);
+					?>
 				</div>
 			</div>
 			<div id="live-chat"></div>
