@@ -4,6 +4,7 @@ include_once ROOT_PATH."function.php";
 
 include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Commande.php";
+include_once ROOT_PATH."models/CommandeHistory.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Carte.php";
 include_once ROOT_PATH."models/Format.php";
@@ -19,6 +20,12 @@ class Controller_Commande extends Controller_Livreur_Template {
 		if (isset($_GET["action"])) {
 			$action = $_GET["action"];
 			switch ($action) {
+				case "index" :
+					$this->index($request);
+					break;
+				case "history" :
+					$this->history($request);
+					break;
 				case "validation" :
 					$this->validation($request);
 					break;
@@ -41,6 +48,38 @@ class Controller_Commande extends Controller_Livreur_Template {
 					$this->sendMessage($request);
 					break;
 			}
+		} else {
+			$this->index($request);
+		}
+	}
+	
+	public function index ($request) {
+		if (isset($_GET["id"])) {
+			$commande = new Model_Commande();
+			$commande->uid = $request->_auth->id;
+			$commande->id = $_GET["id"];
+			$request->commande = $commande->load();
+			$request->vue = $this->render("commande.php");
+		} else {
+			$commande = new Model_Commande();
+			$commande->uid = $request->_auth->id;
+			$request->commandes = $commande->getCommandesLivreur();
+			$request->vue = $this->render("commandes.php");
+		}
+	}
+	
+	public function history ($request) {
+		if (isset($_GET["id"])) {
+			$commande = new Model_Commande();
+			$commande->uid = $request->_auth->id;
+			$commande->id = $_GET["id"];
+			$request->commande = $commande->load();
+			$request->vue = $this->render("commande.php");
+		} else {
+			$commande = new Model_Commande_History();
+			$commande->uid = $request->_auth->id;
+			$request->commandes = $commande->loadCommandeLivreur();
+			$request->vue = $this->render("commandes_history.php");
 		}
 	}
 	

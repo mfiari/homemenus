@@ -1117,6 +1117,48 @@ class Model_Commande extends Model_Template {
 		return $listCommande;
 	}
 	
+	/*
+	* Récupère les commandes du livreur
+	*/
+	public function getCommandesLivreur () {
+		$sql = "SELECT com.id AS id_commande, com.uid, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.etape, com.is_premium, 
+		com.ville AS ville_commande, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, 
+		resto.id AS id_restaurant, resto.nom, resto.ville, com.last_view_livreur, client.uid, client.nom AS nom_client, client.prenom AS prenom_client
+		FROM commande com
+		JOIN restaurants resto ON resto.id = com.id_restaurant
+		JOIN users client ON client.uid = com.uid
+		WHERE id_livreur = :livreur";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":livreur", $this->uid);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$listCommande = array();
+		foreach ($result as $c) {
+			$commande = new Model_Commande();
+			$commande->id = $c["id_commande"];
+			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
+			$commande->heure_souhaite = $c["heure_souhaite"];
+			$commande->minute_souhaite = $c["minute_souhaite"];
+			$commande->etape = $c["etape"];
+			$commande->ville = $c["ville_commande"];
+			$commande->is_premium = $c["is_premium"];
+			$commande->client = new Model_User();
+			$commande->client->id = $c['uid'];
+			$commande->client->nom = $c['nom_client'];
+			$commande->client->prenom = $c['prenom_client'];
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $c["id_restaurant"];
+			$restaurant->nom = $c["nom"];
+			$restaurant->ville = $c["ville"];
+			$commande->restaurant = $restaurant;
+			$listCommande[] = $commande;
+		}
+		return $listCommande;
+	}
+	
 	public function getCommandeEnCoursNonVue () {
 		$sql = "SELECT COUNT(*) AS count
 		FROM commande com
