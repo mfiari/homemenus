@@ -7,6 +7,7 @@
 				<li data-target="#myCarousel" data-slide-to="1"></li>
 				<li data-target="#myCarousel" data-slide-to="2"></li>
 				<li data-target="#myCarousel" data-slide-to="3"></li>
+				<li data-target="#myCarousel" data-slide-to="4"></li>
 			</ol>
 
 			<!-- Wrapper for slides -->
@@ -21,8 +22,17 @@
 					</a>
 				</div>-->
 				<div class="item active">
+					<a href="#">
+						<img style="height : 350px; width : 100%;" src="res/img/ryhtme_alimentaire.jpg" title="HoMe Menus - horaire livraison" alt="HoMe Menus - horaire livraison">
+						<div class="carousel-caption">
+							<h3>Modification des horaires de livraison</h3>
+							<p>A partir du mardi 5 spetembre, nous livrons également le midi.</p>
+						</div>
+					</a>
+				</div>
+				<div class="item">
 					<a href="restaurant-11-Mantes-la-Ville-Okinawa.html">
-						<img style="height : 300px; width : 100%;" src="res/img/okinawa.jpg" title="HoMe Menus - Okinawa Mantes la ville" alt="HoMe Menus - Okinawa Mantes la ville">
+						<img style="height : 350px; width : 100%;" src="res/img/okinawa.jpg" title="HoMe Menus - Okinawa Mantes la ville" alt="HoMe Menus - Okinawa Mantes la ville">
 						<div class="carousel-caption">
 							<h3>Ouverture de L'Okinawa</h3>
 							<p>Ouverture du restaurant L'Okinawa à Mantes la ville. Commandez dès maintenant.</p>
@@ -31,7 +41,7 @@
 				</div>
 				<div class="item">
 					<a href="restaurant-12-Drocourt-La-fourchette-du-vexin.html">
-						<img style="height : 300px; width : 100%;" src="res/img/lafourchette.jpg" title="HoMe Menus - La fourchette du vexin Drocourt" alt="HoMe Menus - La fourchette du vexin Drocourt">
+						<img style="height : 350px; width : 100%;" src="res/img/lafourchette.jpg" title="HoMe Menus - La fourchette du vexin Drocourt" alt="HoMe Menus - La fourchette du vexin Drocourt">
 						<div class="carousel-caption">
 							<h3>Ouverture de la fourchette du vexin</h3>
 							<p>Ouverture du restaurant La Fourchette du vexin à Drocourt. Commandez dès maintenant.</p>
@@ -40,7 +50,7 @@
 				</div>
 				<div class="item">
 					<a href="restaurant-10-Mantes-la-Ville-La-Villa-Mantes.html">
-						<img style="height : 300px; width : 100%;" src="res/img/slider1.jpg" title="HoMe Menus - La villa Mantes la jolie" alt="HoMe Menus - La villa Mantes la jolie">
+						<img style="height : 350px; width : 100%;" src="res/img/slider1.jpg" title="HoMe Menus - La villa Mantes la jolie" alt="HoMe Menus - La villa Mantes la jolie">
 						<div class="carousel-caption">
 							<h3>Ouverture de La Villa</h3>
 							<p>Ouverture du restaurant La Villa à Mantes la jolie. Commandez dès maintenant.</p>
@@ -49,7 +59,7 @@
 				</div>
 				<div class="item">
 					<a href="?controler=contact&action=livreur">
-						<img style="height : 300px; width : 100%;" src="res/img/slider2.jpg" title="HoMe Menus - Livreur" alt="HoMe Menus - Livreur">
+						<img style="height : 350px; width : 100%;" src="res/img/slider2.jpg" title="HoMe Menus - Livreur" alt="HoMe Menus - Livreur">
 						<div class="carousel-caption">
 							<h3>Recrutement livreur</h3>
 							<p>Nous cherchons des livreurs pour le mois de septembre, disponible de 11h à 14h ! Contactez-nous dès maintenant.</p>
