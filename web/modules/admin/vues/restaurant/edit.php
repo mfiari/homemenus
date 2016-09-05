@@ -57,44 +57,53 @@
 				<span>Horaires</span>
 					<?php 
 						$jours = array(1 => "Lundi", 2 => "Mardi", 3 => "Mercredi", 4 => "Jeudi", 5 => "Vendredi", 6 => "Samedi", 7 => "Dimanche");
+						$periodes = array("midi" => "Midi", "soir" => "Soir");
 					?>
 					<?php foreach ($jours as $jkey => $jour) : ?>
-						<?php 
-							if ($edit) {
-								foreach ($request->restaurant->horaires as $current_horaire) {
-									if ($current_horaire->id_jour == $jkey) {
-										$horaire = $current_horaire;
-										break;
+						<?php foreach ($periodes as $pkey => $periode) : ?>
+							<?php 
+								if ($edit) {
+									foreach ($request->restaurant->horaires as $current_horaire) {
+										$horaire = null;
+										if ($current_horaire->id_jour == $jkey) {
+											if ($pkey == "midi" && $current_horaire->heure_debut >= 11 && $current_horaire->heure_debut <= 16) {
+												$horaire = $current_horaire;
+												break;
+											} else if ($pkey == "soir" && $current_horaire->heure_debut >= 18 && $current_horaire->heure_debut <= 23) {
+												$horaire = $current_horaire;
+												break;
+											}
+										}
 									}
 								}
-							}
-						?>
-						<div class="row">
-							<div class="col-md-2">
-								<label><?php echo $jour; ?> : </label>
-							</div>
-							<div class="col-md-4">
-								<div class="form-group">
-									<label>De : </label>
-									<input class="form-control" name="de_<?php echo $jkey; ?>_heure" type="text" value="<?php echo isset($horaire) ? $horaire->heure_debut : ""; ?>" size="2" />
-									<label>h</label>
-									<input class="form-control" name="de_<?php echo $jkey; ?>_minute" type="text" value="<?php echo isset($horaire) ? $horaire->minute_debut : "00"; ?>" size="2" />
+							?>
+							<div class="row">
+								<div class="col-md-2">
+									<label><?php echo $jour; ?> <?php echo $periode; ?> : </label>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label>De : </label>
+										<input class="form-control" name="de_<?php echo $jkey; ?>_<?php echo $pkey; ?>_heure" type="text" value="<?php echo isset($horaire) ? $horaire->heure_debut : ""; ?>" size="2" />
+										<label>h</label>
+										<input class="form-control" name="de_<?php echo $jkey; ?>_<?php echo $pkey; ?>_minute" type="text" value="<?php echo isset($horaire) ? $horaire->minute_debut : "00"; ?>" size="2" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label>à : </label>
+										<input class="form-control" name="a_<?php echo $jkey; ?>_<?php echo $pkey; ?>_heure" type="text" value="<?php echo isset($horaire) ? $horaire->heure_fin : ""; ?>" size="2" />
+										<label>h</label>
+										<input class="form-control" name="a_<?php echo $jkey; ?>_<?php echo $pkey; ?>_minute" type="text" value="<?php echo isset($horaire) ? $horaire->minute_fin : "00"; ?>" size="2" />
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group">
+										<input type="checkbox" name="ferme_<?php echo $jkey; ?>_<?php echo $pkey; ?>" <?php echo $edit && !isset($horaire) ? 'checked' : ""; ?>> Fermé
+									</div>
 								</div>
 							</div>
-							<div class="col-md-4">
-								<div class="form-group">
-									<label>à : </label>
-									<input class="form-control" name="a_<?php echo $jkey; ?>_heure" type="text" value="<?php echo isset($horaire) ? $horaire->heure_fin : ""; ?>" size="2" />
-									<label>h</label>
-									<input class="form-control" name="a_<?php echo $jkey; ?>_minute" type="text" value="<?php echo isset($horaire) ? $horaire->minute_fin : "00"; ?>" size="2" />
-								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-									<input type="checkbox" name="ferme_<?php echo $jkey; ?>" <?php echo $edit && !isset($horaire) ? 'checked' : ""; ?>> Fermé
-								</div>
-							</div>
-						</div>
+						<?php endforeach; ?>
 					<?php endforeach; ?>
 				</div>
 				<button id="add_restaurant_button" class="btn btn-primary" type="button">Valider</button>

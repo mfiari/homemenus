@@ -161,15 +161,19 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				$modelRestaurant->short_desc = $short_desc;
 				$modelRestaurant->long_desc = $long_desc;
 				
+				$periodes = array("midi", "soir");
+				
 				for ($i = 1 ; $i <= 7 ; $i++) {
-					if (!isset($_POST['ferme_'.$i]) || $_POST['ferme_'.$i] != 'on') {
-						$horaire = new Model_Horaire();
-						$horaire->id_jour = $i;
-						$horaire->heure_debut = $_POST['de_'.$i.'_heure'];
-						$horaire->minute_debut = $_POST['de_'.$i.'_minute'];
-						$horaire->heure_fin = $_POST['a_'.$i.'_heure'];
-						$horaire->minute_fin = $_POST['a_'.$i.'_minute'];
-						$modelRestaurant->addHoraire($horaire);
+					foreach ($periodes as $periode) {
+						if (!isset($_POST['ferme_'.$i.'_'.$periode]) || $_POST['ferme_'.$i.'_'.$periode] != 'on') {
+							$horaire = new Model_Horaire();
+							$horaire->id_jour = $i;
+							$horaire->heure_debut = $_POST['de_'.$i.'_'.$periode.'_heure'];
+							$horaire->minute_debut = $_POST['de_'.$i.'_'.$periode.'_minute'];
+							$horaire->heure_fin = $_POST['a_'.$i.'_'.$periode.'_heure'];
+							$horaire->minute_fin = $_POST['a_'.$i.'_'.$periode.'_minute'];
+							$modelRestaurant->addHoraire($horaire);
+						}
 					}
 				}
 				
