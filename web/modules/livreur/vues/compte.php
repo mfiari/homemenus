@@ -23,11 +23,11 @@
 					<fieldset>
 						<div class="form-group">
 							<label for="nom">Nom : </label>
-							<input class="form-control" name="nom" type="text" value="<?php echo $request->user->nom; ?>" maxlength="32" required>
+							<input class="form-control" name="nom" type="text" value="<?php echo utf8_encode($request->user->nom); ?>" maxlength="32" required>
 						</div>
 						<div class="form-group">
 							<label for="prenom">Prénom : </label>
-							<input class="form-control" name="prenom" type="text" value="<?php echo $request->user->prenom; ?>" maxlength="32" required>
+							<input class="form-control" name="prenom" type="text" value="<?php echo utf8_encode($request->user->prenom); ?>" maxlength="32" required>
 						</div>
 						<div class="form-group">
 							<label for="login">Identifiant : </label>
@@ -62,7 +62,7 @@
 								<th colspan="4" style="background-color : #337ab7; text-align : center;"><?php echo $dispo->jour; ?></th>
 							</tr>
 							<tr>
-								<td><?php echo $dispo->rue; ?>, <?php echo $dispo->code_postal; ?> <?php echo $dispo->ville; ?></td>
+								<td><?php echo utf8_encode($dispo->rue); ?>, <?php echo $dispo->code_postal; ?> <?php echo utf8_encode($dispo->ville); ?></td>
 								<td><?php echo $dispo->perimetre; ?> KM</td>
 								<td><?php echo $dispo->vehicule; ?></td>
 								<td>De <?php echo $dispo->heure_debut; ?>h<?php echo $dispo->minute_debut; ?> à <?php echo $dispo->heure_fin; ?>h<?php echo $dispo->minute_fin; ?></td>
