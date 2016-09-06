@@ -75,8 +75,23 @@
 					<button id="subscribe-button" class="btn btn-primary" type="submit">Modifier</button>
 				</fieldset>
 			</form>
-			<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=compte&action=parametrage">
+			<form method="post" enctype="x-www-form-urlencoded" action="?controler=compte&action=parametrage">
 				<h3>Paramétrage</h3>
+				<fieldset>
+					<div class="form-group">
+						<input type="checkbox" name="default_adress" <?php echo $request->user->parametre->default_adresse_search ? "checked" : ""; ?>/>
+						Utiliser votre adresse comme valeur par défaut pour la recherche.
+					</div>
+					<div class="form-group">
+						<input type="checkbox" name="mail_commande" <?php echo $request->user->parametre->send_mail_commande ? "checked" : ""; ?>/>
+						Reçevoir un mail lors de la validation de ma commande
+					</div>
+					<div class="form-group">
+						<input type="checkbox" name="sms_commande" <?php echo $request->user->parametre->send_sms_commande ? "checked" : ""; ?>/>
+						Reçevoir le suivi de ma commande par SMS.
+					</div>
+					<button class="btn btn-primary" type="submit">Modifier</button>
+				</fieldset>
 			</form>
 			<!--<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=paypal&action=premium_subscribe">
 				<h3>Souscrire au compte premium</h3>

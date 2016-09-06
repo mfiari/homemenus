@@ -26,6 +26,7 @@ class Model_User extends Model_Template {
 	private $dispos;
 	private $horaires;
 	private $id_restaurant;
+	private $parametre;
 	
 	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
@@ -91,6 +92,91 @@ class Model_User extends Model_Template {
 		return $this;
 	}
 	
+	public function getById () {
+		$sql = "SELECT user.nom, user.prenom, user.status, user.login, user.email, user.is_premium, uc.rue, uc.ville, uc.code_postal, uc.telephone, 
+		up.default_adresse_search, up.send_mail_commande, up.send_sms_commande
+		FROM users user
+		LEFT JOIN user_client uc ON uc.uid = user.uid
+		LEFT JOIN user_parametre up ON up.uid = user.uid
+		WHERE user.uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null ||$value == false) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$this->nom = $value["nom"];
+		$this->prenom = $value["prenom"];
+		$this->login = $value["login"];
+		$this->status = $value["status"];
+		$this->email = $value["email"];
+		$this->is_premium = $value["is_premium"];
+		$this->rue = $value["rue"];
+		$this->ville = $value["ville"];
+		$this->code_postal = $value["code_postal"];
+		$this->telephone = $value["telephone"];
+		
+		$parameter = new Model_Parametre();
+		$parameter->default_adresse_search = $value["default_adresse_search"];
+		$parameter->send_mail_commande = $value["send_mail_commande"];
+		$parameter->send_sms_commande = $value["send_sms_commande"];
+		
+		$this->parametre = $parameter;
+		
+		return $this;
+	}
+	
+	public function getBySession ($uid, $session) {
+		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone, user.is_premium
+		FROM users user
+		JOIN user_session us ON us.uid = user.uid
+		LEFT JOIN user_client uc ON uc.uid = user.uid
+		WHERE user.uid = :uid AND us.session_key = :session AND user.is_login = true";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $uid);
+		$stmt->bindValue(":session", $session);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null ||$value == false) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$this->id = $uid;
+		$this->nom = $value["nom"];
+		$this->prenom = $value["prenom"];
+		$this->login = $value["login"];
+		$this->status = $value["status"];
+		$this->session = $session;
+		$this->rue = $value["rue"];
+		$this->ville = $value["ville"];
+		$this->code_postal = $value["code_postal"];
+		$this->telephone = $value["telephone"];
+		$this->is_premium = $value["is_premium"];
+		return $this;
+	}
+	
+	public function getByLoginAndPassword($login, $password) {
+		$sql = "SELECT uid, nom, prenom, status, is_enable FROM users WHERE login = :login AND password = sha1(:password)";
+		$params = array (
+			":login" => $login,
+			":password" => $password
+		);
+		$value = $this->executeSql($sql, $params, PDO::FETCH_ASSOC);
+		return $value !== false;
+	}
+	
 	public function getByLogin () {
 		$sql = "SELECT uid, email, is_enable FROM users WHERE login = :login";
 		$stmt = $this->db->prepare($sql);
@@ -119,6 +205,22 @@ class Model_User extends Model_Template {
 			return $this->update();
 		}
 		return false;
+	}
+	
+	public function saveParameters () {
+		$sql = "UPDATE user_parametre SET default_adresse_search = :default_adresse_search, send_mail_commande = :send_mail_commande, send_sms_commande = :send_sms_commande
+		WHERE uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":default_adresse_search", $this->parametre->default_adresse_search);
+		$stmt->bindValue(":send_mail_commande", $this->parametre->send_mail_commande);
+		$stmt->bindValue(":send_sms_commande", $this->parametre->send_sms_commande);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
 	}
 	
 	public function insert() {
@@ -419,81 +521,6 @@ class Model_User extends Model_Template {
 			}
 		}
 		return true;
-	}
-	
-	public function getById () {
-		$sql = "SELECT user.nom, user.prenom, user.status, user.login, user.email, user.is_premium, uc.rue, uc.ville, uc.code_postal, uc.telephone
-		FROM users user
-		LEFT JOIN user_client uc ON uc.uid = user.uid
-		WHERE user.uid = :uid";
-		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":uid", $this->id);
-		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
-			$this->sqlHasFailed = true;
-			return false;
-		}
-		$value = $stmt->fetch(PDO::FETCH_ASSOC);
-		if ($value == null ||$value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
-			$this->sqlHasFailed = true;
-			return false;
-		}
-		$this->nom = $value["nom"];
-		$this->prenom = $value["prenom"];
-		$this->login = $value["login"];
-		$this->status = $value["status"];
-		$this->email = $value["email"];
-		$this->is_premium = $value["is_premium"];
-		$this->rue = $value["rue"];
-		$this->ville = $value["ville"];
-		$this->code_postal = $value["code_postal"];
-		$this->telephone = $value["telephone"];
-		return $this;
-	}
-	
-	public function getBySession ($uid, $session) {
-		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone, user.is_premium
-		FROM users user
-		JOIN user_session us ON us.uid = user.uid
-		LEFT JOIN user_client uc ON uc.uid = user.uid
-		WHERE user.uid = :uid AND us.session_key = :session AND user.is_login = true";
-		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":uid", $uid);
-		$stmt->bindValue(":session", $session);
-		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
-			$this->sqlHasFailed = true;
-			return false;
-		}
-		$value = $stmt->fetch(PDO::FETCH_ASSOC);
-		if ($value == null ||$value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
-			$this->sqlHasFailed = true;
-			return false;
-		}
-		$this->id = $uid;
-		$this->nom = $value["nom"];
-		$this->prenom = $value["prenom"];
-		$this->login = $value["login"];
-		$this->status = $value["status"];
-		$this->session = $session;
-		$this->rue = $value["rue"];
-		$this->ville = $value["ville"];
-		$this->code_postal = $value["code_postal"];
-		$this->telephone = $value["telephone"];
-		$this->is_premium = $value["is_premium"];
-		return $this;
-	}
-	
-	public function getByLoginAndPassword($login, $password) {
-		$sql = "SELECT uid, nom, prenom, status, is_enable FROM users WHERE login = :login AND password = sha1(:password)";
-		$params = array (
-			":login" => $login,
-			":password" => $password
-		);
-		$value = $this->executeSql($sql, $params, PDO::FETCH_ASSOC);
-		return $value !== false;
 	}
 	
 	public function modifyPassword ($newPassword) {

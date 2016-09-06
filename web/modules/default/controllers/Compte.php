@@ -16,6 +16,7 @@ include_once ROOT_PATH."models/Option.php";
 include_once ROOT_PATH."models/OptionValue.php";
 include_once ROOT_PATH."models/Accompagnement.php";
 include_once ROOT_PATH."models/PreCommande.php";
+include_once ROOT_PATH."models/Parametre.php";
 
 class Controller_Compte extends Controller_Default_Template {
 	
@@ -38,6 +39,9 @@ class Controller_Compte extends Controller_Default_Template {
 					break;
 				case "reset_password" :
 					$this->reset_password($request);
+					break;
+				case "parametrage" :
+					$this->parametrage($request);
 					break;
 				case "solde" :
 					$this->solde($request);
@@ -241,5 +245,20 @@ class Controller_Compte extends Controller_Default_Template {
 		} else if ($request->request_method == "GET") {
 			$request->vue = $this->render("reset_password");
 		}
+	}
+	
+	public function parametrage ($request) {
+		if ($request->request_method == "POST") {
+			$errors = array();
+			$modelUser = new Model_User();
+			$modelUser->id = $request->_auth->id;
+			$modelParametre = new Model_Parametre();
+			$modelParametre->default_adresse_search = (isset($_POST['default_adress']) && $_POST['default_adress'] == 'on');
+			$modelParametre->send_mail_commande = (isset($_POST['mail_commande']) && $_POST['mail_commande'] == 'on');
+			$modelParametre->send_sms_commande = (isset($_POST['sms_commande']) && $_POST['sms_commande'] == 'on');
+			$modelUser->parametre = $modelParametre;
+			$modelUser->saveParameters();
+		}
+		$this->redirect('index', 'compte');
 	}
 }
