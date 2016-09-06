@@ -70,11 +70,10 @@ class Controller_Commande extends Controller_Livreur_Template {
 	
 	public function history ($request) {
 		if (isset($_GET["id"])) {
-			$commande = new Model_Commande();
-			$commande->uid = $request->_auth->id;
+			$commande = new Model_Commande_History();
 			$commande->id = $_GET["id"];
 			$request->commande = $commande->load();
-			$request->vue = $this->render("commande.php");
+			$request->vue = $this->render("commande_history.php");
 		} else {
 			$commande = new Model_Commande_History();
 			$commande->uid = $request->_auth->id;
@@ -122,7 +121,7 @@ class Controller_Commande extends Controller_Livreur_Template {
 		$commande = new Model_Commande();
 		$commande->id = $_GET['id'];
 		$request->commande = $commande->getCommandeLivreur();
-		$request->vue = $this->render("commande.php");
+		$request->vue = $this->render("detail_commande.php");
 	}
 	
 	public function hasChat ($request) {

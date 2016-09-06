@@ -36,7 +36,7 @@
 						<?php endif; ?>
 					</td>
 					<td>
-						<a href="?controler=commande&action=detail&id=<?php echo $commande->id;?>"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
+						<a href="?controler=commande&id=<?php echo $commande->id;?>"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
 					</td>
 				</tr>
 			<?php endforeach; ?>

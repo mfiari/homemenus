@@ -1,6 +1,6 @@
 <?php $commande = $request->commande; ?>
 <h2>Commande #<?php echo $request->commande->id; ?></h2>
-<a class="btn btn-primary" href="?controler=commande">
+<a class="btn btn-primary" href="?controler=commande&action=history">
 	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 </a>
 <div id="restaurant">
@@ -131,6 +131,6 @@
 		</div>
 	</div>
 </div>
-<a class="btn btn-primary" href="?controler=commande">
+<a class="btn btn-primary" href="?controler=commande&action=history">
 	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 </a>

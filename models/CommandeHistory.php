@@ -259,7 +259,7 @@ class Model_Commande_History extends Model_Template {
 	* Récupère les commandes livreur
 	*/
 	public function loadCommandeLivreur () {
-		$sql = "SELECT id_commande, id_user, nom_user, prenom_user, ville_commande, date_commande, prix, id_restaurant, nom_restaurant, ville_restaurant, 
+		$sql = "SELECT id, id_commande, id_user, nom_user, prenom_user, ville_commande, date_commande, prix, id_restaurant, nom_restaurant, ville_restaurant, 
 		code_postal_restaurant, note
 		FROM commande_history
 		WHERE id_livreur = :uid";
@@ -273,7 +273,7 @@ class Model_Commande_History extends Model_Template {
 		$listCommande = array();
 		foreach ($result as $c) {
 			$commande = new Model_Commande();
-			$commande->id = $c["id_commande"];
+			$commande->id = $c["id"];
 			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
 			$commande->prix = $c["prix"];
 			$commande->note = $c["note"];
