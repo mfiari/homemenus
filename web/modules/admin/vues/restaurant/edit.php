@@ -66,7 +66,7 @@
 									foreach ($request->restaurant->horaires as $current_horaire) {
 										$horaire = null;
 										if ($current_horaire->id_jour == $jkey) {
-											if ($pkey == "midi" && $current_horaire->heure_debut >= 11 && $current_horaire->heure_debut <= 16) {
+											if ($pkey == "midi" && $current_horaire->heure_debut >= 10 && $current_horaire->heure_debut <= 16) {
 												$horaire = $current_horaire;
 												break;
 											} else if ($pkey == "soir" && $current_horaire->heure_debut >= 18 && $current_horaire->heure_debut <= 23) {
