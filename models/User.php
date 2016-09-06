@@ -134,10 +134,12 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getBySession ($uid, $session) {
-		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone, user.is_premium
+		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone, user.is_premium, 
+		up.default_adresse_search, up.send_mail_commande, up.send_sms_commande
 		FROM users user
 		JOIN user_session us ON us.uid = user.uid
 		LEFT JOIN user_client uc ON uc.uid = user.uid
+		LEFT JOIN user_parametre up ON up.uid = user.uid
 		WHERE user.uid = :uid AND us.session_key = :session AND user.is_login = true";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $uid);
@@ -164,6 +166,14 @@ class Model_User extends Model_Template {
 		$this->code_postal = $value["code_postal"];
 		$this->telephone = $value["telephone"];
 		$this->is_premium = $value["is_premium"];
+		
+		$parameter = new Model_Parametre();
+		$parameter->default_adresse_search = $value["default_adresse_search"];
+		$parameter->send_mail_commande = $value["send_mail_commande"];
+		$parameter->send_sms_commande = $value["send_sms_commande"];
+		
+		$this->parametre = $parameter;
+		
 		return $this;
 	}
 	

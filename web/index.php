@@ -23,6 +23,7 @@ $request->mobileDetect = $mobileDetect;
 if (isset($_SESSION["uid"]) && isset($_SESSION["session"])) {
 	include_once ROOT_PATH."models/Template.php";
 	include_once ROOT_PATH."models/User.php";
+	include_once ROOT_PATH."models/Parametre.php";
 	$user = new Model_User();
 	if ($user->getBySession($_SESSION["uid"], $_SESSION["session"])) {
 		$request->_auth = $user;

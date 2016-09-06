@@ -44,7 +44,15 @@
 			<form id="adress-form" action="?controler=restaurant&action=recherche" method="POST">
 				<div class="input-group">
 					<div class="search-block">
-						<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Saisissez votre adresse de livraison">
+						<?php
+							$adresse = "";
+							if (($request->_auth) && $request->_auth->parametre->default_adresse_search) {
+								if ($request->_auth->rue != '') {
+									$adresse = utf8_encode($request->_auth->rue).', '.$request->_auth->code_postal.' '.utf8_encode($request->_auth->ville);
+								}
+							}
+						?>
+						<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Saisissez votre adresse de livraison" value="<?php echo $adresse;?>">
 						<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
 					</div>
 					<span class="input-group-btn">
