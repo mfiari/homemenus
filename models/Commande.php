@@ -29,6 +29,7 @@ class Model_Commande extends Model_Template {
 	private $is_modif;
 	private $is_premium;
 	private $part_restaurant;
+	private $date_validation_livreur;
 	
 	public function __construct($callParent = true) {
 		if ($callParent) {
@@ -2240,7 +2241,7 @@ class Model_Commande extends Model_Template {
 	
 	public function getAll () {
 		$sql = "SELECT com.id AS id_commande, com.uid AS id_client, livreur.uid AS id_livreur, livreur.login, resto.id AS id_restaurant, resto.nom AS nom_restaurant, 
-		resto.code_postal AS cp_restaurant, resto.ville AS ville_restaurant, com.date_commande, com.prix, com.prix_livraison, com.etape, com.note
+		resto.code_postal AS cp_restaurant, resto.ville AS ville_restaurant, com.date_commande, com.prix, com.prix_livraison, com.etape, com.note, com.date_validation_livreur
 		FROM commande com
 		LEFT JOIN users livreur ON livreur.uid = com.id_livreur
 		JOIN restaurants resto ON resto.id = com.id_restaurant
@@ -2259,6 +2260,7 @@ class Model_Commande extends Model_Template {
 			$commande->prix = $c["prix"] + $c["prix_livraison"];
 			$commande->etape = $c["etape"];
 			$commande->note = $c["note"];
+			$commande->date_validation_livreur = $c["date_validation_livreur"];
 			
 			$client = new Model_User();
 			$client->id = $c["id_client"];

@@ -16,6 +16,7 @@
 						<th>Ville</th>
 						<th>Date de commande</th>
 						<th>Prix</th>
+						<th>Vue par livreur</th>
 						<th>Statut</th>
 						<th>Note</th>
 						<th></th>
@@ -32,6 +33,7 @@
 							<td><?php echo utf8_encode($commande->restaurant->ville); ?> (<?php echo $commande->restaurant->code_postal; ?>)</td>
 							<td><?php echo $commande->date_commande; ?></td>
 							<td><?php echo $commande->prix; ?> €</td>
+							<td><?php echo $commande->date_validation_livreur != '0000-00-00 00:00:00' ? $commande->date_validation_livreur : '<span style="color : red; ">Non</span>'; ?></td>
 							<td><?php echo $commande->getStatus(); ?></td>
 							<td><?php echo $commande->note; ?> / 5</td>
 							<td>
