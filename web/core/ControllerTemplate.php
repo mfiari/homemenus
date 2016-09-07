@@ -39,5 +39,6 @@ abstract class Controller_Template {
 			$redirectUrl = 'index.php';
 		}
 		header('Location: '.$redirectUrl);
+		exit;
 	}
 }
