@@ -55,7 +55,7 @@ abstract class Model_Template {
 				foreach ($params as $key => $value) {
 					$sql = str_replace($key, $value, $sql);
 				}
-				writeLog(SQL_LOG, 'Aucun résultats requete', LOG_LEVEL_ERROR, $sql);
+				writeLog(SQL_LOG, 'Aucun résultats requete', LOG_LEVEL_WARNING, $sql);
 				$this->sqlHasFailed = true;
 				return false;
 			}
