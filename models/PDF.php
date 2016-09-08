@@ -246,6 +246,37 @@ class PDF extends FPDF {
 		$this->Cell($width,10,($totalPrix - ($totalPrix * $pourcentage / 100)).' '.chr(128).' TTC',0,1);*/
 	}
 	
+	public function generateHoraireLivreur ($livreur) {
+		$this->title = "Horaires";
+		
+		$this->AliasNbPages();
+		$this->AddPage();
+		
+		$width = 70;
+		// Police Arial gras 12
+		$this->SetFont('Arial','B',12);
+		
+		//En-tête
+		$this->Cell(80, 7, utf8_decode('Adresse de départ'), 1, 0, 'C');
+		$this->Cell(35, 7, utf8_decode('Périmètre'), 1, 0, 'C');
+		$this->Cell(35, 7, utf8_decode('Véhicule'), 1, 0, 'C');
+		$this->Cell(35, 7, 'Horaires', 1, 0, 'C');
+		$this->Ln();
+		
+		//Données
+		foreach($livreur->dispos as $dispo) {
+			$this->Cell(80, 6, utf8_decode($dispo->rue).', '.$dispo->code_postal.' '.utf8_decode($dispo->ville), 1);
+			$this->Cell(35, 6, $dispo->perimetre.' km', 1);
+			$this->Cell(35, 6, $dispo->vehicule, 1);
+			$this->Cell(35, 6, 'De '.$dispo->heure_debut.'h'.$dispo->minute_debut.utf8_decode(' à ').$dispo->heure_fin.'h'.$dispo->minute_fin, 1);
+			$this->Ln();
+		}
+		
+		//Trait de terminaison
+		$this->Cell(4,0,'','T');
+		
+	}
+	
 	public function render ($dest = "I", $filename = "doc.pdf") {
 		$this->Output($dest, $filename);
 	}
