@@ -40,6 +40,9 @@
 			$montantTotalError += $commande->prix + $commande->prix_livraison;
 			writeLog (CRON_LOG, "Echec historisation commande #".$commande->id." : commande ".$commande->getStatus (), LOG_LEVEL_ERROR);
 		} else if ($modelCommandeHistory->save($commande)) {
+			$messageContent =  file_get_contents (ROOT_PATH.'mails/fin_commande.html');
+			send_mail ($commande->client->email, "Merci de votre commande", $messageContent);
+			
 			$commande->remove();
 			$totalCommande++;
 			$montantTotal += $commande->prix + $commande->prix_livraison;
