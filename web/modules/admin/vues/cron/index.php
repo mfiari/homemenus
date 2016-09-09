@@ -22,6 +22,10 @@
 			<a href="?controler=cron&action=updateDistanceRestaurant">Lancer</a>
 		</div>
 		<div class="row">
+			<span>Update distance livreur</span>
+			<a href="?controler=cron&action=updateDistanceLivreur">Lancer</a>
+		</div>
+		<div class="row">
 			<span>Dump database</span>
 			<a href="?controler=cron&action=dumpDatabase">Lancer</a>
 		</div>

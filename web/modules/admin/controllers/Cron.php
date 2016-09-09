@@ -24,6 +24,9 @@ class Controller_Cron extends Controller_Admin_Template {
 				case "updateDistanceRestaurant" :
 					$this->updateDistanceRestaurant($request);
 					break;
+				case "updateDistanceLivreur" :
+					$this->updateDistanceLivreur($request);
+					break;
 				case "dumpDatabase" :
 					$this->dumpDatabase($request);
 					break;
@@ -63,6 +66,11 @@ class Controller_Cron extends Controller_Admin_Template {
 	
 	public function updateDistanceRestaurant ($request) {
 		exec('php '.ROOT_PATH.'cron/distance_resto_livreur.php');
+		$this->redirect('index', 'cron');
+	}
+	
+	public function updateDistanceLivreur ($request) {
+		exec('php '.ROOT_PATH.'cron/distance_livreur_dispo.php');
 		$this->redirect('index', 'cron');
 	}
 	
