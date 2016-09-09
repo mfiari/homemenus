@@ -32,5 +32,7 @@
 		);
 		
 		$messageContent =  file_get_contents (ROOT_PATH.'mails/livreur_planing.html');
+		$messageContent = str_replace("[PRENOM]", $user->prenom, $messageContent);
+		$messageContent = str_replace("[NOM]", $user->nom, $messageContent);
 		send_mail ($user->email, "Planing livreur", $messageContent, MAIL_FROM_DEFAULT, $attachments);
 	}
