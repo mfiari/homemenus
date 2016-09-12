@@ -8,7 +8,7 @@
 			<span>Nom : </span>
 		</div>
 		<div class="col-md-9">
-			<input class="form-control" name="nom" type="text" value="<?php echo $request->panier->user->nom; ?>" disabled>
+			<input class="form-control" name="nom" type="text" value="<?php echo utf8_encode($request->panier->user->nom); ?>" disabled>
 		</div>
 	</div>
 	<div class="row">
@@ -16,7 +16,7 @@
 			<span>Prénom : </span>
 		</div>
 		<div class="col-md-9">
-			<input class="form-control" name="nom" type="text" value="<?php echo $request->panier->user->prenom; ?>" disabled>
+			<input class="form-control" name="nom" type="text" value="<?php echo utf8_encode($request->panier->user->prenom); ?>" disabled>
 		</div>
 	</div>
 	<div class="row">
