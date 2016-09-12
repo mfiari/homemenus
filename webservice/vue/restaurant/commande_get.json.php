@@ -19,8 +19,8 @@
 	if ($result->client) {
 		$retour['client'] = array();
 		$retour['client']['id'] = $result->client->id;
-		$retour['client']['nom'] = $result->client->nom;
-		$retour['client']['prenom'] = $result->client->prenom;
+		$retour['client']['nom'] = utf8_encode($result->client->nom);
+		$retour['client']['prenom'] = utf8_encode($result->client->prenom);
 	}
 	
 	if ($result->restaurant) {
