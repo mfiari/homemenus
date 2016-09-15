@@ -7,7 +7,6 @@
 				<li data-target="#myCarousel" data-slide-to="1"></li>
 				<li data-target="#myCarousel" data-slide-to="2"></li>
 				<li data-target="#myCarousel" data-slide-to="3"></li>
-				<li data-target="#myCarousel" data-slide-to="4"></li>
 			</ol>
 
 			<!-- Wrapper for slides -->
@@ -36,15 +35,6 @@
 						<div class="carousel-caption">
 							<h3>Ouverture de L'Okinawa</h3>
 							<p>Ouverture du restaurant L'Okinawa à Mantes la ville. Commandez dès maintenant.</p>
-						</div>
-					</a>
-				</div>
-				<div class="item">
-					<a href="restaurant-12-Drocourt-La-fourchette-du-vexin.html">
-						<img style="height : 350px; width : 100%;" src="res/img/lafourchette.jpg" title="HoMe Menus - La fourchette du vexin Drocourt" alt="HoMe Menus - La fourchette du vexin Drocourt">
-						<div class="carousel-caption">
-							<h3>Ouverture de la fourchette du vexin</h3>
-							<p>Ouverture du restaurant La Fourchette du vexin à Drocourt. Commandez dès maintenant.</p>
 						</div>
 					</a>
 				</div>
