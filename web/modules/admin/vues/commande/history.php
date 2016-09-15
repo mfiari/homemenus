@@ -32,7 +32,7 @@
 					<?php $totalPrix = 0; ?>
 					<?php foreach ($request->commandes as $commande) : ?>
 						<tr>
-							<td><a href="?controler=commande&action=view&id_commande=<?php echo $commande->id; ?>">#<?php echo $commande->id; ?></a></td>
+							<td><a href="?controler=commande&action=viewHistory&id_commande=<?php echo $commande->id; ?>">#<?php echo $commande->id; ?></a></td>
 							<td><a href="?controler=user&action=view&id_user=<?php echo $commande->livreur->id; ?>"><?php echo utf8_encode($commande->livreur->login); ?></a></td>
 							<td><a href="?controler=restaurant&action=view&id_restaurant=<?php echo $commande->restaurant->id; ?>"><?php echo utf8_encode($commande->restaurant->nom); ?></a></td>
 							<td><a href="?controler=user&action=client&id_user=<?php echo $commande->client->id; ?>"><?php echo $commande->client->id; ?></a></td>

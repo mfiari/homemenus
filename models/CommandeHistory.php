@@ -431,7 +431,7 @@ class Model_Commande_History extends Model_Template {
 		
 		$this->cartes = array();
 		
-		$sql = "SELECT id_carte AS id, nom_carte AS nom, id_categorie, quantite, 0 AS prix
+		$sql = "SELECT id_carte AS id, nom_carte AS nom, id_categorie, quantite, prix AS prix, id_format, nom_format
 		FROM commande_carte_history 
 		WHERE id_commande = :id";
 		$stmt = $this->db->prepare($sql);
@@ -447,6 +447,12 @@ class Model_Commande_History extends Model_Template {
 			$carte->nom = $c['nom'];
 			$carte->quantite = $c['quantite'];
 			$carte->prix = $c['prix'] * $c['quantite'];
+			
+			$format = new Model_Format(false);
+			$format->id = $c['id_format'];
+			$format->nom = $c['nom_format'];
+			
+			$carte->addFormat($format);
 			
 			$sql = "SELECT id_supplement AS id, nom_supplement AS nom, prix_supplement AS prix
 			FROM commande_carte_supplement_history
