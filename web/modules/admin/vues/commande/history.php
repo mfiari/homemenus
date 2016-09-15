@@ -29,6 +29,7 @@
 				</thead>
 				<tbody>
 					<?php $total = 0; ?>
+					<?php $totalPrix = 0; ?>
 					<?php foreach ($request->commandes as $commande) : ?>
 						<tr>
 							<td><a href="?controler=commande&action=view&id_commande=<?php echo $commande->id; ?>">#<?php echo $commande->id; ?></a></td>
@@ -45,16 +46,15 @@
 								</a>
 							</td>
 						</tr>
-						<?php $total += $commande->prix; ?>
+						<?php $total++; ?>
+						<?php $totalPrix += $commande->prix; ?>
 					<?php endforeach; ?>
 				</tbody>
 				<tfoot>
 					<tr>
-						<th colspan="6">Total : </th>
-						<th><?php echo $total; ?> €</th>
-						<th></th>
-						<th></th>
-						<th></th>
+						<th>Total : </th>
+						<th colspan="5"><?php echo $total; ?> commande(s)</th>
+						<th><?php echo $totalPrix; ?> €</th>
 					</tr>
 				</tfoot>
 			</table>
