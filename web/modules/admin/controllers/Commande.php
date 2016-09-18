@@ -46,6 +46,9 @@ class Controller_Commande extends Controller_Admin_Template {
 				case "remove" :
 					$this->remove($request);
 					break;
+				case "create" :
+					$this->create($request);
+					break;
 			}
 		} else {
 			$this->index($request);
@@ -116,14 +119,14 @@ class Controller_Commande extends Controller_Admin_Template {
 		if (isset($_POST['date_debut'])) {
 			$request->date_debut = $_POST['date_debut'];
 		} else {
-			$request->date_debut = '01/06/2016';
+			$request->date_debut = '01/'.date('m').'/'.date('Y');
 		}
 		$dateDebut = datepickerToDatetime($request->date_debut);
 		
 		if (isset($_POST['date_fin'])) {
 			$request->date_fin = $_POST['date_fin'];
 		} else {
-			$request->date_fin = '30/06/2016';
+			$request->date_fin = date('d').'/'.date('m').'/'.date('Y');
 		}
 		$dateFin = datepickerToDatetime($request->date_fin);
 		$modelCommande = new Model_Commande_History();
@@ -166,5 +169,9 @@ class Controller_Commande extends Controller_Admin_Template {
 			$commande->remove();
 			$this->redirect('index', 'commande');
 		}
+	}
+	
+	public function create ($request) {
+		
 	}
 }
