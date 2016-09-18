@@ -651,7 +651,7 @@ class Controller_Panier extends Controller_Default_Template {
 					$pdf2->generateFactureRestaurant($commande);
 					$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
 					
-					$messageContentRestaurant =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_restaurant.html');
+					/*$messageContentRestaurant =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_restaurant.html');
 					
 					$messageContentRestaurant = str_replace("[COMMANDE_ID]", $commande->id, $messageContentRestaurant);
 					$messageContentRestaurant = str_replace("[TOTAL]", $commande->prix, $messageContentRestaurant);
@@ -661,7 +661,7 @@ class Controller_Panier extends Controller_Default_Template {
 					);
 					foreach ($restaurantUsers as $restaurantUser) {
 						send_mail ($restaurantUser->email, "Nouvelle commande", $messageContentRestaurant, MAIL_FROM_DEFAULT, $attachments2);
-					}
+					}*/
 				}
 				$request->vue = $this->render("paypal_success.php");
 				
