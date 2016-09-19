@@ -532,10 +532,10 @@ class Model_Commande extends Model_Template {
 		$sql = "
 		SELECT 
 			client.uid AS uid, client.nom AS cnom, client.prenom AS cprenom, uc.telephone ctel, com.rue AS com_rue, com.ville AS com_ville, 
-			com.code_postal AS com_cp, com.id_livreur AS id_livreur, resto.id AS id_resto, resto.nom AS nom_resto, resto.rue AS rue_resto, 
-			resto.ville AS ville_resto, resto.code_postal AS cp_resto, livreur.uid AS id_livreur, livreur.prenom AS prenom_livreur, ul.latitude AS lat_livreur, 
-			ul.longitude AS lon_livreur, ul.is_ready AS livreur_ready, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.date_validation_restaurant, 
-			com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.etape, com.prix, com.prix_livraison, com.distance
+			com.code_postal AS com_cp, com.telephone, com.id_livreur AS id_livreur, resto.id AS id_resto, resto.nom AS nom_resto, resto.rue AS rue_resto, 
+			resto.ville AS ville_resto, resto.code_postal AS cp_resto, resto.telephone AS tel_resto, livreur.uid AS id_livreur, livreur.prenom AS prenom_livreur, 
+			ul.latitude AS lat_livreur, ul.longitude AS lon_livreur, ul.is_ready AS livreur_ready, com.date_commande, com.heure_souhaite, com.minute_souhaite, 
+			com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.etape, com.prix, com.prix_livraison, com.distance
 		FROM commande com
 		JOIN users client ON client.uid = com.uid
 		JOIN user_client uc ON uc.uid = client.uid
@@ -561,6 +561,7 @@ class Model_Commande extends Model_Template {
 		$this->rue = $value['com_rue'];
 		$this->ville = $value['com_ville'];
 		$this->code_postal = $value['com_cp'];
+		$this->telephone = $value['telephone'];
 		$this->id_livreur = $value['id_livreur'];
 		$this->restaurant = new Model_Restaurant(false);
 		$this->restaurant->id = $value['id_resto'];
@@ -568,6 +569,7 @@ class Model_Commande extends Model_Template {
 		$this->restaurant->rue = $value['rue_resto'];
 		$this->restaurant->ville = $value['ville_resto'];
 		$this->restaurant->code_postal = $value['cp_resto'];
+		$this->restaurant->telephone = $value['tel_resto'];
 		$this->livreur = new Model_User(false);
 		$this->livreur->id = $value['id_livreur'];
 		$this->livreur->prenom = $value['prenom_livreur'];

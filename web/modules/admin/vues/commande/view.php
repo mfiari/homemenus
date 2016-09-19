@@ -4,12 +4,14 @@
 </a>
 <div id="restaurant">
 	<h3><?php echo utf8_encode($request->commande->restaurant->nom); ?></h3>
-	<p><?php echo utf8_encode($request->commande->restaurant->rue); ?>, <?php echo $request->commande->restaurant->code_postal; ?> <?php echo utf8_encode($request->commande->restaurant->ville); ?></p>
+	<p>Adresse : <?php echo utf8_encode($request->commande->restaurant->rue); ?>, <?php echo $request->commande->restaurant->code_postal; ?> <?php echo utf8_encode($request->commande->restaurant->ville); ?></p>
+	<p>Téléphone : <?php echo $request->commande->restaurant->telephone; ?></p>
 </div>
 <div id="client">
 	<h3>Client</h3>
 	<span><?php echo utf8_encode($request->commande->client->nom); ?> <?php echo utf8_encode($request->commande->client->prenom); ?></span>
-	<p><?php echo utf8_encode($request->commande->rue); ?>, <?php echo $request->commande->code_postal; ?> <?php echo utf8_encode($request->commande->ville); ?></p>
+	<p>Adresse : <?php echo utf8_encode($request->commande->rue); ?>, <?php echo $request->commande->code_postal; ?> <?php echo utf8_encode($request->commande->ville); ?></p>
+	<p>Téléphone : <?php echo $request->commande->telephone; ?></p>
 </div>
 <div id="livreur">
 	<h3>Livreur</h3>
