@@ -735,7 +735,7 @@ class Model_Commande extends Model_Template {
 		$sql = "SELECT livreur.uid, livreur.nom, livreur.prenom, us.gcm_token, livreur.is_login 
 		FROM commande
 		JOIN users livreur ON livreur.uid = commande.id_livreur
-		JOIN user_session us ON us.uid = livreur.uid AND us.date_logout = '0000-00-00 00:00:00'
+		LEFT JOIN user_session us ON us.uid = livreur.uid AND us.date_logout = '0000-00-00 00:00:00'
 		WHERE commande.id = :id
 		LIMIT 1";
 		$stmt = $this->db->prepare($sql);
@@ -758,9 +758,11 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getClient () {
-		$sql = "SELECT client.uid, client.nom, client.prenom, us.gcm_token, client.is_login FROM commande
+		$sql = "SELECT client.uid, client.nom, client.prenom, us.gcm_token, client.is_login, up.send_sms_commande, commande.telephone 
+		FROM commande
 		JOIN users client ON client.uid = commande.uid
 		LEFT JOIN user_session us ON us.uid = client.uid AND us.date_logout = '0000-00-00 00:00:00'
+		LEFT JOIN user_parametre up ON up.uid = client.uid
 		WHERE commande.id = :id
 		LIMIT 1";
 		$stmt = $this->db->prepare($sql);
@@ -779,6 +781,13 @@ class Model_Commande extends Model_Template {
 		$this->client->prenom = $value['prenom'];
 		$this->client->gcm_token = $value['gcm_token'];
 		$this->client->is_login = $value['is_login'];
+		$this->client->telephone = $value["telephone"];
+		
+		$parameter = new Model_Parametre();
+		$parameter->send_sms_commande = $value["send_sms_commande"];
+		
+		$this->client->parametre = $parameter;
+		
 		return $this->client;
 	}
 	

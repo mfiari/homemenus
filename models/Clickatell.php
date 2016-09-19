@@ -35,7 +35,8 @@ class Clickatell {
 	}
 	
 	public function addNumero ($numero) {
-		$this->numeros[] = $numero;
+		$numero = substr($numero, 1);
+		$this->numeros[] = '33'.$numero;
 	}
 	
 	public function sendMessage () {
@@ -51,7 +52,7 @@ class Clickatell {
 		}
 		$to .= ']';
 		
-		$datas = '{"text":"'.$this->message.'","to":'.$to.'}';
+		$datas = '{"from" : "33661459733", "text":"'.$this->message.'","to":'.$to.'}';
 
 		//set the url, number of POST vars, POST data
 		curl_setopt($ch,CURLOPT_URL, $this->url);

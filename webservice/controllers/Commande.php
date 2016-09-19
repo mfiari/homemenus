@@ -12,6 +12,8 @@ include_once MODEL_PATH."Option.php";
 include_once MODEL_PATH."OptionValue.php";
 include_once MODEL_PATH."Accompagnement.php";
 include_once MODEL_PATH."PDF.php";
+include_once MODEL_PATH."Clickatell.php";
+include_once MODEL_PATH."Parametre.php";
 
 class Controller_Commande extends Controller_Template {
 	
@@ -182,6 +184,13 @@ class Controller_Commande extends Controller_Template {
 					$result = $gcm->send($message, $data);
 				}
 			}
+			$client = $commande->getClient();
+			if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
+				$sms = new Clickatell();
+				$sms->message = "Votre commande #".$commande->id." a été refusé par le restaurant";
+				$sms->addNumero($client->telephone);
+				$sms->sendMessage();
+			}
 		}
 	}
 	
@@ -213,6 +222,15 @@ class Controller_Commande extends Controller_Template {
 					// On notifie nos utilisateurs
 					$result = $gcm->send($message, $data);
 				}
+			}
+			$client = $commande->getClient();
+			/*var_dump($client);
+			var_dump($client->parametre);*/
+			if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
+				$sms = new Clickatell();
+				$sms->message = "Bonjour, votre commande est en cours de preparation. L'equipe HoMe Menus.";
+				$sms->addNumero($client->telephone);
+				$sms->sendMessage();
 			}
 		}
 	}
@@ -296,7 +314,15 @@ class Controller_Commande extends Controller_Template {
 		$commande = new Model_Commande();
 		$commande->id = $_POST["id_commande"];
 		$commande->uid = $_POST["id_livreur"];
-		$commande->recuperationLivreur();
+		if ($commande->recuperationLivreur()) {
+			$client = $commande->getClient();
+			if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
+				$sms = new Clickatell();
+				$sms->message = "Bonjour, votre commande #".$commande->id." est prête et est en cours de livraison. L'équipe HoMe Menus.";
+				$sms->addNumero($client->telephone);
+				$sms->sendMessage();
+			}
+		}
 	}
 	
 	private function livraison () {
