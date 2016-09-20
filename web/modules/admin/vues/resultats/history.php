@@ -58,7 +58,7 @@
 						<?php foreach ($request->days as $day) : ?>
 							<tr>
 								<td><?php echo $weekdayArray[$day['weekday']]; ?></td>
-								<td><?php echo $day['hour']; ?></td>
+								<td><?php echo $day['hour']; ?>h - <?php echo $day['hour']+1; ?>h</td>
 								<td><?php echo utf8_encode($day['nom_restaurant']); ?></td>
 								<td><?php echo $day['total_commande']; ?></td>
 								<td><?php echo $day['part_restaurant']; ?></td>
@@ -68,6 +68,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th colspan="3">Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo $request->resultats['part_restaurant']; ?></th>
+							<th><?php echo $request->resultats['part_livreur']; ?></th>
+							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
+							<th><?php echo $request->resultats['total_prix']; ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -97,6 +107,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th>Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo $request->resultats['part_restaurant']; ?></th>
+							<th><?php echo $request->resultats['part_livreur']; ?></th>
+							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
+							<th><?php echo $request->resultats['total_prix']; ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -126,6 +146,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th>Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo $request->resultats['part_restaurant']; ?></th>
+							<th><?php echo $request->resultats['part_livreur']; ?></th>
+							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
+							<th><?php echo $request->resultats['total_prix']; ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -155,6 +185,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th>Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo $request->resultats['part_restaurant']; ?></th>
+							<th><?php echo $request->resultats['part_livreur']; ?></th>
+							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
+							<th><?php echo $request->resultats['total_prix']; ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -184,6 +224,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th>Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo $request->resultats['part_restaurant']; ?></th>
+							<th><?php echo $request->resultats['part_livreur']; ?></th>
+							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
+							<th><?php echo $request->resultats['total_prix']; ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -213,6 +263,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th>Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo $request->resultats['part_restaurant']; ?></th>
+							<th><?php echo $request->resultats['part_livreur']; ?></th>
+							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
+							<th><?php echo $request->resultats['total_prix']; ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
