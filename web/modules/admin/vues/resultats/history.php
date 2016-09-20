@@ -39,6 +39,40 @@
 		</div>
 		<div class="col-md-10  col-md-offset-1">
 			<div class="row">
+				<h2>Total par jour et par restaurants</h2>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Jour</th>
+							<th>Heure</th>
+							<th>Restaurant</th>
+							<th>Nb de commande</th>
+							<th>Total restaurant</th>
+							<th>Total Livreur</th>
+							<th>Total HoMe Menus</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php $weekdayArray = array('Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'); ?>
+						<?php foreach ($request->days as $day) : ?>
+							<tr>
+								<td><?php echo $weekdayArray[$day['weekday']]; ?></td>
+								<td><?php echo $day['hour']; ?></td>
+								<td><?php echo utf8_encode($day['nom_restaurant']); ?></td>
+								<td><?php echo $day['total_commande']; ?></td>
+								<td><?php echo $day['part_restaurant']; ?></td>
+								<td><?php echo $day['part_livreur']; ?></td>
+								<td><?php echo $day['total_prix'] - $day['part_restaurant'] - $day['part_livreur']; ?></td>
+								<td><?php echo $day['total_prix']; ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-md-10  col-md-offset-1">
+			<div class="row">
 				<h2>Total par mois</h2>
 				<table class="table table-striped">
 					<thead>
