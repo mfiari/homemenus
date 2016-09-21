@@ -229,11 +229,11 @@ class Controller_Restaurant extends Controller_Default_Template {
 					//var_dump($result); die();
 					if ($result['status'] == "OK") {
 						$distanceRestoKm = $result['distance'] / 1000;
-						if ($distanceRestoKm < $distanceKm) {
-							$restaurant->distance = $distanceRestoKm;
+						//if ($distanceRestoKm < $distanceKm) {
+							$restaurant->distance = $distanceRestoKm == 0 ? -1 : $distanceRestoKm;
 							$availableRestaurant[] = $restaurant;
 							$recherche->addRestaurant($restaurant);
-						}
+						//}
 					}
 				}
 			}
