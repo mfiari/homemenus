@@ -62,10 +62,11 @@ class Model_Recherche extends Model_Template {
 		}
 		$this->id = $this->db->lastInsertId();
 		foreach ($this->restaurants as $restaurant) {
-			$sql = "INSERT INTO recherche_detail (id_recherche, id_restaurant) VALUES(:id_recherche, :id_restaurant)";
+			$sql = "INSERT INTO recherche_detail (id_recherche, id_restaurant, distance) VALUES(:id_recherche, :id_restaurant, :distance)";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id_recherche", $this->id);
 			$stmt->bindValue(":id_restaurant", $restaurant->id);
+			$stmt->bindValue(":distance", $restaurant->distance);
 			if (!$stmt->execute()) {
 				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
@@ -118,7 +119,7 @@ class Model_Recherche extends Model_Template {
 		$this->nbRestaurant = $value['nb_restaurant'];
 		$this->date_recherche = $value['date_recherche'];
 		
-		$sql = "SELECT restaurants.id, nom FROM restaurants JOIN recherche_detail rd ON rd.id_restaurant = restaurants.id WHERE rd.id_recherche = :id";
+		$sql = "SELECT restaurants.id, nom, distance FROM restaurants JOIN recherche_detail rd ON rd.id_restaurant = restaurants.id WHERE rd.id_recherche = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -130,6 +131,7 @@ class Model_Recherche extends Model_Template {
 			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $resultat['id'];
 			$restaurant->nom = $resultat['nom'];
+			$restaurant->distance = $resultat['distance'];
 			$this->restaurants[] = $restaurant;
 		}
 		return $this;

@@ -16,12 +16,14 @@
 						<thead>
 							<tr>
 								<th>Restaurants</th>
+								<th>Distance</th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php foreach ($request->recherche->restaurants as $restaurant) : ?>
 								<tr>
 									<td><a href="?controler=restaurant&action=view&id_restaurant=<?php echo $restaurant->id;?>"><?php echo utf8_encode($restaurant->nom); ?></a></td>
+									<td><?php echo $restaurant->distance; ?> Km</td>
 								</tr>
 							<?php endforeach; ?>
 						</tbody>
