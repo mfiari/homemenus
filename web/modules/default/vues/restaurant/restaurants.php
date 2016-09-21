@@ -109,7 +109,7 @@
 		?>
 		<?php foreach ($request->restaurants as $restaurant) : ?>
 			<?php $horaire = $restaurant->horaire; ?>
-			<?php if ($horaire->heure_debut != '' && $restaurant->distance < 21 && $restaurant->distance > 0) : ?>
+			<?php if ($horaire->heure_debut != '' && $restaurant->distance < 16 && $restaurant->distance > 0) : ?>
 				<?php if ($indice %4 == 0) : ?>
 					<div class="row">
 				<?php endif; ?>
@@ -148,29 +148,40 @@
 	<?php endif; ?>
 </div>
 <?php if ((count($request->restaurants) > 0) && ($totalRestaurantOuvert < $totalRestaurant)) : ?>
-	<div style="margin-top : 100px;">
-		<h4>Les restaurants ci-dessous ne peuvent vous être livré car ils se trouvent en dehors de notre périmètre de livraison (qui est de 15km).
-		Si vous souhaitez tout de même vous les faires livrer, merci de passer par la <a href="?controler=contact&action=evenement">commande spécial</a>.</h4>
-		<table class="table table-striped">
-			<tbody>
-				<?php foreach ($request->restaurants as $restaurant) : ?>
-					<?php $horaire = $restaurant->horaire; ?>
-					<?php if ($horaire->heure_debut != '' && ($restaurant->distance >= 21 || $restaurant->distance < 0)) : ?>
-						<tr>
-							<td>
-								<a href="?action=restaurant_partenaire&id=<?php echo $restaurant->id; ?>">
-									<?php echo utf8_encode($restaurant->nom); ?>
-								</a>
-							</td>
-							<td><?php echo utf8_encode($restaurant->short_desc); ?></td>
-							<td><?php echo $restaurant->distance > 0 ? $restaurant->distance.' Km' : 'NA'; ?></td>
-						</tr>
-						<?php $totalRestaurantOuvert++; ?>
-					<?php endif; ?>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
-	</div>
+	<?php 
+		$totalRestaurantNA = $totalRestaurantOuvert;
+		foreach ($request->restaurants as $restaurant) {
+			$horaire = $restaurant->horaire;
+			if ($horaire->heure_debut != '' && ($restaurant->distance >= 16 || $restaurant->distance < 0)) {
+				$totalRestaurantNA++;
+			}
+		}
+	?>
+	<?php if ($totalRestaurantNA > $totalRestaurantOuvert) : ?>
+		<div style="margin-top : 100px;">
+			<h4>Les restaurants ci-dessous ne peuvent vous être livré car ils se trouvent en dehors de notre périmètre de livraison (qui est de 15km).
+			Si vous souhaitez tout de même vous les faires livrer, merci de passer par la <a href="?controler=contact&action=evenement">commande spécial</a>.</h4>
+			<table class="table table-striped">
+				<tbody>
+					<?php foreach ($request->restaurants as $restaurant) : ?>
+						<?php $horaire = $restaurant->horaire; ?>
+						<?php if ($horaire->heure_debut != '' && ($restaurant->distance >= 16 || $restaurant->distance < 0)) : ?>
+							<tr>
+								<td>
+									<a href="?action=restaurant_partenaire&id=<?php echo $restaurant->id; ?>">
+										<?php echo utf8_encode($restaurant->nom); ?>
+									</a>
+								</td>
+								<td><?php echo utf8_encode($restaurant->short_desc); ?></td>
+								<td><?php echo $restaurant->distance > 0 ? $restaurant->distance.' Km' : 'Distance non trouvée'; ?></td>
+							</tr>
+							<?php $totalRestaurantOuvert++; ?>
+						<?php endif; ?>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+	<?php endif; ?>
 <?php endif; ?>
 <?php if ((count($request->restaurants) > 0) && ($totalRestaurantOuvert < $totalRestaurant)) : ?>
 	<div style="margin-top : 100px;">
@@ -187,7 +198,7 @@
 								</a>
 							</td>
 							<td><?php echo utf8_encode($restaurant->short_desc); ?></td>
-							<td><?php echo $restaurant->distance; ?> Km</td>
+							<td><?php echo $restaurant->distance > 0 ? $restaurant->distance.' Km' : 'Distance non trouvée'; ?></td>
 						</tr>
 					<?php endif; ?>
 				<?php endforeach; ?>
