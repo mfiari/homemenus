@@ -249,15 +249,18 @@
 	<span class="sr-only">Error:</span>
 	Vous devez accepter les conditions générales de vente pour pouvoir continuer
 </div>
-<div>
+<div style="margin-top : 20px;">
 	<div id="paiementsForm" class="row" style="display : none;">
-		<div class="col-md-offset-2 col-md-4">
-			<form id="payPaypal" action="?controler=paypal" method="POST">
+		<div class="col-md-6">
+			<form style="text-align : center;" id="payPaypal" action="?controler=paypal" method="POST">
 				<input id="command" class="btn btn-primary" type="submit" value="Payer avec paypal">
 			</form>
+			<div class="col-md-offset-2 col-md-10">
+				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
+			</div>
 		</div>
-		<div class="col-md-4">
-			<form id="payCard" action="?controler=panier&action=valideCarte" method="POST">
+		<div class="col-md-6">
+			<form style="text-align : center;" id="payCard" action="?controler=panier&action=valideCarte" method="POST">
 			  <script
 				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
 				data-email="<?php echo $request->_auth->login; ?>"
@@ -273,6 +276,9 @@
 				data-currency="eur">
 			  </script>
 			</form>
+			<div class="col-md-offset-2 col-md-10">
+				<img style="width : 80%; margin-top : 20px;" src="res/img/stripe-secure.png" title="HoMe Menus - paiement stripe secure" alt="HoMe Menus - paiement stripe secure">
+			</div>
 		</div>
 	</div>
 </div>
