@@ -12,15 +12,15 @@
 					<input id="minute_commande" name="minute_commande" value="0" hidden="hidden" />
 					<div class="form-group">
 						<label for="login">Rue<span class="required">*</span> : </label>
-						<input id="rue_field" class="form-control" name="rue" type="text" required>
+						<input id="rue_field" class="form-control" name="rue" type="text" value="<?php echo isset($_SESSION['search_rue']) ? $_SESSION['search_rue'] : ''; ?>" required>
 					</div>
 					<div class="form-group">
 						<label for="login">Code postal<span class="required">*</span> : </label>
-						<input id="cp_field" class="form-control" name="code_postal" type="text" required>
+						<input id="cp_field" class="form-control" name="code_postal" type="text" value="<?php echo isset($_SESSION['search_cp']) ? $_SESSION['search_cp'] : ''; ?>" required>
 					</div>
 					<div class="form-group">
 						<label for="login">Ville<span class="required">*</span> : </label>
-						<input id="ville_field" class="form-control" name="ville" type="text" required>
+						<input id="ville_field" class="form-control" name="ville" type="text" value="<?php echo isset($_SESSION['search_ville']) ? $_SESSION['search_ville'] : ''; ?>" required>
 					</div>
 					<div class="form-group">
 						<label for="login">Téléphone<span class="required">*</span> : </label>
