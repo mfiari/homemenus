@@ -2251,9 +2251,12 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getAll () {
-		$sql = "SELECT com.id AS id_commande, com.uid AS id_client, livreur.uid AS id_livreur, livreur.login, resto.id AS id_restaurant, resto.nom AS nom_restaurant, 
-		resto.code_postal AS cp_restaurant, resto.ville AS ville_restaurant, com.date_commande, com.prix, com.prix_livraison, com.etape, com.note, com.date_validation_livreur
+		$sql = "SELECT com.id AS id_commande, client.uid AS id_client, client.nom AS nom_client, client.prenom AS prenom_client, 
+		livreur.uid AS id_livreur, livreur.prenom AS prenom_livreur, livreur.login, 
+		resto.id AS id_restaurant, resto.nom AS nom_restaurant, resto.code_postal AS cp_restaurant, resto.ville AS ville_restaurant, 
+		com.ville, com.code_postal, com.date_commande, com.prix, com.prix_livraison, com.etape, com.note, com.date_validation_livreur
 		FROM commande com
+		LEFT JOIN users client ON client.uid = com.uid
 		LEFT JOIN users livreur ON livreur.uid = com.id_livreur
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		ORDER BY com.date_commande ASC";
@@ -2267,6 +2270,8 @@ class Model_Commande extends Model_Template {
 		foreach ($result as $c) {
 			$commande = new Model_Commande();
 			$commande->id = $c["id_commande"];
+			$commande->ville = $c["ville"];
+			$commande->code_postal = $c["code_postal"];
 			$commande->date_commande = $c["date_commande"];
 			$commande->prix = $c["prix"] + $c["prix_livraison"];
 			$commande->etape = $c["etape"];
@@ -2275,12 +2280,15 @@ class Model_Commande extends Model_Template {
 			
 			$client = new Model_User();
 			$client->id = $c["id_client"];
+			$client->nom = $c["nom_client"];
+			$client->prenom = $c["prenom_client"];
 			
 			$commande->client = $client;
 			
 			$livreur = new Model_User();
 			$livreur->id = $c["id_livreur"];
 			$livreur->login = $c["login"];
+			$livreur->prenom = $c["prenom_livreur"];
 			
 			$commande->livreur = $livreur;
 			
