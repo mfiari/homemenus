@@ -146,6 +146,15 @@
 			</div>
 		</div>
 	</div>
+	<?php if ($request->commande->etape == 0) : ?>
+		<a class="btn btn-primary" href="?controler=commande&action=validationRestaurant&id_commande=<?php echo $request->commande->id; ?>">Préparaion de la commande</a>
+	<?php elseif ($request->commande->etape == 1) : ?>
+		<a class="btn btn-primary" href="?controler=commande&action=preparationRestaurant&id_commande=<?php echo $request->commande->id; ?>">Valider la préparaion de la commande</a>
+	<?php elseif ($request->commande->etape == 2) : ?>
+		<a class="btn btn-primary" href="?controler=commande&action=recuperationLivreur&id_commande=<?php echo $request->commande->id; ?>">Livraison de la commande</a>
+	<?php elseif ($request->commande->etape == 3) : ?>
+		<a class="btn btn-primary" href="?controler=commande&action=livraisonCommande&id_commande=<?php echo $request->commande->id; ?>">Valider la livraison de la commande</a>
+	<?php endif; ?>
 </div>
 <a class="btn btn-primary" href="?controler=commande&action=index">
 	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour

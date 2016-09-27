@@ -1587,6 +1587,61 @@ class Model_Commande extends Model_Template {
 		return true;
 	}
 	
+	public function annule () {
+		$sql = "UPDATE commande SET etape = -1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function validation () {
+		$sql = "UPDATE commande SET etape = 1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function finPreparation () {
+		$sql = "UPDATE commande SET etape = 2 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function recuperationCommande () {
+		$sql = "UPDATE commande SET etape = 3 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function livraisonCommande () {
+		$sql = "UPDATE commande SET etape = 4 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
 	/*
 	* Le restaurant valide que la préparation de la commande à commencer
 	*/
@@ -2305,17 +2360,6 @@ class Model_Commande extends Model_Template {
 		return $listCommande;
 	}
 	
-	public function annule () {
-		$sql = "UPDATE commande SET annule = true WHERE id = :id";
-		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":id", $this->id);
-		if (!$stmt->execute()) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
-			return false;
-		}
-		return true;
-	}
-	
 	public function getTotal () {
 		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, 
 		SUM(prix + prix_livraison) AS total_prix FROM commande";
@@ -2392,6 +2436,8 @@ class Model_Commande extends Model_Template {
 	
 	public function getStatus () {
 		switch ($this->etape) {
+			case -1:
+				return "Annulée";
 			case 0:
 				return "En attente de validation";
 			case 1:

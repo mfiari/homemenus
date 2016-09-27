@@ -40,6 +40,18 @@ class Controller_Commande extends Controller_Admin_Template {
 				case "annule" :
 					$this->annule($request);
 					break;
+				case "validationRestaurant" :
+					$this->validationRestaurant($request);
+					break;
+				case "preparationRestaurant" :
+					$this->preparationRestaurant($request);
+					break;
+				case "recuperationLivreur" :
+					$this->recuperationLivreur($request);
+					break;
+				case "livraisonCommande" :
+					$this->livraisonCommande($request);
+					break;
 				case "renew" :
 					$this->renew($request);
 					break;
@@ -148,9 +160,126 @@ class Controller_Commande extends Controller_Admin_Template {
 		if (isset($_GET["id_commande"])) {
 			$commande = new Model_Commande();
 			$commande->id = $_GET["id_commande"];
-			$commande->annule();
-			$this->redirect('index', 'commande');
+			if ($commande->annule()) {
+				$livreur = $commande->getLivreur();
+				if ($livreur->is_login) {
+					if ($livreur->gcm_token) {
+						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+						$registatoin_ids = array($livreur->gcm_token);
+						$message = "La commande #".$commande->id." a été refusé par le restaurant";
+						// listre des utilisateurs à notifier
+						$gcm->setDevices($registatoin_ids);
+						// Le titre de la notification
+						$data = array(
+							"title" => "Commande refusé",
+							"key" => "livreur-validation-commande",
+							"id_commande" => $commande->id
+						);
+						// On notifie nos utilisateurs
+						$result = $gcm->send($message, $data);
+					}
+				}
+				$client = $commande->getClient();
+				if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
+					$sms = new Clickatell();
+					$sms->message = "Votre commande #".$commande->id." a été refusé par le restaurant";
+					$sms->addNumero($client->telephone);
+					$sms->sendMessage();
+				}
+			}
 		}
+		$this->redirect('index', 'commande');
+	}
+	
+	public function validationRestaurant ($request) {
+		if (isset($_GET["id_commande"])) {
+			$commande = new Model_Commande();
+			$commande->id = $_GET["id_commande"];
+			if ($commande->validation()) {
+				$livreur = $commande->getLivreur();
+				if ($livreur->is_login) {
+					if ($livreur->gcm_token) {
+						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+						$registatoin_ids = array($livreur->gcm_token);
+						$message = "La commande #".$commande->id." a été validé";
+						// listre des utilisateurs à notifier
+						$gcm->setDevices($registatoin_ids);
+						// Le titre de la notification
+						$data = array(
+							"title" => "Commande validé",
+							"key" => "livreur-validation-commande",
+							"id_commande" => $commande->id
+						);
+						// On notifie nos utilisateurs
+						$result = $gcm->send($message, $data);
+					}
+				}
+				$client = $commande->getClient();
+				/*var_dump($client);
+				var_dump($client->parametre);*/
+				if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
+					$sms = new Clickatell();
+					$sms->message = "Bonjour, votre commande est en cours de preparation. L'equipe HoMe Menus.";
+					$sms->addNumero($client->telephone);
+					$sms->sendMessage();
+				}
+			}
+		}
+		$this->redirect('index', 'commande');
+	}
+	
+	public function preparationRestaurant ($request) {
+		if (isset($_GET["id_commande"])) {
+			$commande = new Model_Commande();
+			$commande->id = $_GET["id_commande"];
+			if ($commande->finPreparation()) {
+				$livreur = $commande->getLivreur();
+				if ($livreur->is_login) {
+					if ($livreur->gcm_token) {
+						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+						$registatoin_ids = array($livreur->gcm_token);
+						$message = "La commande #".$commande->id." est prête";
+						// listre des utilisateurs à notifier
+						$gcm->setDevices($registatoin_ids);
+						// Le titre de la notification
+						$data = array(
+							"title" => "Commande prête",
+							"key" => "livreur-preparation-commande",
+							"id_commande" => $commande->id
+						);
+						// On notifie nos utilisateurs
+						$result = $gcm->send($message, $data);
+					}
+				}
+			}
+		}
+		$this->redirect('index', 'commande');
+	}
+	
+	public function recuperationLivreur ($request) {
+		if (isset($_GET["id_commande"])) {
+			$commande = new Model_Commande();
+			$commande->id = $_GET["id_commande"];
+			if ($commande->recuperationCommande()) {
+				$client = $commande->getClient();
+				if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
+					$sms = new Clickatell();
+					$sms->message = "Bonjour, votre commande #".$commande->id." est prête et est en cours de livraison. L'équipe HoMe Menus.";
+					$sms->addNumero($client->telephone);
+					$sms->sendMessage();
+				}
+			}
+		}
+		$this->redirect('index', 'commande');
+	}
+	
+	public function livraisonCommande ($request) {
+		if (isset($_GET["id_commande"])) {
+			$commande = new Model_Commande();
+			$commande->id = $_GET["id_commande"];
+			$commande->livraisonCommande();
+		}
+		$this->redirect('index', 'commande');
 	}
 	
 	public function renew ($request) {
@@ -158,8 +287,8 @@ class Controller_Commande extends Controller_Admin_Template {
 			$commande = new Model_Commande();
 			$commande->id = $_GET["id_commande"];
 			$commande->renew();
-			$this->redirect('index', 'commande');
 		}
+		$this->redirect('index', 'commande');
 	}
 	
 	public function remove ($request) {
@@ -167,8 +296,8 @@ class Controller_Commande extends Controller_Admin_Template {
 			$commande = new Model_Commande();
 			$commande->id = $_GET["id_commande"];
 			$commande->remove();
-			$this->redirect('index', 'commande');
 		}
+		$this->redirect('index', 'commande');
 	}
 	
 	public function create ($request) {
