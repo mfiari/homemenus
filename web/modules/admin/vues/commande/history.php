@@ -22,6 +22,7 @@
 						<th>client</th>
 						<th>Ville</th>
 						<th>Date de commande</th>
+						<th>Temps</th>
 						<th>Prix</th>
 						<th>Note</th>
 						<th></th>
@@ -31,6 +32,16 @@
 					<?php $total = 0; ?>
 					<?php $totalPrix = 0; ?>
 					<?php foreach ($request->commandes as $commande) : ?>
+						<?php 
+							if ($commande->date_validation_restaurant != '' && $commande->date_livraison != '') {
+								$d1 = new DateTime($commande->date_validation_restaurant);
+								$d2 = new DateTime($commande->date_livraison);
+								$diff = $d1->diff($d2);
+								$temps = ($diff->h * 60) + $diff->i;
+							} else {
+								$temps == -1;
+							}
+						?>
 						<tr>
 							<td><a href="?controler=commande&action=viewHistory&id_commande=<?php echo $commande->id; ?>">#<?php echo $commande->id; ?></a></td>
 							<td><a href="?controler=user&action=view&id_user=<?php echo $commande->livreur->id; ?>"><?php echo utf8_encode($commande->livreur->login); ?></a></td>
@@ -38,6 +49,7 @@
 							<td><a href="?controler=user&action=client&id_user=<?php echo $commande->client->id; ?>"><?php echo $commande->client->id; ?></a></td>
 							<td><?php echo utf8_encode($commande->restaurant->ville); ?> (<?php echo $commande->restaurant->code_postal; ?>)</td>
 							<td><?php echo $commande->date_commande; ?></td>
+							<td><?php echo $temps == -1 ? 'NA' : $temps.' min'; ?></td>
 							<td><?php echo $commande->prix; ?> €</td>
 							<td><?php echo $commande->note; ?> / 5</td>
 							<td>

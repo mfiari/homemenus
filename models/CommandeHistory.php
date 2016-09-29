@@ -26,6 +26,11 @@ class Model_Commande_History extends Model_Template {
 	private $etape;
 	private $etapeLibelle;
 	private $is_modif;
+	private $date_validation_livreur;
+	private $date_validation_restaurant;
+	private $date_fin_preparation_restaurant;
+	private $date_recuperation_livreur;
+	private $date_livraison;
 	
 	public function __construct($callParent = true) {
 		if ($callParent) {
@@ -336,7 +341,7 @@ class Model_Commande_History extends Model_Template {
 	
 	public function getAll ($dateDebut, $dateFin) {
 		$sql = "SELECT id, id_commande, id_user AS id_client, id_livreur, login_livreur AS login, id_restaurant, nom_restaurant, 
-		code_postal_restaurant AS cp_restaurant, ville_restaurant, date_commande, prix, prix_livraison, note
+		code_postal_restaurant AS cp_restaurant, ville_restaurant, date_commande, date_validation_restaurant, date_livraison, prix, prix_livraison, note
 		FROM commande_history
 		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		ORDER BY date_commande ASC";
@@ -354,6 +359,8 @@ class Model_Commande_History extends Model_Template {
 			$commande->id = $c["id"];
 			$commande->id_commande = $c["id_commande"];
 			$commande->date_commande = $c["date_commande"];
+			$commande->date_validation_restaurant = $c["date_validation_restaurant"];
+			$commande->date_livraison = $c["date_livraison"];
 			$commande->prix = $c["prix"] + $c["prix_livraison"];
 			$commande->note = $c["note"];
 			
@@ -387,7 +394,7 @@ class Model_Commande_History extends Model_Template {
 			id_commande, id_user AS uid, nom_user AS cnom, prenom_user AS cprenom, telephone_commande AS ctel, rue_commande AS com_rue, ville_commande AS com_ville, 
 			code_postal_commande AS com_cp, id_restaurant AS id_resto, nom_restaurant AS nom_resto, rue_restaurant AS rue_resto, 
 			ville_restaurant AS ville_resto, code_postal_restaurant AS cp_resto, id_livreur, prenom_livreur, date_commande, heure_souhaite, minute_souhaite, 
-			date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, prix, prix_livraison, distance
+			date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, prix, prix_livraison, distance
 		FROM commande_history
 		WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
@@ -425,6 +432,7 @@ class Model_Commande_History extends Model_Template {
 		$this->date_validation_restaurant = $value['date_validation_restaurant'];
 		$this->date_fin_preparation_restaurant = $value['date_fin_preparation_restaurant'];
 		$this->date_recuperation_livreur = $value['date_recuperation_livreur'];
+		$this->date_livraison = $value['date_livraison'];
 		$this->prix = $value['prix'];
 		$this->prix_livraison = $value['prix_livraison'];
 		$this->distance = $value['distance'];

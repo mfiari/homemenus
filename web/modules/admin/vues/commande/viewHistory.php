@@ -21,6 +21,24 @@
 </div>
 <div id="commande">
 	<h3>Commande</h3>
+	<?php 
+		if ($request->commande->date_validation_restaurant != '' && $request->commande->date_livraison != '') {
+			$d1 = new DateTime($request->commande->date_validation_restaurant);
+			$d2 = new DateTime($request->commande->date_livraison);
+			$diff = $d1->diff($d2);
+			$temps = ($diff->h * 60) + $diff->i;
+		} else {
+			$temps == -1;
+		}
+	?>
+	<p><b>Date de commande : </b><?php echo $request->commande->date_commande; ?></p>
+	<p><b>Heure souhaité : </b><?php echo $request->commande->heure_souhaite == -1 ? 'Au plus tôt' : $request->commande->heure_souhaite.'h'.$request->commande->minute_souhaite; ?></p>
+	<p><b>Validation livreur : </b><?php echo $request->commande->date_validation_livreur; ?></p>
+	<p><b>Validation restaurant : </b><?php echo $request->commande->date_validation_restaurant; ?></p>
+	<p><b>Fin préparation restaurant : </b><?php echo $request->commande->date_fin_preparation_restaurant; ?></p>
+	<p><b>Récupération livreur : </b><?php echo $request->commande->date_recuperation_livreur; ?></p>
+	<p><b>Date de livraison : </b><?php echo $request->commande->date_livraison; ?></p>
+	<p><b>Temps écoulé : </b><?php echo $temps == -1 ? 'NA' : $temps.' min'; ?></p>
 	<?php $totalPrix = 0; ?>
 	<?php $totalQte = 0; ?>
 	<?php foreach ($request->commande->menus as $menu) : ?>
