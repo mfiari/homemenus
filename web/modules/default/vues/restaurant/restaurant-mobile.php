@@ -114,7 +114,10 @@
 <script type="text/javascript">
 	$(function() {
 		$(".carte-item").click(function () {
-			$("#loading-modal").modal();
+			$("#loading-modal").modal({
+				backdrop: 'static',
+				keyboard: true
+			});
 			var id_carte = $(this).attr('data-id');
 			var id_restaurant = $("#id_restaurant").val();
 			$.ajax({
@@ -129,7 +132,10 @@
 		});
 		
 		$(".menu-item").click(function () {
-			$("#loading-modal").modal();
+			$("#loading-modal").modal({
+				backdrop: 'static',
+				keyboard: true
+			});
 			var id_menu = $(this).attr('data-id');
 			var id_restaurant = $("#id_restaurant").val();
 			$.ajax({
