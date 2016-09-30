@@ -114,10 +114,7 @@
 <script type="text/javascript">
 	$(function() {
 		$(".carte-item").click(function () {
-			$("#loading-modal").modal({
-				backdrop: 'static',
-				keyboard: true
-			});
+			$("#loading-modal").modal();
 			var id_carte = $(this).attr('data-id');
 			var id_restaurant = $("#id_restaurant").val();
 			$.ajax({
@@ -126,16 +123,16 @@
 				dataType: "html"
 			}).done(function( msg ) {
 				$("#loading-modal").modal('hide');
-				$("#carte-modal").modal();
+				$("#carte-modal").modal({
+					backdrop: 'static',
+					keyboard: true
+				});
 				$("#carte-modal .modal-content").html(msg);
 			});
 		});
 		
 		$(".menu-item").click(function () {
-			$("#loading-modal").modal({
-				backdrop: 'static',
-				keyboard: true
-			});
+			$("#loading-modal").modal();
 			var id_menu = $(this).attr('data-id');
 			var id_restaurant = $("#id_restaurant").val();
 			$.ajax({

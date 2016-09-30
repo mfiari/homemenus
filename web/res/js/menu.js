@@ -37,7 +37,10 @@ function initMenu (data) {
 	);
 	
 	$("#loading-modal").modal('hide');
-	$("#menu-modal").modal();
+	$("#menu-modal").modal({
+		backdrop: 'static',
+		keyboard: true
+	});
 	
 	initFormat (menu);
 	
