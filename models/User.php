@@ -981,7 +981,8 @@ class Model_User extends Model_Template {
 		$sql = "SELECT uld.id, rue, ville, code_postal, latitude, longitude, perimetre, vehicule, id_jour, heure_debut, minute_debut, heure_fin, minute_fin, days.nom 
 		FROM user_livreur_dispo uld
 		JOIN days ON days.id = id_jour
-		WHERE uid = :id";
+		WHERE uid = :id
+		ORDER BY id_jour, heure_debut";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {

@@ -258,18 +258,18 @@ class PDF extends FPDF {
 		
 		//En-tête
 		$this->Cell(80, 7, utf8_decode('Adresse de départ'), 1, 0, 'C');
-		$this->Cell(30, 7, utf8_decode('Périmètre'), 1, 0, 'C');
-		$this->Cell(30, 7, utf8_decode('Véhicule'), 1, 0, 'C');
-		$this->Cell(30, 7, 'Jour', 1, 0, 'C');
+		$this->Cell(25, 7, utf8_decode('Périmètre'), 1, 0, 'C');
+		$this->Cell(25, 7, utf8_decode('Véhicule'), 1, 0, 'C');
+		$this->Cell(25, 7, 'Jour', 1, 0, 'C');
 		$this->Cell(35, 7, 'Horaires', 1, 0, 'C');
 		$this->Ln();
 		
 		//Données
 		foreach($livreur->dispos as $dispo) {
 			$this->Cell(80, 6, utf8_decode($dispo->rue).', '.$dispo->code_postal.' '.utf8_decode($dispo->ville), 1, 0, 'R');
-			$this->Cell(30, 6, $dispo->perimetre.' km', 1, 0, 'R');
-			$this->Cell(30, 6, $dispo->vehicule, 1, 0, 'R');
-			$this->Cell(30, 6, $dispo->jour, 1, 0, 'R');
+			$this->Cell(25, 6, $dispo->perimetre.' km', 1, 0, 'R');
+			$this->Cell(25, 6, $dispo->vehicule, 1, 0, 'R');
+			$this->Cell(25, 6, $dispo->jour, 1, 0, 'R');
 			$this->Cell(35, 6, 'De '.$dispo->heure_debut.'h'.$dispo->minute_debut.utf8_decode(' à ').$dispo->heure_fin.'h'.$dispo->minute_fin, 1, 0, 'R');
 			$this->Ln();
 		}

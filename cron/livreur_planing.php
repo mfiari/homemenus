@@ -20,9 +20,9 @@
 		if(!is_dir($planingDir)){
 		   mkdir($planingDir, 0777, true);
 		}
-		
-		$modelUser->id = $livreur->id;
-		$user = $modelUser->getLivreur();
+		$modelLivreur = new Model_User();
+		$modelLivreur->id = $livreur->id;
+		$user = $modelLivreur->getLivreur();
 		$pdf = new PDF();
 		$pdf->generateHoraireLivreur($user);
 		$pdf->render('F', $planingDir.'livreur'.$livreur->id.'.pdf');
