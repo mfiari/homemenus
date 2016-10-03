@@ -258,6 +258,10 @@ div.even {
     background-color: #0000FF;
 }
 
+#myCarousel .item {
+    border: none;
+}
+
 .item {
     border: 1px solid black;
     border-radius: 5px;
