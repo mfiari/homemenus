@@ -52,7 +52,7 @@
 								}
 							}
 						?>
-						<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Saisissez votre adresse de livraison" value="<?php echo $adresse;?>">
+						<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Saisissez votre adresse" value="<?php echo $adresse;?>">
 						<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
 					</div>
 					<span class="input-group-btn">

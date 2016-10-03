@@ -50,7 +50,7 @@
 		<form id="adress-form" action="?controler=restaurant&action=recherche" method="POST">
 			<div>
 				<div class="search-block">
-					<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Saisissez votre adresse de livraison">
+					<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Saisissez votre adresse">
 					<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
 				</div>
 				<span class="input-group-btn">
