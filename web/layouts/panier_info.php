@@ -61,7 +61,7 @@
 			}).done(function( msg ) {
 				var data = $.parseJSON(msg);
 				console.log(data);
-				if (data.distance < 15) {
+				if (data.distance < 16) {
 					document.location.href = "?controler=panier&action=finalisation";
 				} else {
 					$("#panier-info-modal .modal-footer div.alert-danger span.message").html("Nous ne pouvons vous livrer ce restaurant car votre adresse se trouve à plus de 15km du restaurant (" + data.distance + " km)");

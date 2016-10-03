@@ -337,11 +337,18 @@ class Controller_Panier extends Controller_Default_Template {
 			$result = array();
 			$result['distance'] = $distance;
 			
+			if ($distance < 16) {
+				writeLog(SERVER_LOG, "Adresse correcte", LOG_LEVEL_INFO, "$rue, $code_postal $ville");
+			} else {
+				writeLog(SERVER_LOG, "Adresse en dehors du périmètre", LOG_LEVEL_ERROR, "$rue, $code_postal $ville");
+			}
+			
 			$request->disableLayout = true;
 			$request->noRender = true;
 			echo json_encode($result);
 		} else {
 			$this->error(404, "Not found");
+			writeLog(SERVER_LOG, "Adresse panier invalide", LOG_LEVEL_ERROR, "$rue, $code_postal $ville");
 		}
 	}
 	
