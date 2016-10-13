@@ -100,6 +100,35 @@
 						</div>
 					</div>
 				<?php endif; ?>
+				<?php if (count($carte->options) > 0) : ?>
+					<div class="row">
+						<div class="col-md-offset-1 col-md-11">
+							<div class="row">
+								<div class="col-md-offset-1 col-md-11">
+									<?php foreach ($carte->options as $option) : ?>
+										<?php foreach ($option->values as $optionValue) : ?>
+											<span><?php echo utf8_encode($option->nom); ?> : <?php echo utf8_encode($optionValue->nom); ?></span>
+										<?php endforeach; ?>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
+				<?php if (count($carte->accompagnements) > 0) : ?>
+					<div class="row">
+						<div class="col-md-offset-1 col-md-11">
+							<span>accompagnements : </span>
+							<div class="row">
+								<div class="col-md-offset-1 col-md-11">
+									<?php foreach ($carte->accompagnements as $accompagnement) : ?>
+										<span><?php echo utf8_encode($accompagnement->nom); ?></span>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
 			</div>
 			<div class="col-md-4">
 				<div class="row">

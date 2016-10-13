@@ -624,6 +624,53 @@ class Model_Commande extends Model_Template {
 				$supplement->prix = $sup["prix"];
 				$carte->addSupplement($supplement);
 			}
+			
+			$sql = "SELECT cco.id AS id, ro.id AS id_option, ro.nom AS nom_option, rov.id AS id_value, rov.nom AS nom_value
+			FROM commande_carte_option cco 
+			JOIN restaurant_option ro ON ro.id = cco.id_option
+			JOIN restaurant_option_value rov ON rov.id = cco.id_value
+			WHERE cco.id_commande_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $this->id);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$listCommandeCarteOption = $stmt->fetchAll();
+			foreach ($listCommandeCarteOption as $commandeCarteOption) {
+				$option = new Model_Option(false);
+				$option->id = $commandeCarteOption['id_option'];
+				$option->nom = $commandeCarteOption['nom_option'];
+				
+				$optionValue = new Model_Option_Value(false);
+				$optionValue->id = $commandeCarteOption['id_value'];
+				$optionValue->nom = $commandeCarteOption['nom_value'];
+				
+				$option->addValue($optionValue);
+				
+				$carte->addOption($option);
+			}
+			
+			$sql = "SELECT cca.id AS id, carte.id AS id_carte, carte.nom AS nom_carte
+			FROM commande_carte_accompagnement cca 
+			JOIN carte ON carte.id = cca.id_accompagnement
+			WHERE cca.id_commande_carte = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $this->id);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$listCommandeCarteAccompagnement = $stmt->fetchAll();
+			foreach ($listCommandeCarteAccompagnement as $commandeCarteAccompagnement) {
+				$accompagnement = new Model_Accompagnement(false);
+				$accompagnement->id = $commandeCarteAccompagnement['id'];
+				$accompagnementCarte = new Model_Carte(false);
+				$accompagnementCarte->id = $commandeCarteAccompagnement['id_carte'];
+				$accompagnementCarte->nom = $commandeCarteAccompagnement['nom_carte'];
+				$accompagnement->addCarte($accompagnementCarte);
+				$carte->addAccompagnement($accompagnement);
+			}
 			$this->cartes[] = $carte;
 		}
 		
@@ -1891,6 +1938,21 @@ class Model_Commande extends Model_Template {
 			$this->cartes[] = $carte;
 		}
 		return $this;
+	}
+	
+	/*
+	* Le livreur valide qu'il a récupérer la commande dans le restaurant
+	*/
+	public function validationLivreur () {
+		$sql = "UPDATE commande SET date_validation_livreur = NOW() WHERE id = :commande AND id_livreur = :livreur";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":commande", $this->id);
+		$stmt->bindValue(":livreur", $this->uid);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
 	}
 	
 	/*
