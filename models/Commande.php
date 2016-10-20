@@ -587,10 +587,11 @@ class Model_Commande extends Model_Template {
 		$this->distance = $value['distance'];
 		$this->cartes = array();
 		
-		$sql = "SELECT carte.id, carte.nom, carte.id_categorie, cc.quantite, cf.prix
+		$sql = "SELECT carte.id, carte.nom, carte.id_categorie, cc.quantite, cf.id AS id_format, cf.prix, rf.nom AS nom_format
 		FROM commande_carte cc 
 		JOIN carte ON carte.id = cc.id_carte
 		JOIN carte_format cf ON cf.id_carte = carte.id AND cf.id_format = cc.id_format
+		JOIN restaurant_format rf ON rf.id = cc.id_format
 		WHERE cc.id_commande = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
@@ -605,6 +606,12 @@ class Model_Commande extends Model_Template {
 			$carte->nom = $c['nom'];
 			$carte->quantite = $c['quantite'];
 			$carte->prix = $c['prix'] * $c['quantite'];
+			
+			$format = new Model_Format();
+			$format->id = $c['id_format'];
+			$format->nom = $c['nom_format'];
+
+			$carte->addFormat($format);
 			
 			$sql = "SELECT supp.id, supp.nom, supp.prix
 			FROM commande_carte_supplement css
@@ -1135,7 +1142,7 @@ class Model_Commande extends Model_Template {
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		JOIN users client ON client.uid = com.uid
 		WHERE id_livreur = :livreur
-		AND etape < 4";
+		AND etape BETWEEN 0 AND 3";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":livreur", $this->uid);
 		if (!$stmt->execute()) {
