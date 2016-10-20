@@ -292,7 +292,7 @@ class Controller_Commande extends Controller_Template {
 	}
 	
 	private function validationLivreur () {
-		if (!isset($_POST["id_user"])) {
+		if (!isset($_POST["id_livreur"])) {
 			die();
 		}
 		if (!isset($_POST["id_commande"])) {
@@ -300,7 +300,7 @@ class Controller_Commande extends Controller_Template {
 		}
 		$commande = new Model_Commande();
 		$commande->id = $_POST["id_commande"];
-		$commande->uid = $_POST["id_user"];
+		$commande->uid = $_POST["id_livreur"];
 		$commande->validationLivreur();
 	}
 	
