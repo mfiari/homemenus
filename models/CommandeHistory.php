@@ -340,8 +340,8 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getAll ($dateDebut, $dateFin) {
-		$sql = "SELECT id, id_commande, id_user AS id_client, id_livreur, login_livreur AS login, id_restaurant, nom_restaurant, 
-		code_postal_restaurant AS cp_restaurant, ville_restaurant, date_commande, date_validation_restaurant, date_livraison, prix, prix_livraison, note
+		$sql = "SELECT id, id_commande, id_user AS id_client, nom_user, prenom_user, id_livreur, login_livreur AS login, prenom_livreur, id_restaurant, nom_restaurant, 
+		code_postal_restaurant AS cp_restaurant, ville_restaurant, ville_commande, date_commande, date_validation_restaurant, date_livraison, prix, prix_livraison, note
 		FROM commande_history
 		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		ORDER BY date_commande ASC";
@@ -358,6 +358,7 @@ class Model_Commande_History extends Model_Template {
 			$commande = new Model_Commande();
 			$commande->id = $c["id"];
 			$commande->id_commande = $c["id_commande"];
+			$commande->ville = $c["ville_commande"];
 			$commande->date_commande = $c["date_commande"];
 			$commande->date_validation_restaurant = $c["date_validation_restaurant"];
 			$commande->date_livraison = $c["date_livraison"];
@@ -366,12 +367,15 @@ class Model_Commande_History extends Model_Template {
 			
 			$client = new Model_User();
 			$client->id = $c["id_client"];
+			$client->nom = $c["nom_user"];
+			$client->prenom = $c["prenom_user"];
 			
 			$commande->client = $client;
 			
 			$livreur = new Model_User();
 			$livreur->id = $c["id_livreur"];
 			$livreur->login = $c["login"];
+			$livreur->prenom = $c["prenom_livreur"];
 			
 			$commande->livreur = $livreur;
 			

@@ -20,7 +20,6 @@
 						<th>Livreur</th>
 						<th>Restaurant</th>
 						<th>client</th>
-						<th>Ville</th>
 						<th>Date de commande</th>
 						<th>Temps</th>
 						<th>Prix</th>
@@ -33,21 +32,28 @@
 					<?php $totalPrix = 0; ?>
 					<?php foreach ($request->commandes as $commande) : ?>
 						<?php 
-							if ($commande->date_validation_restaurant != '' && $commande->date_livraison != '') {
+							if ($commande->date_validation_restaurant != '' && $commande->date_livraison != '' && 
+							$commande->date_validation_restaurant != '0000-00-00 00:00:00' && $commande->date_livraison != '0000-00-00 00:00:00') {
 								$d1 = new DateTime($commande->date_validation_restaurant);
 								$d2 = new DateTime($commande->date_livraison);
 								$diff = $d1->diff($d2);
 								$temps = ($diff->h * 60) + $diff->i;
 							} else {
-								$temps == -1;
+								$temps = -1;
 							}
 						?>
 						<tr>
 							<td><a href="?controler=commande&action=viewHistory&id_commande=<?php echo $commande->id; ?>">#<?php echo $commande->id; ?></a></td>
-							<td><a href="?controler=user&action=view&id_user=<?php echo $commande->livreur->id; ?>"><?php echo utf8_encode($commande->livreur->login); ?></a></td>
-							<td><a href="?controler=restaurant&action=view&id_restaurant=<?php echo $commande->restaurant->id; ?>"><?php echo utf8_encode($commande->restaurant->nom); ?></a></td>
-							<td><a href="?controler=user&action=client&id_user=<?php echo $commande->client->id; ?>"><?php echo $commande->client->id; ?></a></td>
-							<td><?php echo utf8_encode($commande->restaurant->ville); ?> (<?php echo $commande->restaurant->code_postal; ?>)</td>
+							<td><a href="?controler=user&action=view&id_user=<?php echo $commande->livreur->id; ?>">
+								<?php echo utf8_encode($commande->livreur->prenom); ?> (<?php echo utf8_encode($commande->livreur->login); ?>)
+							</a></td>
+							<td><a href="?controler=restaurant&action=view&id_restaurant=<?php echo $commande->restaurant->id; ?>">
+								<?php echo utf8_encode($commande->restaurant->nom); ?> (<?php echo utf8_encode($commande->restaurant->ville); ?>)
+							</a></td>
+							<td><a href="?controler=user&action=client&id_user=<?php echo $commande->client->id; ?>">
+								<?php echo utf8_encode($commande->client->nom); ?> <?php echo utf8_encode($commande->client->prenom); ?>
+								(<?php echo utf8_encode($commande->ville); ?>)
+							</a></td>
 							<td><?php echo $commande->date_commande; ?></td>
 							<td><?php echo $temps == -1 ? 'NA' : $temps.' min'; ?></td>
 							<td><?php echo $commande->prix; ?> €</td>
