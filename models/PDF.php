@@ -140,7 +140,7 @@ class PDF extends FPDF {
 		
 		$this->title = "Commande #".$commande->id;
 		
-		$this->logo = getLogoRestaurant($commande->restaurant->id);
+		//$this->logo = getLogoRestaurant($commande->restaurant->id);
 		
 		$this->AliasNbPages();
 		$this->AddPage();
