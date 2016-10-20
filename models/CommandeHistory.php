@@ -396,8 +396,8 @@ class Model_Commande_History extends Model_Template {
 		$sql = "
 		SELECT 
 			id_commande, id_user AS uid, nom_user AS cnom, prenom_user AS cprenom, telephone_commande AS ctel, rue_commande AS com_rue, ville_commande AS com_ville, 
-			code_postal_commande AS com_cp, id_restaurant AS id_resto, nom_restaurant AS nom_resto, rue_restaurant AS rue_resto, 
-			ville_restaurant AS ville_resto, code_postal_restaurant AS cp_resto, id_livreur, prenom_livreur, date_commande, heure_souhaite, minute_souhaite, 
+			code_postal_commande AS com_cp, id_restaurant AS id_resto, nom_restaurant AS nom_resto, rue_restaurant AS rue_resto, ville_restaurant AS ville_resto, 
+			code_postal_restaurant AS cp_resto, telephone_restaurant, id_livreur, prenom_livreur, date_commande, heure_souhaite, minute_souhaite, 
 			date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, prix, prix_livraison, distance
 		FROM commande_history
 		WHERE id = :id";
@@ -427,6 +427,7 @@ class Model_Commande_History extends Model_Template {
 		$this->restaurant->rue = $value['rue_resto'];
 		$this->restaurant->ville = $value['ville_resto'];
 		$this->restaurant->code_postal = $value['cp_resto'];
+		$this->restaurant->telephone = $value['telephone_restaurant'];
 		$this->livreur = new Model_User(false);
 		$this->livreur->id = $value['id_livreur'];
 		$this->livreur->prenom = $value['prenom_livreur'];

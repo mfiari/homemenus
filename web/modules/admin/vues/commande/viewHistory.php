@@ -5,11 +5,13 @@
 <div id="restaurant">
 	<h3><?php echo utf8_encode($request->commande->restaurant->nom); ?></h3>
 	<p><?php echo utf8_encode($request->commande->restaurant->rue); ?>, <?php echo $request->commande->restaurant->code_postal; ?> <?php echo utf8_encode($request->commande->restaurant->ville); ?></p>
+	<p>Téléphone : <?php echo $request->commande->restaurant->telephone; ?></p>
 </div>
 <div id="client">
 	<h3>Client</h3>
 	<span><?php echo utf8_encode($request->commande->client->nom); ?> <?php echo utf8_encode($request->commande->client->prenom); ?></span>
 	<p><?php echo utf8_encode($request->commande->rue); ?>, <?php echo $request->commande->code_postal; ?> <?php echo utf8_encode($request->commande->ville); ?></p>
+	<p>Téléphone : <?php echo $request->commande->client->telephone; ?></p>
 </div>
 <div id="livreur">
 	<h3>Livreur</h3>
@@ -96,6 +98,33 @@
 								<div class="col-md-offset-1 col-md-11">
 									<?php foreach ($carte->supplements as $supplement) : ?>
 										<span><?php echo utf8_encode($supplement->nom); ?></span>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
+				<?php if (count($carte->options) > 0) : ?>
+					<div class="row">
+						<div class="col-md-offset-1 col-md-11">
+							<div class="row">
+								<div class="col-md-offset-1 col-md-11">
+									<?php foreach ($carte->options as $option) : ?>
+										<span><?php echo utf8_encode($option->nom); ?></span>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
+				<?php if (count($carte->accompagnements) > 0) : ?>
+					<div class="row">
+						<div class="col-md-offset-1 col-md-11">
+							<span>accompagnements : </span>
+							<div class="row">
+								<div class="col-md-offset-1 col-md-11">
+									<?php foreach ($carte->accompagnements as $accompagnement) : ?>
+										<span><?php echo utf8_encode($accompagnement->nom); ?></span>
 									<?php endforeach; ?>
 								</div>
 							</div>
