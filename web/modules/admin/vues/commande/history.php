@@ -6,7 +6,9 @@
 			<li role="presentation" class="active"><a>Historique des commandes</a></li>
 		</ul>
 		<div>
-			<form method="post" enctype="x-www-form-urlencoded" action="">
+			<form method="GET" enctype="x-www-form-urlencoded" action="">
+				<input type="text" name="controler" value="commande" hidden>
+				<input type="text" name="action" value="history" hidden>
 				<span>Début : </span><input class="datepicker" type="text" name="date_debut" value="<?php echo $request->date_debut ? $request->date_debut : ''; ?>">
 				<span>Fin : </span><input class="datepicker" type="text" name="date_fin" value="<?php echo $request->date_fin ? $request->date_fin : ''; ?>">
 				<button class="btn btn-primary" type="submit">Valider</button>
@@ -73,6 +75,20 @@
 						<th>Total : </th>
 						<th colspan="5"><?php echo $total; ?> commande(s)</th>
 						<th><?php echo $totalPrix; ?> €</th>
+						<th></th>
+					</tr>
+					<tr>
+						<?php
+							$totalPage = ceil($request->totalRows / $request->nbItem);
+							if ($totalPage == 0) {
+								$totalPage = 1;
+							}
+						?>
+						<td></td>
+						<td colspan="2"><a class="btn btn-primary" href="?controler=commande&action=history&date_debut=<?php echo $request->date_debut; ?>&date_fin=<?php echo $request->date_fin; ?>&page=<?php echo $request->page-1; ?>" <?php echo $request->page == 1 ? 'disabled' : ''; ?>>Page précédente</a></td>
+						<td colspan="2"><?php echo $request->page; ?> / <?php echo $totalPage; ?></td>
+						<td colspan="2"><a class="btn btn-primary" href="?controler=commande&action=history&date_debut=<?php echo $request->date_debut; ?>&date_fin=<?php echo $request->date_fin; ?>&page=<?php echo $request->page+1; ?>" <?php echo $request->page == $totalPage ? 'disabled' : ''; ?>>Page suivante</a></td>
+						<td></td>
 					</tr>
 				</tfoot>
 			</table>
@@ -96,3 +112,11 @@
 		});
 	});
 </script>
+<style>
+
+	a[disabled] {
+		pointer-events: none;
+		background-color: gray;
+	}
+
+</style>

@@ -130,21 +130,38 @@ class Controller_Commande extends Controller_Admin_Template {
 	}
 	
 	public function history ($request) {
-		if (isset($_POST['date_debut'])) {
-			$request->date_debut = $_POST['date_debut'];
+		if (isset($_GET['date_debut'])) {
+			$request->date_debut = $_GET['date_debut'];
 		} else {
 			$request->date_debut = '01/'.date('m').'/'.date('Y');
 		}
 		$dateDebut = datepickerToDatetime($request->date_debut);
 		
-		if (isset($_POST['date_fin'])) {
-			$request->date_fin = $_POST['date_fin'];
+		if (isset($_GET['date_fin'])) {
+			$request->date_fin = $_GET['date_fin'];
 		} else {
 			$request->date_fin = date('d').'/'.date('m').'/'.date('Y');
 		}
 		$dateFin = datepickerToDatetime($request->date_fin);
+		
+		if (isset($_GET['page'])) {
+			$request->page = $_GET['page'];
+		} else {
+			$request->page = 1;
+		}
+		$page = $request->page;
+		
+		if (isset($_GET['nbItem'])) {
+			$request->nbItem = $_GET['nbItem'];
+		} else {
+			$request->nbItem = 20;
+		}
+		$nbItem = $request->nbItem;
+		
 		$modelCommande = new Model_Commande_History();
-		$request->commandes = $modelCommande->getAll($dateDebut, $dateFin);
+		$result = $modelCommande->getAll($dateDebut, $dateFin, $page, $nbItem);
+		$request->totalRows = $result["total_rows"];
+		$request->commandes = $result["list_commandes"];
 		$request->title = "Administration - commandes";
 		$request->vue = $this->render("commande/history.php");
 	}

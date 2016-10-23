@@ -339,12 +339,31 @@ class Model_Commande_History extends Model_Template {
 		return $listCommande;
 	}
 	
-	public function getAll ($dateDebut, $dateFin) {
+	public function getAll ($dateDebut, $dateFin, $page = 1, $nbItem = 20) {
+		$offset = (($page -1) * $nbItem);
+		
+		$sql = "SELECT COUNT(*) AS nb_row
+		FROM commande_history
+		WHERE date_commande BETWEEN :date_debut AND :date_fin";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return false;
+		}
+		$total_row = $value['nb_row'];
+		
 		$sql = "SELECT id, id_commande, id_user AS id_client, nom_user, prenom_user, id_livreur, login_livreur AS login, prenom_livreur, id_restaurant, nom_restaurant, 
 		code_postal_restaurant AS cp_restaurant, ville_restaurant, ville_commande, date_commande, date_validation_restaurant, date_livraison, prix, prix_livraison, note
 		FROM commande_history
 		WHERE date_commande BETWEEN :date_debut AND :date_fin
-		ORDER BY date_commande ASC";
+		ORDER BY date_commande ASC
+		Limit $offset, $nbItem";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":date_debut", $dateDebut);
 		$stmt->bindValue(":date_fin", $dateFin);
@@ -389,7 +408,7 @@ class Model_Commande_History extends Model_Template {
 			
 			$listCommande[] = $commande;
 		}
-		return $listCommande;
+		return array("total_rows" => $total_row, "list_commandes" => $listCommande);
 	}
 	
 	public function load () {
