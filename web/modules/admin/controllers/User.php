@@ -29,6 +29,9 @@ class Controller_User extends Controller_Admin_Template {
 				case "clients" :
 					$this->clients($request);
 					break;
+				case "addClient" :
+					$this->addClient($request);
+					break;
 				case "client" :
 					$this->client($request);
 					break;
@@ -142,6 +145,78 @@ class Controller_User extends Controller_Admin_Template {
 		$request->clients = $modelUser->getAllClients();
 		$request->title = "Administration - clients";
 		$request->vue = $this->render("user/clients.php");
+	}
+	
+	public function addClient ($request) {
+		if ($request->request_method == "POST") {
+			$errorMessage = array();
+			if (!isset($_POST["nom"]) || trim($_POST["nom"]) == "") {
+				$errorMessage["EMPTY_NOM"] = "Le nom ne peut être vide";
+			} else {
+				$request->fieldNom = $_POST["nom"];
+			}
+			if (!isset($_POST["prenom"]) || trim($_POST["prenom"]) == "") {
+				$errorMessage["EMPTY_PRENOM"] = "Le prénom ne peut être vide";
+			} else {
+				$request->fieldPrenom = $_POST["prenom"];
+			}
+			if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
+				$errorMessage["EMPTY_LOGIN"] = "Le login ne peut être vide";
+			} else {
+				$request->fieldEmail = $_POST["login"];
+			}
+			$rue = null;
+			$ville = null;
+			$code_postal = null;
+			$telephone = null;
+			if (isset($_POST["adresse"]) && trim($_POST["adresse"]) != '') {
+				$rue = trim($_POST["rue"]);
+				$ville = trim($_POST["ville"]);
+				$code_postal = trim($_POST["code_postal"]);
+				$request->fieldAdresse = $_POST["adresse"];
+				$request->fieldRue = $rue;
+				$request->fieldVille = $ville;
+				$request->fieldCP = $code_postal;
+			}
+			if (isset($_POST["telephone"]) && trim($_POST["telephone"]) != '') {
+				$telephone = trim($_POST["telephone"]);
+				$request->fieldTel = $_POST["telephone"];
+			}
+			if (count($errorMessage) == 0) {
+				$model = new Model_User();
+				$model->nom = trim($_POST["nom"]);
+				$model->prenom = trim($_POST["prenom"]);
+				$model->login = trim($_POST["login"]);
+				$model->email = trim($_POST["login"]);
+				$model->password = generatePassword();
+				$model->status = USER_CLIENT;
+				$model->rue = $rue;
+				$model->ville = $ville;
+				$model->code_postal = $code_postal;
+				$model->inscription_token = generateToken();
+				$model->telephone = $telephone;
+				if ($model->isLoginAvailable()) {
+					if ($model->save()) {
+						$messageContent =  file_get_contents (ROOT_PATH.'mails/creation_compte.html');
+						$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
+						$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
+						$messageContent = str_replace("[LOGIN]", $model->login, $messageContent);
+						$messageContent = str_replace("[PASSWORD]", $model->password, $messageContent);
+						
+						send_mail ($model->email, "Création de votre compte", $messageContent);
+						$this->redirect('clients', 'user');
+					} else {
+						$request->errorMessage = array("CREATE_ERROR" => "Une erreur s'est produite, veuillez réessayé ultérieurement.");
+					}
+				} else {
+					$request->errorMessage = array("USER_EXISTS" => "l'email ".$model->email." existe déjà");
+				}
+			} else {
+				$request->errorMessage = $errorMessage;
+			}
+		}
+		$request->title = "Administration - client";
+		$request->vue = $this->render("user/addClient.php");
 	}
 	
 	public function client ($request) {

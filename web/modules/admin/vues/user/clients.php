@@ -46,4 +46,7 @@
 			</table>
 		</div>
 	</div>
+	<div class="col-md-12">
+		<a href="?controler=user&action=addClient" class="btn btn-primary">Ajouter un client</a>
+	</div>
 </div>
