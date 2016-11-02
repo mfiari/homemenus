@@ -7,7 +7,7 @@
 		</ul>
 		<div id="commandes">
 			<form method="post" action="?controler=commande&action=create">
-				<button class="btn btn-primary" type="button">Créer une nouvelle commande</button>
+				<button class="btn btn-primary" type="submit">Créer une nouvelle commande</button>
 			</form>
 			<table class="table table-striped">
 				<thead>

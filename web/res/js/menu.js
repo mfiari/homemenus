@@ -3,12 +3,43 @@ var formContent = {};
 
 var menuContainer;
 
-function initMenu (data) {
+function initMenu (data, controllerMenu, actionMenu, controllerPanier, actionPanier) {
 	var restaurant = data.restaurant;
 	var menu = restaurant.menu;
 	
+	console.log(controllerMenu);
+	console.log(actionMenu);
+	console.log(controllerPanier);
+	console.log(actionPanier);
+	
+	if (controllerMenu && controllerMenu != '') {
+		formContent.controllerMenu = controllerMenu;
+	} else {
+		formContent.controllerMenu = 'panier';
+	}
+	
+	if (actionMenu && actionMenu != '') {
+		formContent.actionMenu = actionMenu;
+	} else {
+		formContent.actionMenu = 'addMenu';
+	}
+	
+	if (controllerPanier && controllerPanier != '') {
+		formContent.controllerPanier = controllerPanier;
+	} else {
+		formContent.controllerPanier = 'restaurant';
+	}
+	
+	if (actionPanier && actionPanier != '') {
+		formContent.actionPanier = actionPanier;
+	} else {
+		formContent.actionPanier = 'panier';
+	}
+	
 	formContent.id_menu = menu.id;
 	formContent.id_restaurant = restaurant.id;
+	
+	console.log(formContent);
 	
 	$("#menu-modal .modal-content").html('');
 	
@@ -270,7 +301,7 @@ function resume () {
 				
 				$.ajax({
 					type: "POST",
-					url: "?controler=panier&action=addMenu",
+					url: '?controler='+formContent.controllerMenu+'&action='+formContent.actionMenu,
 					dataType: "html",
 					data: sendData
 				}).done(function( msg ) {
@@ -281,7 +312,7 @@ function resume () {
 					$("#menu-modal .modal-footer div.alert-success").css('display', 'inline-block');
 					$.ajax({
 						type: "GET",
-						url: '?controler=restaurant&action=panier',
+						url: '?controler='+formContent.controllerPanier+'&action='+formContent.actionPanier,
 						dataType: "html"
 					}).done(function( msg ) {
 						$("#panier-content").html(msg);

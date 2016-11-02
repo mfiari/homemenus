@@ -587,7 +587,7 @@ class Model_Commande extends Model_Template {
 		$this->distance = $value['distance'];
 		$this->cartes = array();
 		
-		$sql = "SELECT carte.id, carte.nom, carte.id_categorie, cc.quantite, cf.id AS id_format, cf.prix, rf.nom AS nom_format
+		$sql = "SELECT cc.id AS id, carte.id AS id_carte, carte.nom, carte.id_categorie, cc.quantite, cf.id AS id_format, cf.prix, rf.nom AS nom_format
 		FROM commande_carte cc 
 		JOIN carte ON carte.id = cc.id_carte
 		JOIN carte_format cf ON cf.id_carte = carte.id AND cf.id_format = cc.id_format
@@ -601,8 +601,9 @@ class Model_Commande extends Model_Template {
 		}
 		$result = $stmt->fetchAll();
 		foreach ($result as $c) {
+			$id_commande_carte = $c['id'];
 			$carte = new Model_Carte(false);
-			$carte->id = $c['id'];
+			$carte->id = $c['id_carte'];
 			$carte->nom = $c['nom'];
 			$carte->quantite = $c['quantite'];
 			$carte->prix = $c['prix'] * $c['quantite'];
@@ -618,7 +619,7 @@ class Model_Commande extends Model_Template {
 			JOIN supplements supp ON supp.id = css.id_supplement
 			WHERE css.id_commande_carte = :id";
 			$stmt = $this->db->prepare($sql);
-			$stmt->bindValue(":id", $this->id);
+			$stmt->bindValue(":id", $id_commande_carte);
 			if (!$stmt->execute()) {
 				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
@@ -638,7 +639,7 @@ class Model_Commande extends Model_Template {
 			JOIN restaurant_option_value rov ON rov.id = cco.id_value
 			WHERE cco.id_commande_carte = :id";
 			$stmt = $this->db->prepare($sql);
-			$stmt->bindValue(":id", $this->id);
+			$stmt->bindValue(":id", $id_commande_carte);
 			if (!$stmt->execute()) {
 				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
@@ -663,7 +664,7 @@ class Model_Commande extends Model_Template {
 			JOIN carte ON carte.id = cca.id_accompagnement
 			WHERE cca.id_commande_carte = :id";
 			$stmt = $this->db->prepare($sql);
-			$stmt->bindValue(":id", $this->id);
+			$stmt->bindValue(":id", $id_commande_carte);
 			if (!$stmt->execute()) {
 				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;

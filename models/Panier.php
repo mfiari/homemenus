@@ -310,7 +310,7 @@ class Model_Panier extends Model_Template {
 			pl.reduction_premium, promo.description, promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, promo.sur_prix_total, 
 			promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM panier 
-		JOIN prix_livraison pl ON panier.distance BETWEEN pl.distance_min AND pl.distance_max
+		JOIN prix_livraison pl ON ((panier.distance BETWEEN pl.distance_min AND pl.distance_max) OR pl.distance_max = -1)
 		JOIN restaurants resto ON resto.id = panier.id_restaurant
 		LEFT JOIN restaurant_horaires rh ON rh.id_restaurant = resto.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
 		OR (rh.heure_debut <= HOUR(CURRENT_TIME) AND rh.heure_fin > HOUR(CURRENT_TIME)))
@@ -420,7 +420,7 @@ class Model_Panier extends Model_Template {
 			rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin, pl.prix, pl.montant_min, pl.reduction_premium, promo.description,
 			promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM panier 
-		JOIN prix_livraison pl ON panier.distance BETWEEN pl.distance_min AND pl.distance_max
+		JOIN prix_livraison pl ON ((panier.distance BETWEEN pl.distance_min AND pl.distance_max) OR pl.distance_max = -1)
 		JOIN restaurants resto ON resto.id = panier.id_restaurant
 		LEFT JOIN restaurant_horaires rh ON rh.id_restaurant = resto.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
 		OR (rh.heure_debut <= HOUR(CURRENT_TIME) AND rh.heure_fin > HOUR(CURRENT_TIME)))
@@ -639,7 +639,7 @@ class Model_Panier extends Model_Template {
 			pl.prix, pl.montant_min, pl.reduction_premium, promo.description, user.uid AS uid, user.nom AS nom, user.prenom AS prenom, user.email, 
 			promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM panier 
-		JOIN prix_livraison pl ON panier.distance BETWEEN pl.distance_min AND pl.distance_max
+		JOIN prix_livraison pl ON ((panier.distance BETWEEN pl.distance_min AND pl.distance_max) OR pl.distance_max = -1)
 		JOIN restaurants resto ON resto.id = panier.id_restaurant
 		LEFT JOIN users user ON user.uid = panier.uid
 		LEFT JOIN code_promo promo ON promo.id = panier.id_code_promo

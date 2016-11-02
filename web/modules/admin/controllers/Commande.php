@@ -17,6 +17,11 @@ include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Contenu.php";
 include_once ROOT_PATH."models/GCMPushMessage.php";
+include_once ROOT_PATH."models/Panier.php";
+include_once ROOT_PATH."models/Horaire.php";
+include_once ROOT_PATH."models/Certificat.php";
+include_once ROOT_PATH."models/Commentaire.php";
+include_once ROOT_PATH."models/CodePromo.php";
 
 class Controller_Commande extends Controller_Admin_Template {
 	
@@ -62,6 +67,33 @@ class Controller_Commande extends Controller_Admin_Template {
 					break;
 				case "create" :
 					$this->create($request);
+					break;
+				case "carte" :
+					$this->carte($request);
+					break;
+				case "addCarte" :
+					$this->addCarte($request);
+					break;
+				case "removeCarte" :
+					$this->removeCarte($request);
+					break;
+				case "addMenu" :
+					$this->addMenu($request);
+					break;
+				case "removeMenu" :
+					$this->removeMenu($request);
+					break;
+				case "panier" :
+					$this->panier($request);
+					break;
+				case "addCodePromo" :
+					$this->addCodePromo($request);
+					break;
+				case "validate" :
+					$this->validate($request);
+					break;
+				case "finalisation" :
+					$this->finalisation($request);
 					break;
 			}
 		} else {
@@ -320,6 +352,343 @@ class Controller_Commande extends Controller_Admin_Template {
 	}
 	
 	public function create ($request) {
+		if ($request->request_method == "POST") {
+			$errorMessage = array();
+			if (!isset($_POST["client"]) || trim($_POST["client"]) == "") {
+				$errorMessage["EMPTY_CLIENT"] = "Le client ne peut être vide";
+			} else {
+				$request->selectClient = $_POST["client"];
+			}
+			if (!isset($_POST["restaurant"]) || trim($_POST["restaurant"]) == "") {
+				$errorMessage["EMPTY_RESTAURANT"] = "Le restaurant ne peut être vide";
+			} else {
+				$request->selectRestaurant = $_POST["restaurant"];
+			}
+			if (count($errorMessage) == 0) {
+				$id_user = $_POST["client"];
+				$id_restaurant = $_POST["restaurant"];
+				$panier = new Model_Panier();
+				$panier->uid = $id_user;
+				$panier->init();
+				if ($panier->id_restaurant == -1 || $panier->id_restaurant == $id_restaurant) {
+					$distance = 0;
+					$panier->id_restaurant = $id_restaurant;
+					$panier->rue = '';
+					$panier->ville = '';
+					$panier->code_postal = '';
+					$panier->latitude = 0;
+					$panier->longitude = 0;
+					$panier->distance = $distance;
+					$panier->update();
+				} else if ($panier->id_restaurant != $id_restaurant) {
+					$errorMessage["NOT_EMPTY_PANIER"] = "Le un panier existe déjà pour cette utilisateur";
+				}
+				if (count($errorMessage) == 0) {
+					
+					$modelRestaurant = new Model_Restaurant();
+					$modelRestaurant->id = $id_restaurant;
+					$request->restaurant = $modelRestaurant->loadAll();
+					
+					$request->restaurant->distance = $distance;
+					$request->prix_livraison = $request->restaurant->getPrixLivraison();
+					
+					$request->panier = $panier->loadPanier();
+					
+					$request->id_user = $id_user;
+			
+					$request->title = "Administration - commande";
+					$request->javascripts = array("res/js/menu.js");
+					$request->vue = $this->render("commande/addPanier.php");
+					return;
+				} else {
+					$request->errorMessage = $errorMessage;
+				}
+			} else {
+				$request->errorMessage = $errorMessage;
+			}
+		}
+		$modelUser = new Model_User();
+		$request->clients = $modelUser->getAllClients();
 		
+		$modelRestaurant = new Model_Restaurant();
+		$request->restaurants = $modelRestaurant->getAll();
+		
+		$request->title = "Administration - commande";
+		$request->vue = $this->render("commande/createCommande.php");
 	}
+	
+	private function carte ($request) {
+		if (isset($_GET["id_carte"])) {
+			$request->disableLayout = true;
+			$modelCarte = new Model_Carte();
+			$modelCarte->id = $_GET['id_carte'];
+			$request->id_restaurant = $_GET['id'];
+			$request->id_user = $_GET['id_user'];
+			$request->carte = $modelCarte->load();
+			$request->carte->getLogo($request->id_restaurant);
+			
+			$request->vue = $this->render("commande/carteDetail.php");
+		} 
+	}
+	
+	public function addCarte ($request) {
+		if ($request->request_method != "POST") {
+			$this->error(405, "Method not allowed");
+			return;
+		}
+		if (!isset($_POST['id_carte'])) {
+			$this->error(409, "Conflict");
+		}
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$id_restaurant = $_POST['id_restaurant'];
+		
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		$panier->init();
+		
+		$quantite = $_POST['quantite'];
+		$id_carte = $_POST['id_carte'];
+		$format = $_POST['format'];
+		$modelCarte = new Model_Carte();
+		$modelCarte->id = $id_carte;
+		$modelCarte->load();
+		$id_panier_carte = $panier->addCarte($id_carte, $format, $quantite);
+		foreach ($modelCarte->options as $option) {
+			if (isset($_POST['check_option_'.$option->id])) {
+				$panier->addCarteOption($id_panier_carte, $option->id, $_POST['check_option_'.$option->id]);
+			}
+		}
+		foreach ($modelCarte->accompagnements as $accompagnement) {
+			foreach ($accompagnement->cartes as $carte) {
+				if (isset($_POST['check_accompagnement_'.$carte->id])) {
+					$panier->addCarteAccompagnement($id_panier_carte, $carte->id);
+				}
+			}
+		}
+		foreach ($modelCarte->supplements as $supplement) {
+			if (isset($_POST['check_supplement_'.$supplement->id])) {
+				$panier->addCarteSupplement($id_panier_carte, $supplement->id);
+			}
+		}
+	}
+	
+	public function removeCarte ($request) {
+		if ($request->request_method != "POST") {
+			$this->error(405, "Method not allowed");
+			return;
+		}
+		if (!isset($_POST['id_panier'])) {
+			$this->error(400, "Bad request");
+		}
+		if (!isset($_POST['id_panier_carte'])) {
+			$this->error(400, "Bad request");
+		}
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		$panier->id = $_POST['id_panier'];
+		$id_panier_carte = $_POST['id_panier_carte'];
+		if (!$panier->removePanierCarte($id_panier_carte)) {
+			$this->error(500, "Bad request");
+		}
+		$totalArticle = $panier->getNbArticle();
+		if ($totalArticle == 0) {
+			$panier->remove();
+		}
+	}
+	
+	public function addMenu ($request) {
+		if ($request->request_method != "POST") {
+			$this->error(405, "Method not allowed");
+		}
+		if (!isset($_POST['id_menu'])) {
+			$this->error(400, "Bad request");
+		}
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$id_menu = $_POST['id_menu'];
+		$id_restaurant = $_POST['id_restaurant'];
+		$modelMenu = new Model_Menu();
+		$modelMenu->id = $id_menu;
+		
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		$panier->init();
+		
+		$quantite = $_POST['quantite'];
+		$id_format = $_POST['id_format'];
+		$id_formule = $_POST['id_formule'];
+		$id_panier_menu = $panier->addMenu($id_menu, $id_format, $id_formule, $quantite);
+		
+		$categories = $modelMenu->getCategories($id_formule);
+		foreach ($categories as $categorie) {
+			if ($categorie['quantite'] == 1) {
+				if (isset($_POST['contenu_'.$categorie['id']])) {
+					$id_contenu = $_POST['contenu_'.$categorie['id']];
+					$panier->addContenu($id_panier_menu, $id_contenu);
+				}
+			}
+		}
+	}
+	
+	public function removeMenu ($request) {
+		if ($request->request_method != "POST") {
+			$this->error(405, "Method not allowed");
+			return;
+		}
+		if (!isset($_POST['id_panier'])) {
+			$this->error(400, "Bad request");
+		}
+		if (!isset($_POST['id_panier_menu'])) {
+			$this->error(400, "Bad request");
+		}
+		$request->disableLayout = true;
+		$request->noRender = true;
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		$panier->id = $_POST['id_panier'];
+		$id_panier_menu = $_POST['id_panier_menu'];
+		if (!$panier->removePanierMenu($id_panier_menu)) {
+			$this->error(500, "Bad request");
+		}
+		$totalArticle = $panier->getNbArticle();
+		if ($totalArticle == 0) {
+			$panier->remove();
+		}
+	}
+	
+	private function panier ($request) {
+		if (isset($_GET["type"]) && $_GET["type"] == "ajax") {
+			$request->disableLayout = true;
+		} else if ($request->mobileDetect && $request->mobileDetect->isMobile() && !$request->mobileDetect->isTablet()) {
+			$request->disableLayout = false;
+		} else {
+			$request->disableLayout = true;
+		}
+		$panier = new Model_Panier();
+		$panier->uid = $_GET['id_user'];
+		$request->panier = $panier->loadPanier();
+		$request->vue = $this->render("commande/panier.php");
+	}
+	
+	public function addCodePromo ($request) {
+		$codePromo = $_POST['code_promo'];
+		
+		$request->disableLayout = true;
+		$request->noRender = true;
+		
+		$modelCodePromo = new Model_CodePromo();
+		$modelCodePromo->code = $codePromo;
+		if ($modelCodePromo->getByCode() === false) {
+			$this->error(404, "Not found");
+		}
+		
+		if ($modelCodePromo->isPrivate()) {
+			if ($request->_auth === false) {
+				$this->error(403, "Forbidden");
+			}
+			if (!$modelCodePromo->isBoundToUser(3)) {
+				$this->error(401, "Unauthorized");
+			}
+			if ($modelCodePromo->hasBeenUseByUser(3)) {
+				$this->error(410, "Gone");
+			}
+		}
+		
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		$panier->init();
+		
+		if ($modelCodePromo->surRestaurant()) {
+			if (!$modelCodePromo->isBoundToRestaurant($panier->id_restaurant)) {
+				$this->error(400, "Bad Request");
+			}
+		}
+		$panier->setCodePromo ($modelCodePromo->id);
+	}
+	
+	public function validate ($request) {
+		if ($request->request_method != "POST") {
+			$this->error(405, "Method not allowed");
+			return;
+		}
+		$rue = "";
+		$ville = "";
+		$code_postal = "";
+		if (isset($_POST['rue'])) {
+			$rue = $_POST['rue'];
+		}
+		if (isset($_POST['ville'])) {
+			$ville = $_POST['ville'];
+		}
+		if (isset($_POST['code_postal'])) {
+			$code_postal = $_POST['code_postal'];
+		}
+		if (isset($_POST['telephone'])) {
+			$telephone = $_POST['telephone'];
+		}
+		$heure_commande = -1;
+		$minute_commande = 0;
+		if ((isset($_POST['type']) && $_POST['type'] == "pre_commande") || (!isset($_POST['type']) && isset($_POST['heure_commande'])) ) {
+			$heure_commande = $_POST['heure_commande'];
+			$minute_commande = $_POST['minute_commande'];
+		}
+		
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		
+		$restaurant = new Model_Restaurant();
+		$restaurant->id = $panier->getRestaurant();
+		$fields = array ("latitude", "longitude");
+		$restaurant->get($fields);
+		$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
+		
+		$adresse = $rue.', '.$code_postal.' '.$ville;
+		$geocoder = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false";
+		$localisation = urlencode($adresse);
+		$query = sprintf($geocoder,$localisation);
+		$rd = json_decode(file_get_contents($query));
+		
+		if ($rd->{'status'} == "OK") {
+			$coord = $rd->{'results'}[0]->{'geometry'}->{'location'};
+			$user_latitude = $coord->{'lat'};
+			$user_longitude = $coord->{'lng'};
+			
+			$adresseUser = $user_latitude.','.$user_longitude;
+			
+			$result = getDistance($adresseUser, $adresseResto);
+			$distance = 0;
+			if ($result['status'] == "OK") {
+				$distance = $result['distance'] / 1000;
+			}
+			
+			$panier->validate($rue, $ville, $code_postal, $telephone, $heure_commande, $minute_commande, $distance);
+			
+			$result = array();
+			$result['distance'] = $distance;
+			
+			if ($distance < 16) {
+				writeLog(SERVER_LOG, "Adresse correcte", LOG_LEVEL_INFO, "$rue, $code_postal $ville");
+			} else {
+				writeLog(SERVER_LOG, "Adresse en dehors du périmètre", LOG_LEVEL_ERROR, "$rue, $code_postal $ville");
+			}
+			
+			$request->disableLayout = true;
+			$request->noRender = true;
+			echo json_encode($result);
+		} else {
+			$this->error(404, "Not found");
+			writeLog(SERVER_LOG, "Adresse panier invalide", LOG_LEVEL_ERROR, "$rue, $code_postal $ville");
+		}
+	}
+	
+	public function finalisation ($request) {
+		$panier = new Model_Panier();
+		$panier->uid = $_GET['id_user'];
+		$request->panier = $panier->load();
+		$request->vue = $this->render("commande/panier_validate.php");
+	}
+	
 }
