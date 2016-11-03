@@ -68,6 +68,9 @@ class Controller_Commande extends Controller_Admin_Template {
 				case "create" :
 					$this->create($request);
 					break;
+				case "openCommande" :
+					$this->openCommande($request);
+					break;
 				case "carte" :
 					$this->carte($request);
 					break;
@@ -415,6 +418,30 @@ class Controller_Commande extends Controller_Admin_Template {
 		
 		$request->title = "Administration - commande";
 		$request->vue = $this->render("commande/createCommande.php");
+	}
+	
+	public function openCommande ($request) {
+		$id_user = $_GET["client"];
+		$id_restaurant = $_GET["restaurant"];
+		
+		$panier = new Model_Panier();
+		$panier->uid = $id_user;
+		$panier->init();
+					
+		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant->id = $id_restaurant;
+		$request->restaurant = $modelRestaurant->loadAll();
+					
+		$request->panier = $panier->loadPanier();
+		
+		$request->restaurant->distance = $request->panier->distance;
+		$request->prix_livraison = $request->panier->prix_livraison;
+					
+		$request->id_user = $id_user;
+			
+		$request->title = "Administration - commande";
+		$request->javascripts = array("res/js/menu.js");
+		$request->vue = $this->render("commande/addPanier.php");
 	}
 	
 	private function carte ($request) {
