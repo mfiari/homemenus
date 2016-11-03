@@ -5,7 +5,7 @@
 			<span>Nom : </span>
 		</div>
 		<div class="col-md-9">
-			<input class="form-control" name="nom" type="text" value="<?php echo $request->_auth->nom; ?>" disabled>
+			<input class="form-control" name="nom" type="text" value="<?php echo utf8_encode($request->panier->user->nom); ?>" disabled>
 		</div>
 	</div>
 	<div class="row">
@@ -13,7 +13,7 @@
 			<span>Prénom : </span>
 		</div>
 		<div class="col-md-9">
-			<input class="form-control" name="nom" type="text" value="<?php echo $request->_auth->prenom; ?>" disabled>
+			<input class="form-control" name="nom" type="text" value="<?php echo utf8_encode($request->panier->user->prenom); ?>" disabled>
 		</div>
 	</div>
 	<div class="row">
@@ -21,7 +21,7 @@
 			<span>Mail : </span>
 		</div>
 		<div class="col-md-9">
-			<input class="form-control" name="nom" type="text" value="<?php echo $request->_auth->login; ?>" disabled>
+			<input class="form-control" name="nom" type="text" value="<?php echo $request->panier->user->email; ?>" disabled>
 		</div>
 	</div>
 	<div class="row">

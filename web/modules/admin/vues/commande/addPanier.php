@@ -395,19 +395,19 @@
 					<input name="id_user" value="<?php echo $request->id_user; ?>" hidden="hidden" />
 					<div class="form-group">
 						<label for="login">Rue<span class="required">*</span> : </label>
-						<input id="rue_field_admin" class="form-control" name="rue" type="text" value="<?php echo isset($_SESSION['search_rue']) ? $_SESSION['search_rue'] : ''; ?>" required>
+						<input id="rue_field_admin" class="form-control" name="rue" type="text" value="<?php echo utf8_encode($request->panier->rue); ?>" required>
 					</div>
 					<div class="form-group">
 						<label for="login">Code postal<span class="required">*</span> : </label>
-						<input id="cp_field_admin" class="form-control" name="code_postal" type="text" value="<?php echo isset($_SESSION['search_cp']) ? $_SESSION['search_cp'] : ''; ?>" required>
+						<input id="cp_field_admin" class="form-control" name="code_postal" type="text" value="<?php echo $request->panier->code_postal; ?>" required>
 					</div>
 					<div class="form-group">
 						<label for="login">Ville<span class="required">*</span> : </label>
-						<input id="ville_field_admin" class="form-control" name="ville" type="text" value="<?php echo isset($_SESSION['search_ville']) ? $_SESSION['search_ville'] : ''; ?>" required>
+						<input id="ville_field_admin" class="form-control" name="ville" type="text" value="<?php echo utf8_encode($request->panier->ville); ?>" required>
 					</div>
 					<div class="form-group">
 						<label for="login">Téléphone<span class="required">*</span> : </label>
-						<input id="phone_field_admin" class="form-control" name="telephone" type="text" required>
+						<input id="phone_field_admin" class="form-control" name="telephone" type="text" value="<?php echo $request->panier->telephone; ?>" required>
 					</div>
 				</form>
 			</div>

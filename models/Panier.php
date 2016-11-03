@@ -417,11 +417,13 @@ class Model_Panier extends Model_Template {
 	public function load () {
 		$sql = "SELECT panier.id, panier.rue, panier.ville, panier.code_postal, panier.telephone, panier.heure_souhaite, panier.minute_souhaite, panier.distance,
 			resto.id AS id_restaurant, resto.nom, resto.rue AS rue_restaurant, resto.ville AS ville_restaurant, resto.code_postal AS cp_restaurant, 
+			user.uid AS uid, user.nom AS nom_user, user.prenom AS prenom, user.email,, 
 			rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin, pl.prix, pl.montant_min, pl.reduction_premium, promo.description,
 			promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM panier 
 		JOIN prix_livraison pl ON ((panier.distance BETWEEN pl.distance_min AND pl.distance_max) OR pl.distance_max = -1)
 		JOIN restaurants resto ON resto.id = panier.id_restaurant
+		LEFT JOIN users user ON user.uid = panier.uid
 		LEFT JOIN restaurant_horaires rh ON rh.id_restaurant = resto.id AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
 		OR (rh.heure_debut <= HOUR(CURRENT_TIME) AND rh.heure_fin > HOUR(CURRENT_TIME)))
 		LEFT JOIN code_promo promo ON promo.id = panier.id_code_promo
@@ -465,6 +467,14 @@ class Model_Panier extends Model_Template {
 		$restaurant->horaire = $horaire;
 		
 		$this->restaurant = $restaurant;
+		
+		$user = new Model_User(false);
+		$user->id = $value['uid'];
+		$user->nom = $value['nom_user'];
+		$user->prenom = $value['prenom'];
+		$user->email = $value['email'];
+		
+		$this->user = $user;
 		
 		$codePromo = new Model_CodePromo(false);
 		$codePromo->description = $value['description'];
