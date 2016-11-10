@@ -40,6 +40,11 @@ class Clickatell {
 	}
 	
 	public function sendMessage () {
+		
+		if (!SEND_SMS) {
+			return false;
+		}
+		
 		//open connection
 		$ch = curl_init();
 		
@@ -70,6 +75,8 @@ class Clickatell {
 
 		//close connection
 		curl_close($ch);
+		
+		return true;
 	}
 
 }
