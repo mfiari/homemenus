@@ -123,4 +123,25 @@ class Model_Mail extends Model_Template {
 		
 		return $this;
 	}
+	
+	public function getAllClientEmail () {
+		$sql = "SELECT user.uid, user.nom, user.prenom, user.email FROM users user
+		WHERE user.status = 'USER' AND user.is_enable = 1 AND user.deleted = 0";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$listUser = array();
+		foreach ($result as $item) {
+			$user = new Model_User(false);
+			$user->id = $item["uid"];
+			$user->nom = $item["nom"];
+			$user->prenom = $item["prenom"];
+			$user->email = $item["email"];
+			$listUser[] = $user;
+		}
+		return $listUser;
+	}
 }
