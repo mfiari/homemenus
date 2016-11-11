@@ -31,6 +31,8 @@ class Model_Commande extends Model_Template {
 	private $part_restaurant;
 	private $date_validation_livreur;
 	private $date_validation_restaurant;
+	private $date_fin_preparation_restaurant;
+	private $date_recuperation_livreur;
 	private $date_livraison;
 	
 	public function __construct($callParent = true) {
