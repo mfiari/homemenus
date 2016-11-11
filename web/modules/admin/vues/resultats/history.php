@@ -28,10 +28,10 @@
 					<tbody>
 						<tr>
 							<td><?php echo $request->resultats['total_commande']; ?></td>
-							<td><?php echo $request->resultats['part_restaurant']; ?></td>
-							<td><?php echo $request->resultats['part_livreur']; ?></td>
-							<td><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
-							<td><?php echo $request->resultats['total_prix']; ?></td>
+							<td><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></td>
+							<td><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<td><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<td><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></td>
 						</tr>
 					</tbody>
 				</table>
@@ -61,10 +61,10 @@
 								<td><?php echo $day['hour']; ?>h - <?php echo $day['hour']+1; ?>h</td>
 								<td><?php echo utf8_encode($day['nom_restaurant']); ?></td>
 								<td><?php echo $day['total_commande']; ?></td>
-								<td><?php echo $day['part_restaurant']; ?></td>
-								<td><?php echo $day['part_livreur']; ?></td>
-								<td><?php echo $day['total_prix'] - $day['part_restaurant'] - $day['part_livreur']; ?></td>
-								<td><?php echo $day['total_prix']; ?></td>
+								<td><?php echo number_format($day['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($day['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($day['total_prix'] - $day['part_restaurant'] - $day['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($day['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -72,10 +72,10 @@
 						<tr>
 							<th colspan="3">Total</th>
 							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo $request->resultats['part_restaurant']; ?></th>
-							<th><?php echo $request->resultats['part_livreur']; ?></th>
-							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
-							<th><?php echo $request->resultats['total_prix']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
 						</tr>
 					</tfoot>
 				</table>
@@ -100,10 +100,10 @@
 							<tr>
 								<td><?php echo $month['month']; ?></td>
 								<td><?php echo $month['total_commande']; ?></td>
-								<td><?php echo $month['part_restaurant']; ?></td>
-								<td><?php echo $month['part_livreur']; ?></td>
-								<td><?php echo $month['total_prix'] - $month['part_restaurant'] - $month['part_livreur']; ?></td>
-								<td><?php echo $month['total_prix']; ?></td>
+								<td><?php echo number_format($month['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($month['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($month['total_prix'] - $month['part_restaurant'] - $month['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($month['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -111,10 +111,10 @@
 						<tr>
 							<th>Total</th>
 							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo $request->resultats['part_restaurant']; ?></th>
-							<th><?php echo $request->resultats['part_livreur']; ?></th>
-							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
-							<th><?php echo $request->resultats['total_prix']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
 						</tr>
 					</tfoot>
 				</table>
@@ -139,10 +139,10 @@
 							<tr>
 								<td><?php echo utf8_encode($livreur['nom']); ?></td>
 								<td><?php echo $livreur['total_commande']; ?></td>
-								<td><?php echo $livreur['part_restaurant']; ?></td>
-								<td><?php echo $livreur['part_livreur']; ?></td>
-								<td><?php echo $livreur['total_prix'] - $livreur['part_restaurant'] - $livreur['part_livreur']; ?></td>
-								<td><?php echo $livreur['total_prix']; ?></td>
+								<td><?php echo number_format($livreur['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($livreur['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($livreur['total_prix'] - $livreur['part_restaurant'] - $livreur['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($livreur['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -150,10 +150,10 @@
 						<tr>
 							<th>Total</th>
 							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo $request->resultats['part_restaurant']; ?></th>
-							<th><?php echo $request->resultats['part_livreur']; ?></th>
-							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
-							<th><?php echo $request->resultats['total_prix']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
 						</tr>
 					</tfoot>
 				</table>
@@ -178,10 +178,10 @@
 							<tr>
 								<td><?php echo utf8_encode($restaurant['nom']); ?></td>
 								<td><?php echo $restaurant['total_commande']; ?></td>
-								<td><?php echo $restaurant['part_restaurant']; ?></td>
-								<td><?php echo $restaurant['part_livreur']; ?></td>
-								<td><?php echo $restaurant['total_prix'] - $restaurant['part_restaurant'] - $restaurant['part_livreur']; ?></td>
-								<td><?php echo $restaurant['total_prix']; ?></td>
+								<td><?php echo number_format($restaurant['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($restaurant['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($restaurant['total_prix'] - $restaurant['part_restaurant'] - $restaurant['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($restaurant['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -189,10 +189,10 @@
 						<tr>
 							<th>Total</th>
 							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo $request->resultats['part_restaurant']; ?></th>
-							<th><?php echo $request->resultats['part_livreur']; ?></th>
-							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
-							<th><?php echo $request->resultats['total_prix']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
 						</tr>
 					</tfoot>
 				</table>
@@ -217,10 +217,10 @@
 							<tr>
 								<td><?php echo $client['nom']; ?> <?php echo $client['prenom']; ?></td>
 								<td><?php echo $client['total_commande']; ?></td>
-								<td><?php echo $client['part_restaurant']; ?></td>
-								<td><?php echo $client['part_livreur']; ?></td>
-								<td><?php echo $client['total_prix'] - $client['part_restaurant'] - $client['part_livreur']; ?></td>
-								<td><?php echo $client['total_prix']; ?></td>
+								<td><?php echo number_format($client['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($client['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($client['total_prix'] - $client['part_restaurant'] - $client['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($client['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -228,10 +228,10 @@
 						<tr>
 							<th>Total</th>
 							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo $request->resultats['part_restaurant']; ?></th>
-							<th><?php echo $request->resultats['part_livreur']; ?></th>
-							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
-							<th><?php echo $request->resultats['total_prix']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
 						</tr>
 					</tfoot>
 				</table>
@@ -256,10 +256,10 @@
 							<tr>
 								<td><?php echo $ville['nom']; ?> (<?php echo $ville['cp']; ?>)</td>
 								<td><?php echo $ville['total_commande']; ?></td>
-								<td><?php echo $ville['part_restaurant']; ?></td>
-								<td><?php echo $ville['part_livreur']; ?></td>
-								<td><?php echo $ville['total_prix'] - $ville['part_restaurant'] - $ville['part_livreur']; ?></td>
-								<td><?php echo $ville['total_prix']; ?></td>
+								<td><?php echo number_format($ville['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($ville['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($ville['total_prix'] - $ville['part_restaurant'] - $ville['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($ville['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -267,10 +267,10 @@
 						<tr>
 							<th>Total</th>
 							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo $request->resultats['part_restaurant']; ?></th>
-							<th><?php echo $request->resultats['part_livreur']; ?></th>
-							<th><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
-							<th><?php echo $request->resultats['total_prix']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
 						</tr>
 					</tfoot>
 				</table>

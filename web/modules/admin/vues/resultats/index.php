@@ -56,6 +56,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th>Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -85,6 +95,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th>Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -114,6 +134,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th>Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
@@ -143,6 +173,16 @@
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
+					<tfoot>
+						<tr>
+							<th>Total</th>
+							<th><?php echo $request->resultats['total_commande']; ?></th>
+							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</div>
