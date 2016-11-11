@@ -21,10 +21,10 @@
 					<tbody>
 						<tr>
 							<td><?php echo $request->resultats['total_commande']; ?></td>
-							<td><?php echo $request->resultats['part_restaurant']; ?></td>
-							<td><?php echo $request->resultats['part_livreur']; ?></td>
-							<td><?php echo $request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur']; ?></td>
-							<td><?php echo $request->resultats['total_prix']; ?></td>
+							<td><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></td>
+							<td><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<td><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+							<td><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></td>
 						</tr>
 					</tbody>
 				</table>
@@ -49,10 +49,10 @@
 							<tr>
 								<td><?php echo utf8_encode($livreur['nom']); ?></td>
 								<td><?php echo $livreur['total_commande']; ?></td>
-								<td><?php echo $livreur['part_restaurant']; ?></td>
-								<td><?php echo $livreur['part_livreur']; ?></td>
-								<td><?php echo $livreur['total_prix'] - $livreur['part_restaurant'] - $livreur['part_livreur']; ?></td>
-								<td><?php echo $livreur['total_prix']; ?></td>
+								<td><?php echo number_format($livreur['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($livreur['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($livreur['total_prix'] - $livreur['part_restaurant'] - $livreur['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($livreur['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -78,10 +78,10 @@
 							<tr>
 								<td><?php echo utf8_encode($restaurant['nom']); ?></td>
 								<td><?php echo $restaurant['total_commande']; ?></td>
-								<td><?php echo $restaurant['part_restaurant']; ?></td>
-								<td><?php echo $restaurant['part_livreur']; ?></td>
-								<td><?php echo $restaurant['total_prix'] - $restaurant['part_restaurant'] - $restaurant['part_livreur']; ?></td>
-								<td><?php echo $restaurant['total_prix']; ?></td>
+								<td><?php echo number_format($restaurant['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($restaurant['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($restaurant['total_prix'] - $restaurant['part_restaurant'] - $restaurant['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($restaurant['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -105,12 +105,12 @@
 					<tbody>
 						<?php foreach ($request->clients as $client) : ?>
 							<tr>
-								<td><?php echo $client['nom']; ?> <?php echo $client['prenom']; ?></td>
+								<td><?php echo utf8_encode($client['nom']); ?> <?php echo utf8_encode($client['prenom']); ?></td>
 								<td><?php echo $client['total_commande']; ?></td>
-								<td><?php echo $client['part_restaurant']; ?></td>
-								<td><?php echo $client['part_livreur']; ?></td>
-								<td><?php echo $client['total_prix'] - $client['part_restaurant'] - $client['part_livreur']; ?></td>
-								<td><?php echo $client['total_prix']; ?></td>
+								<td><?php echo number_format($client['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($client['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($client['total_prix'] - $client['part_restaurant'] - $client['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($client['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -134,12 +134,12 @@
 					<tbody>
 						<?php foreach ($request->villes as $ville) : ?>
 							<tr>
-								<td><?php echo $ville['nom']; ?> (<?php echo $ville['cp']; ?>)</td>
+								<td><?php echo utf8_encode($ville['nom']); ?> (<?php echo $ville['cp']; ?>)</td>
 								<td><?php echo $ville['total_commande']; ?></td>
-								<td><?php echo $ville['part_restaurant']; ?></td>
-								<td><?php echo $ville['part_livreur']; ?></td>
-								<td><?php echo $ville['total_prix'] - $ville['part_restaurant'] - $ville['part_livreur']; ?></td>
-								<td><?php echo $ville['total_prix']; ?></td>
+								<td><?php echo number_format($ville['part_restaurant'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($ville['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($ville['total_prix'] - $ville['part_restaurant'] - $ville['part_livreur'], 2, ',', ' '); ?></td>
+								<td><?php echo number_format($ville['total_prix'], 2, ',', ' '); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
