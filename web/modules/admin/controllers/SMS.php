@@ -73,7 +73,6 @@ class Controller_SMS extends Controller_Admin_Template {
 		$users = $modelSMS->getAllClientTel();
 		foreach ($users as $user) {
 			if (isset($_POST['user-'.$user->id]) && $_POST['user-'.$user->id] == 'on') {
-				var_dump($user->nom.' '.$user->prenom.' ('.$user->telephone.')');
 				//if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
 					$sms = new Clickatell();
 					$sms->message = $message;
@@ -88,7 +87,6 @@ class Controller_SMS extends Controller_Admin_Template {
 				//}
 			}
 		}
-		die();
 		$this->redirect('smsling', 'sms');
 	}
 }
