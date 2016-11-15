@@ -678,6 +678,40 @@ class Model_Commande_History extends Model_Template {
 		return $stmt->fetchAll();;
 	}
 	
+	public function getAvgTimeByRestaurant ($dateDebut, $dateFin) {
+		$sql = "SELECT id_restaurant, nom_restaurant AS nom, AVG(TIMESTAMPDIFF (MINUTE, date_validation_restaurant, date_fin_preparation_restaurant)) AS diff 
+		FROM commande_history 
+		WHERE date_validation_restaurant != '0000-00-00 00:00:00' AND date_fin_preparation_restaurant != '0000-00-00 00:00:00' 
+		AND date_recuperation_livreur != '0000-00-00 00:00:00' AND date_livraison != '0000-00-00 00:00:00' AND date_commande BETWEEN :date_debut AND :date_fin
+		GROUP BY id_restaurant";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return $stmt->fetchAll();;
+	}
+	
+	public function getAvgTimeByLivreur ($dateDebut, $dateFin) {
+		$sql = "SELECT id_livreur, login_livreur AS livreur, id_restaurant, nom_restaurant AS resto, ville_commande AS ville, 
+		AVG(TIMESTAMPDIFF (MINUTE, date_fin_preparation_restaurant, date_livraison)) AS diff 
+		FROM commande_history 
+		WHERE date_validation_restaurant != '0000-00-00 00:00:00' AND date_fin_preparation_restaurant != '0000-00-00 00:00:00' 
+		AND date_recuperation_livreur != '0000-00-00 00:00:00' AND date_livraison != '0000-00-00 00:00:00' AND date_commande BETWEEN :date_debut AND :date_fin
+		GROUP BY id_livreur, id_restaurant, ville
+		ORDER BY livreur, resto, ville";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return $stmt->fetchAll();;
+	}
+	
 	public function noter () {
 		$sql = "UPDATE commande_history SET note = :note, commentaire = :commentaire, commentaire_anonyme = :anonyme WHERE id = :id";
 		$stmt = $this->db->prepare($sql);

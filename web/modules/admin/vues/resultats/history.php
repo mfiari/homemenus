@@ -276,6 +276,52 @@
 				</table>
 			</div>
 		</div>
+		<div class="col-md-10  col-md-offset-1">
+			<div class="row">
+				<h2>Temps moyen de préparation Par restaurant</h2>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Restaurant</th>
+							<th>Temps de préparation</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($request->timeRestaurant as $time) : ?>
+							<tr>
+								<td><?php echo utf8_encode($time['nom']); ?></td>
+								<td><?php echo number_format($time['diff'], 2, ',', ' '); ?> min</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-md-10  col-md-offset-1">
+			<div class="row">
+				<h2>Temps moyen de livraison Par livreur</h2>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Livreur</th>
+							<th>Restaurant</th>
+							<th>Ville</th>
+							<th>Temps de livraison</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($request->timeLivreur as $time) : ?>
+							<tr>
+								<td><?php echo utf8_encode($time['livreur']); ?></td>
+								<td><?php echo utf8_encode($time['resto']); ?></td>
+								<td><?php echo utf8_encode($time['ville']); ?></td>
+								<td><?php echo number_format($time['diff'], 2, ',', ' '); ?> min</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </div>
 <script>
