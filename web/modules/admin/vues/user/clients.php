@@ -9,6 +9,7 @@
 						<th>Prénom</th>
 						<th>login</th>
 						<th>Ville</th>
+						<th>Téléphone</th>
 						<th>Actif</th>
 						<th>Premium</th>
 						<th></th>
@@ -21,6 +22,7 @@
 							<td><?php echo utf8_encode($client->prenom); ?></td>
 							<td><?php echo $client->login; ?></td>
 							<td><?php echo utf8_encode($client->ville); ?> (<?php echo $client->code_postal; ?>)</td>
+							<td><?php echo $client->telephone; ?></td>
 							<td><?php echo $client->is_enable ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
 							<td><?php echo $client->is_premium ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
 							<td>
