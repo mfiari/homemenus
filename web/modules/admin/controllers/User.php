@@ -224,8 +224,11 @@ class Controller_User extends Controller_Admin_Template {
 		$modelUser->id = $_GET['id_user'];
 		$request->client = $modelUser->getClient();
 		$modelCommande = new Model_Commande();
-		$modelCommande->uid = $_GET['id_user'];
+		$modelCommande->uid = $modelUser->id;
 		$request->commandes = $modelCommande->loadCommandeClient();
+		$modelCommandeHistory = new Model_Commande_History();
+		$modelCommandeHistory->uid = $modelUser->id;
+		$request->commandesHistory = $modelCommandeHistory->loadCommandeClient();
 		$request->title = "Administration - client";
 		$request->vue = $this->render("user/client.php");
 	}

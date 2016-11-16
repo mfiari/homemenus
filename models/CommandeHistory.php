@@ -298,6 +298,49 @@ class Model_Commande_History extends Model_Template {
 		return $listCommande;
 	}
 	
+	/*
+	* Récupère les commandes utilisateur en cours
+	*/
+	public function loadCommandeClient () {
+		$sql = "SELECT id, id_commande, id_livreur, nom_livreur, prenom_livreur, login_livreur, date_commande, heure_souhaite, minute_souhaite, prix, prix_livraison, 
+		id_restaurant, nom_restaurant, ville_restaurant, code_postal_restaurant, note, rue_commande, ville_commande, code_postal_commande
+		FROM commande_history
+		WHERE id_user = :id_user";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id_user", $this->uid);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$result = $stmt->fetchAll();
+		$listCommande = array();
+		foreach ($result as $c) {
+			$commande = new Model_Commande_History();
+			$commande->id = $c["id"];
+			$commande->id_commande = $c["id_commande"];
+			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
+			$commande->rue = $c["rue_commande"];
+			$commande->ville = $c["ville_commande"];
+			$commande->code_postal = $c["code_postal_commande"];
+			$commande->prix = $c["prix"];
+			$commande->prix_livraison = $c["prix_livraison"];
+			$commande->note = $c["note"];
+			$commande->livreur = new Model_User(false);
+			$commande->livreur->id = $c['id_livreur'];
+			$commande->livreur->nom = $c['nom_livreur'];
+			$commande->livreur->prenom = $c['prenom_livreur'];
+			$commande->livreur->login = $c['login_livreur'];
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $c["id_restaurant"];
+			$restaurant->nom = $c["nom_restaurant"];
+			$restaurant->ville = $c["ville_restaurant"];
+			$restaurant->code_postal = $c["code_postal_restaurant"];
+			$commande->restaurant = $restaurant;
+			$listCommande[] = $commande;
+		}
+		return $listCommande;
+	}
+	
 	public function getByUser () {
 		$sql = "SELECT id, id_commande, id_livreur, prenom_livreur, id_restaurant, nom_restaurant, 
 		code_postal_restaurant AS cp_restaurant, ville_restaurant, date_commande, prix, prix_livraison, note
