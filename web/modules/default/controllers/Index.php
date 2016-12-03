@@ -9,6 +9,7 @@ include_once ROOT_PATH."models/Contenu.php";
 include_once ROOT_PATH."models/Menu.php";
 include_once ROOT_PATH."models/Certificat.php";
 include_once ROOT_PATH."models/Commentaire.php";
+include_once ROOT_PATH."models/Carte.php";
 
 class Controller_Index extends Controller_Default_Template {
 	
@@ -34,6 +35,9 @@ class Controller_Index extends Controller_Default_Template {
 					break;
 				case "restaurant_partenaire" :
 					$this->restaurant_partenaire($request);
+					break;
+				case "plats_favoris" :
+					$this->plats_favoris($request);
 					break;
 				case "inscription" :
 					$this->signin($request);
@@ -112,8 +116,15 @@ class Controller_Index extends Controller_Default_Template {
 		$modelRestaurant->id = $_GET['id'];
 		$request->restaurant = $modelRestaurant->loadAll();
 		$request->title = "HoMe Menus - Restaurant ".utf8_encode($request->restaurant->nom);
-		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
+		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyA2OFGXi3t5i1_mVyyHBw8OBp20ZsY9Lh0");
 		$request->vue = $this->render("restaurant_partenaire");
+	}
+	
+	public function plats_favoris ($request) {
+		$request->title = "HoMe Menus - Plats favoris";
+		$modelCarte = new Model_Carte();
+		$request->cartes = $modelCarte->getBestProducts();
+		$request->vue = $this->render("plats_favoris");
 	}
 	
 	public function signin ($request) {

@@ -11,6 +11,7 @@ class Model_Carte extends Model_Template {
 	private $ordre;
 	private $commentaire;
 	private $is_visible;
+	private $restaurant;
 	private $categorie;
 	private $horaires;
 	private $formats;
@@ -418,6 +419,49 @@ class Model_Carte extends Model_Template {
 			$this->supplements[] = $supplement;
 		}
 		return $this;
+	}
+	
+	public function getBestProducts ($limit = 10) {
+		$sql = "SELECT carte.id AS id_carte, carte.nom AS nom_carte, carte.commentaire, resto.id AS id_resto, resto.nom AS nom_resto, resto.ville AS ville_resto,
+		categorie.nom AS nom_categorie, SUM(cch.quantite) AS total
+		FROM commande_carte_history cch
+		JOIN carte ON carte.id = cch.id_carte
+		JOIN restaurant_categorie categorie ON  categorie.id = carte.id_categorie
+		JOIN restaurants resto ON resto.id = categorie.id_restaurant
+		WHERE resto.enabled = 1
+		GROUP BY carte.id	
+		ORDER BY total DESC
+		LIMIT 0, $limit";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$results = $stmt->fetchAll();
+		$cartes = array();
+		foreach ($results as $result) {
+			$carte = new Model_Carte();
+			$carte->id = $result["id_carte"];
+			$carte->nom = $result["nom_carte"];
+			$carte->commentaire = $result["commentaire"];
+			
+			$restaurant = new Model_Restaurant();
+			$restaurant->id = $result["id_resto"];
+			$restaurant->nom = $result["nom_resto"];
+			$restaurant->ville = $result["ville_resto"];
+			
+			$carte->restaurant = $restaurant;
+			
+			$categorie = new Model_Categorie();
+			$categorie->nom = $result["nom_categorie"];
+			
+			$carte->categorie = $categorie;
+			
+			$carte->getLogo ($restaurant->id);
+			
+			$cartes[] = $carte;
+		}
+		return $cartes;
 	}
 	
 	public function getLogo ($id_restaurant) {
