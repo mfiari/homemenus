@@ -30,6 +30,9 @@ class Controller_Cron extends Controller_Admin_Template {
 				case "dumpDatabase" :
 					$this->dumpDatabase($request);
 					break;
+				case "copyDatabase" :
+					$this->copyDatabase($request);
+					break;
 				case "videPanier" :
 					$this->videPanier($request);
 					break;
@@ -76,6 +79,18 @@ class Controller_Cron extends Controller_Admin_Template {
 	
 	public function dumpDatabase ($request) {
 		exec('php '.ROOT_PATH.'cron/dump_database.php');
+		$this->redirect('index', 'cron');
+	}
+	
+	public function copyDatabase ($request) {
+		$database = $_GET['databse'];
+		if ($database == 'test') {
+			exec('php '.ROOT_PATH.'cron/copy_database_test.php');
+		} else if ($database == 'demo') {
+			exec('php '.ROOT_PATH.'cron/copy_database_demo.php');
+		} else if ($database == 'recette') {
+			exec('php '.ROOT_PATH.'cron/copy_database_recette.php');
+		}
 		$this->redirect('index', 'cron');
 	}
 	

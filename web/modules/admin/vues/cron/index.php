@@ -30,6 +30,18 @@
 			<a href="?controler=cron&action=dumpDatabase">Lancer</a>
 		</div>
 		<div class="row">
+			<span>Copy database test</span>
+			<a href="?controler=cron&action=dumpDatabase&database=test">Lancer</a>
+		</div>
+		<div class="row">
+			<span>Copy database demo</span>
+			<a href="?controler=cron&action=dumpDatabase&database=demo">Lancer</a>
+		</div>
+		<div class="row">
+			<span>Copy database recette</span>
+			<a href="?controler=cron&action=dumpDatabase&database=recette">Lancer</a>
+		</div>
+		<div class="row">
 			<span>Vide panier</span>
 			<a href="?controler=cron&action=videPanier">Lancer</a>
 		</div>

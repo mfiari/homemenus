@@ -22,6 +22,10 @@
 	DEFINE ("MYSQL_LOGIN", "root");
 	DEFINE ("MYSQL_PASSWORD", "");
 	
+	DEFINE ("MYSQL_TEST_DBNAME", "homemenus_test");
+	DEFINE ("MYSQL_DEMO_DBNAME", "homemenus_demo");
+	DEFINE ("MYSQL_RECETTE_DBNAME", "homemenus_recette");
+	
 	/* GCM config */
 	DEFINE ("GOOGLE_API_KEY", "AIzaSyA2OFGXi3t5i1_mVyyHBw8OBp20ZsY9Lh0");
 	

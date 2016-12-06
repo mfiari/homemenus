@@ -87,4 +87,72 @@ class Model_Database extends Model_Template {
 		}
 		return $output;
 	}
+	
+	public function copy_database ($database) {
+		$stmt = $this->db->query("SHOW TABLES");
+		while($row = $stmt->fetch(PDO::FETCH_NUM)){
+			$table = $row[0];
+			$this->db->query("DROP TABLE IF EXISTS ".$database.".$table");
+			$this->db->query("CREATE TABLE ".$database.".$table LIKE $table");
+			$this->db->query("INSERT INTO ".$database.".$table SELECT * FROM $table");
+		}
+	}
+	
+	public function changePassword ($database, $newPassword) {
+		$sql = "UPDATE $database.users SET password = sha1(:password)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":password", $newPassword);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+	}
+	
+	public function changeEmail ($database, $newEmail) {
+		$sql = "UPDATE $database.commande_history SET email_user = :email";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":email", $newEmail);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$sql = "UPDATE $database.users SET email = :email";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":email", $newEmail);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+	}
+	
+	public function changePhoneNumber ($database, $newPhoneNumber) {
+		$sql = "UPDATE ".$database.".commande SET telephone = :telephone";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":telephone", $newPhoneNumber);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$sql = "UPDATE ".$database.".commande_history SET telephone_commande = :telephone";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":telephone", $newPhoneNumber);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$sql = "UPDATE ".$database.".user_client SET telephone = :telephone";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":telephone", $newPhoneNumber);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$sql = "UPDATE ".$database.".user_livreur SET telephone = :telephone";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":telephone", $newPhoneNumber);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+	}
 }
