@@ -58,8 +58,11 @@ function generateToken ($length = 32) {
 	return $chaine;
 }
 
-function generatePassword ($length = 8) {
-	$characters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-_#*$+=";
+function generatePassword ($length = 8, $strong = false) {
+	$characters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-_";
+	if ($strong) {
+		$characters .= '#*$+=';
+	}
 	$chaine = "";
 	$nbChar = strlen($characters);
 	while (strlen($chaine) < $length) {
@@ -141,7 +144,7 @@ function writeLog ($type, $texte, $level = LOG_LEVEL_INFO, $message = null) {
 	if ($level == LOG_LEVEL_ERROR) {
 		send_mail ("informatique@homemenus.fr", "Erreur de type ".$type, $mailMessage);
 	}
-	if (ENVIRONNEMENT == "DEV" || ENVIRONNEMENT == "TEST") {
+	if ((ENVIRONNEMENT == "DEV" || ENVIRONNEMENT == "TEST") && $level == LOG_LEVEL_ERROR) {
 		var_dump($texte);
 	}
 }
