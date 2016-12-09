@@ -16,6 +16,8 @@
 	include_once ROOT_PATH."models/Categorie.php";
 	include_once ROOT_PATH."models/Supplement.php";
 	include_once ROOT_PATH."models/CodePromo.php";
+	include_once ROOT_PATH."models/Option.php";
+	include_once ROOT_PATH."models/OptionValue.php";
 	
 	writeLog (CRON_LOG, "début historisation commande");
 	

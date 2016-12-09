@@ -58,13 +58,14 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function create ($panier) {
-		$sql = "INSERT INTO commande (uid, rue, ville, code_postal, telephone, id_restaurant, date_commande, heure_souhaite, minute_souhaite, 
-		prix_livraison, distance, etape, is_premium) 
-		(SELECT panier.uid, panier.rue, panier.ville, panier.code_postal, panier.telephone, panier.id_restaurant, now(), panier.heure_souhaite, 
-		panier.minute_souhaite, CASE WHEN user.is_premium THEN pl.prix - pl.reduction_premium ELSE pl.prix END, panier.distance, 0, user.is_premium
+		$sql = "INSERT INTO commande (uid, rue, ville, code_postal, latitude, longitude, telephone, id_restaurant, date_commande, heure_souhaite, minute_souhaite, 
+		prix_livraison, part_restaurant, distance, etape, is_premium) 
+		(SELECT panier.uid, panier.rue, panier.ville, panier.code_postal, panier.latitude, panier.longitude, panier.telephone, panier.id_restaurant, now(), panier.heure_souhaite, 
+		panier.minute_souhaite, CASE WHEN user.is_premium THEN pl.prix - pl.reduction_premium ELSE pl.prix END, resto.pourcentage, panier.distance, 0, user.is_premium
 		FROM panier 
 		JOIN prix_livraison pl ON panier.distance BETWEEN pl.distance_min AND pl.distance_max
 		JOIN users user ON user.uid = panier.uid
+		JOIN restaurants resto ON resto.id = panier.id_restaurant
 		WHERE panier.id = :id)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $panier->id);
@@ -2098,6 +2099,8 @@ class Model_Commande extends Model_Template {
 			$codePromo->id = $c['id_code_promo'];
 			$codePromo->code = $c['code'];
 			$codePromo->description = $c['description'];
+			$codePromo->date_debut = $c['date_debut'] == '' ? '0000-00-00 00:00:00' : $c['date_debut'];
+			$codePromo->date_fin = $c['date_fin'] == '' ? '0000-00-00 00:00:00' : $c['date_fin'];
 			$codePromo->type_reduc = $c['type_reduc'];
 			$codePromo->sur_prix_livraison = $c['sur_prix_livraison'];
 			$codePromo->valeur_prix_livraison = $c['valeur_prix_livraison'];
@@ -2293,6 +2296,32 @@ class Model_Commande extends Model_Template {
 					$accompagnement->commentaire = $commandeCarteAccompagnement['commentaire'];
 					
 					$carte->addAccompagnement($accompagnement);
+				}
+			
+				$sql = "SELECT cco.id AS id, ro.id AS id_option, ro.nom AS nom_option, rov.id AS id_value, rov.nom AS nom_value
+				FROM commande_carte_option cco 
+				JOIN restaurant_option ro ON ro.id = cco.id_option
+				JOIN restaurant_option_value rov ON rov.id = cco.id_value
+				WHERE cco.id_commande_carte = :id";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $commandeCarte['id']);
+				if (!$stmt->execute()) {
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+					return false;
+				}
+				$listCommandeCarteOption = $stmt->fetchAll();
+				foreach ($listCommandeCarteOption as $commandeCarteOption) {
+					$option = new Model_Option(false);
+					$option->id = $commandeCarteOption['id_option'];
+					$option->nom = $commandeCarteOption['nom_option'];
+					
+					$optionValue = new Model_Option_Value(false);
+					$optionValue->id = $commandeCarteOption['id_value'];
+					$optionValue->nom = $commandeCarteOption['nom_value'];
+					
+					$option->addValue($optionValue);
+					
+					$carte->addOption($option);
 				}
 				
 				$commande->cartes[] = $carte;
