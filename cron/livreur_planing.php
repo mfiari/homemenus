@@ -11,6 +11,9 @@
 	$modelUser = new Model_User();
 	$livreurs = $modelUser->getAllActifLivreur();
 	
+	$dateDebut = mktime(0, 0, 0, date('m'), date('d')-6, date('Y'));
+	$dateFin = time();
+	
 	foreach ($livreurs as $livreur) {
 			
 		$today = date('Y-m-d');
@@ -23,6 +26,17 @@
 		$modelLivreur = new Model_User();
 		$modelLivreur->id = $livreur->id;
 		$user = $modelLivreur->getLivreur();
+		for ($i = 6 ; $i >= 0 ; $i--) {
+			$curentDate = mktime(0, 0, 0, date('m'), date('d')-$i, date('Y'));
+			foreach($user->dispos as $dispo) {
+				if ($dispo->id_jour == date('N', $curentDate)) {
+					$debut = date('Y-m-d', $curentDate).' '.$dispo->heure_debut.':'.$dispo->minute_debut.':00';
+					$fin = date('Y-m-d', $curentDate).' '.$dispo->heure_fin.':'.$dispo->minute_fin.':00';
+					$dispo->date = date('d/m/Y', $curentDate);
+					$dispo->commande = $modelLivreur->getNbCommandeLivreur($debut, $fin);
+				}
+			}
+		}
 		$pdf = new PDF();
 		$pdf->generateHoraireLivreur($user);
 		$pdf->render('F', $planingDir.'livreur'.$livreur->id.'.pdf');

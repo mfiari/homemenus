@@ -5,7 +5,15 @@ require(WEBSITE_PATH.'res/lib/fpdf/fpdf.php');
 class PDF extends FPDF {
 	
 	private $title;
+	private $titleWidth;
+	private $titleHeight;
 	private $logo;
+	
+	function __construct() {
+		parent::__construct();
+		$this->titleWidth = 50;
+		$this->titleHeight = 10;
+	}
 	
 	// En-tête
 	function Header() {
@@ -16,7 +24,7 @@ class PDF extends FPDF {
 		// Décalage à droite
 		$this->Cell(70);
 		// Titre
-		$this->Cell(50,10,$this->title,1,0,'C');
+		$this->Cell($this->titleWidth,$this->titleHeight,$this->title,1,0,'C');
 		// Décalage à droite
 		$this->Cell(30);
 		if ($this->logo) {
@@ -247,32 +255,81 @@ class PDF extends FPDF {
 	}
 	
 	public function generateHoraireLivreur ($livreur) {
-		$this->title = "Horaires";
+		$this->title = "Planing du ".(date("d/m/Y", strtotime("-6 days"))).' au '.(date("d/m/Y"));
+		$this->titleWidth = 100;
 		
 		$this->AliasNbPages();
 		$this->AddPage();
 		
+		//Info
+		$this->Ln();
+		
+		$this->SetFont('Arial','',8);
+		$this->MultiCell(0, 5, utf8_decode('Ceci est votre planing du '.(date("d/m/Y", strtotime("-6 days"))).' au '.(date("d/m/Y")).'. 
+		Vous recevrez votre planing de la semaine prochaine dimanche à 12h. Envoyez nous vos disponiblité à l\'adresse livreur@homemenus.fr.
+		Sans notification de votre part, votre planing sera effectuée en fonction de celui de cette semaine.'), 0, 1);
+		
+		$this->Ln();
+		$this->Ln();
+		// Police Arial gras 12
+		$this->SetFont('Arial','B',12);
+		$this->Cell(80, 7, 'Nom : '.utf8_decode($livreur->nom).' '.utf8_decode($livreur->prenom), 0, 1);
+		$this->Cell(80, 7, 'Identifiant : '.$livreur->login, 0, 1);
+		$this->Cell(80, 7, 'Email : '.$livreur->email, 0, 1);
+		$this->Cell(80, 7, utf8_decode('Téléphone : ').$livreur->telephone, 0, 1);
+		$this->Ln();
+		
 		$width = 70;
+		
+		//En-tête
+		$this->Cell(35, 7, 'Jour', 1, 0, 'C');
+		$this->Cell(30, 7, 'Horaires', 1, 0, 'C');
+		$this->Cell(60, 7, utf8_decode('Adresse de départ'), 1, 0, 'C');
+		$this->Cell(20, 7, utf8_decode('Périmètre'), 1, 0, 'C');
+		$this->Cell(20, 7, utf8_decode('Véhicule'), 1, 0, 'C');
+		$this->Cell(25, 7, 'Commandes', 1, 0, 'C');
+		$this->Ln();
+		
+		// Police Arial gras 12
+		$this->SetFont('Arial','',9);
+		
+		$totalHeure = 0;
+		$totalCommande = 0;
+		$prixHoraire = 7.50;
+		$bonus = 0;
+		
+		//Données
+		for ($i = 6 ; $i >= 0 ; $i--) {
+			$curentDate = mktime(0, 0, 0, date('m'), date('d')-$i, date('Y'));
+			foreach($livreur->dispos as $dispo) {
+				if ($dispo->id_jour == date('N', $curentDate)) {
+					$this->Cell(35, 6, $dispo->jour.' ('.$dispo->date.')', 1, 0, 'R');
+					$this->Cell(30, 6, 'De '.$dispo->heure_debut.'h'.$dispo->minute_debut.utf8_decode(' à ').$dispo->heure_fin.'h'.$dispo->minute_fin, 1, 0, 'R');
+					$this->Cell(60, 6, utf8_decode($dispo->rue).', '.$dispo->code_postal.' '.utf8_decode($dispo->ville), 1, 0, 'R');
+					$this->Cell(20, 6, $dispo->perimetre.' km', 1, 0, 'R');
+					$this->Cell(20, 6, $dispo->vehicule, 1, 0, 'R');
+					$this->Cell(25, 6, $dispo->commande, 1, 0, 'R');
+					$this->Ln();
+					$totalCommande += $dispo->commande;
+					$totalHeure += $dispo->heure_fin - $dispo->heure_debut;
+					$bonus = floor($dispo->commande / 5) * 10;
+				}
+			}
+		}
+		
+		$gain = $prixHoraire * $totalHeure;
+		
 		// Police Arial gras 12
 		$this->SetFont('Arial','B',12);
 		
-		//En-tête
-		$this->Cell(80, 7, utf8_decode('Adresse de départ'), 1, 0, 'C');
-		$this->Cell(25, 7, utf8_decode('Périmètre'), 1, 0, 'C');
-		$this->Cell(25, 7, utf8_decode('Véhicule'), 1, 0, 'C');
-		$this->Cell(25, 7, 'Jour', 1, 0, 'C');
-		$this->Cell(35, 7, 'Horaires', 1, 0, 'C');
+		//Fin
 		$this->Ln();
-		
-		//Données
-		foreach($livreur->dispos as $dispo) {
-			$this->Cell(80, 6, utf8_decode($dispo->rue).', '.$dispo->code_postal.' '.utf8_decode($dispo->ville), 1, 0, 'R');
-			$this->Cell(25, 6, $dispo->perimetre.' km', 1, 0, 'R');
-			$this->Cell(25, 6, $dispo->vehicule, 1, 0, 'R');
-			$this->Cell(25, 6, $dispo->jour, 1, 0, 'R');
-			$this->Cell(35, 6, 'De '.$dispo->heure_debut.'h'.$dispo->minute_debut.utf8_decode(' à ').$dispo->heure_fin.'h'.$dispo->minute_fin, 1, 0, 'R');
-			$this->Ln();
-		}
+		$this->Cell(80, 7, 'Nb heure total : '.$totalHeure.' h', 0, 1);
+		$this->Cell(80, 7, utf8_decode('Nb de commande(s) réalisée(s) : ').$totalCommande, 0, 1);
+		$this->Cell(80, 7, 'Gain : '.$this->toEuro($gain), 0, 1);
+		$this->Cell(80, 7, 'Bonus : '.$bonus, 0, 1);
+		$this->Cell(80, 7, 'Gain total : '.$this->toEuro($gain + $bonus), 0, 1);
+		$this->Ln();
 		
 		//Trait de terminaison
 		$this->Cell(4,0,'','T');
@@ -281,6 +338,23 @@ class PDF extends FPDF {
 	
 	public function render ($dest = "I", $filename = "doc.pdf") {
 		$this->Output($dest, $filename);
+	}
+	
+	private function toEuro ($prix) {
+		$prixExplode = explode('.', $prix);
+		$dizaine = $prixExplode[0];
+		$prixFinal = $dizaine;
+		if (count($prixExplode) > 1) {
+			if (strlen($prixExplode[1]) == 1) {
+				$prixFinal .= ','.$prixExplode[1].'0';
+			} else {
+				$prixFinal .= ','.$prixExplode[1];
+			}
+		} else {
+			$prixFinal .= ',00';
+		}
+		$prixFinal .= ' '.chr(128);
+		return $prixFinal;
 	}
 
 }

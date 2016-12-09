@@ -510,6 +510,29 @@ class Model_Restaurant extends Model_Template {
 		
 		$this->horaire = $horaire;
 		
+		$sql = "SELECT id_jour, nom, heure_debut, minute_debut, heure_fin, minute_fin 
+		FROM restaurant_horaires
+		JOIN days ON days.id = id_jour
+		WHERE id_restaurant = :id AND id_jour = WEEKDAY(CURRENT_DATE)+1
+		ORDER BY id_jour, heure_debut";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$horaires = $stmt->fetchAll();
+		foreach ($horaires as $hor) {
+			$horaire = new Model_Horaire();
+			$horaire->id_jour = $hor["id_jour"];
+			$horaire->name = $hor["nom"];
+			$horaire->heure_debut = $hor["heure_debut"];
+			$horaire->minute_debut = $hor["minute_debut"];
+			$horaire->heure_fin = $hor["heure_fin"];
+			$horaire->minute_fin = $hor["minute_fin"];
+			$this->addHoraire($horaire);
+		}
+		
 		$sql = "SELECT certif.id, certif.nom, certif.description AS description_certif, certif.logo, rc.url, rc.description AS description
 		FROM certificats certif
 		JOIN restaurant_certificat rc ON rc.id_certificat = certif.id

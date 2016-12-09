@@ -14,10 +14,12 @@ class Model_Dispo extends Model_Template {
 	private $vehicule;
 	private $id_jour;
 	private $jour;
+	private $date;
 	private $heure_debut;
 	private $minute_debut;
 	private $heure_fin;
 	private $minute_fin;
+	private $commande;
 	
 	public function __get($property) {
 		if (property_exists($this, $property)) {

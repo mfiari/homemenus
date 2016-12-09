@@ -1035,4 +1035,22 @@ class Model_User extends Model_Template {
 		}
 		return true;
 	}
+	
+	public function getNbCommandeLivreur ($debut, $fin) {
+		$sql = "SELECT COUNT(*) AS total FROM commande_history WHERE id_livreur = :livreur AND date_livraison BETWEEN :debut AND :fin";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":livreur", $this->id);
+		$stmt->bindValue(":debut", $debut);
+		$stmt->bindValue(":fin", $fin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null ||$value == false) {
+			return 0;
+		}
+		return $value["total"];
+	}
 }
