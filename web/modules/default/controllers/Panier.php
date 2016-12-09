@@ -425,8 +425,8 @@ class Controller_Panier extends Controller_Default_Template {
 					$model->email = trim($_POST["login"]);
 					$model->password = trim($_POST["password"]);
 					$model->status = USER_CLIENT;
-					$model->rue = $panier->rue;
-					$model->ville = $panier->ville;
+					$model->rue = utf8_encode($panier->rue);
+					$model->ville = utf8_encode($panier->ville);
 					$model->code_postal = $panier->code_postal;
 					$model->inscription_token = generateToken();
 					$model->telephone = $panier->telephone;
