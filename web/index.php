@@ -85,7 +85,7 @@ if (isset($_GET["module"])) {
 	$manager->dispatch($request);
 } else {
 	if ($request->_auth) {
-		if ($request->_auth->status == USER_ADMIN) {
+		if ($request->_auth->status == USER_ADMIN || $request->_auth->status == USER_ADMIN_INFO || $request->_auth->status == USER_ADMIN_CLIENT) {
 			include_once WEBSITE_PATH."modules/admin/Manager.php";
 			$manager = new Admin_Manager();
 		} else if ($request->_auth->status == USER_LIVREUR) {

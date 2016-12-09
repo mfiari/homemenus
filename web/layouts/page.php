@@ -19,6 +19,10 @@
 					if ($request->_auth) {
 						if ($request->_auth->status == USER_ADMIN) {
 							include('top_admin.php');
+						} else if ($request->_auth->status == USER_ADMIN_INFO) {
+							include('top_admin_info.php');
+						} else if ($request->_auth->status == USER_ADMIN_CLIENT) {
+							include('top_admin_client.php');
 						} else if ($request->_auth->status == USER_LIVREUR) {
 							include('top_livreur.php');
 						} else if ($request->_auth->status == USER_RESTAURANT) {

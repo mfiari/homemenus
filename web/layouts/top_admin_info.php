@@ -32,6 +32,8 @@
 						<li><a href="?controler=sms">SMS</a></li>
 						<li><a href="?controler=sms&action=smsling">SMSling</a></li>
 						<li><a href="?controler=commentaire">Commentaire</a></li>
+						<li><a href="?controler=log">Log</a></li>
+						<li><a href="?controler=cron">Cron</a></li>
 						<li><a href="?action=logout">deconnexion</a></li>
 					</ul>
 				</li>
