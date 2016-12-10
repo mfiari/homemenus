@@ -47,11 +47,11 @@
 		showLoading('loginButton', true);
 		$.ajax({
 			type: "POST",
-			url: "?action=login",
+			url: "index.php?action=login",
 			dataType: "html",
 			data: $("#loginForm").serialize()
 		}).done(function( msg ) {
-			document.location.href = "?action=index";
+			document.location.href = "index.html";
 		}).error(function(jqXHR, textStatus, errorThrown) {
 			switch (jqXHR.status) {
 				case 400 :

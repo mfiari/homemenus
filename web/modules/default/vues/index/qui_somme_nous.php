@@ -18,18 +18,18 @@
 			<h2>Nos restaurants partenaires</h2>
 			<div>
 				<p>HoMe Menus a sélectionné pour vous les meilleurs restaurants de votre région.<p>
-				<p>Rendez-vous sur la page de <a href="?action=restaurants_partenaire">nos restaurants partenaires</a> afin de voir tous les restaurants avec lesquels nous travaillons</p>
+				<p>Rendez-vous sur la page de <a href="restaurants-partenaire.html">nos restaurants partenaires</a> afin de voir tous les restaurants avec lesquels nous travaillons</p>
 			</div>
 		</div>
 		<div class="row">
 			<h2>Nous contactez</h2>
 			<div class="row">
 				<div class="col-md-8">
-					<p>Vous avez une question. N'hésitez pas à nous joindre via notre <a href="?controler=contact">page de contact</a>.</p>
-					<p>Vous souhaitez devenir livreur pour HoMe Menus. Postulez via notre <a href="?controler=contact&action=livreur">page de contact pour les livreurs</a>.</p>
-					<p>Vous souhaitez devenir restaurant partenaire. Envoyez-nous votre demande via notre <a href="?controler=contact&action=restaurant">page de contact pour les restaurants</a>.</p>
-					<p>Vous souhaitez créer un compte entreprise pour vos salariés. Envoyez-nous votre demande via notre <a href="?controler=contact&action=entreprise">page de contact pour les entreprises</a>.</p>
-					<p>Vous souhaitez organiser un évènement. Contactez-nous via notre <a href="?controler=contact&action=evenement">page de contact</a>.</p>
+					<p>Vous avez une question. N'hésitez pas à nous joindre via notre <a href="contact.html">page de contact</a>.</p>
+					<p>Vous souhaitez devenir livreur pour HoMe Menus. Postulez via notre <a href="contact-livreur.html">page de contact pour les livreurs</a>.</p>
+					<p>Vous souhaitez devenir restaurant partenaire. Envoyez-nous votre demande via notre <a href="contact-restaurant.html">page de contact pour les restaurants</a>.</p>
+					<p>Vous souhaitez créer un compte entreprise pour vos salariés. Envoyez-nous votre demande via notre <a href="contact-entreprise.html">page de contact pour les entreprises</a>.</p>
+					<p>Vous souhaitez organiser un évènement. Contactez-nous via notre <a href="contact-evenement.html">page de contact</a>.</p>
 					<p>Nous sommes également joignable par téléphone tous les jours de 10h à 23h au 06 61 45 97 33</p>
 				</div>
 				<div class="col-md-4">

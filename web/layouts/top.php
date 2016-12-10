@@ -7,7 +7,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a href="index.php" class="logo">
+			<a href="index.html" class="logo">
 				<img id="logo" src="res/img/logo.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
 			</a>
 			<img id="slogan" src="res/img/slogan.png" alt="HoMe Menus - livraison - slogan" title="slogan HoMe Menus">
@@ -16,7 +16,7 @@
 			<ul class="menu nav navbar-nav">
 				<li><a href="index.php">Accueil</a></li>
 				<?php if ($request->_auth) : ?>
-					<li><a href="index.php?controler=contact">Contact</a></li>
+					<li><a href="contact.html">Contact</a></li>
 					<li><a id="cardMenu">
 						<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
 						<?php if ($request->_itemsPanier && $request->_itemsPanier > 0) : ?>
@@ -36,12 +36,12 @@
 							<li><a href="index.php?action=logout"><span class="glyphicon glyphicon-off" aria-hidden="true"></span>Déconnexion</a></li>
 						</ul>
 					</li>
-					<li><a href="index.php?action=faq">FAQ</a></li>
+					<li><a href="faq.html">FAQ</a></li>
 				<?php else : ?>
 					<li><a href="index.php?action=inscription">Inscription</a></li>
 					<li><a data-toggle="modal" data-target="#login-modal">Connexion</a></li>
-					<li><a href="index.php?controler=contact">Contact</a></li>
-					<li><a href="index.php?action=faq">FAQ</a></li>
+					<li><a href="contact.html">Contact</a></li>
+					<li><a href="faq.html">FAQ</a></li>
 				<?php endif; ?>
 			</ul>
 		</nav>

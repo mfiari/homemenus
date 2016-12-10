@@ -36,7 +36,7 @@
 			
 			<div>
 				<h3>A partir de quelle heure débutent les livraisons ?</h3>
-				<p>Pour le moment nous livrons tous les jours à partir de 18h30 jusqu'à 23H30, et bientôt à partir de midi.</p>
+				<p>Nous livrons tous les jours le midi de 11h30 à 14h30 et le soir de 18h30 jusqu'à 23H30.</p>
 			</div>
 
 			<div>
@@ -74,9 +74,8 @@
 				<h3>Y’a-t-il des frais de livraison ?</h3>
 				<p>Actuellement selon la distance où vous commandez vous paierez des frais de livraison :
 					<ul>
-						<li>2,50 € si vous commandez de 0 à 5 kilomètres de chez vous</li>
-						<li>5 € si vous commandez de 6 à 10 kilomètres de chez vous</li>
-						<li>7,50 € si vous commandez de 11 à 15 kilomètres de chez vous</li>
+						<li>2,50 € si vous commandez de 0 à 7 kilomètres de chez vous</li>
+						<li>5 € si vous commandez de 8 à 15 kilomètres de chez vous</li>
 						<li>Au delà de 15 kilomètres c’est possible, mais il vous faudra effectuer une commande spéciale.</li>
 					</ul>
 				</p>
@@ -92,7 +91,7 @@
 				<h3>Que dois-je faire si il n’y a pas de livreur disponible pour mon restaurant ?</h3>
 				<p>Il se peut que parfois lorsque vous voudriez commander, un restaurant soit marqué en rouge avec la mention « livreur non disponible » 
 				Ce cas très rare peut arriver si plusieurs coursiers sont occupés ! Pas de panique ! 
-				<a href="?controler=contact">Contactez-nous</a> et nous mettrons tout en œuvre afin d’attitrer, dans la mesure du possible, 
+				<a href="contact.html">Contactez-nous</a> et nous mettrons tout en œuvre afin d’attitrer, dans la mesure du possible, 
 				un livreur à votre commande dans les plus brefs délais.</p>
 			</div>
 			
@@ -128,7 +127,7 @@
 				<p>1. Vérifiez que vous avez rentré la bonne adresse mail lors de votre inscription</p>
 				<p>2. Vérifiez que vous recevez les e-mails extérieurs</p>
 				<p>3. Vérifiez dans le dossier SPAM de votre boite mail</p>
-				<p>4. Contactez nous afin de confirmer votre adresse mail via notre <a href="?controler=contact">page de contact</a></p>
+				<p>4. Contactez nous afin de confirmer votre adresse mail via notre <a href="contact.html">page de contact</a></p>
 			</div>
 
 			<div>
@@ -141,7 +140,7 @@
 				<h3>Que dois-je faire si j’ai un problème avec ma commande ?</h3>
 				<p>Nous mettons tout en œuvre afin de vous offrir une expérience HoMe Menus plus que parfaite, 
 				mais il se peut que parfois (très rarement) les choses ne se passent pas toujours comme nous le souhaiterions. 
-				N’hésitez pas à nous contactez via notre <a href="?controler=contact">page de contact</a></p>
+				N’hésitez pas à nous contactez via notre <a href="contact.html">page de contact</a></p>
 			</div>
 			
 			<div>
@@ -188,14 +187,14 @@
 				<p>Affirmatif ! Aujourd’hui nous proposons plusieurs services pour les entreprises ou les professionnels afin de vous régaler au bureau 
 				pour booster votre productivité ! Pour  connaître les avantages qui s’offrent à vous, 
 				cliquez sur la partie entreprise visible sur la page d’accueil 
-				ou contactez nous via notre <a href="?controler=contact&action=entreprise">page de contact pour les entreprises</a></p>
+				ou contactez nous via notre <a href="contact-entreprise.html">page de contact pour les entreprises</a></p>
 			</div>
 			
 			<div>
 				<h3>C’est possible de faire une commande spéciale ?</h3>
 				<p>Si vous avez un anniversaire, une réunion, un événement particulier, il est possible de faire une commande spéciale, 
 				adressez nous un mail, nous nous ferons un plaisir de satisfaire vos envies avec les différentes offres que nous vous proposons. 
-				Pour ceci contactez nous via notre <a href="?controler=contact&action=evenement">page de contact</a></p>
+				Pour ceci contactez nous via notre <a href="contact-evenement.html">page de contact</a></p>
 			</div>
 			
 			<h2>5- Autres sujets</h2>
@@ -212,7 +211,7 @@
 				vous ayez l'habitude de demander de retirer un aliment d'un plat.</p>
 				<p>Cette fonctionnalité n'est malheureusement pas disponible sur les commandes directes du restaurant.</p>
 				<p>Si vous souhaitez modifier le contenu d'un plat à cause d'une allergie ou autre, 
-				contactez nous via notre <a href="?controler=contact">page de contact</a> avant votre commande.</p>
+				contactez nous via notre <a href="contact.html">page de contact</a> avant votre commande.</p>
 			</div>
 			
 			<div>
@@ -232,18 +231,18 @@
 
 			<div>
 				<h3>Comment fait-on pour devenir livreur ?</h3>
-				<p>Si tu souhaites devenir livreur, envoies nous une demande via notre <a href="?controler=contact&action=livreur">page de contact</a>.</p>
+				<p>Si tu souhaites devenir livreur, envoies nous une demande via notre <a href="contact-livreur.html">page de contact</a>.</p>
 			</div>
 
 			<div>
 				<h3>Comment faire pour devenir restaurant partenaire ?</h3>
 				<p>Si vous souhaitez devenir partenaire, 
-				rien de plus simple envoyez nous une demande via notre <a href="?controler=contact&action=restaurant">page de contact</a>.</p>
+				rien de plus simple envoyez nous une demande via notre <a href="contact-restaurant.html">page de contact</a>.</p>
 			</div>
 		</div>
 		
 		<div>
-			<p>Vous avez d’autres questions ? Rendez-vous sur la <a href="?controler=contact">page de contact</a> afin de nous les poser.</p>
+			<p>Vous avez d’autres questions ? Rendez-vous sur la <a href="?contact.html">page de contact</a> afin de nous les poser.</p>
 		</div>
 	</div>
 </div>

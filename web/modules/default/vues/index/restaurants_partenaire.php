@@ -20,7 +20,7 @@
 				</a>
 			</span>
 			<div class="logo_restaurant">
-				<a href="?action=restaurant_partenaire&id=<?php echo $restaurant->id; ?>">
+				<a href="restaurant-<?php echo $restaurant->id; ?>-<?php echo str_replace(' ', '-', $ville); ?>-<?php echo str_replace(' ', '-', utf8_encode($restaurant->nom)); ?>.html">
 					<img src="<?php echo getLogoRestaurant($restaurant->id); ?>">
 				</a>
 			</div>

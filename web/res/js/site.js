@@ -38,7 +38,7 @@ function openCard () {
 	$("#loading-modal").modal();
 	$.ajax({
 		type: "GET",
-		url: '?controler=panier&action=view',
+		url: 'index.php?controler=panier&action=view',
 		dataType: "html"
 	}).done(function( msg ) {
 		$("#loading-modal").modal('hide');
@@ -285,7 +285,7 @@ function enableRating (id_commande) {
 function openChatBox (id_commande) {
 	$.ajax({
 		type: "POST",
-		url: "?controler=commande&action=getChat&id_commande="+id_commande,
+		url: "index.php?controler=commande&action=getChat&id_commande="+id_commande,
 		dataType: "html"
 	}).done(function(msg) {
 		$("#live-chat").show();

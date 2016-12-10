@@ -145,7 +145,7 @@
 			</div>
 			<div class="modal-body">
 				<h3>Afin de commander dans ce restaurant, vous devez saisir votre adresse afin de vérifier que vous pouvez vous faire livrer le restaurant</h3>
-				<form id="adress-form" action="?controler=restaurant&action=recherche" method="POST">
+				<form id="adress-form" action="index.php?controler=restaurant&action=recherche" method="POST">
 					<div class="input-group">
 						<div class="search-block">
 							<input id="full_address" class="form-control" name="adresse" type="text" placeholder="Saisissez votre adresse">
@@ -212,7 +212,7 @@
 		$("#loading-modal").modal();
 		$.ajax({
 			type: "GET",
-			url: '?controler=notes&action=viewRestaurant&id_restaurant='+id_resto,
+			url: 'index.php?controler=notes&action=viewRestaurant&id_restaurant='+id_resto,
 			dataType: "html"
 		}).done(function( msg ) {
 			$("#loading-modal").modal('hide');
@@ -225,7 +225,7 @@
 		$("#loading-modal").modal();
 		$.ajax({
 			type: "GET",
-			url: '?controler=notes&action=viewCarte&id_carte='+id_carte,
+			url: 'index.php?controler=notes&action=viewCarte&id_carte='+id_carte,
 			dataType: "html"
 		}).done(function( msg ) {
 			$("#loading-modal").modal('hide');

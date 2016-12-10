@@ -3,12 +3,12 @@
 <header class="home">
 	<div class="container">
 		<div>
-			<a href="?action=index">
+			<a href="index.html">
 				<img id="logo" src="res/img/logo.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
 			</a>
 			<ul class="menu">
 				<?php if ($request->_auth) : ?>
-					<li><a href="?controler=contact">Contact</a></li>
+					<li><a href="contact.html">Contact</a></li>
 					<li><a id="cardMenu">
 						<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
 						<?php if ($request->_itemsPanier && $request->_itemsPanier > 0) : ?>
@@ -28,12 +28,12 @@
 							<li><a href="?action=logout"><span class="glyphicon glyphicon-off" aria-hidden="true"></span>deconnexion</a></li>
 						</ul>
 					</li>
-					<li><a href="?action=faq">FAQ</a></li>
+					<li><a href="faq.html">FAQ</a></li>
 				<?php else : ?>
 					<li><a href="?action=inscription">Inscription</a></li>
 					<li><a data-toggle="modal" data-target="#login-modal">Connexion</a></li>
-					<li><a href="?controler=contact">Contact</a></li>
-					<li><a href="?action=faq">FAQ</a></li>
+					<li><a href="contact.html">Contact</a></li>
+					<li><a href="faq.html">FAQ</a></li>
 				<?php endif; ?>
 			</ul>
 		</div>

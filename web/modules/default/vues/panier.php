@@ -223,7 +223,7 @@
 		var id = $(this).attr('data-id');
 		$.ajax({
 			type: "POST",
-			url: "?controler=panier&action=showCarteDetail",
+			url: "index.php?controler=panier&action=showCarteDetail",
 			dataType: "html",
 			data: {id_panier : id_panier, id_panier_carte : id}
 		}).done(function( msg ) {
@@ -237,7 +237,7 @@
 		var id = $(this).attr('data-id');
 		$.ajax({
 			type: "POST",
-			url: "?controler=panier&action=removeCarte",
+			url: "index.php?controler=panier&action=removeCarte",
 			dataType: "html",
 			data: {id_panier : id_panier, id_panier_carte : id}
 		}).done(function( msg ) {
@@ -251,7 +251,7 @@
 		var id = $(this).attr('data-id');
 		$.ajax({
 			type: "POST",
-			url: "?controler=panier&action=removeMenu",
+			url: "index.php?controler=panier&action=removeMenu",
 			dataType: "html",
 			data: {id_panier : id_panier, id_panier_menu : id}
 		}).done(function( msg ) {
@@ -265,7 +265,7 @@
 		var codePromo = $("#code_promo").val();
 		$.ajax({
 			type: "POST",
-			url: "?controler=panier&action=addCodePromo",
+			url: "index.php?controler=panier&action=addCodePromo",
 			dataType: "html",
 			data: {code_promo : codePromo}
 		}).done(function( msg ) {

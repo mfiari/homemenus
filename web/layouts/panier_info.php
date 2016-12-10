@@ -55,14 +55,14 @@
 			showLoading('validationButton', true);
 			$.ajax({
 				type: "POST",
-				url: "?controler=panier&action=validate",
+				url: "index.php?controler=panier&action=validate",
 				dataType: "html",
 				data: $("#panierInfoForm").serialize()
 			}).done(function( msg ) {
 				var data = $.parseJSON(msg);
 				console.log(data);
 				if (data.distance < 16) {
-					document.location.href = "?controler=panier&action=finalisation";
+					document.location.href = "index.php?controler=panier&action=finalisation";
 				} else {
 					$("#panier-info-modal .modal-footer div.alert-danger span.message").html("Nous ne pouvons vous livrer ce restaurant car votre adresse se trouve à plus de 15km du restaurant (" + data.distance + " km)");
 					$("#panier-info-modal .modal-footer div.alert-danger").css('display', 'block');
