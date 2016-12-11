@@ -23,7 +23,7 @@
 						<img style="height : 350px; width : 100%;" src="res/img/plats_favoris.png" title="HoMe Menus - Plats favoris" alt="HoMe Menus - Plats favoris">
 						<div class="carousel-caption">
 							<h3>Plats favoris</h3>
-							<p>Vous ne savez pas quoi commander ? Venez voir les 10 plats les plus commander par nos clients.</p>
+							<p>Vous ne savez pas quoi commander ? Venez voir les 10 plats les plus commandé par nos clients.</p>
 						</div>
 					</a>
 				</div>
