@@ -91,7 +91,7 @@ class Controller_User extends Controller_Admin_Template {
 		$request->commandes = $modelCommande->loadCommandeLivreur();
 		$modelCommandeHistory = new Model_Commande_History();
 		$modelCommandeHistory->uid = $_GET['id_user'];
-		$request->commandesHistory = $modelCommandeHistory->loadCommandeLivreur();
+		$request->commandesHistory = $modelCommandeHistory->loadCommandeLivreur('0,20', 'date_commande DESC');
 		$request->title = "Administration - livreur";
 		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
 		$request->vue = $this->render("user/livreur.php");
