@@ -255,22 +255,55 @@ class PDF extends FPDF {
 	}
 	
 	public function generateHoraireLivreur ($livreur) {
-		$this->title = "Planing du ".(date("d/m/Y", strtotime("-6 days"))).' au '.(date("d/m/Y"));
+		$this->title = "Planing du 12/12/2016 au 18/12/2016";
 		$this->titleWidth = 100;
 		
 		$this->AliasNbPages();
 		$this->AddPage();
 		
-		//Info
+		// Police Arial gras 12
+		$this->SetFont('Arial','B',12);
+		$this->Cell(80, 7, 'Nom : '.utf8_decode($livreur->nom).' '.utf8_decode($livreur->prenom), 0, 1);
+		$this->Cell(80, 7, 'Identifiant : '.$livreur->login, 0, 1);
+		$this->Cell(80, 7, 'Email : '.$livreur->email, 0, 1);
+		$this->Cell(80, 7, utf8_decode('Téléphone : ').$livreur->telephone, 0, 1);
 		$this->Ln();
 		
-		$this->SetFont('Arial','',8);
-		$this->MultiCell(0, 5, utf8_decode('Ceci est votre planing du '.(date("d/m/Y", strtotime("-6 days"))).' au '.(date("d/m/Y")).'. 
-		Vous recevrez votre planing de la semaine prochaine dimanche à 12h. Envoyez nous vos disponiblité à l\'adresse livreur@homemenus.fr.
-		Sans notification de votre part, votre planing sera effectuée en fonction de celui de cette semaine.'), 0, 1);
+		$width = 70;
 		
+		//En-tête
+		$this->Cell(40, 7, 'Jour', 1, 0, 'C');
+		$this->Cell(35, 7, 'Horaires', 1, 0, 'C');
+		$this->Cell(65, 7, utf8_decode('Adresse de départ'), 1, 0, 'C');
+		$this->Cell(25, 7, utf8_decode('Périmètre'), 1, 0, 'C');
+		$this->Cell(25, 7, utf8_decode('Véhicule'), 1, 0, 'C');
 		$this->Ln();
-		$this->Ln();
+		
+		// Police Arial gras 12
+		$this->SetFont('Arial','',9);
+		
+		//Données
+		foreach($livreur->dispos as $dispo) {
+			$this->Cell(40, 6, $dispo->jour.' ('.$dispo->date.')', 1, 0, 'R');
+			$this->Cell(35, 6, 'De '.$dispo->heure_debut.'h'.$dispo->minute_debut.utf8_decode(' à ').$dispo->heure_fin.'h'.$dispo->minute_fin, 1, 0, 'R');
+			$this->Cell(65, 6, utf8_decode($dispo->rue).', '.$dispo->code_postal.' '.utf8_decode($dispo->ville), 1, 0, 'R');
+			$this->Cell(25, 6, $dispo->perimetre.' km', 1, 0, 'R');
+			$this->Cell(25, 6, $dispo->vehicule, 1, 0, 'R');
+			$this->Ln();
+		}
+		
+		//Trait de terminaison
+		$this->Cell(4,0,'','T');
+		
+	}
+	
+	public function generateBilanHoraireLivreur ($livreur) {
+		$this->title = "Bilan du 05/12/2016 au 11/12/2016";
+		$this->titleWidth = 100;
+		
+		$this->AliasNbPages();
+		$this->AddPage();
+		
 		// Police Arial gras 12
 		$this->SetFont('Arial','B',12);
 		$this->Cell(80, 7, 'Nom : '.utf8_decode($livreur->nom).' '.utf8_decode($livreur->prenom), 0, 1);
@@ -299,22 +332,17 @@ class PDF extends FPDF {
 		$bonus = 0;
 		
 		//Données
-		for ($i = 6 ; $i >= 0 ; $i--) {
-			$curentDate = mktime(0, 0, 0, date('m'), date('d')-$i, date('Y'));
-			foreach($livreur->dispos as $dispo) {
-				if ($dispo->id_jour == date('N', $curentDate)) {
-					$this->Cell(35, 6, $dispo->jour.' ('.$dispo->date.')', 1, 0, 'R');
-					$this->Cell(30, 6, 'De '.$dispo->heure_debut.'h'.$dispo->minute_debut.utf8_decode(' à ').$dispo->heure_fin.'h'.$dispo->minute_fin, 1, 0, 'R');
-					$this->Cell(60, 6, utf8_decode($dispo->rue).', '.$dispo->code_postal.' '.utf8_decode($dispo->ville), 1, 0, 'R');
-					$this->Cell(20, 6, $dispo->perimetre.' km', 1, 0, 'R');
-					$this->Cell(20, 6, $dispo->vehicule, 1, 0, 'R');
-					$this->Cell(25, 6, $dispo->commande, 1, 0, 'R');
-					$this->Ln();
-					$totalCommande += $dispo->commande;
-					$totalHeure += $dispo->heure_fin - $dispo->heure_debut;
-					$bonus = floor($dispo->commande / 5) * 10;
-				}
-			}
+		foreach($livreur->dispos as $dispo) {
+			$this->Cell(35, 6, $dispo->date, 1, 0, 'R');
+			$this->Cell(30, 6, 'De '.$dispo->heure_debut.'h'.$dispo->minute_debut.utf8_decode(' à ').$dispo->heure_fin.'h'.$dispo->minute_fin, 1, 0, 'R');
+			$this->Cell(60, 6, utf8_decode($dispo->rue).', '.$dispo->code_postal.' '.utf8_decode($dispo->ville), 1, 0, 'R');
+			$this->Cell(20, 6, $dispo->perimetre.' km', 1, 0, 'R');
+			$this->Cell(20, 6, $dispo->vehicule, 1, 0, 'R');
+			$this->Cell(25, 6, $dispo->commande, 1, 0, 'R');
+			$this->Ln();
+			$totalCommande += $dispo->commande;
+			$totalHeure += $dispo->heure_fin - $dispo->heure_debut;
+			$bonus = floor($dispo->commande / 5) * 10;
 		}
 		
 		$gain = $prixHoraire * $totalHeure;

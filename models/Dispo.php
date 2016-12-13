@@ -234,4 +234,77 @@ class Model_Dispo extends Model_Template {
 		}
 		return true;
 	}
+	
+	public function getLivreurDispo () {
+		$sql = "SELECT uld.id, rue, ville, code_postal, latitude, longitude, perimetre, vehicule, id_jour, heure_debut, minute_debut, heure_fin, minute_fin, 
+		days.nom 
+		FROM user_livreur_dispo uld
+		JOIN days ON days.id = id_jour
+		WHERE uid = :id
+		ORDER BY id_jour, heure_debut";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id_livreur);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$dispos = array();
+		$results = $stmt->fetchAll();
+		foreach ($results as $result) {
+			$dispo = new Model_Dispo(false);
+			$dispo->id = $result['id'];
+			$dispo->rue = $result['rue'];
+			$dispo->ville = $result['ville'];
+			$dispo->code_postal = $result['code_postal'];
+			$dispo->latitude = $result['latitude'];
+			$dispo->longitude = $result['longitude'];
+			$dispo->perimetre = $result['perimetre'];
+			$dispo->vehicule = $result['vehicule'];
+			$dispo->id_jour = $result['id_jour'];
+			$dispo->jour = $result['nom'];
+			$dispo->heure_debut = $result['heure_debut'];
+			$dispo->minute_debut = $result['minute_debut'];
+			$dispo->heure_fin = $result['heure_fin'];
+			$dispo->minute_fin = $result['minute_fin'];
+			$dispos[] = $dispo;
+		}
+		return $dispos;
+	}
+	
+	public function getHistoryLivreurDispo ($date_debut, $date_fin) {
+		$sql = "SELECT id, rue_dispo AS rue, ville_dispo AS ville, code_postal_dispo AS code_postal, latitude_dispo AS latitude, longitude_dispo AS longitude, 
+		perimetre, vehicule, date_dispo, heure_debut, minute_debut, heure_fin, minute_fin
+		FROM historique_dispo_livreur
+		WHERE uid = :id AND date_dispo BETWEEN '$date_debut' AND '$date_fin' 
+		ORDER BY date_dispo, heure_debut";
+		//var_dump($sql)
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id_livreur);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$dispos = array();
+		$results = $stmt->fetchAll();
+		foreach ($results as $result) {
+			$dispo = new Model_Dispo(false);
+			$dispo->id = $result['id'];
+			$dispo->rue = $result['rue'];
+			$dispo->ville = $result['ville'];
+			$dispo->code_postal = $result['code_postal'];
+			$dispo->latitude = $result['latitude'];
+			$dispo->longitude = $result['longitude'];
+			$dispo->perimetre = $result['perimetre'];
+			$dispo->vehicule = $result['vehicule'];
+			$dispo->date = $result['date_dispo'];
+			$dispo->heure_debut = $result['heure_debut'];
+			$dispo->minute_debut = $result['minute_debut'];
+			$dispo->heure_fin = $result['heure_fin'];
+			$dispo->minute_fin = $result['minute_fin'];
+			$dispos[] = $dispo;
+		}
+		return $dispos;
+	}
 }
