@@ -14,6 +14,7 @@
 		<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
 			<ul class="menu nav navbar-nav">
 				<li><a href="?action=stats">Resultats</a></li>
+				<li><a href="?controler=recherche">recherches</a></li>
 				<li><a href="?controler=restaurant">Restaurants</a></li>
 				<li><a href="?controler=user&action=livreurs">Livreurs</a></li>
 				<li><a href="?controler=user&action=clients">Clients</a></li>
@@ -26,7 +27,6 @@
 					</a>
 					<ul class="dropdown-menu">
 						<li><a href="?controler=codePromo">code promo</a></li>
-						<li><a href="?controler=recherche">recherches</a></li>
 						<li><a href="?controler=mail">mails</a></li>
 						<li><a href="?controler=mail&action=emailing">emailing</a></li>
 						<li><a href="?controler=sms">SMS</a></li>
