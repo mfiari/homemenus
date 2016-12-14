@@ -22,6 +22,7 @@ include_once ROOT_PATH."models/Horaire.php";
 include_once ROOT_PATH."models/Certificat.php";
 include_once ROOT_PATH."models/Commentaire.php";
 include_once ROOT_PATH."models/CodePromo.php";
+include_once ROOT_PATH."models/PDF.php";
 
 class Controller_Commande extends Controller_Admin_Template {
 	
@@ -97,6 +98,9 @@ class Controller_Commande extends Controller_Admin_Template {
 					break;
 				case "finalisation" :
 					$this->finalisation($request);
+					break;
+				case "facture" :
+					$this->facture($request);
 					break;
 			}
 		} else {
@@ -716,6 +720,19 @@ class Controller_Commande extends Controller_Admin_Template {
 		$panier->uid = $_GET['id_user'];
 		$request->panier = $panier->load();
 		$request->vue = $this->render("commande/panier_validate.php");
+	}
+	
+	public function facture ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		
+		$commande = new Model_Commande();
+		$commande->id = $_GET["commande"];
+		$commande->load();
+		
+		$pdf = new PDF ();
+		$pdf->generateFactureClient($commande);
+		$pdf->render();
 	}
 	
 }

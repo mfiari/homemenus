@@ -130,6 +130,24 @@ class PDF extends FPDF {
 					$this->Cell(0,10,$supplement->nom,0,1);
 				}
 			}
+			if (count($carte->options) > 0) {
+				foreach ($carte->options as $option) {
+					foreach ($option->values as $value) {
+						$this->Cell(20,10,'',0,0);
+						$this->Cell(0,10,utf8_encode($option->nom).' : '.utf8_encode($value->nom),0,1);
+					}
+				}
+			}
+			if (count($carte->accompagnements) > 0) {
+				$this->Cell(20,10,'',0,0);
+				$this->Cell(0,10,utf8_encode('accompagnements : '),0,1);
+				foreach ($carte->accompagnements as $accompagnement) {
+					foreach ($accompagnement->cartes as $carteAccompagnement) {
+						$this->Cell(40,10,'',0,0);
+						$this->Cell(0,10,$carteAccompagnement->nom,0,1);
+					}
+				}
+			}
 			$this->Cell(0,5,'','B',1);
 			$totalQte += $carte->quantite;
 			$totalPrix += $carte->prix;
