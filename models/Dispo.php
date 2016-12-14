@@ -278,7 +278,6 @@ class Model_Dispo extends Model_Template {
 		FROM historique_dispo_livreur
 		WHERE uid = :id AND date_dispo BETWEEN '$date_debut' AND '$date_fin' 
 		ORDER BY date_dispo, heure_debut";
-		//var_dump($sql)
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id_livreur);
 		if (!$stmt->execute()) {
