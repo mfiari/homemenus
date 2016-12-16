@@ -731,7 +731,7 @@ class Controller_Commande extends Controller_Admin_Template {
 		$commande->load();
 		
 		$pdf = new PDF ();
-		$pdf->generateFactureClient($commande);
+		$pdf->generateFactureClientAdmin($commande);
 		$pdf->render();
 	}
 	

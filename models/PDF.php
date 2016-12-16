@@ -185,6 +185,10 @@ class PDF extends FPDF {
 		$this->Cell($width,10,'',0,0);
 		$this->Cell($width,10,formatTimestampToDateHeure($commande->date_commande),0,1);
 		
+		$this->Cell($width,10,'Adresse de livraison',0,0);
+		$this->Cell(20,10,'',0,0);
+		$this->Cell($width,10,utf8_encode($commande->rue).', '.$commande->code_postal.' '.utf8_encode($commande->ville),0,1);
+		
 		// Saut de ligne
 		$this->Ln(20);
 		
@@ -261,6 +265,116 @@ class PDF extends FPDF {
 	}
 	
 	public function generateFactureRestaurant ($commande) {
+		
+		$this->title = "Commande #".$commande->id;
+		
+		//$this->logo = getLogoRestaurant($commande->restaurant->id);
+		
+		$this->AliasNbPages();
+		$this->AddPage();
+		
+		// Saut de ligne
+		$this->Ln(5);
+		
+		$width = 70;
+		// Police Arial gras 12
+		$this->SetFont('Arial','B',12);
+		
+		$this->Cell($width,10,'Date de commande',0,0);
+		$this->Cell($width,10,'',0,0);
+		$this->Cell($width,10,formatTimestampToDateHeure($commande->date_commande),0,1);
+		
+		// Saut de ligne
+		$this->Ln(5);
+		
+		$this->Cell($width,10,'Livreur',0,0);
+		$this->Cell($width,10,'',0,0);
+		$this->Cell($width,10,$commande->livreur->prenom,0,1);
+		
+		// Saut de ligne
+		$this->Ln(20);
+		
+		$width = 80;
+		$this->SetFont('Times','',12);
+		
+		$totalPrix = 0;
+		$totalQte = 0;
+		foreach ($commande->menus as $menu) {
+			$name = $menu->nom;
+			if (count($menu->formats) == 1 && $menu->formats[0]->nom != "") {
+				$name .= ' ('.$menu->formats[0]->nom.')';
+			}
+			$this->Cell($width,10,$name,0,0);
+			$this->Cell($width,10,' X '.$menu->quantite,0,0);
+			$this->Cell($width,10,$menu->prix.' '.chr(128),0,1);
+			foreach ($menu->formules as $formule) {
+				foreach ($formule->categories as $categorie) {
+					$this->Cell(20,10,'',0,0);
+					$this->Cell($width,10,$categorie->nom.' : ',0,0);
+					foreach ($categorie->contenus as $contenu) {
+						$this->Cell(0,10,$contenu->nom,0,1);
+					}
+				}
+			}
+			$totalQte += $menu->quantite;
+			$totalPrix += $menu->prix;
+			$this->Cell(0,5,'','B',1);
+		}
+		foreach ($commande->cartes as $carte) {
+			$name = $carte->nom;
+			if (count($carte->formats) == 1 && $carte->formats[0]->nom != "") {
+				$name .= ' ('.$carte->formats[0]->nom.')';
+			}
+			$this->Cell($width,10,$name,0,0);
+			$this->Cell($width,10,' X '.$carte->quantite,0,0);
+			$this->Cell($width,10,$carte->prix.' '.chr(128),0,1);
+			if (count($carte->supplements) > 0) {
+				$this->Cell(20,10,'',0,0);
+				$this->Cell(0,10,'Supplements : ',0,1);
+				foreach ($carte->supplements as $supplement) {
+					$this->Cell(40,10,'',0,0);
+					$this->Cell(0,10,$supplement->nom,0,1);
+				}
+			}
+			if (count($carte->options) > 0) {
+				foreach ($carte->options as $option) {
+					foreach ($option->values as $value) {
+						$this->Cell(20,10,'',0,0);
+						$this->Cell(0,10,utf8_encode($option->nom).' : '.utf8_encode($value->nom),0,1);
+					}
+				}
+			}
+			if (count($carte->accompagnements) > 0) {
+				$this->Cell(20,10,'',0,0);
+				$this->Cell(0,10,utf8_encode('accompagnements : '),0,1);
+				foreach ($carte->accompagnements as $accompagnement) {
+					foreach ($accompagnement->cartes as $carteAccompagnement) {
+						$this->Cell(40,10,'',0,0);
+						$this->Cell(0,10,$carteAccompagnement->nom,0,1);
+					}
+				}
+			}
+			$this->Cell(0,5,'','B',1);
+			$totalQte += $carte->quantite;
+			$totalPrix += $carte->prix;
+		}
+		
+		$pourcentage = $commande->restaurant->pourcentage;
+		
+		$this->Cell($width,10,'Total commande :',0,0);
+		$this->Cell($width,10,$totalQte,0,0);
+		$this->Cell($width,10,$totalPrix.' '.chr(128),0,1);
+		
+		/*$this->Cell($width,10,'Part HoMe Menus :',0,0);
+		$this->Cell($width,10,'',0,0);
+		$this->Cell($width,10,($totalPrix * $pourcentage / 100).' '.chr(128),0,1);
+		
+		$this->Cell($width,10,'Total gain:',0,0);
+		$this->Cell($width,10,'',0,0);
+		$this->Cell($width,10,($totalPrix - ($totalPrix * $pourcentage / 100)).' '.chr(128).' TTC',0,1);*/
+	}
+	
+	public function generateTotalFactureRestaurant ($commande) {
 		
 		$this->title = "Commande #".$commande->id;
 		
