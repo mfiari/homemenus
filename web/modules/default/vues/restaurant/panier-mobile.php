@@ -5,7 +5,7 @@
 			<form method="post" enctype="x-www-form-urlencoded" id="panierForm" action="">
 				<input type="hidden" id="id_panier" name="id_panier" value="<?php echo $request->panier->id; ?>" />
 				<?php
-					$current_heure = date('G')+1;
+					$current_heure = date('G')+GTM_INTERVAL;
 					$current_minute = date('i');
 					$horaire = $request->panier->restaurant->horaire;
 				?>

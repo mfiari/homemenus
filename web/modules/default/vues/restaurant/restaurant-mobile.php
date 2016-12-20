@@ -1,7 +1,7 @@
 <?php 
 	$restaurant = $request->restaurant;
 	$horaire = $restaurant->horaire;
-	$current_heure = date('G')+1;
+	$current_heure = date('G')+GTM_INTERVAL;
 	$current_minute = date('i');
 ?>
 <input id="id_restaurant" value="<?php echo $restaurant->id; ?>" hidden="hidden" />
