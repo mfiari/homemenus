@@ -1,14 +1,95 @@
 <?php include(WEBSITE_PATH.'layouts/panier_info.php'); ?>
+<?php 
+	$restaurant = $request->restaurant;
+	$livreurs = $request->livreurs;
+	$horaire = $restaurant->horaire;
+	$horaires = $restaurant->horaires;
+	$current_heure = date('G')+GTM_INTERVAL;
+	$current_minute = date('i');
+	
+	$horaires_dispo_livreur = array();
+	
+	for ($i = 0 ; $i < 24 ; $i++) {
+		$livreurDispo = false;
+		$minute_debut = 59;
+		$minute_fin = 0;
+		foreach ($livreurs as $livreur) {
+			foreach ($livreur->dispos as $dispo) {
+				if ($i >= $dispo->heure_debut && $i <= $dispo->heure_fin) {
+					$livreurDispo = true;
+					if ($i == $dispo->heure_debut) {
+						if ($minute_debut > $dispo->minute_debut) {
+							$minute_debut = $dispo->minute_debut;
+							$minute_fin = 59;
+						}
+					} else if ($i == $dispo->heure_fin) {
+						if ($minute_fin < $dispo->minute_fin) {
+							$minute_fin = $dispo->minute_fin;
+							$minute_debut = 0;
+						}
+					} else {
+						$minute_debut = 0;
+						$minute_fin = 59;
+					}
+				}
+			}
+		}
+		if ($livreurDispo) {
+			$horaires_dispo_livreur[] = array(
+				"livreur" => $livreurDispo,
+				"heure" => $i,
+				"minute_debut" => $minute_debut,
+				"minute_fin" => $minute_fin,
+			);
+		}
+		$livreurDispo = false;
+	}
+	
+	$horaires_final = array();
+	foreach ($horaires_dispo_livreur as $horaire_dispo_livreur) {
+		foreach ($horaires as $h) {
+			if ($horaire_dispo_livreur['heure'] >= $h->heure_debut && $horaire_dispo_livreur['heure'] <= $h->heure_fin && $horaire_dispo_livreur['heure'] >= $current_heure) {
+				if ($horaire_dispo_livreur['heure'] == $h->heure_debut) {
+					if ($horaire_dispo_livreur['minute_debut'] < $h->minute_debut) {
+						$horaire_dispo_livreur['minute_debut'] = $h->minute_debut;
+					}
+				}
+				if ($horaire_dispo_livreur['heure'] == $h->heure_fin) {
+					if ($horaire_dispo_livreur['minute_fin'] > $h->minute_fin) {
+						$horaire_dispo_livreur['minute_fin'] = $h->minute_fin;
+					}
+				}
+				if ($horaire_dispo_livreur['heure'] == $current_heure) {
+					if ($horaire_dispo_livreur['minute_debut'] < $current_minute) {
+						$horaire_dispo_livreur['minute_debut'] = $current_minute;
+					} else if ($horaire_dispo_livreur['minute_fin'] > $current_minute) {
+						$horaire_dispo_livreur['minute_fin'] = $current_minute;
+					}
+				}
+				$horaires_final[] = $horaire_dispo_livreur;
+			}
+		}
+	}
+	
+?>
+<script type="text/javascript">
+	var horaires_final = new Array();
+	<?php foreach ($horaires_final as $horaire_final) : ?>
+		var ligne = {};
+		ligne.heure = <?php echo $horaire_final['heure']; ?>;
+		ligne.minute_debut = <?php echo $horaire_final['minute_debut']; ?>;
+		ligne.minute_fin = <?php echo $horaire_final['minute_fin']; ?>;
+		horaires_final.push(ligne);
+	<?php endforeach; ?>
+</script>
 <div id="panier-content">
+	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
+		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour à la carte du restaurant
+	</a>
 	<div>
 		<?php if ($request->panier) : ?>
 			<form method="post" enctype="x-www-form-urlencoded" id="panierForm" action="">
 				<input type="hidden" id="id_panier" name="id_panier" value="<?php echo $request->panier->id; ?>" />
-				<?php
-					$current_heure = date('G')+GTM_INTERVAL;
-					$current_minute = date('i');
-					$horaire = $request->panier->restaurant->horaire;
-				?>
 				<div>
 					<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
 						<input type="hidden" name="type_commande" value="pre_commande">
@@ -19,44 +100,16 @@
 							Précommande possible dès maintenant.
 						</span><br /><br />
 						<span><b>Heure de livraison souhaitée : </b></span><br />
-						<?php 
-							if ($horaire->heure_debut < $current_heure) {
-								$beginHour = $current_heure;
-							} else {
-								$beginHour = $horaire->heure_debut;
-							}
-						?>
-						<select name="heure_commande">
-							<?php for ($i = $beginHour ; $i <= $horaire->heure_fin ; $i++) : ?>
-								<option><?php echo $i; ?></option>
-							<?php endfor; ?>
-						</select>h
-						<select name="minute_commande">
-							<?php for ($i = 0 ; $i <= 60 ; $i++) : ?>
-								<option <?php echo $i == $horaire->minute_debut ? 'selected' : ''; ?>><?php echo $i; ?></option>
-							<?php endfor; ?>
-						</select>
+						<div id="heure_livraison">
+							<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
+						</div>
 					<?php else : ?>
 						<input type="radio" name="type_commande" value="now" checked>Au plus tôt
 						<input type="radio" name="type_commande" value="pre_commande">Précommander
-						<span>heure de commande</span>
-						<?php 
-							if ($horaire->heure_debut < $current_heure) {
-								$beginHour = $current_heure;
-							} else {
-								$beginHour = $horaire->heure_debut;
-							}
-						?>
-						<select name="heure_commande">
-							<?php for ($i = $beginHour ; $i <= $horaire->heure_fin ; $i++) : ?>
-								<option><?php echo $i; ?></option>
-							<?php endfor; ?>
-						</select>
-						<select name="minute_commande">
-							<?php for ($i = 0 ; $i <= 60 ; $i++) : ?>
-								<option <?php echo $i == $horaire->minute_debut ? 'selected' : ''; ?>><?php echo $i; ?></option>
-							<?php endfor; ?>
-						</select>
+						<div id="heure_livraison">
+							<span>heure de commande : </span>
+							<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
+						</div>
 					<?php endif; ?>
 				</div><br />
 				<div class="panel panel-default panel-primary">
@@ -193,6 +246,9 @@
 			<span>(vide)</span>
 		<?php endif; ?>
 	</div>
+	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
+		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour à la carte du restaurant
+	</a>
 </div>
 
 <script type="text/javascript">
@@ -202,8 +258,29 @@
 		initDeleteMenuItem ();
 		initPanierCommande();
 		initCodePromo ();
+		initHoraireCommande ();
 		
 	});
+	
+	function initHoraireCommande () {
+		for (var i = 0 ; i < horaires_final.length ; i++) {
+			$("select#heure_commande").append($('<option />').html(horaires_final[i].heure));
+		}
+		for (var j = horaires_final[0].minute_debut ; j <= horaires_final[0].minute_fin ; j++) {
+			$("select#minute_commande").append($('<option />').html(j));
+		}
+		$("select#heure_commande").change(function() {
+			var heure = $(this).val();
+			$("select#minute_commande").html('');
+			for (var i = 0 ; i < horaires_final.length ; i++) {
+				if (horaires_final[i].heure == heure) {
+					for (var j = horaires_final[i].minute_debut ; j <= horaires_final[i].minute_fin ; j++) {
+						$("select#minute_commande").append($('<option />').html(j));
+					}
+				}
+			}
+		});
+	}
 	
 	function initDeleteCarteItem () {
 		$(".carte-item-delete").click(function(event) {
@@ -309,6 +386,7 @@
 			initDeleteMenuItem ();
 			initPanierCommande();
 			initCodePromo ();
+			initHoraireCommande ();
 		});
 	}
 </script>
