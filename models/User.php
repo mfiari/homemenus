@@ -667,7 +667,7 @@ class Model_User extends Model_Template {
 		$livreurs = $stmt->fetchAll();
 		$list = array();
 		foreach ($livreurs as $livreur) {
-			$user = new Model_User(false);
+			$user = new Model_User();
 			$user->id = $livreur['uid'];
 			$list[] = $user;
 		}
@@ -983,6 +983,42 @@ class Model_User extends Model_Template {
 		FROM user_livreur_dispo uld
 		JOIN days ON days.id = id_jour
 		WHERE uid = :id
+		ORDER BY id_jour, heure_debut";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$dispos = $stmt->fetchAll();
+		foreach ($dispos as $disp) {
+			$dispo = new Model_Dispo(false);
+			$dispo->id = $disp['id'];
+			$dispo->rue = $disp['rue'];
+			$dispo->ville = $disp['ville'];
+			$dispo->code_postal = $disp['code_postal'];
+			$dispo->latitude = $disp['latitude'];
+			$dispo->longitude = $disp['longitude'];
+			$dispo->perimetre = $disp['perimetre'];
+			$dispo->vehicule = $disp['vehicule'];
+			$dispo->id_jour = $disp['id_jour'];
+			$dispo->jour = $disp['nom'];
+			$dispo->heure_debut = $disp['heure_debut'];
+			$dispo->minute_debut = $disp['minute_debut'];
+			$dispo->heure_fin = $disp['heure_fin'];
+			$dispo->minute_fin = $disp['minute_fin'];
+			$this->dispos[] = $dispo;
+		}
+		return $this;
+	}
+	
+	public function getLivreurDispo () {
+		$sql = "SELECT uld.id, rue, ville, code_postal, latitude, longitude, perimetre, vehicule, id_jour, heure_debut, minute_debut, heure_fin, minute_fin, 
+		days.nom 
+		FROM user_livreur_dispo uld
+		JOIN days ON days.id = id_jour
+		WHERE uid = :id AND id_jour = WEEKDAY(CURRENT_DATE)+1
 		ORDER BY id_jour, heure_debut";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);

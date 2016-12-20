@@ -22,6 +22,7 @@ include_once ROOT_PATH."models/Recherche.php";
 include_once ROOT_PATH."models/Certificat.php";
 include_once ROOT_PATH."models/CodePromo.php";
 include_once ROOT_PATH."models/Commentaire.php";
+include_once ROOT_PATH."models/Dispo.php";
 
 class Controller_Restaurant extends Controller_Default_Template {
 	
@@ -84,6 +85,10 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$modelUser = new Model_User();
 			$livreurs = $modelUser->getLivreurAvailableForRestaurant($request->restaurant);
 			$request->restaurant->has_livreur_dispo = count($livreurs) > 0;
+			foreach ($livreurs as $livreur) {
+				$livreur->getLivreurDispo();
+			}
+			$request->livreurs = $livreurs;
 			
 			$adresseUser = $_SESSION['search_latitude'].','.$_SESSION['search_longitude'];
 			$adresseResto = $request->restaurant->latitude.','.$request->restaurant->longitude;

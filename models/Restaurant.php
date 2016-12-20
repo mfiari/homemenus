@@ -480,7 +480,8 @@ class Model_Restaurant extends Model_Template {
 		OR ((rh.heure_debut < HOUR(CURRENT_TIME) OR (rh.heure_debut = HOUR(CURRENT_TIME) AND rh.minute_debut <= MINUTE(CURRENT_TIME))) 
 		AND (rh.heure_fin > HOUR(CURRENT_TIME) OR (rh.heure_fin = HOUR(CURRENT_TIME) AND rh.minute_fin > MINUTE(CURRENT_TIME)))))
 		WHERE r.id = :id
-		GROUP BY r.id";
+		ORDER BY rh.heure_debut ASC
+		LIMIT 1";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {

@@ -3,7 +3,7 @@
 		<form method="post" enctype="x-www-form-urlencoded" id="panierForm" action="">
 			<input type="hidden" id="id_panier" name="id_panier" value="<?php echo $request->panier->id; ?>" />
 			<?php
-				$current_heure = date('G')+1;
+				$current_heure = date('G')+GTM_INTERVAL;
 				$current_minute = date('i');
 				$horaire = $request->panier->restaurant->horaire;
 			?>
@@ -17,44 +17,16 @@
 						Précommande possible dès maintenant.
 					</span><br /><br />
 					<span><b>Heure de livraison souhaitée : </b></span><br />
-					<?php 
-						if ($horaire->heure_debut < $current_heure) {
-							$beginHour = $current_heure;
-						} else {
-							$beginHour = $horaire->heure_debut;
-						}
-					?>
-					<select name="heure_commande">
-						<?php for ($i = $beginHour ; $i <= $horaire->heure_fin ; $i++) : ?>
-							<option><?php echo $i; ?></option>
-						<?php endfor; ?>
-					</select>h
-					<select name="minute_commande">
-						<?php for ($i = 0 ; $i <= 60 ; $i++) : ?>
-							<option <?php echo $i == $horaire->minute_debut ? 'selected' : ''; ?>><?php echo $i; ?></option>
-						<?php endfor; ?>
-					</select>
+					<div id="heure_livraison">
+						<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
+					</div>
 				<?php else : ?>
 					<input type="radio" name="type_commande" value="now" checked>Au plus tôt
 					<input type="radio" name="type_commande" value="pre_commande">Précommander
-					<span>heure de commande</span>
-					<?php 
-						if ($horaire->heure_debut < $current_heure) {
-							$beginHour = $current_heure;
-						} else {
-							$beginHour = $horaire->heure_debut;
-						}
-					?>
-					<select name="heure_commande">
-						<?php for ($i = $beginHour ; $i <= $horaire->heure_fin ; $i++) : ?>
-							<option><?php echo $i; ?></option>
-						<?php endfor; ?>
-					</select>
-					<select name="minute_commande">
-						<?php for ($i = 0 ; $i <= 60 ; $i++) : ?>
-							<option <?php echo $i == $horaire->minute_debut ? 'selected' : ''; ?>><?php echo $i; ?></option>
-						<?php endfor; ?>
-					</select>
+					<div id="heure_livraison">
+						<span>heure de commande : </span>
+						<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
+					</div>
 				<?php endif; ?>
 			</div><br />
 			<div class="panel panel-default panel-primary">

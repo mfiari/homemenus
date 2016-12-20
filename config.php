@@ -2,6 +2,8 @@
 
 	DEFINE ("ENVIRONNEMENT", "DEV");
 
+	DEFINE ("GTM_INTERVAL", 1);
+
 	/* path config */
 	DEFINE ("ROOT_PATH", "D:/wamp/www/projets/homemenus/website/");
 	DEFINE ("MODEL_PATH", ROOT_PATH."models/");
