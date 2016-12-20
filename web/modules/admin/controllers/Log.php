@@ -42,10 +42,21 @@ class Controller_Log extends Controller_Admin_Template {
 	}
 	
 	public function cron ($request) {
-		$request->title = "Administration - Log";
+		/*$request->title = "Administration - Log";
 		$today = date('Y-m-d');
 		if (file_exists(ROOT_PATH.'log/cron/log_'.$today)) {
 			$request->logs = file (ROOT_PATH.'log/cron/log_'.$today);
+		}
+		$request->vue = $this->render("log/cron.php");*/
+		$request->title = "Administration - Log";
+		if (isset($_POST['date'])) {
+			$request->date_log = $_POST['date'];
+		} else {
+			$request->date_log = date('d/m/Y');
+		}
+		$today = datepickerToDatetime($request->date_log);
+		if (file_exists(ROOT_PATH.'log/cron/log_'.$today)) {
+			$request->logs = Model_Log::parse(ROOT_PATH.'log/cron/log_'.$today);
 		}
 		$request->vue = $this->render("log/cron.php");
 	}
