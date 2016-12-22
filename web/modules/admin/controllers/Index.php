@@ -5,6 +5,7 @@ include_once ROOT_PATH."function.php";
 include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/CommandeHistory.php";
+include_once ROOT_PATH."models/Dispo.php";
 
 class Controller_Index extends Controller_Admin_Template {
 	
@@ -35,6 +36,8 @@ class Controller_Index extends Controller_Admin_Template {
 	
 	public function stats ($request) {
 		$request->title = "Administration";
+		$modelUser = new Model_User();
+		$request->livreursDispo = $modelUser->getLivreurAvailableToday();
 		$modelCommande = new Model_Commande();
 		$request->resultats = $modelCommande->getTotal();
 		$request->livreurs = $modelCommande->getTotalByLivreur();

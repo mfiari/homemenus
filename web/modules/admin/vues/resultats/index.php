@@ -7,6 +7,29 @@
 		</ul>
 		<div class="col-md-10  col-md-offset-1">
 			<div class="row">
+				<h2>Livreurs disponible</h2>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Nom</th>
+							<th>Horaire</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($request->livreursDispo as $livreur) : ?>
+							<tr>
+								<td><?php echo utf8_encode($livreur->nom); ?> <?php echo utf8_encode($livreur->prenom); ?> (<?php echo $livreur->login; ?>)</td>
+								<td>De <?php echo $livreur->dispos->heure_debut; ?>h<?php echo $livreur->dispos->minute_debut; ?> à 
+									<?php echo $livreur->dispos->heure_fin; ?>h<?php echo $livreur->dispos->minute_fin; ?>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-md-10  col-md-offset-1">
+			<div class="row">
 				<h2>Total</h2>
 				<table class="table table-striped">
 					<thead>

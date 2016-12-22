@@ -649,6 +649,39 @@ class Model_User extends Model_Template {
 		return $list;
 	}
 	
+	public function getLivreurAvailableToday () {
+		$sql = "SELECT user.uid, user.login, user.nom, user.prenom, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin
+		FROM users user
+		JOIN user_livreur ul ON ul.uid = user.uid
+		JOIN user_livreur_dispo uld ON uld.uid = user.uid
+		WHERE user.is_enable = 1 AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1) ";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$livreurs = $stmt->fetchAll();
+		$list = array();
+		foreach ($livreurs as $livreur) {
+			$user = new Model_User(false);
+			$user->id = $livreur['uid'];
+			$user->login = $livreur['login'];
+			$user->nom = $livreur['nom'];
+			$user->prenom = $livreur['prenom'];
+			
+			$dispo = new Model_Dispo(false);
+			$dispo->heure_debut = $livreur['heure_debut'];
+			$dispo->minute_debut = $livreur['minute_debut'];
+			$dispo->heure_fin = $livreur['heure_fin'];
+			$dispo->minute_fin = $livreur['minute_fin'];
+			$user->dispos = $dispo;
+			
+			$list[] = $user;
+		}
+		return $list;
+	}
+	
 	public function getLivreurAvailableForRestaurant ($restaurant) {
 		$sql = "SELECT user.uid
 		FROM users user
