@@ -254,8 +254,7 @@ class Controller_User extends Controller_Admin_Template {
 			$dispo->save();
 			
 			$dispo->addUpdateDispo($dispo->id);
-			
-			$this->redirect('livreurs', 'user');
+			$this->redirect('livreur', 'user', '', array('id_user' => $_POST['id_livreur']));
 		} else {
 			$this->redirect('livreurs', 'user');
 		}

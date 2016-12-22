@@ -27,7 +27,7 @@
 					<?php foreach ($request->livreur->dispos as $dispo) : ?>
 						<tr>
 							<td><?php echo utf8_encode($dispo->rue); ?>, <?php echo $dispo->code_postal; ?> <?php echo utf8_encode($dispo->ville); ?></td>
-							<td><?php echo $dispo->id_jour; ?></td>
+							<td><?php echo $dispo->jour; ?></td>
 							<td><?php echo $dispo->heure_debut; ?>h<?php echo $dispo->minute_debut; ?></td>
 							<td><?php echo $dispo->heure_fin; ?>h<?php echo $dispo->minute_fin; ?></td>
 							<td><?php echo $dispo->vehicule; ?></td>
@@ -42,7 +42,7 @@
 				</tbody>
 			</table>
 			<div id="disponibilite">
-				<form id="ajoutDispoForm" method="post" action="?controler=user&amp;action=add_dispo">
+				<form id="ajoutDispoForm" method="post" action="?controler=user&action=add_dispo">
 					<input name="id_livreur" value="<?php echo $request->livreur->id; ?>" hidden>
 					<input id="rue" name="rue" hidden>
 					<input id="ville" name="ville" hidden>
