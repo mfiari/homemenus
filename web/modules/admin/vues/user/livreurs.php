@@ -23,21 +23,21 @@
 							<td><?php echo $livreur->is_enable ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
 							<td>
 								<a href="?controler=user&action=livreur&id_user=<?php echo $livreur->id; ?>">
-									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+									<span data-toggle="tooltip" title="Voir le livreur" class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 								</a>
 								<a href="?controler=user&action=edit&id_user=<?php echo $livreur->id; ?>">
-									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+									<span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 								</a>
 								<?php if ($livreur->is_enable) : ?>
 									<a href="?controler=user&action=disable&id_user=<?php echo $livreur->id; ?>">
-										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										<span data-toggle="tooltip" title="Désactiver" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 									</a>
 								<?php else : ?>
 									<a href="?controler=user&action=enable&id_user=<?php echo $livreur->id; ?>">
-										<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										<span data-toggle="tooltip" title="Activer" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 									</a>
 									<a href="?controler=user&action=delete&id_user=<?php echo $livreur->id; ?>">
-										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 									</a>
 								<?php endif; ?>
 							</td>
