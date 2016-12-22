@@ -52,7 +52,7 @@
 					<?php $typeChoix = $accompagnement->limite == 1 ? 'radio' : 'checkbox'; ?>
 					<?php foreach ($accompagnement->cartes as $carte) : ?>
 						<div>
-							<input type="<?php echo $typeChoix; ?>" name="check_accompagnement_<?php echo $carte->id; ?>"/>
+							<input type="<?php echo $typeChoix; ?>" name="check_accompagnement_<?php echo $accompagnement->id; ?>" value="<?php echo $carte->id; ?>"/>
 							<span><?php echo utf8_encode($carte->nom); ?></span>
 						</div>
 					<?php endforeach; ?>
