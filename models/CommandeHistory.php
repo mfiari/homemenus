@@ -11,6 +11,7 @@ class Model_Commande_History extends Model_Template {
 	private $code_postal;
 	private $prix;
 	private $prix_livraison;
+	private $part_restaurant;
 	private $note;
 	private $commentaire;
 	private $commentaire_anonyme;
@@ -38,6 +39,7 @@ class Model_Commande_History extends Model_Template {
 		}
 		$this->id = -1;
 		$this->carte = array();
+		$this->cartes = array();
 		$this->menus = array();
 	}
 	
@@ -52,6 +54,14 @@ class Model_Commande_History extends Model_Template {
 			$this->$property = $value;
 		}
 		return $this;
+	}
+	
+	public function addCarte ($carte) {
+		$this->cartes[] = $carte;
+	}
+	
+	public function addMenu ($menu) {
+		$this->menus[] = $menu;
 	}
 	
 	public function save ($commande) {
@@ -611,6 +621,145 @@ class Model_Commande_History extends Model_Template {
 			$this->menus[] = $menu;
 		}
 		return $this;
+	}
+	
+	public function getCommandesByRestaurant ($id_restaurant, $dateDebut, $dateFin) {
+		$sql = "
+		SELECT id, id_commande, id_livreur, prenom_livreur, date_commande, heure_souhaite, minute_souhaite, date_validation_restaurant, 
+		date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, prix, prix_livraison, part_restaurant
+		FROM commande_history
+		WHERE id_restaurant = :restaurant AND date_livraison BETWEEN :date_debut AND :date_fin";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":restaurant", $id_restaurant);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$commandes = array();
+		
+		$results = $stmt->fetchAll();
+		foreach ($results as $result) {
+			$commande = new Model_Commande_History();
+			$commande->id = $result['id'];
+			$commande->id_commande = $result['id_commande'];
+			$commande->livreur = new Model_User(false);
+			$commande->livreur->id = $result['id_livreur'];
+			$commande->livreur->prenom = $result['prenom_livreur'];
+			$commande->date_commande = $result['date_commande'];
+			$commande->heure_souhaite = $result['heure_souhaite'];
+			$commande->minute_souhaite = $result['minute_souhaite'];
+			$commande->date_validation_restaurant = $result['date_validation_restaurant'];
+			$commande->date_fin_preparation_restaurant = $result['date_fin_preparation_restaurant'];
+			$commande->date_recuperation_livreur = $result['date_recuperation_livreur'];
+			$commande->date_livraison = $result['date_livraison'];
+			$commande->prix = $result['prix'];
+			$commande->prix_livraison = $result['prix_livraison'];
+			$commande->part_restaurant = $result['part_restaurant'];
+		
+		
+			$sql = "SELECT id_carte AS id, nom_carte AS nom, id_categorie, quantite, prix AS prix, id_format, nom_format
+			FROM commande_carte_history 
+			WHERE id_commande = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $commande->id);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$cartes = $stmt->fetchAll();
+			foreach ($cartes as $c) {
+				$carte = new Model_Carte(false);
+				$carte->id = $c['id'];
+				$carte->nom = $c['nom'];
+				$carte->quantite = $c['quantite'];
+				$carte->prix = $c['prix'] * $c['quantite'];
+				
+				$format = new Model_Format(false);
+				$format->id = $c['id_format'];
+				$format->nom = $c['nom_format'];
+				
+				$carte->addFormat($format);
+				
+				$sql = "SELECT id_supplement AS id, nom_supplement AS nom, prix_supplement AS prix
+				FROM commande_carte_supplement_history
+				WHERE id_commande_carte = :id";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $carte->id);
+				if (!$stmt->execute()) {
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+					return false;
+				}
+				$supplements = $stmt->fetchAll();
+				foreach ($supplements as $sup) {
+					$supplement = new Model_Supplement(false);
+					$supplement->id = $sup["id"];
+					$supplement->nom = $sup["nom"];
+					$supplement->prix = $sup["prix"];
+					$carte->addSupplement($supplement);
+				}
+				$commande->addCarte($carte);
+			}
+		
+		
+			$sql = "SELECT id, id_menu, nom_menu, id_format, nom_format, quantite, prix
+			FROM commande_menu_history
+			WHERE id_commande = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $commande->id);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$listCommandeMenu = $stmt->fetchAll();
+			foreach ($listCommandeMenu as $commandeMenu) {
+				$menu = new Model_Menu(false);
+				$menu->id = $commandeMenu['id_menu'];
+				$menu->nom = $commandeMenu['nom_menu'];
+				$menu->quantite = $commandeMenu['quantite'];
+				$menu->prix = $commandeMenu['prix'] * $commandeMenu['quantite'];
+				
+				$format = new Model_Format();
+				$format->id = $commandeMenu['id_format'];
+				$format->nom = $commandeMenu['nom_format'];
+				
+				$menu->addFormat($format);
+				
+				$formule = new Model_Formule();
+				$formule->id = 0;
+				$formule->nom = 'formule';
+				
+				$menu->addFormule($formule);
+				
+				$sql = "SELECT id, id_categorie, nom_categorie, id_carte, nom_carte
+				FROM commande_menu_contenu_history 
+				WHERE id_commande_menu = :id";
+				$stmt = $this->db->prepare($sql);
+				$stmt->bindValue(":id", $commandeMenu['id']);
+				if (!$stmt->execute()) {
+					writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+					return false;
+				}
+				$listCommandeContenu = $stmt->fetchAll();
+				foreach ($listCommandeContenu as $commandeContenu) {
+					$categorie = new Model_Categorie(false);
+					$categorie->id = $commandeContenu['id_categorie'];
+					$categorie->nom = $commandeContenu['nom_categorie'];
+					
+					$contenu = new Model_Contenu(false);
+					$contenu->id = $commandeContenu['id_carte'];
+					$contenu->nom = $commandeContenu['nom_carte'];
+					
+					$categorie->addContenu($contenu);
+					
+					$formule->addCategorie($categorie);
+				}
+				$commande->addMenu($menu);
+			}
+			$commandes[] = $commande;
+		}
+		return $commandes;
 	}
 	
 	public function getTotal ($dateDebut, $dateFin) {

@@ -374,11 +374,10 @@ class PDF extends FPDF {
 		$this->Cell($width,10,($totalPrix - ($totalPrix * $pourcentage / 100)).' '.chr(128).' TTC',0,1);*/
 	}
 	
-	public function generateTotalFactureRestaurant ($commande) {
+	public function generateTotalFactureRestaurant ($commandes, $dateDebut, $dateFin) {
 		
-		$this->title = "Commande #".$commande->id;
-		
-		//$this->logo = getLogoRestaurant($commande->restaurant->id);
+		$this->title = "Resultat du $dateDebut au $dateFin";
+		$this->titleWidth = 100;
 		
 		$this->AliasNbPages();
 		$this->AddPage();
@@ -386,102 +385,98 @@ class PDF extends FPDF {
 		// Saut de ligne
 		$this->Ln(5);
 		
-		$width = 70;
-		// Police Arial gras 12
-		$this->SetFont('Arial','B',12);
+		$dateCommande = '';
 		
-		$this->Cell($width,10,'Date de commande',0,0);
-		$this->Cell($width,10,'',0,0);
-		$this->Cell($width,10,formatTimestampToDateHeure($commande->date_commande),0,1);
-		
-		// Saut de ligne
-		$this->Ln(5);
-		
-		$this->Cell($width,10,'Livreur',0,0);
-		$this->Cell($width,10,'',0,0);
-		$this->Cell($width,10,$commande->livreur->prenom,0,1);
-		
-		// Saut de ligne
-		$this->Ln(20);
+		$days = array("Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche");
 		
 		$width = 80;
-		$this->SetFont('Times','',12);
-		
 		$totalPrix = 0;
 		$totalQte = 0;
-		foreach ($commande->menus as $menu) {
-			$name = $menu->nom;
-			if (count($menu->formats) == 1 && $menu->formats[0]->nom != "") {
-				$name .= ' ('.$menu->formats[0]->nom.')';
-			}
-			$this->Cell($width,10,$name,0,0);
-			$this->Cell($width,10,' X '.$menu->quantite,0,0);
-			$this->Cell($width,10,$menu->prix.' '.chr(128),0,1);
-			foreach ($menu->formules as $formule) {
-				foreach ($formule->categories as $categorie) {
-					$this->Cell(20,10,'',0,0);
-					$this->Cell($width,10,$categorie->nom.' : ',0,0);
-					foreach ($categorie->contenus as $contenu) {
-						$this->Cell(0,10,$contenu->nom,0,1);
-					}
-				}
-			}
-			$totalQte += $menu->quantite;
-			$totalPrix += $menu->prix;
-			$this->Cell(0,5,'','B',1);
-		}
-		foreach ($commande->cartes as $carte) {
-			$name = $carte->nom;
-			if (count($carte->formats) == 1 && $carte->formats[0]->nom != "") {
-				$name .= ' ('.$carte->formats[0]->nom.')';
-			}
-			$this->Cell($width,10,$name,0,0);
-			$this->Cell($width,10,' X '.$carte->quantite,0,0);
-			$this->Cell($width,10,$carte->prix.' '.chr(128),0,1);
-			if (count($carte->supplements) > 0) {
-				$this->Cell(20,10,'',0,0);
-				$this->Cell(0,10,'Supplements : ',0,1);
-				foreach ($carte->supplements as $supplement) {
-					$this->Cell(40,10,'',0,0);
-					$this->Cell(0,10,$supplement->nom,0,1);
-				}
-			}
-			if (count($carte->options) > 0) {
-				foreach ($carte->options as $option) {
-					foreach ($option->values as $value) {
-						$this->Cell(20,10,'',0,0);
-						$this->Cell(0,10,utf8_encode($option->nom).' : '.utf8_encode($value->nom),0,1);
-					}
-				}
-			}
-			if (count($carte->accompagnements) > 0) {
-				$this->Cell(20,10,'',0,0);
-				$this->Cell(0,10,utf8_encode('accompagnements : '),0,1);
-				foreach ($carte->accompagnements as $accompagnement) {
-					foreach ($accompagnement->cartes as $carteAccompagnement) {
-						$this->Cell(40,10,'',0,0);
-						$this->Cell(0,10,$carteAccompagnement->nom,0,1);
-					}
-				}
-			}
-			$this->Cell(0,5,'','B',1);
-			$totalQte += $carte->quantite;
-			$totalPrix += $carte->prix;
-		}
+		$pourcentage = 1;
 		
-		$pourcentage = $commande->restaurant->pourcentage;
+		foreach ($commandes as $commande) {
+			
+			$totalPrixCommande = 0;
+			$totalQteCommande = 0;
+			
+			if ($dateCommande != $commande->date_livraison) {
+				
+				list($date, $heure) = explode(" ", $commande->date_livraison);
+				list($year, $month, $day) = explode("-", $date);
+				$dayN = date('N', mktime(0, 0, 0, intval($month), intval($day), intval($year)));
+				
+				
+				// Police Arial gras 12
+				$this->SetFont('Arial','B',12);
+				
+				$this->Cell(0, 15, $days[$dayN -1]." $day/$month/$year",1,0,'C');
+				
+				// Saut de ligne
+				$this->Ln(20);
+				
+				$dateCommande = $commande->date_livraison;
+			}
+			$this->SetFont('Arial','B',12);
+			$this->Cell(0, 15, "Commande #".$commande->id,0,0,'C');
+				
+			// Saut de ligne
+			$this->Ln(10);
+			
+			$this->SetFont('Times','',12);
+			
+			foreach ($commande->menus as $menu) {
+				$name = $menu->nom;
+				if (count($menu->formats) == 1 && $menu->formats[0]->nom != "") {
+					$name .= ' ('.$menu->formats[0]->nom.')';
+				}
+				$this->Cell($width,10,$name,0,0);
+				$this->Cell($width,10,' X '.$menu->quantite,0,0);
+				$this->Cell($width,10,$menu->prix.' '.chr(128),0,1);
+				
+				$totalQteCommande += $menu->quantite;
+				$totalPrixCommande += $menu->prix;
+				$this->Cell(0,5,'','B',1);
+			}
+			
+			foreach ($commande->cartes as $carte) {
+				$name = $carte->nom;
+				if (count($carte->formats) == 1 && $carte->formats[0]->nom != "") {
+					$name .= ' ('.$carte->formats[0]->nom.')';
+				}
+				$this->Cell($width,10,$name,0,0);
+				$this->Cell($width,10,' X '.$carte->quantite,0,0);
+				$this->Cell($width,10,$carte->prix.' '.chr(128),0,1);
+				
+				$this->Cell(0,5,'','B',1);
+				$totalQteCommande += $carte->quantite;
+				$totalPrixCommande += $carte->prix;
+			}
+			
+			$pourcentage = $commande->part_restaurant;
+			
+			$this->Cell($width,10,'Total commande :',0,0);
+			$this->Cell($width,10,$totalQteCommande,0,0);
+			$this->Cell($width,10,$totalPrixCommande.' '.chr(128),0,1);
+			
+			$totalPrix += $totalPrixCommande;
+			
+			// Saut de ligne
+			$this->Ln(10);
+		}
+				
+		$this->SetFont('Arial','B',12);
 		
-		$this->Cell($width,10,'Total commande :',0,0);
-		$this->Cell($width,10,$totalQte,0,0);
+		$this->Cell($width,10,'Total :',0,0);
+		$this->Cell($width,10,'',0,0);
 		$this->Cell($width,10,$totalPrix.' '.chr(128),0,1);
 		
-		/*$this->Cell($width,10,'Part HoMe Menus :',0,0);
+		$this->Cell($width,10,'Part HoMe Menus :',0,0);
 		$this->Cell($width,10,'',0,0);
 		$this->Cell($width,10,($totalPrix * $pourcentage / 100).' '.chr(128),0,1);
 		
 		$this->Cell($width,10,'Total gain:',0,0);
 		$this->Cell($width,10,'',0,0);
-		$this->Cell($width,10,($totalPrix - ($totalPrix * $pourcentage / 100)).' '.chr(128).' TTC',0,1);*/
+		$this->Cell($width,10,($totalPrix - ($totalPrix * $pourcentage / 100)).' '.chr(128).' TTC',0,1);
 	}
 	
 	public function generateHoraireLivreur ($livreur) {

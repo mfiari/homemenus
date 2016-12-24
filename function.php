@@ -46,6 +46,11 @@ function formatTimestampToDateHeure ($timestamp) {
 	return $day.'/'.$month.'/'.$year.' '.$heure;
 }
 
+function formatTimestampToDate ($timestamp) {
+	list($year, $month, $day) = explode("-", $timestamp);
+	return $day.'/'.$month.'/'.$year;
+}
+
 function generateToken ($length = 32) {
 	$characters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-_";
 	$chaine = "";
