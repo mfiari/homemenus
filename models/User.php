@@ -419,7 +419,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function deleted () {
-		$sql = "UPDATE users SET deleted = true WHERE uid = :uid";
+		$sql = "UPDATE users SET deleted = true, date_suppression = NOW() WHERE uid = :uid";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		if (!$stmt->execute()) {
