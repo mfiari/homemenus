@@ -35,6 +35,9 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "disable" :
 					$this->disable($request);
 					break;
+				case "deleted" :
+					$this->deleted($request);
+					break;
 				case "view" :
 					$this->view($request);
 					break;
@@ -221,6 +224,13 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		$model = new Model_Restaurant();
 		$model->id = trim($_GET["id_restaurant"]);
 		$model->disable();
+		$this->redirect('index', 'restaurant');
+	}
+	
+	public function deleted ($request) {
+		$model = new Model_Restaurant();
+		$model->id = trim($_GET["id_restaurant"]);
+		$model->deleted();
 		$this->redirect('index', 'restaurant');
 	}
 	

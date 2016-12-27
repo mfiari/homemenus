@@ -300,7 +300,7 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function getAll () {
-		$sql = "SELECT id, nom, rue, code_postal, ville, latitude, longitude, enabled FROM restaurants Order by ville, nom";
+		$sql = "SELECT id, nom, rue, code_postal, ville, latitude, longitude, enabled FROM restaurants WHERE deleted = 0 Order by ville, nom";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
@@ -361,6 +361,18 @@ class Model_Restaurant extends Model_Template {
 	
 	public function disable () {
 		$sql = "UPDATE restaurants SET enabled = false WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
+	public function deleted () {
+		$sql = "UPDATE restaurants SET deleted = true WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {

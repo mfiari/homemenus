@@ -28,14 +28,14 @@
 								</a>
 								<?php if ($restaurant->is_enable) : ?>
 									<a href="?controler=restaurant&action=disable&id_restaurant=<?php echo $restaurant->id; ?>">
-										<span data-toggle="tooltip" title="Désactivé" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
+										<span data-toggle="tooltip" title="Désactiver" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
 									</a>
 								<?php else : ?>
 									<a href="?controler=restaurant&action=enable&id_restaurant=<?php echo $restaurant->id; ?>">
-										<span data-toggle="tooltip" title="Activé" class="glyphicon glyphicon-ok" aria-hidden="true" style="color : #00FF00;"></span>
+										<span data-toggle="tooltip" title="Activer" class="glyphicon glyphicon-ok" aria-hidden="true" style="color : #00FF00;"></span>
 									</a>
-									<a href="?controler=restaurant&action=delete&id_restaurant=<?php echo $restaurant->id; ?>">
-										<span data-toggle="tooltip" title="Supprimé" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
+									<a href="?controler=restaurant&action=deleted&id_restaurant=<?php echo $restaurant->id; ?>">
+										<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
 									</a>
 								<?php endif; ?>
 							</td>
