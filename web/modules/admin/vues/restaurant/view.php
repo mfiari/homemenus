@@ -33,11 +33,14 @@
 										<td>
 											<?php if ($user->is_enable) : ?>
 												<a href="?controler=restaurant&action=disableUser&id_user=<?php echo $user->id; ?>&id_restaurant=<?php echo $request->restaurant->id; ?>">
-													<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+													<span data-toggle="tooltip" title="Désactiver" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 												</a>
 											<?php else : ?>
 												<a href="?controler=restaurant&action=enableUser&id_user=<?php echo $user->id; ?>&id_restaurant=<?php echo $request->restaurant->id; ?>">
-													<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+													<span data-toggle="tooltip" title="Activer" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+												</a>
+												<a href="?controler=restaurant&action=deleteUser&id_user=<?php echo $user->id; ?>">
+													<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 												</a>
 											<?php endif; ?>
 										</td>
