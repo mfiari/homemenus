@@ -241,7 +241,7 @@
 	}
 	
 	foreach ($directories as $directory) {
-		$files = glob($directory."/*");
+		$files = glob($directory."/log_$previousYear-$previousMonth-*");
 		foreach ($files as $file) {
 			if (!unlink($file)) {
 				writeLog (CRON_LOG, "Impossible de suprimer le fichier $file", LOG_LEVEL_WARNING);
