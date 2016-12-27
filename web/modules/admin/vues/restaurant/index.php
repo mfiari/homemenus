@@ -21,21 +21,21 @@
 							<td><?php echo $restaurant->is_enable ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
 							<td>
 								<a href="?controler=restaurant&action=view&id_restaurant=<?php echo $restaurant->id; ?>">
-									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+									<span data-toggle="tooltip" title="Voir" class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 								</a>
 								<a href="?controler=restaurant&action=edit&id_restaurant=<?php echo $restaurant->id; ?>">
-									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+									<span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 								</a>
 								<?php if ($restaurant->is_enable) : ?>
 									<a href="?controler=restaurant&action=disable&id_restaurant=<?php echo $restaurant->id; ?>">
-										<span title="Désactivé" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
+										<span data-toggle="tooltip" title="Désactivé" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
 									</a>
 								<?php else : ?>
 									<a href="?controler=restaurant&action=enable&id_restaurant=<?php echo $restaurant->id; ?>">
-										<span title="Activé" class="glyphicon glyphicon-ok" aria-hidden="true" style="color : #00FF00;"></span>
+										<span data-toggle="tooltip" title="Activé" class="glyphicon glyphicon-ok" aria-hidden="true" style="color : #00FF00;"></span>
 									</a>
 									<a href="?controler=restaurant&action=delete&id_restaurant=<?php echo $restaurant->id; ?>">
-										<span title="Supprimé" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
+										<span data-toggle="tooltip" title="Supprimé" class="glyphicon glyphicon-remove" aria-hidden="true" style="color : #FF0000;"></span>
 									</a>
 								<?php endif; ?>
 							</td>
