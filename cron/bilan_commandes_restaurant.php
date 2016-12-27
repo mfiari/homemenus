@@ -38,7 +38,7 @@
 	}
 	
 	foreach ($restaurants as $restaurant) {
-		$commandes = $modelCommande->getCommandesByRestaurant($restaurant->id, $dateDebut, $dateFin);
+		$commandes = $modelCommande->getCommandesByRestaurant($restaurant->id, $dateDebut.' 00:00:00', $dateFin.' 23:59:59');
 	
 		if (count($commandes) == 0) {
 			writeLog (CRON_LOG, "Aucune commande réalisé pour le restaurant $restaurant->id", LOG_LEVEL_WARNING);
@@ -46,7 +46,7 @@
 		}
 		
 		$pdf = new PDF();
-		$pdf->generateTotalFactureRestaurant($commandes, formatTimestampToDate($dateDebut), formatTimestampToDate($today));
+		$pdf->generateTotalFactureRestaurant($commandes, formatTimestampToDate($dateDebut), formatTimestampToDate($dateFin));
 		$pdf->render('F', $CommandeDir.'bilan'.$restaurant->id.'.pdf');
 	
 		$messageContent =  file_get_contents (ROOT_PATH.'mails/bilan_commande_restaurant.html');
@@ -56,7 +56,7 @@
 		);
 
 		$messageContent = str_replace("[DATE_DEBUT]", formatTimestampToDate($dateDebut), $messageContent);
-		$messageContent = str_replace("[DATE_FIN]", formatTimestampToDate($today), $messageContent);
+		$messageContent = str_replace("[DATE_FIN]", formatTimestampToDate($dateFin), $messageContent);
 		
 		send_mail ("informatique@homemenus.fr", "Bilan des commandes", $messageContent, MAIL_FROM_DEFAULT, $attachments);
 	}
