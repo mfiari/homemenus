@@ -99,6 +99,12 @@ class Controller_Commande extends Controller_Admin_Template {
 				case "finalisation" :
 					$this->finalisation($request);
 					break;
+				case "generateCommande" :
+					$this->generateCommande($request);
+					break;
+				case "valideCarte" :
+					$this->valideCarte($request);
+					break;
 				case "facture" :
 					$this->facture($request);
 					break;
@@ -703,7 +709,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			if ($distance < 16) {
 				writeLog(SERVER_LOG, "Adresse correcte", LOG_LEVEL_INFO, "$rue, $code_postal $ville");
 			} else {
-				writeLog(SERVER_LOG, "Adresse en dehors du périmètre", LOG_LEVEL_ERROR, "$rue, $code_postal $ville");
+				writeLog(SERVER_LOG, "Adresse en dehors du périmètre", LOG_LEVEL_WARNING, "$rue, $code_postal $ville");
 			}
 			
 			$request->disableLayout = true;
@@ -720,6 +726,148 @@ class Controller_Commande extends Controller_Admin_Template {
 		$panier->uid = $_GET['id_user'];
 		$request->panier = $panier->load();
 		$request->vue = $this->render("commande/panier_validate.php");
+	}
+	
+	public function valideCarte ($request) {
+		
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		$panier = $panier->load();
+		
+		$totalPrix = 0;
+		
+		foreach ($panier->carteList as $carte) {
+			$totalPrix += $carte->prix;
+		}
+		
+		foreach ($panier->menuList as $menu) {
+			$totalPrix += $menu->prix;
+		}
+		
+		if ($panier->code_promo->surPrixLivraison()) {
+			if (!$panier->code_promo->estGratuit()) {
+				$totalPrix += ($panier->prix_livraison - $panier->code_promo->valeur_prix_livraison);
+			}
+		} else {
+			$totalPrix += $panier->prix_livraison;
+		}
+		
+		if ($panier->code_promo->surPrixTotal()) {
+			if ($panier->code_promo->estGratuit()) {
+				$totalPrix = 0;
+			} else {
+				if ($panier->code_promo->valeur_prix_total != -1) {
+					$totalPrix -= $panier->code_promo->valeur_prix_total;
+				}
+				if ($panier->code_promo->pourcentage_prix_total != -1) {
+					$totalPrix -= ($totalPrix * $panier->code_promo->pourcentage_prix_total) / 100;
+				}
+			}
+		}
+		
+		require_once WEBSITE_PATH.'res/lib/stripe/init.php';
+		if (isset($_POST['stripeToken'])) {
+			\Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
+
+			// Get the credit card details submitted by the form
+			$token = $_POST['stripeToken'];
+
+			// Create the charge on Stripe's servers - this will charge the user's card
+			try {
+			  $charge = \Stripe\Charge::create(array(
+				"amount" => $totalPrix * 100, // amount in cents, again
+				"currency" => "eur",
+				"source" => $token,
+				"description" => "validation commande user ".$request->_auth->id
+				));
+				
+				$this->generateCommande ($request);
+				
+			} catch(\Stripe\Error\Card $e) {
+				
+			}
+		}
+	}
+	
+	public function generateCommande ($request) {	
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		$panier->init();
+		$commande = new Model_Commande();
+		if ($commande->create($panier)) {
+			$panier->remove();
+			$user = new Model_User();
+			
+			$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
+			if (count($restaurantUsers) > 0) {
+				$registatoin_ids = array();
+				$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+				foreach ($restaurantUsers as $restaurantUser) {
+					array_push($registatoin_ids, $restaurantUser->gcm_token);
+				}
+				$message = "Vous avez reçu une nouvelle commande";
+				// listre des utilisateurs à notifier
+				$gcm->setDevices($registatoin_ids);
+			 
+				// Le titre de la notification
+				$data = array(
+					"title" => "Nouvelle commande",
+					"key" => "restaurant-new-commande",
+					"id_commande" => $commande->id
+				);
+			 
+				// On notifie nos utilisateurs
+				$result = $gcm->send($message, $data);
+			}
+			
+			$commande->load();
+			
+			$today = date('Y-m-d');
+			
+			$clientDir = ROOT_PATH.'files/commandes/'.$today.'/client/';
+			
+			if(!is_dir($clientDir)){
+			   mkdir($clientDir, 0777, true);
+			}
+			
+			$pdf = new PDF();
+			$pdf->generateFactureClient($commande);
+			$pdf->render('F', $clientDir.'commande'.$commande->id.'.pdf');
+			
+			$attachments = array(
+				$clientDir.'commande'.$commande->id.'.pdf'
+			);
+			
+			$messageContentAdmin =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
+			
+			$messageContentAdmin = str_replace("[COMMANDE_ID]", $commande->id, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[CLIENT]", $commande->client->nom.' '.$commande->client->prenom, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[TOTAL]", $commande->prix, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentAdmin);
+			
+			send_mail (MAIL_ADMIN, "Nouvelle commande", $messageContentAdmin, MAIL_FROM_DEFAULT, $attachments);
+			
+			$messageContentClient =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_client.html');
+			
+			$messageContentClient = str_replace("[COMMANDE_ID]", $commande->id, $messageContentClient);
+			$messageContentClient = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentClient);
+			$messageContentClient = str_replace("[TOTAL]", $commande->prix, $messageContentClient);
+			$messageContentClient = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentClient);
+			
+			send_mail ($request->_auth->login, "Nouvelle commande", $messageContentClient, MAIL_FROM_DEFAULT, $attachments);
+			
+			$restaurantDir = ROOT_PATH.'files/commandes/'.$today.'/restaurant/';
+			
+			if(!is_dir($restaurantDir)){
+			   mkdir($restaurantDir, 0777, true);
+			}
+			
+			$pdf2 = new PDF();
+			$pdf2->generateFactureRestaurant($commande);
+			$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
+		}
+		$this->redirect('index', 'commande');
 	}
 	
 	public function facture ($request) {

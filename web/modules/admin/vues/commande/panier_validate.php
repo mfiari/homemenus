@@ -251,19 +251,27 @@
 </div>
 <div style="margin-top : 20px;">
 	<div id="paiementsForm" class="row" style="display : none;">
-		<div class="col-md-6">
+		<div class="col-md-4">
+			<form style="text-align : center;" action="?controler=commande&action=generateCommande" method="POST">
+				<input name="id_user" type="text" value="<?php echo $request->panier->user->id; ?>" hidden>
+				<input id="command" class="btn btn-primary" type="submit" value="Valider sans paiement">
+			</form>
+		</div>
+		<div class="col-md-4">
 			<form style="text-align : center;" id="payPaypal" action="?controler=paypal" method="POST">
+				<input name="id_user" type="text" value="<?php echo $request->panier->user->id; ?>" hidden>
 				<input id="command" class="btn btn-primary" type="submit" value="Payer avec paypal">
 			</form>
 			<div class="col-md-offset-2 col-md-10">
 				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
 			</div>
 		</div>
-		<div class="col-md-6">
-			<form style="text-align : center;" id="payCard" action="?controler=panier&action=valideCarte" method="POST">
+		<div class="col-md-4">
+			<form style="text-align : center;" id="payCard" action="?controler=commande&action=valideCarte" method="POST">
+			  <input name="id_user" type="text" value="<?php echo $request->panier->user->id; ?>" hidden>
 			  <script
 				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-				data-email="<?php echo $request->_auth->login; ?>"
+				data-email="<?php echo $request->panier->user->email; ?>"
 				data-allow-remember-me="false"
 				data-label="Payer par carte"
 				data-key="<?php echo STRIPE_PUBLIC_KEY; ?>"
