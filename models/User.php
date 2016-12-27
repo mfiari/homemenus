@@ -418,6 +418,18 @@ class Model_User extends Model_Template {
 		return true;
 	}
 	
+	public function deleted () {
+		$sql = "UPDATE users SET deleted = true WHERE uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
 	public function subscribePremium () {
 		$sql = "UPDATE users SET is_premium = true WHERE uid = :uid";
 		$stmt = $this->db->prepare($sql);
@@ -909,7 +921,7 @@ class Model_User extends Model_Template {
 	
 	public function getAllLivreurs () {
 		$sql = "SELECT user.uid, user.nom, user.prenom, user.login, user.email, user.is_enable, ul.is_ready 
-		FROM users user JOIN user_livreur ul ON ul.uid = user.uid WHERE user.status = 'LIVREUR'
+		FROM users user JOIN user_livreur ul ON ul.uid = user.uid WHERE deleted = 0 AND user.status = 'LIVREUR'
 		ORDER BY user.is_enable DESC";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
@@ -935,7 +947,7 @@ class Model_User extends Model_Template {
 	
 	public function getAllClients () {
 		$sql = "SELECT user.uid, user.nom, user.prenom, user.login, uc.code_postal, uc.ville, uc.telephone, user.is_enable, user.is_premium
-		FROM users user JOIN user_client uc ON uc.uid = user.uid WHERE user.status = 'USER'";
+		FROM users user JOIN user_client uc ON uc.uid = user.uid WHERE deleted = 0 AND user.status = 'USER'";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);

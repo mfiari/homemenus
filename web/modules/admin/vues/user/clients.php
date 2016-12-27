@@ -37,7 +37,7 @@
 									<a href="?controler=user&action=enable&id_user=<?php echo $client->id; ?>&type=client">
 										<span data-toggle="tooltip" title="Activer" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 									</a>
-									<a href="?controler=user&action=delete&id_user=<?php echo $client->id; ?>&type=client">
+									<a href="?controler=user&action=deleted&id_user=<?php echo $client->id; ?>&type=client">
 										<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 									</a>
 								<?php endif; ?>

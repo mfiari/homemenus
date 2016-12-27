@@ -23,6 +23,9 @@ class Controller_User extends Controller_Admin_Template {
 				case "livreur" :
 					$this->livreur($request);
 					break;
+				case "livreurDispo" :
+					$this->livreurDispo($request);
+					break;
 				case "edit" :
 					$this->edit($request);
 					break;
@@ -40,6 +43,9 @@ class Controller_User extends Controller_Admin_Template {
 					break;
 				case "disable" :
 					$this->disable($request);
+					break;
+				case "deleted" :
+					$this->deleted($request);
 					break;
 				case "add_dispo" :
 					$this->add_dispo($request);
@@ -75,6 +81,18 @@ class Controller_User extends Controller_Admin_Template {
 		}
 	}
 	
+	public function deleted ($request) {
+		$model = new Model_User();
+		$model->id = trim($_GET["id_user"]);
+		$model->deleted();
+		$type = $_GET["type"];
+		if ($type == "client") {
+			$this->redirect('clients', 'user');
+		} else {
+			$this->redirect('livreurs', 'user');
+		}
+	}
+	
 	public function livreurs ($request) {
 		$modelUser = new Model_User();
 		$request->livreurs = $modelUser->getAllLivreurs();
@@ -95,6 +113,13 @@ class Controller_User extends Controller_Admin_Template {
 		$request->title = "Administration - livreur";
 		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
 		$request->vue = $this->render("user/livreur.php");
+	}
+	
+	public function livreurDispo ($request) {
+		$modelUser = new Model_User();
+		$request->livreurs = $modelUser->getAllLivreurs();
+		$request->title = "Administration - livreurs";
+		$request->vue = $this->render("user/livreurs.php");
 	}
 	
 	public function edit ($request) {
