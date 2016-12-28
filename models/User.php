@@ -562,7 +562,7 @@ class Model_User extends Model_Template {
 		$sql = "SELECT user.uid, user.nom, user.prenom, user.login, user.status, user.is_login, user.is_enable 
 		FROM users user
 		JOIN user_restaurant ur ON ur.uid = user.uid
-		WHERE ur.id_restaurant = :id";
+		WHERE ur.id_restaurant = :id AND user.deleted = 0";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $id_restaurant);
 		if (!$stmt->execute()) {

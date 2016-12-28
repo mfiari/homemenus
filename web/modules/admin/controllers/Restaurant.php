@@ -50,6 +50,9 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "disableUser" :
 					$this->disableUser($request);
 					break;
+				case "deleteUser" :
+					$this->deleteUser($request);
+					break;
 				case "viewCategorie" :
 					$this->viewCategorie($request);
 					break;
@@ -325,6 +328,14 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		$id_restaurant = trim($_GET["id_restaurant"]);
 		$model->id = trim($_GET["id_user"]);
 		$model->disable();
+		$this->redirect('view', 'restaurant', '', array('id_restaurant' => $id_restaurant));
+	}
+	
+	public function deleteUser ($request) {
+		$model = new Model_User();
+		$id_restaurant = trim($_GET["id_restaurant"]);
+		$model->id = trim($_GET["id_user"]);
+		$model->deleted();
 		$this->redirect('view', 'restaurant', '', array('id_restaurant' => $id_restaurant));
 	}
 	

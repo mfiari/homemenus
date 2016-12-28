@@ -39,7 +39,7 @@
 												<a href="?controler=restaurant&action=enableUser&id_user=<?php echo $user->id; ?>&id_restaurant=<?php echo $request->restaurant->id; ?>">
 													<span data-toggle="tooltip" title="Activer" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 												</a>
-												<a href="?controler=restaurant&action=deleteUser&id_user=<?php echo $user->id; ?>">
+												<a href="?controler=restaurant&action=deleteUser&id_user=<?php echo $user->id; ?>&id_restaurant=<?php echo $request->restaurant->id; ?>">
 													<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 												</a>
 											<?php endif; ?>
