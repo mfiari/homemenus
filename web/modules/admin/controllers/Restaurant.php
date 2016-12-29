@@ -71,6 +71,9 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "addCategorie" :
 					$this->addCategorie($request);
 					break;
+				case "modifyCategorie" :
+					$this->modifyCategorie($request);
+					break;
 				case "deleteCategorie" :
 					$this->deleteCategorie($request);
 					break;
@@ -573,11 +576,24 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		}
 	}
 	
+	public function modifyCategorie ($request) {
+		if ($request->request_method == "POST") {
+			$id_restaurant = $_POST['id_restaurant'];
+			$modelCategorie = new Model_Categorie();
+			$modelCategorie->id = $_POST['id_categorie'];
+			$modelCategorie->nom = $_POST['nom'];
+			$modelCategorie->save();
+			$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
+		}
+	}
+	
 	public function deleteCategorie ($request) {
+		$id_restaurant = $_GET['id_restaurant'];
 		$id_categorie = $_GET['id_categorie'];
 		$modelCategorie = new Model_Categorie();
 		$modelCategorie->id = $id_categorie;
-		$modelCategorie->remove();
+		$modelCategorie->deleted();
+		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
 	}
 	
 	public function addCategorieToMenu ($request) {

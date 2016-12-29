@@ -718,7 +718,7 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function loadCategories () {
-		$sql = "SELECT id, nom FROM restaurant_categorie WHERE id_restaurant = :id AND parent_categorie = 0 ORDER BY ordre";
+		$sql = "SELECT id, nom FROM restaurant_categorie WHERE id_restaurant = :id AND parent_categorie = 0 AND deleted = 0 ORDER BY ordre";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {

@@ -75,7 +75,11 @@
 										<tr>
 											<td><?php echo utf8_encode($categorie->nom); ?></td>
 											<td></td>
-											<td></td>
+											<td>
+												<a class="edit-categorie" data-id="<?php echo $categorie->id; ?>">
+													<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+												</a>
+											</td>
 										</tr>
 										<?php foreach ($childrens as $children) : ?>
 											<tr>
@@ -85,7 +89,7 @@
 													<a href="?controler=restaurant&action=viewCategorie&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $children->id; ?>">
 														<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 													</a>
-													<a href="">
+													<a class="edit-categorie" data-id="<?php echo $categorie->id; ?>">
 														<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 													</a>
 													<a href="?controler=restaurant&action=deleteCategorie&id_categorie=<?php echo $children->id; ?>">
@@ -95,20 +99,32 @@
 											</tr>
 										<?php endforeach; ?>
 									<?php else : ?>
-										<tr>
+										<tr class="tr-view-categorie" id="tr-view-categorie-<?php echo $categorie->id; ?>">
 											<td><a href="?controler=restaurant&action=viewCategorie&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>"><?php echo utf8_encode($categorie->nom); ?></a></td>
 											<td></td>
 											<td>
 												<a href="?controler=restaurant&action=viewCategorie&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>">
 													<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 												</a>
-												<a href="">
+												<a class="edit-categorie" data-id="<?php echo $categorie->id; ?>">
 													<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 												</a>
-												<a href="?controler=restaurant&action=deleteCategorie&id_categorie=<?php echo $categorie->id; ?>">
+												<a href="?controler=restaurant&action=deleteCategorie&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>">
 													<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 												</a>
 											</td>
+										</tr>
+										<tr id="tr-edit-categorie-<?php echo $categorie->id; ?>" style="display : none;">
+											<form method="post" action="?controler=restaurant&action=modifyCategorie">
+												<input type="text" name="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden>
+												<input type="text" name="id_categorie" value="<?php echo $categorie->id; ?>" hidden>
+												<td><input type="text" name="nom" value="<?php echo utf8_encode($categorie->nom); ?>"></td>
+												<td></td>
+												<td>
+													<button class="btn btn-primary" type="submit">Modifier</button>
+													<button class="btn btn-primary" type="button">Annuler</button>
+												</td>
+											</form>
 										</tr>
 									<?php endif; ?>
 								<?php endforeach; ?>
@@ -438,5 +454,10 @@
 		
 		boundToPoints(list);
 		
+		$(".tr-view-categorie .edit-categorie").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-view-categorie-"+id).hide();
+			$("#tr-edit-categorie-"+id).show();
+		});
 	});
 </script>

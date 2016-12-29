@@ -17,6 +17,7 @@ class Model_Categorie extends Model_Template {
 		if ($callParent) {
 			parent::__construct();
 		}
+		$this->id = -1;
 		$this->contenus = array();
 	}
 	
@@ -38,6 +39,14 @@ class Model_Categorie extends Model_Template {
 	}
 	
 	public function save () {
+		if ($this->id == -1) {
+			$this->insert();
+		} else {
+			$this->update();
+		}
+	}
+	
+	public function insert () {
 		$sql = "INSERT INTO restaurant_categorie (parent_categorie, id_restaurant, nom, ordre) 
 		VALUES (:parent, :restaurant, :nom, :ordre)";
 		$stmt = $this->db->prepare($sql);
@@ -50,6 +59,30 @@ class Model_Categorie extends Model_Template {
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
+		return true;
+	}
+	
+	public function update () {
+		$sql = "UPDATE restaurant_categorie SET nom = :nom WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		$stmt->bindValue(":nom", $this->nom);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function deleted () {
+		$sql = "UPDATE restaurant_categorie SET deleted = 1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
 	}
 	
 	public function remove () {
