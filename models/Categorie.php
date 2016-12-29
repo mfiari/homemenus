@@ -203,7 +203,7 @@ class Model_Categorie extends Model_Template {
 	}
 	
 	public function getContenu ($id_restaurant) {
-		$sql = "SELECT id, nom FROM carte WHERE id_categorie = :id ORDER BY ordre";
+		$sql = "SELECT id, nom, stock FROM carte WHERE id_categorie = :id AND deleted = 0 ORDER BY ordre";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -215,6 +215,7 @@ class Model_Categorie extends Model_Template {
 			$contenu = new Model_Contenu();
 			$contenu->id = $c["id"];
 			$contenu->nom = $c["nom"];
+			$contenu->stock = $c["stock"];
 			$contenu->getLogo($id_restaurant);
 			$this->contenus[] = $contenu;
 		}

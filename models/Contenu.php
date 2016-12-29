@@ -13,6 +13,7 @@ class Model_Contenu {
 	private $logo;
 	private $supplements;
 	private $accompagnements;
+	private $stock;
 	
 	public function __construct() {
 		$this->supplements = array();

@@ -464,6 +464,39 @@ class Model_Carte extends Model_Template {
 		return $cartes;
 	}
 	
+	public function removeStock () {
+		$sql = "UPDATE carte SET stock = 0 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function addStock () {
+		$sql = "UPDATE carte SET stock = 1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function deleted () {
+		$sql = "UPDATE carte SET deleted = 1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
 	public function getLogo ($id_restaurant) {
 		$imgPath = "res/img/restaurant/";
 		$logoDirectory = WEBSITE_PATH.$imgPath;

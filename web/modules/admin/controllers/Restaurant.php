@@ -65,6 +65,15 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "editContenu" :
 					$this->editContenu($request);
 					break;
+				case "removeStock" :
+					$this->removeStock($request);
+					break;
+				case "addStock" :
+					$this->addStock($request);
+					break;
+				case "deleteContenu" :
+					$this->deleteContenu($request);
+					break;
 				case "addContenuToMenu" :
 					$this->addContenuToMenu($request);
 					break;
@@ -543,6 +552,33 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			}
 			$request->vue = $this->render("restaurant/editContenu.php");
 		}
+	}
+	
+	public function removeStock ($request) {
+		$id_restaurant = $_GET['id_restaurant'];
+		$id_categorie = $_GET['id_categorie'];
+		$modelCarte = new Model_Carte();
+		$modelCarte->id = $_GET['id_contenu'];
+		$modelCarte->removeStock();
+		$this->redirect('viewCategorie', 'restaurant', '', array ('id_restaurant' => $id_restaurant, 'id_categorie' => $id_categorie));
+	}
+	
+	public function addStock ($request) {
+		$id_restaurant = $_GET['id_restaurant'];
+		$id_categorie = $_GET['id_categorie'];
+		$modelCarte = new Model_Carte();
+		$modelCarte->id = $_GET['id_contenu'];
+		$modelCarte->addStock();
+		$this->redirect('viewCategorie', 'restaurant', '', array ('id_restaurant' => $id_restaurant, 'id_categorie' => $id_categorie));
+	}
+	
+	public function deleteContenu ($request) {
+		$id_restaurant = $_GET['id_restaurant'];
+		$id_categorie = $_GET['id_categorie'];
+		$modelCarte = new Model_Carte();
+		$modelCarte->id = $_GET['id_contenu'];
+		$modelCarte->deleted();
+		$this->redirect('viewCategorie', 'restaurant', '', array ('id_restaurant' => $id_restaurant, 'id_categorie' => $id_categorie));
 	}
 	
 	public function addContenuToMenu ($request) {

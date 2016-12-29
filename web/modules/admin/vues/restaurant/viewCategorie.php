@@ -11,19 +11,33 @@
 					<tr>
 						<th>logo</th>
 						<th>Nom</th>
+						<th>En stock</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php foreach ($request->categorie->contenus as $contenu) : ?>
 						<tr>
 							<td><img style="width : 50px;" src="<?php echo $contenu->logo; ?>"></td>
-							<td><a href="?controler=restaurant&action=editContenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $request->categorie->id; ?>&id_contenu=<?php echo $contenu->id; ?>"><?php echo utf8_encode($contenu->nom); ?></a></td>
+							<td><a href="?controler=restaurant&action=editContenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $request->categorie->id; ?>&id_contenu=<?php echo $contenu->id; ?>">
+								<?php echo utf8_encode($contenu->nom); ?>
+							</a></td>
+							<td><?php echo $contenu->stock ? '<span style="color : green; ">Oui</span>' : '<span style="color : red; ">Non</span>'; ?></td>
 							<td>
-								<a href="">
-									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+								<a href="?controler=restaurant&action=editContenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $request->categorie->id; ?>&id_contenu=<?php echo $contenu->id; ?>">
+									<span  data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 								</a>
-								<a href="?controler=restaurant&action=deleteContenu&id_contenu=<?php echo $contenu->id; ?>">
-									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								<?php if ($contenu->stock) : ?>
+									<a href="?controler=restaurant&action=removeStock&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $request->categorie->id; ?>&id_contenu=<?php echo $contenu->id; ?>">
+										<span  data-toggle="tooltip" title="Retirer du stock" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+									</a>
+								<?php else : ?>
+									<a href="?controler=restaurant&action=addStock&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $request->categorie->id; ?>&id_contenu=<?php echo $contenu->id; ?>">
+										<span  data-toggle="tooltip" title="Ajouter au stock" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+									</a>
+								<?php endif; ?>
+								<a href="?controler=restaurant&action=deleteContenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $request->categorie->id; ?>&id_contenu=<?php echo $contenu->id; ?>">
+									<span  data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 								</a>
 							</td>
 						</tr>
