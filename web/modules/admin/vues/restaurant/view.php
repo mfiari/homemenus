@@ -77,7 +77,7 @@
 											<td></td>
 											<td>
 												<a class="edit-categorie" data-id="<?php echo $categorie->id; ?>">
-													<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+													<span  data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 												</a>
 											</td>
 										</tr>
@@ -87,13 +87,13 @@
 												<td><a href="?controler=restaurant&action=viewCategorie&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $children->id; ?>"><?php echo utf8_encode($children->nom); ?></a></td>
 												<td>
 													<a href="?controler=restaurant&action=viewCategorie&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $children->id; ?>">
-														<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+														<span  data-toggle="tooltip" title="Voir" class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 													</a>
 													<a class="edit-categorie" data-id="<?php echo $categorie->id; ?>">
-														<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+														<span  data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 													</a>
 													<a href="?controler=restaurant&action=deleteCategorie&id_categorie=<?php echo $children->id; ?>">
-														<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+														<span  data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 													</a>
 												</td>
 											</tr>
@@ -104,13 +104,13 @@
 											<td></td>
 											<td>
 												<a href="?controler=restaurant&action=viewCategorie&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>">
-													<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+													<span  data-toggle="tooltip" title="Voir" class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 												</a>
 												<a class="edit-categorie" data-id="<?php echo $categorie->id; ?>">
-													<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+													<span  data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 												</a>
 												<a href="?controler=restaurant&action=deleteCategorie&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>">
-													<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+													<span  data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 												</a>
 											</td>
 										</tr>
