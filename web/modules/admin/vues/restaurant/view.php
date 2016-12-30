@@ -185,7 +185,7 @@
 											</a>
 										</td>
 									</tr>
-									<tr id="tr-edit-menu-<?php echo $menu->id; ?>" style="display : none;">
+									<tr class="tr-edit-menu" id="tr-edit-menu-<?php echo $menu->id; ?>" style="display : none;">
 										<form method="post" action="?controler=restaurant&action=modifyMenu">
 											<input type="text" name="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden>
 											<input type="text" name="id_menu" value="<?php echo $menu->id; ?>" hidden>
@@ -221,14 +221,28 @@
 							</thead>
 							<tbody>
 								<?php foreach ($request->restaurant->tags as $tag) : ?>
-									<tr>
+									<tr class="tr-view-tag" id="tr-view-tag-<?php echo $tag->id; ?>">
 										<td><?php echo utf8_encode($tag->nom); ?></td>
 										<td>
-											<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+											<a class="edit-tag" data-id="<?php echo $tag->id; ?>">
+												<span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+											</a>
 											<a href="?controler=restaurant&action=deleteTag&id_restaurant=<?php echo $request->restaurant->id; ?>&id_tag=<?php echo $tag->id; ?>">
 												<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
+									</tr>
+									<tr class="tr-edit-tag" id="tr-edit-tag-<?php echo $tag->id; ?>" style="display : none;">
+										<form method="post" action="?controler=restaurant&action=modifyTag">
+											<input type="text" name="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden>
+											<input type="text" name="id_tag" value="<?php echo $tag->id; ?>" hidden>
+											<td><input type="text" name="nom" value="<?php echo utf8_encode($tag->nom); ?>"></td>
+											<td></td>
+											<td>
+												<button class="btn btn-primary" type="submit">Modifier</button>
+												<button class="btn btn-primary edit-cancel" type="button" data-id="<?php echo $tag->id; ?>">Annuler</button>
+											</td>
+										</form>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -263,16 +277,30 @@
 							</thead>
 							<tbody>
 								<?php foreach ($request->restaurant->formats as $format) : ?>
-									<tr>
+									<tr class="tr-view-format" id="tr-view-format-<?php echo $format->id; ?>">
 										<td><?php echo $format->nom != '' ? utf8_encode($format->nom) : 'Pas de format'; ?></td>
 										<td>
 											<?php if ($format->nom != '') : ?>
-												<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+												<a class="edit-format" data-id="<?php echo $format->id; ?>">
+													<span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+												</a>
 												<a href="?controler=restaurant&action=deleteFormat&id_restaurant=<?php echo $request->restaurant->id; ?>&id_format=<?php echo $format->id; ?>">
 													<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 												</a>
 											<?php endif; ?>
 										</td>
+									</tr>
+									<tr class="tr-edit-format" id="tr-edit-format-<?php echo $format->id; ?>" style="display : none;">
+										<form method="post" action="?controler=restaurant&action=modifyFormat">
+											<input type="text" name="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden>
+											<input type="text" name="id_format" value="<?php echo $format->id; ?>" hidden>
+											<td><input type="text" name="nom" value="<?php echo utf8_encode($format->nom); ?>"></td>
+											<td></td>
+											<td>
+												<button class="btn btn-primary" type="submit">Modifier</button>
+												<button class="btn btn-primary edit-cancel" type="button" data-id="<?php echo $format->id; ?>">Annuler</button>
+											</td>
+										</form>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -307,14 +335,28 @@
 							</thead>
 							<tbody>
 								<?php foreach ($request->restaurant->formules as $formule) : ?>
-									<tr>
+									<tr class="tr-view-formule" id="tr-view-formule-<?php echo $formule->id; ?>">
 										<td><?php echo utf8_encode($formule->nom); ?></td>
 										<td>
-											<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+											<a class="edit-formule" data-id="<?php echo $formule->id; ?>">
+												<span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+											</a>
 											<a href="?controler=restaurant&action=deleteFormule&id_restaurant=<?php echo $request->restaurant->id; ?>&id_formule=<?php echo $formule->id; ?>">
 												<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
+									</tr>
+									<tr class="tr-edit-formule" id="tr-edit-formule-<?php echo $formule->id; ?>" style="display : none;">
+										<form method="post" action="?controler=restaurant&action=modifyFormule">
+											<input type="text" name="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden>
+											<input type="text" name="id_formule" value="<?php echo $formule->id; ?>" hidden>
+											<td><input type="text" name="nom" value="<?php echo utf8_encode($formule->nom); ?>"></td>
+											<td></td>
+											<td>
+												<button class="btn btn-primary" type="submit">Modifier</button>
+												<button class="btn btn-primary edit-cancel" type="button" data-id="<?php echo $formule->id; ?>">Annuler</button>
+											</td>
+										</form>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -490,6 +532,30 @@
 			var id = $(this).attr('data-id');
 			$("#tr-edit-menu-"+id).hide();
 			$("#tr-view-menu-"+id).show();
+		});
+		
+		$(".tr-view-format .edit-format").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-view-format-"+id).hide();
+			$("#tr-edit-format-"+id).show();
+		});
+		
+		$(".tr-edit-format .edit-cancel").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-edit-format-"+id).hide();
+			$("#tr-view-format-"+id).show();
+		});
+		
+		$(".tr-view-formule .edit-formule").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-view-formule-"+id).hide();
+			$("#tr-edit-formule-"+id).show();
+		});
+		
+		$(".tr-edit-formule .edit-cancel").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-edit-formule-"+id).hide();
+			$("#tr-view-formule-"+id).show();
 		});
 	});
 </script>

@@ -12,6 +12,7 @@ class Model_Formule extends Model_Template {
 			parent::__construct();
 		}
 		$this->categories = array();
+		$this->_tableName = "restaurant_formule";
 	}
 	
 	public function __get($property) {
@@ -31,7 +32,7 @@ class Model_Formule extends Model_Template {
 		$this->categories[] = $categorie;
 	}
 	
-	public function save () {
+	public function insert () {
 		$sql = "INSERT INTO restaurant_formule (id_restaurant, nom) VALUES (:restaurant, :nom)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $this->id_restaurant);
@@ -41,6 +42,18 @@ class Model_Formule extends Model_Template {
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
+		return true;
+	}
+	
+	public function update () {
+		$sql = "UPDATE restaurant_formule SET nom = :nom WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":nom", $this->nom);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
 		return true;
 	}
 	

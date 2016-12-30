@@ -98,11 +98,17 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "addFormat" :
 					$this->addFormat($request);
 					break;
+				case "modifyFormat" :
+					$this->modifyFormat($request);
+					break;
 				case "deleteFormat" :
 					$this->deleteFormat($request);
 					break;
 				case "addFormule" :
 					$this->addFormule($request);
+					break;
+				case "modifyFormule" :
+					$this->modifyFormule($request);
 					break;
 				case "deleteFormule" :
 					$this->deleteFormule($request);
@@ -687,11 +693,24 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		}
 	}
 	
+	public function modifyFormat ($request) {
+		if ($request->request_method == "POST") {
+			$id_restaurant = $_POST['id_restaurant'];
+			$modelFormat = new Model_Format();
+			$modelFormat->id = $_POST['id_format'];
+			$modelFormat->nom = $_POST['nom'];
+			$modelFormat->save();
+			$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
+		}
+	}
+	
 	public function deleteFormat ($request) {
+		$id_restaurant = $_GET['id_restaurant'];
 		$id_format = $_GET['id_format'];
 		$modelFormat = new Model_Format();
 		$modelFormat->id = $id_format;
-		$modelFormat->remove();
+		$modelFormat->deleted();
+		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
 	}
 	
 	public function addFormule ($request) {
@@ -706,12 +725,23 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		}
 	}
 	
+	public function modifyFormule ($request) {
+		if ($request->request_method == "POST") {
+			$id_restaurant = $_POST['id_restaurant'];
+			$modelFormule = new Model_Formule();
+			$modelFormule->id = $_POST['id_formule'];
+			$modelFormule->nom = $_POST['nom'];
+			$modelFormule->save();
+			$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
+		}
+	}
+	
 	public function deleteFormule ($request) {
 		$id_formule = $_GET['id_formule'];
 		$id_restaurant = $_GET['id_restaurant'];
 		$modelFormule = new Model_Formule();
 		$modelFormule->id = $id_formule;
-		$modelFormule->remove();
+		$modelFormule->deleted();
 		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
 	}
 	

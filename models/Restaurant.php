@@ -812,7 +812,7 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function loadFormat () {
-		$sql = "SELECT id, nom FROM restaurant_format WHERE id_restaurant = :id";
+		$sql = "SELECT id, nom FROM restaurant_format WHERE id_restaurant = :id AND deleted = 0";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -830,7 +830,7 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function loadFormule () {
-		$sql = "SELECT id, nom FROM restaurant_formule WHERE id_restaurant = :id";
+		$sql = "SELECT id, nom FROM restaurant_formule WHERE id_restaurant = :id AND deleted = 0";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {

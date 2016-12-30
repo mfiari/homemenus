@@ -12,6 +12,7 @@ class Model_Format extends Model_Template {
 		if ($callParent) {
 			parent::__construct();
 		}
+		$this->_tableName = "restaurant_format";
 	}
 	
 	public function __get($property) {
@@ -27,10 +28,23 @@ class Model_Format extends Model_Template {
 		return $this;
 	}
 	
-	public function save () {
+	public function insert () {
 		$sql = "INSERT INTO restaurant_format (id_restaurant, nom) VALUES (:restaurant, :nom)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $this->id_restaurant);
+		$stmt->bindValue(":nom", $this->nom);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$this->id = $this->db->lastInsertId();
+		return true;
+	}
+	
+	public function update () {
+		$sql = "UPDATE restaurant_format SET nom = :nom WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
 		$stmt->bindValue(":nom", $this->nom);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
