@@ -62,6 +62,12 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "viewMenu" :
 					$this->viewMenu($request);
 					break;
+				case "modifyMenu" :
+					$this->modifyMenu($request);
+					break;
+				case "deleteMenu" :
+					$this->deleteMenu($request);
+					break;
 				case "editContenu" :
 					$this->editContenu($request);
 					break;
@@ -446,6 +452,25 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		$request->menu->id = $_GET['id_menu'];
 		$request->menu->load();
 		$request->vue = $this->render("restaurant/viewMenu.php");
+	}
+	
+	public function modifyMenu ($request) {
+		if ($request->request_method == "POST") {
+			$id_restaurant = $_POST['id_restaurant'];
+			$modelMenu = new Model_Menu();
+			$modelMenu->id = $_POST['id_menu'];
+			$modelMenu->nom = $_POST['nom'];
+			$modelMenu->save();
+			$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
+		}
+	}
+	
+	public function deleteMenu ($request) {
+		$model = new Model_Menu();
+		$id_restaurant = trim($_GET["id_restaurant"]);
+		$model->id = trim($_GET["id_menu"]);
+		$model->deleted();
+		$this->redirect('view', 'restaurant', '', array('id_restaurant' => $id_restaurant));
 	}
 	
 	public function editContenu ($request) {

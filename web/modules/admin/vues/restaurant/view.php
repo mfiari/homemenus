@@ -114,7 +114,7 @@
 												</a>
 											</td>
 										</tr>
-										<tr id="tr-edit-categorie-<?php echo $categorie->id; ?>" style="display : none;">
+										<tr class="tr-edit-categorie" id="tr-edit-categorie-<?php echo $categorie->id; ?>" style="display : none;">
 											<form method="post" action="?controler=restaurant&action=modifyCategorie">
 												<input type="text" name="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden>
 												<input type="text" name="id_categorie" value="<?php echo $categorie->id; ?>" hidden>
@@ -122,7 +122,7 @@
 												<td></td>
 												<td>
 													<button class="btn btn-primary" type="submit">Modifier</button>
-													<button class="btn btn-primary" type="button">Annuler</button>
+													<button class="btn btn-primary edit-cancel" type="button" data-id="<?php echo $categorie->id; ?>">Annuler</button>
 												</td>
 											</form>
 										</tr>
@@ -163,25 +163,39 @@
 						<table class="table table-striped">
 							<thead>
 								<tr>
+									<th>Logo</th>
 									<th>Nom</th>
 									<th></th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php foreach ($request->restaurant->menus as $menu) : ?>
-									<tr>
+									<tr class="tr-view-menu" id="tr-view-menu-<?php echo $menu->id; ?>">
+										<td></td>
 										<td><a href="?controler=restaurant&action=viewMenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_menu=<?php echo $menu->id; ?>"><?php echo utf8_encode($menu->nom); ?></a></td>
 										<td>
 											<a href="?controler=restaurant&action=viewMenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_menu=<?php echo $menu->id; ?>">
 												<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 											</a>
-											<a href="">
-												<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+											<a class="edit-menu" data-id="<?php echo $menu->id; ?>">
+												<span  data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 											</a>
-											<a href="?controler=restaurant&action=deleteMenu&id_menu=<?php echo $menu->id; ?>">
+											<a href="?controler=restaurant&action=deleteMenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_menu=<?php echo $menu->id; ?>">
 												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
+									</tr>
+									<tr id="tr-edit-menu-<?php echo $menu->id; ?>" style="display : none;">
+										<form method="post" action="?controler=restaurant&action=modifyMenu">
+											<input type="text" name="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden>
+											<input type="text" name="id_menu" value="<?php echo $menu->id; ?>" hidden>
+											<td><input type="text" name="nom" value="<?php echo utf8_encode($menu->nom); ?>"></td>
+											<td></td>
+											<td>
+												<button class="btn btn-primary" type="submit">Modifier</button>
+												<button class="btn btn-primary edit-cancel" type="button" data-id="<?php echo $menu->id; ?>">Annuler</button>
+											</td>
+										</form>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -458,6 +472,24 @@
 			var id = $(this).attr('data-id');
 			$("#tr-view-categorie-"+id).hide();
 			$("#tr-edit-categorie-"+id).show();
+		});
+		
+		$(".tr-edit-categorie .edit-cancel").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-edit-categorie-"+id).hide();
+			$("#tr-view-categorie-"+id).show();
+		});
+		
+		$(".tr-view-menu .edit-menu").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-view-menu-"+id).hide();
+			$("#tr-edit-menu-"+id).show();
+		});
+		
+		$(".tr-edit-menu .edit-cancel").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-edit-menu-"+id).hide();
+			$("#tr-view-menu-"+id).show();
 		});
 	});
 </script>
