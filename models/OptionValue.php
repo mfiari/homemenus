@@ -2,7 +2,7 @@
 
 class Model_Option_Value extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $nom;
 	
 	public function __construct() {

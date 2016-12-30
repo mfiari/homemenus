@@ -2,7 +2,7 @@
 
 class Model_Categorie extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $parent_categorie;
 	private $id_restaurant;
 	private $nom;

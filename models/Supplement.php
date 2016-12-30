@@ -2,7 +2,7 @@
 
 class Model_Supplement extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $id_restaurant;
 	private $nom;
 	private $prix;

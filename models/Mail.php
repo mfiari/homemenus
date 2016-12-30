@@ -2,7 +2,7 @@
 
 class Model_Mail extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $from;
 	private $to;
 	private $sujet;

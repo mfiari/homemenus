@@ -2,7 +2,7 @@
 
 class Model_Restaurant extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $logo;
 	private $nom;
 	private $nom_modification;
@@ -793,7 +793,7 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function loadMenus () {
-		$sql = "SELECT id, nom FROM menus WHERE id_restaurant = :id";
+		$sql = "SELECT id, nom FROM menus WHERE id_restaurant = :id AND deleted = 0";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {

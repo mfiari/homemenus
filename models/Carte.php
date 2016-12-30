@@ -2,7 +2,7 @@
 
 class Model_Carte extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $id_categorie;
 	private $nom;
 	private $prix;
@@ -78,7 +78,7 @@ class Model_Carte extends Model_Template {
 		}
 	}
 	
-	private function insert () {
+	public function insert () {
 		$sql = "INSERT INTO carte (nom, id_categorie, is_visible, ordre, commentaire) 
 		VALUES (:nom, :categorie, :visible, :ordre, :commentaire)";
 		$stmt = $this->db->prepare($sql);
@@ -160,7 +160,7 @@ class Model_Carte extends Model_Template {
 		return true;
 	}
 	
-	private function update () {
+	public function update () {
 		$sql = "UPDATE carte SET nom = :nom, is_visible = :visible, ordre = :ordre, commentaire = :commentaire WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":nom", $this->nom);

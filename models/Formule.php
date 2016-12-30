@@ -2,7 +2,7 @@
 
 class Model_Formule extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $id_restaurant;
 	private $nom;
 	private $categories;

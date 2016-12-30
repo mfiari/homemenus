@@ -2,7 +2,6 @@
 
 class Model_Menu extends Model_Template {
 	
-	private $id;
 	private $nom;
 	private $id_restaurant;
 	private $id_formule;
@@ -26,6 +25,7 @@ class Model_Menu extends Model_Template {
 		$this->formules = array();
 		$this->contenus = array();
 		$this->horaires = array();
+		$this->_tableName = "menus";
 	}
 	
 	public function __get($property) {
@@ -65,7 +65,7 @@ class Model_Menu extends Model_Template {
 		$this->horaires[] = $horaire;
 	}
 	
-	public function save () {
+	public function insert () {
 		$sql = "INSERT INTO menus (nom, id_restaurant, ordre, commentaire) 
 		VALUES (:nom, :restaurant, :ordre, :commentaire)";
 		$stmt = $this->db->prepare($sql);
@@ -110,6 +110,18 @@ class Model_Menu extends Model_Template {
 				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				return false;
 			}
+		}
+		return true;
+	}
+	
+	public function update () {
+		$sql = "UPDATE menus SET nom = :nom WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		$stmt->bindValue(":nom", $this->nom);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
 		}
 		return true;
 	}

@@ -1,9 +1,11 @@
 <?php
 
 abstract class Model_Template {
-
+	
+	protected $id;
 	protected $db;
 	protected $sqlHasFailed;
+	protected $_tableName;
 
 	public function __construct($db = null){
 		if ($db === null) {
@@ -14,6 +16,7 @@ abstract class Model_Template {
 			$this->db = $db;
 		}
 		$this->sqlHasFailed = false;
+		$this->id = -1;
 	}
 	
 	public function beginTransaction () {
@@ -30,6 +33,33 @@ abstract class Model_Template {
 	
 	public function getDbConnector () {
 		return $this->db;
+	}
+	
+	public function save () {
+		if ($this->id == -1) {
+			$this->insert();
+		} else {
+			$this->update();
+		}
+	}
+	
+	public function insert () {
+		
+	}
+	
+	public function update () {
+		
+	}
+	
+	public function deleted () {
+		$sql = "UPDATE $this->_tableName SET deleted = 1 WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
 	}
 	
 	public function request ($sql, $params) {

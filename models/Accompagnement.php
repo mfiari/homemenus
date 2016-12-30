@@ -2,7 +2,7 @@
 
 class Model_Accompagnement extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $id_categorie;
 	private $limite;
 	private $cartes;

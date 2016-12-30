@@ -2,7 +2,7 @@
 
 class Model_User extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $nom;
 	private $prenom;
 	private $login;
