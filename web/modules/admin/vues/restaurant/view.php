@@ -393,16 +393,32 @@
 							</thead>
 							<tbody>
 								<?php foreach ($request->restaurant->supplements as $supplement) : ?>
-									<tr>
+									<tr class="tr-view-supplement" id="tr-view-supplement-<?php echo $supplement->id; ?>">
 										<td><?php echo utf8_encode($supplement->nom); ?></td>
 										<td><?php echo $supplement->prix; ?></td>
 										<td><?php echo $supplement->commentaire; ?></td>
 										<td>
-											<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-											<a href="?controler=restaurant&action=deleteSupplement&id_supplement=<?php echo $supplement->id; ?>">
+											<a class="edit-supplement" data-id="<?php echo $supplement->id; ?>">
+												<span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+											</a>
+											<a href="?controler=restaurant&action=deleteSupplement&id_restaurant=<?php echo $request->restaurant->id; ?>&id_supplement=<?php echo $supplement->id; ?>">
 												<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
+									</tr>
+									<tr class="tr-edit-supplement" id="tr-edit-supplement-<?php echo $supplement->id; ?>" style="display : none;">
+										<form method="post" action="?controler=restaurant&action=modifySupplement">
+											<input type="text" name="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden>
+											<input type="text" name="id_supplement" value="<?php echo $supplement->id; ?>" hidden>
+											<td><input type="text" name="nom" value="<?php echo utf8_encode($supplement->nom); ?>"></td>
+											<td><input type="text" name="prix" value="<?php echo $supplement->prix; ?>"></td>
+											<td><textarea class="form-control" name="commentaire"><?php echo utf8_encode($supplement->commentaire); ?></textarea></td>
+											<td></td>
+											<td>
+												<button class="btn btn-primary" type="submit">Modifier</button>
+												<button class="btn btn-primary edit-cancel" type="button" data-id="<?php echo $supplement->id; ?>">Annuler</button>
+											</td>
+										</form>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -556,6 +572,18 @@
 			var id = $(this).attr('data-id');
 			$("#tr-edit-formule-"+id).hide();
 			$("#tr-view-formule-"+id).show();
+		});
+		
+		$(".tr-view-supplement .edit-supplement").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-view-supplement-"+id).hide();
+			$("#tr-edit-supplement-"+id).show();
+		});
+		
+		$(".tr-edit-supplement .edit-cancel").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-edit-supplement-"+id).hide();
+			$("#tr-view-supplement-"+id).show();
 		});
 	});
 </script>

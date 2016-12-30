@@ -116,6 +116,9 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "addSupplement" :
 					$this->addSupplement($request);
 					break;
+				case "modifySupplement" :
+					$this->modifySupplement($request);
+					break;
 				case "deleteSupplement" :
 					$this->deleteSupplement($request);
 					break;
@@ -761,11 +764,26 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		}
 	}
 	
+	public function modifySupplement ($request) {
+		if ($request->request_method == "POST") {
+			$id_restaurant = $_POST['id_restaurant'];
+			$modelSupplement = new Model_Supplement();
+			$modelSupplement->id = $_POST['id_supplement'];
+			$modelSupplement->nom = $_POST['nom'];
+			$modelSupplement->prix = $_POST['prix'];
+			$modelSupplement->commentaire = $_POST['commentaire'];
+			$modelSupplement->save();
+			$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
+		}
+	}
+	
 	public function deleteSupplement ($request) {
-		$id_supplement = $_GET['id_formule'];
+		$id_restaurant = $_GET['id_restaurant'];
+		$id_supplement = $_GET['id_supplement'];
 		$modelSupplement = new Model_Supplement();
 		$modelSupplement->id = $id_supplement;
-		$modelSupplement->remove();
+		$modelSupplement->deleted();
+		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
 	}
 	
 	public function addOption ($request) {
