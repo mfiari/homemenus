@@ -110,7 +110,7 @@
 													<span  data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 												</a>
 												<a href="?controler=restaurant&action=deleteCategorie&id_restaurant=<?php echo $request->restaurant->id; ?>&id_categorie=<?php echo $categorie->id; ?>">
-													<span  data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+													<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 												</a>
 											</td>
 										</tr>
@@ -175,13 +175,13 @@
 										<td><a href="?controler=restaurant&action=viewMenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_menu=<?php echo $menu->id; ?>"><?php echo utf8_encode($menu->nom); ?></a></td>
 										<td>
 											<a href="?controler=restaurant&action=viewMenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_menu=<?php echo $menu->id; ?>">
-												<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+												<span data-toggle="tooltip" title="Voir" class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 											</a>
 											<a class="edit-menu" data-id="<?php echo $menu->id; ?>">
 												<span  data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 											</a>
 											<a href="?controler=restaurant&action=deleteMenu&id_restaurant=<?php echo $request->restaurant->id; ?>&id_menu=<?php echo $menu->id; ?>">
-												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+												<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>
@@ -224,9 +224,9 @@
 									<tr>
 										<td><?php echo utf8_encode($tag->nom); ?></td>
 										<td>
-											<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+											<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 											<a href="?controler=restaurant&action=deleteTag&id_restaurant=<?php echo $request->restaurant->id; ?>&id_tag=<?php echo $tag->id; ?>">
-												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+												<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>
@@ -267,9 +267,9 @@
 										<td><?php echo $format->nom != '' ? utf8_encode($format->nom) : 'Pas de format'; ?></td>
 										<td>
 											<?php if ($format->nom != '') : ?>
-												<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+												<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 												<a href="?controler=restaurant&action=deleteFormat&id_restaurant=<?php echo $request->restaurant->id; ?>&id_format=<?php echo $format->id; ?>">
-													<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+													<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 												</a>
 											<?php endif; ?>
 										</td>
@@ -310,9 +310,9 @@
 									<tr>
 										<td><?php echo utf8_encode($formule->nom); ?></td>
 										<td>
-											<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+											<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 											<a href="?controler=restaurant&action=deleteFormule&id_restaurant=<?php echo $request->restaurant->id; ?>&id_formule=<?php echo $formule->id; ?>">
-												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+												<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>
@@ -356,9 +356,9 @@
 										<td><?php echo $supplement->prix; ?></td>
 										<td><?php echo $supplement->commentaire; ?></td>
 										<td>
-											<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+											<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 											<a href="?controler=restaurant&action=deleteSupplement&id_supplement=<?php echo $supplement->id; ?>">
-												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+												<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>
@@ -406,9 +406,9 @@
 									<tr>
 										<td><a href="?controler=restaurant&action=viewOption&id_restaurant=<?php echo $request->restaurant->id; ?>&id_option=<?php echo $option->id; ?>"><?php echo utf8_encode($option->nom); ?></a></td>
 										<td>
-											<a><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+											<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 											<a href="?controler=restaurant&action=deleteOption&id=<?php echo $option->id; ?>">
-												<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+												<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
 									</tr>
