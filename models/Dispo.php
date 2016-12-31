@@ -2,7 +2,7 @@
 
 class Model_Dispo extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $id_livreur;
 	private $livreur;
 	private $rue;

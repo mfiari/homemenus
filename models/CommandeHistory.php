@@ -2,7 +2,7 @@
 
 class Model_Commande_History extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $id_commande;
 	private $uid;
 	private $client;
@@ -64,7 +64,7 @@ class Model_Commande_History extends Model_Template {
 		$this->menus[] = $menu;
 	}
 	
-	public function save ($commande) {
+	public function saveCommande ($commande) {
 		$sql = "INSERT INTO commande_history (id_commande, id_user, nom_user, prenom_user, email_user, rue_user, ville_user, code_postal_user,
 		rue_commande, ville_commande, code_postal_commande, complement_commande, latitude_commande, longitude_commande, telephone_commande, id_livreur, 
 		nom_livreur, prenom_livreur, login_livreur, id_restaurant, nom_restaurant, rue_restaurant, ville_restaurant, code_postal_restaurant, telephone_restaurant,
