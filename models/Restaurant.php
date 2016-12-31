@@ -986,7 +986,7 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function loadOptions () {
-		$sql = "SELECT opt.id, opt.nom FROM restaurant_option opt WHERE opt.id_restaurant = :id";
+		$sql = "SELECT opt.id, opt.nom FROM restaurant_option opt WHERE opt.id_restaurant = :id AND deleted = 0";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {

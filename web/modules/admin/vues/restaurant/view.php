@@ -461,14 +461,28 @@
 							</thead>
 							<tbody>
 								<?php foreach ($request->restaurant->options as $option) : ?>
-									<tr>
+									<tr class="tr-view-option" id="tr-view-option-<?php echo $option->id; ?>">
 										<td><a href="?controler=restaurant&action=viewOption&id_restaurant=<?php echo $request->restaurant->id; ?>&id_option=<?php echo $option->id; ?>"><?php echo utf8_encode($option->nom); ?></a></td>
 										<td>
-											<a><span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-											<a href="?controler=restaurant&action=deleteOption&id=<?php echo $option->id; ?>">
+											<a class="edit-option" data-id="<?php echo $option->id; ?>">
+												<span data-toggle="tooltip" title="Modifier" class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+											</a>
+											<a href="?controler=restaurant&action=deleteOption&id_restaurant=<?php echo $request->restaurant->id; ?>&id=<?php echo $option->id; ?>">
 												<span data-toggle="tooltip" title="Supprimer" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 											</a>
 										</td>
+									</tr>
+									<tr class="tr-edit-option" id="tr-edit-option-<?php echo $option->id; ?>" style="display : none;">
+										<form method="post" action="?controler=restaurant&action=modifyOption">
+											<input type="text" name="id_restaurant" value="<?php echo $request->restaurant->id; ?>" hidden>
+											<input type="text" name="id_option" value="<?php echo $option->id; ?>" hidden>
+											<td><input type="text" name="nom" value="<?php echo utf8_encode($option->nom); ?>"></td>
+											<td></td>
+											<td>
+												<button class="btn btn-primary" type="submit">Modifier</button>
+												<button class="btn btn-primary edit-cancel" type="button" data-id="<?php echo $option->id; ?>">Annuler</button>
+											</td>
+										</form>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -584,6 +598,18 @@
 			var id = $(this).attr('data-id');
 			$("#tr-edit-supplement-"+id).hide();
 			$("#tr-view-supplement-"+id).show();
+		});
+		
+		$(".tr-view-option .edit-option").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-view-option-"+id).hide();
+			$("#tr-edit-option-"+id).show();
+		});
+		
+		$(".tr-edit-option .edit-cancel").click(function () {
+			var id = $(this).attr('data-id');
+			$("#tr-edit-option-"+id).hide();
+			$("#tr-view-option-"+id).show();
 		});
 	});
 </script>

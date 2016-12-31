@@ -125,6 +125,12 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "addOption" :
 					$this->addOption($request);
 					break;
+				case "modifyOption" :
+					$this->modifyOption($request);
+					break;
+				case "deleteOption" :
+					$this->deleteOption($request);
+					break;
 				case "viewOption" :
 					$this->viewOption($request);
 					break;
@@ -796,6 +802,26 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$modelOption->save();
 			$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
 		}
+	}
+	
+	public function modifyOption ($request) {
+		if ($request->request_method == "POST") {
+			$id_restaurant = $_POST['id_restaurant'];
+			$modelOption = new Model_Option();
+			$modelOption->id = $_POST['id_option'];
+			$modelOption->nom = $_POST['nom'];
+			$modelOption->save();
+			$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
+		}
+	}
+	
+	public function deleteOption ($request) {
+		$id_restaurant = $_GET['id_restaurant'];
+		$id_option = $_GET['id'];
+		$modelOption = new Model_Option();
+		$modelOption->id = $id_option;
+		$modelOption->deleted();
+		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
 	}
 	
 	public function viewOption ($request) {
