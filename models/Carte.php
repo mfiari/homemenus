@@ -248,6 +248,13 @@ class Model_Carte extends Model_Template {
 				return false;
 			}
 		}
+		$sql = "DELETE FROM carte_option WHERE id_carte = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
 		foreach ($this->options as $option) {
 			$sql = "INSERT INTO carte_option (id_carte, id_option) VALUES (:carte, :option)";
 			$stmt = $this->db->prepare($sql);
