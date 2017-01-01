@@ -2,7 +2,7 @@
 
 class Model_CodePromo extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $code;
 	private $description;
 	private $date_debut;

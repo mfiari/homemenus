@@ -2,7 +2,7 @@
 
 class Model_Recherche extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $recherche;
 	private $distance;
 	private $ville;
