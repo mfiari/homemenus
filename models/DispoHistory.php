@@ -2,7 +2,6 @@
 
 class Model_Dispo_History extends Model_Template {
 	
-	private $id;
 	private $id_livreur;
 	private $nom;
 	private $prenom;

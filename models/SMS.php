@@ -2,7 +2,7 @@
 
 class Model_SMS extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $telephone;
 	private $message;
 	private $date_envoi;
