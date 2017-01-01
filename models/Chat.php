@@ -2,7 +2,7 @@
 
 class Model_Chat extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $id_commande;
 	private $sender;
 	private $message;
