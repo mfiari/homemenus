@@ -58,10 +58,31 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function create ($panier) {
-		$sql = "INSERT INTO commande (uid, rue, ville, code_postal, latitude, longitude, telephone, id_restaurant, date_commande, heure_souhaite, minute_souhaite, 
+		
+		$sql = "SELECT numero FROM folio_num_commande WHERE annee = '2017'";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return;
+		}
+		$num_commande = $value['numero'];
+		
+		$sql = "UPDATE folio_num_commande SET numero = numero +1 WHERE annee = '2017'";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		
+		$sql = "INSERT INTO commande (id, uid, rue, ville, code_postal, latitude, longitude, telephone, id_restaurant, date_commande, heure_souhaite, minute_souhaite, 
 		prix_livraison, part_restaurant, distance, etape, is_premium) 
-		(SELECT panier.uid, panier.rue, panier.ville, panier.code_postal, panier.latitude, panier.longitude, panier.telephone, panier.id_restaurant, now(), panier.heure_souhaite, 
-		panier.minute_souhaite, CASE WHEN user.is_premium THEN pl.prix - pl.reduction_premium ELSE pl.prix END, resto.pourcentage, panier.distance, 0, user.is_premium
+		(SELECT $num_commande, panier.uid, panier.rue, panier.ville, panier.code_postal, panier.latitude, panier.longitude, panier.telephone, panier.id_restaurant, 
+		now(), panier.heure_souhaite, panier.minute_souhaite, CASE WHEN user.is_premium THEN pl.prix - pl.reduction_premium ELSE pl.prix END, resto.pourcentage, 
+		panier.distance, 0, user.is_premium
 		FROM panier 
 		JOIN prix_livraison pl ON panier.distance BETWEEN pl.distance_min AND pl.distance_max
 		JOIN users user ON user.uid = panier.uid
