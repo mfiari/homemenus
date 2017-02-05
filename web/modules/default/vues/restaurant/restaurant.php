@@ -95,6 +95,8 @@
 			<span style="color : #FF0000;">Pas de livreur disponible</span>
 		<?php elseif ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
 			<span style="color : #FF0000;">Restaurant fermé</span>
+		<?php elseif (!$horaires) : ?>
+			<span style="color : #FF0000;">Restaurant fermé</span>
 		<?php else : ?>
 			<span style="color : #00FF00;">Restaurant ouvert</span>
 		<?php endif; ?>
@@ -277,7 +279,9 @@
 				<form method="post" enctype="x-www-form-urlencoded" id="panierForm" action="">
 					<input type="hidden" id="id_panier" name="id_panier" value="<?php echo $request->panier->id; ?>" />
 					<div>
-						<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
+						<?php if (!$horaire->id) : ?>
+							<span style="color : red;">Le restaurant <?php echo utf8_encode($request->panier->restaurant->nom); ?> est actuellement fermé.</span>
+						<?php elseif ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
 							<input type="hidden" name="type_commande" value="pre_commande">
 							<div class="alert alert-error" role="alert">
 								<span class="sr-only">Error:</span>
@@ -399,7 +403,13 @@
 							</table>
 						</div>
 					</div>
-					<?php if ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
+					<?php if (!$horaire->id) : ?>
+						<div class="alert alert-danger" role="alert">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							<span class="sr-only">Error:</span>
+							Commande impossible car restaurant fermé. Merci de réessayer un autre jour
+						</div>
+					<?php elseif ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
 						<div class="alert alert-danger" role="alert">
 							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 							<span class="sr-only">Error:</span>

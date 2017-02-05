@@ -8,10 +8,12 @@
 				$horaire = $request->panier->restaurant->horaire;
 			?>
 			<div>
-				<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
+				<?php if (!$horaire->id) : ?>
+					<span style="color : red;">Le <?php echo utf8_encode($request->panier->restaurant->nom); ?> est actuellement fermé.</span>
+				<?php elseif ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
 					<input type="hidden" name="type_commande" value="pre_commande">
 					<span style="color : red;">
-						Le <?php echo utf8_encode($request->panier->restaurant->nom); ?> est actuellement fermé. Ouverture
+						Le restaurant <?php echo utf8_encode($request->panier->restaurant->nom); ?> est actuellement fermé. Ouverture
 							de <?php echo formatHeureMinute($horaire->heure_debut, $horaire->minute_debut); ?> 
 							à <?php echo formatHeureMinute($horaire->heure_fin, $horaire->minute_fin); ?><br />
 						Précommande possible dès maintenant.
@@ -131,7 +133,13 @@
 					</table>
 				</div>
 			</div>
-			<?php if ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
+			<?php if (!$horaire->id) : ?>
+				<div class="alert alert-danger" role="alert">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					<span class="sr-only">Error:</span>
+					Commande impossible car restaurant fermé. Merci de réessayer un autre jour
+				</div>
+			<?php elseif ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
 				<div class="alert alert-danger" role="alert">
 					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 					<span class="sr-only">Error:</span>

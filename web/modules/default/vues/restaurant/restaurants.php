@@ -146,7 +146,7 @@
 								<?php if ($horaire->heure_debut != '' && ($restaurant->distance >= 16 || $restaurant->distance < 0)) : ?>
 									<tr>
 										<td>
-											<a href="?action=restaurant_partenaire&id=<?php echo $restaurant->id; ?>">
+											<a href="<?php echo restaurantToLink($restaurant, $restaurant->ville); ?>">
 												<?php echo utf8_encode($restaurant->nom); ?>
 											</a>
 										</td>
@@ -171,7 +171,7 @@
 							<?php if ($horaire->heure_debut == '') : ?>
 								<tr>
 									<td>
-										<a href="?action=restaurant_partenaire&id=<?php echo $restaurant->id; ?>">
+										<a href="<?php echo restaurantToLink($restaurant, $restaurant->ville); ?>">
 											<?php echo utf8_encode($restaurant->nom); ?>
 										</a>
 									</td>

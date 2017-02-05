@@ -511,8 +511,8 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function loadAll () {
-		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.long_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, 
-		rh.heure_fin, rh.minute_fin,
+		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.long_desc, r.latitude, r.longitude, rh.id AS id_horaire, rh.id_jour, 
+		rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin,
 		(SELECT (SUM(note) / COUNT(*)) FROM commentaire_restaurant WHERE id_restaurant = :id) AS note,
 		(SELECT COUNT(*) FROM commentaire_restaurant WHERE id_restaurant = :id) AS nb_note,
 		(SELECT COUNT(*) FROM commentaire_restaurant WHERE id_restaurant = :id AND validation = 1) AS nb_commentaire
@@ -544,6 +544,7 @@ class Model_Restaurant extends Model_Template {
 		$this->commentaire = $value['nb_commentaire'];
 		
 		$horaire = new Model_Horaire(false);
+		$horaire->id = $value['id_horaire'];
 		$horaire->id_jour = $value['id_jour'];
 		$horaire->heure_debut = $value['heure_debut'];
 		$horaire->minute_debut = $value['minute_debut'];

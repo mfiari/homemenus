@@ -306,9 +306,9 @@ class Model_Panier extends Model_Template {
 	
 	public function loadPanier () {
 		$sql = "SELECT panier.id, panier.rue, panier.ville, panier.code_postal, panier.telephone, panier.heure_souhaite, panier.minute_souhaite,
-			resto.id AS id_restaurant, resto.nom, rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin, pl.prix, pl.montant_min, 
-			pl.reduction_premium, promo.description, promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, promo.sur_prix_total, 
-			promo.valeur_prix_total, promo.pourcentage_prix_total
+			resto.id AS id_restaurant, resto.nom, rh.id AS id_horaire, rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin, pl.prix, 
+			pl.montant_min, pl.reduction_premium, promo.description, promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, 
+			promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM panier 
 		JOIN prix_livraison pl ON ((panier.distance BETWEEN pl.distance_min AND pl.distance_max) OR pl.distance_max = -1)
 		JOIN restaurants resto ON resto.id = panier.id_restaurant
@@ -345,6 +345,7 @@ class Model_Panier extends Model_Template {
 		$this->reduction_premium = $value['reduction_premium'];
 		
 		$horaire = new Model_Horaire(false);
+		$horaire->id = $value['id_horaire'];
 		$horaire->id_jour = $value['id_jour'];
 		$horaire->heure_debut = $value['heure_debut'];
 		$horaire->minute_debut = $value['minute_debut'];
