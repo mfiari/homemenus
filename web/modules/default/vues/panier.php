@@ -100,7 +100,7 @@
 							<?php endforeach; ?>
 							<?php
 								$prix_livraison = $request->panier->prix_livraison;
-								if ($request->_auth->is_premium) {
+								if ($request->_auth && $request->_auth->is_premium) {
 									$prix_livraison -= $request->panier->reduction_premium;
 								}
 							?>
