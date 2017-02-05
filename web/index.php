@@ -3,13 +3,13 @@
 ini_set('display_errors', '1');
 ini_set('max_execution_time', 120);
 
-register_shutdown_function( "fatal_error_handler" );
-
 include_once "../config.php";
 include_once WEBSITE_PATH."core/Request.php";
 include_once ROOT_PATH."function.php";
 
 require_once WEBSITE_PATH.'res/lib/Mobile-Detect/Mobile_Detect.php';
+
+register_shutdown_function( "fatal_error_handler" );
 
 session_start();
 
