@@ -82,7 +82,7 @@
 		</div>
 	</div>
 	<div class="row center">
-		<a class="link" href="restaurants-partenaire.html"><b>Voir</b> tous les restaurants</a>
+		<a class="link" href="restaurants.html"><b>Voir</b> tous les restaurants</a>
 	</div>
 </div>
 <div class="row">

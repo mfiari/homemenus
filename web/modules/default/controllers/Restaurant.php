@@ -132,9 +132,13 @@ class Controller_Restaurant extends Controller_Default_Template {
 		$city = "";
 		if ($request->request_method == "GET") {
 			if (!isset($_SESSION['search_serialized'])) {
-				$this->redirect();
+				$filter = array(
+					"search_adresse" => "Mantes la jolie",
+					"distanceKm" => 15
+				);
+			} else {
+				$filter = unserialize($_SESSION['search_serialized']);
 			}
-			$filter = unserialize($_SESSION['search_serialized']);
 		} else if ($request->request_method == "POST") {
 			if (!isset($_POST['adresse']) || trim($_POST['adresse']) == "") {
 				$this->redirect();
@@ -152,18 +156,6 @@ class Controller_Restaurant extends Controller_Default_Template {
 			} else {
 				$filter["distanceKm"] = 15;
 			}
-			$modelRestaurant = new Model_Restaurant();
-		
-			$tags = $modelRestaurant->getTags();
-			
-			$tagsFilter = array();
-			foreach ($tags as $tag) {
-				if (isset($_POST["tag_".$tag->id])) {
-					$tagsFilter[] = $tag->id;
-				}
-			}
-			$filter["tags"] = $tags;
-			$filter["tagsFilter"] = $tagsFilter;
 			$_SESSION['search_serialized'] = serialize($filter);
 		} else {
 			$this->redirect();
@@ -176,9 +168,6 @@ class Controller_Restaurant extends Controller_Default_Template {
 		
 		$modelRestaurant = new Model_Restaurant();
 		
-		$request->tags = $filter["tags"];
-		$request->tagsFilter = $filter["tagsFilter"];
-		
 		$restaurants = $modelRestaurant->filter($filter);
 		
 		$request->search_adresse = $filter["search_adresse"];
@@ -186,8 +175,6 @@ class Controller_Restaurant extends Controller_Default_Template {
 		$localisation = urlencode($filter["search_adresse"]);
 		$query = sprintf($geocoder,$localisation);
 		$rd = json_decode(file_get_contents($query));
-		/*var_dump($rd);
-		var_dump($rd->{'status'}); die();*/
 		
 		$recherche = new Model_Recherche();
 		$recherche->recherche = $filter["search_adresse"];
@@ -231,14 +218,11 @@ class Controller_Restaurant extends Controller_Default_Template {
 				if ($restaurant->latitude != 0 && $restaurant->longitude != 0) {
 					$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
 					$result = getDistance($adresseUser, $adresseResto);
-					//var_dump($result); die();
 					if ($result['status'] == "OK") {
 						$distanceRestoKm = $result['distance'] / 1000;
-						//if ($distanceRestoKm < $distanceKm) {
-							$restaurant->distance = $distanceRestoKm == 0 ? -1 : $distanceRestoKm;
-							$availableRestaurant[] = $restaurant;
-							$recherche->addRestaurant($restaurant);
-						//}
+						$restaurant->distance = $distanceRestoKm == 0 ? -1 : $distanceRestoKm;
+						$availableRestaurant[] = $restaurant;
+						$recherche->addRestaurant($restaurant);
 					}
 				}
 			}

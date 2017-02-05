@@ -1,5 +1,5 @@
 <div class="row">
-	<h1>Resultats</h1>
+	<h1>Liste des restaurants</h1>
 </div>
 <div class="row">
 	<form id="restaurant-filter-form" class="form-inline" action="?controler=restaurant&action=recherche" method="POST">

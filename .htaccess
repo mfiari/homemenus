@@ -5,6 +5,7 @@ RewriteEngine On
 # Réécriture de index.html vers index.php 
 RewriteRule ^web/index\.html$ web/index.php [L]
 # Réécriture des URL des restaurants 
+RewriteRule ^web/restaurants.html$ web/index.php?controler=restaurant&action=recherche [L]
 RewriteRule ^web/restaurant-([0-9]+)-([a-zA-Z0-9\-]+)\.html$ web/index.php?action=restaurant_partenaire&id=$1 [L]
 RewriteRule ^web/qui-sommes-nous.html$ web/index.php?action=qui_sommes_nous [L]
 RewriteRule ^web/plats-favoris.html$ web/index.php?action=plats_favoris [L]
