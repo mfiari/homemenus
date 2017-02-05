@@ -132,7 +132,7 @@
 		$("#carte-modal .modal-footer .glyphicon-refresh-animate").css('display', 'inline-block');
 		$.ajax({
 			type: "POST",
-			url: "?controler=panier&action=addCarte",
+			url: "index.php?controler=panier&action=addCarte",
 			dataType: "html",
 			data: $("#carteForm").serialize()
 		}).done(function( msg ) {

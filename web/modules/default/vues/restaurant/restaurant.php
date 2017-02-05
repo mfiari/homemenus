@@ -455,7 +455,7 @@
 			var id_restaurant = $("#id_restaurant").val();
 			$.ajax({
 				type: "GET",
-				url: '?controler=restaurant&action=carte&id='+id_restaurant+'&id_carte='+id_carte,
+				url: 'index.php?controler=restaurant&action=carte&id='+id_restaurant+'&id_carte='+id_carte,
 				dataType: "html"
 			}).done(function( msg ) {
 				$("#loading-modal").modal('hide');
@@ -513,7 +513,7 @@
 			var id = $(this).attr('data-id');
 			$.ajax({
 				type: "POST",
-				url: "?controler=panier&action=removeCarte",
+				url: "index.php?controler=panier&action=removeCarte",
 				dataType: "html",
 				data: {id_panier : id_panier, id_panier_carte : id}
 			}).done(function( msg ) {
@@ -533,7 +533,7 @@
 			var id = $(this).attr('data-id');
 			$.ajax({
 				type: "POST",
-				url: "?controler=panier&action=removeMenu",
+				url: "index.php?controler=panier&action=removeMenu",
 				dataType: "html",
 				data: {id_panier : id_panier, id_panier_menu : id}
 			}).done(function( msg ) {
@@ -552,7 +552,7 @@
 			var codePromo = $("#code_promo").val();
 			$.ajax({
 				type: "POST",
-				url: "?controler=panier&action=addCodePromo",
+				url: "index.php?controler=panier&action=addCodePromo",
 				dataType: "html",
 				data: {code_promo : codePromo}
 			}).done(function( msg ) {
@@ -602,7 +602,7 @@
 	function reloadPanier () {
 		$.ajax({
 			type: "GET",
-			url: '?controler=restaurant&action=panier',
+			url: 'index.php?controler=restaurant&action=panier',
 			dataType: "html"
 		}).done(function( msg ) {
 			$("#panier-content").html(msg);
@@ -618,7 +618,7 @@
 		$("#loading-modal").modal();
 		$.ajax({
 			type: "GET",
-			url: '?controler=notes&action=viewRestaurant&id_restaurant='+id_resto,
+			url: 'index.php?controler=notes&action=viewRestaurant&id_restaurant='+id_resto,
 			dataType: "html"
 		}).done(function( msg ) {
 			$("#loading-modal").modal('hide');
@@ -631,7 +631,7 @@
 		$("#loading-modal").modal();
 		$.ajax({
 			type: "GET",
-			url: '?controler=notes&action=viewCarte&id_carte='+id_carte,
+			url: 'index.php?controler=notes&action=viewCarte&id_carte='+id_carte,
 			dataType: "html"
 		}).done(function( msg ) {
 			$("#loading-modal").modal('hide');
