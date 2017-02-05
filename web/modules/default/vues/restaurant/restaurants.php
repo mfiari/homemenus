@@ -68,13 +68,13 @@
 				<?php if ($horaire->heure_debut != '' && $restaurant->distance < 16 && $restaurant->distance > 0) : ?>
 					<div class="row" style="background-color : #F4F4F4;">
 						<div class="col-md-5 col-sm-5">
-							<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
+							<a href="<?php echo restaurantToLink($restaurant, $restaurant->ville); ?>">
 								<img style="width : 100%" src="res/img/restaurant/<?php echo $restaurant->logo; ?>" alt="HoMe Menus - <?php echo utf8_encode($restaurant->nom); ?>" Title="HoMe Menus - <?php echo utf8_encode($restaurant->nom); ?>">
 							</a>
 						</div>
 						<div class="col-md-7 col-sm-7">
 							<h2>
-								<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
+								<a href="<?php echo restaurantToLink($restaurant, $restaurant->ville); ?>">
 									<?php echo utf8_encode($restaurant->nom); ?>
 								</a>
 							</h2>

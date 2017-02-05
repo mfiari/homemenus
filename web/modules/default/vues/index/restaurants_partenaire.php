@@ -10,13 +10,13 @@
 				<?php endif; ?>
 				<div class="row" style="background-color : #F4F4F4;">
 					<div class="col-md-5 col-sm-5">
-						<a href="restaurant-<?php echo $restaurant->id; ?>-<?php echo str_replace(' ', '-', $ville); ?>-<?php echo str_replace(' ', '-', utf8_encode($restaurant->nom)); ?>.html">
+						<a href="<?php echo restaurantToLink($restaurant, $ville); ?>">
 							<img style="width : 100%" src="<?php echo getLogoRestaurant($restaurant->id); ?>" alt="HoMe Menus - <?php echo utf8_encode($restaurant->nom); ?>" Title="HoMe Menus - <?php echo utf8_encode($restaurant->nom); ?>">
 						</a>
 					</div>
 					<div class="col-md-7 col-sm-7">
 						<h2>
-							<a href="restaurant-<?php echo $restaurant->id; ?>-<?php echo str_replace(' ', '-', $ville); ?>-<?php echo str_replace('é', 'e', str_replace('à', 'a', str_replace(' ', '-', utf8_encode($restaurant->nom)))); ?>.html">
+							<a href="<?php echo restaurantToLink($restaurant, $ville); ?>">
 								<?php echo utf8_encode($restaurant->nom); ?>
 							</a>
 						</h2>

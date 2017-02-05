@@ -360,4 +360,22 @@ function getLogoRestaurant ($id_restaurant) {
 	}
 }
 
+function restaurantToLink ($restaurant, $ville) {
+	$ville = cleanString($ville);
+	$name = cleanString($restaurant->nom);
+	
+	return "restaurant-".$restaurant->id.'-'.$ville.'-'.$name.'.html';
+}
+
+function cleanString ($name) {
+	/* replace space by - */
+	$name = str_replace(' ', '-', $name);
+	/* replace à by a */
+	$name = str_replace('à', 'a', $name);
+	/* replace é by e */
+	$name = str_replace('é', 'e', $name);
+	
+	return $name;
+}
+
 ?>

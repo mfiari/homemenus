@@ -75,8 +75,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 	}
 	
 	public function index ($request) {
-		if (isset($_GET['id']) && isset($_SESSION['search_adresse'])) {
-			
+		if (isset($_GET['id'])) {
 			$request->title = "Restaurant";
 			$modelRestaurant = new Model_Restaurant();
 			$modelRestaurant->id = $_GET['id'];
@@ -90,10 +89,17 @@ class Controller_Restaurant extends Controller_Default_Template {
 			}
 			$request->livreurs = $livreurs;
 			
+			if (!isset($_SESSION['search_adresse'])) {
+				$_SESSION['search_latitude'] = 48.989323;
+				$_SESSION['search_longitude'] = 1.714958;
+				$_SESSION['search_adresse'] = "Mantes la jolie";
+				$_SESSION['search_ville'] = "Mantes la jolie";
+				$_SESSION['search_cp'] = "78200";
+			}
+			
 			$adresseUser = $_SESSION['search_latitude'].','.$_SESSION['search_longitude'];
 			$adresseResto = $request->restaurant->latitude.','.$request->restaurant->longitude;
 			$result = getDistance($adresseUser, $adresseResto);
-			//var_dump($result); die();
 			if ($result['status'] == "OK") {
 				$distanceRestoKm = $result['distance'] / 1000;
 				$request->restaurant->distance = $distanceRestoKm;
@@ -212,6 +218,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$user_longitude = $coord->{'lng'};
 			$_SESSION['search_latitude'] = $user_latitude;
 			$_SESSION['search_longitude'] = $user_longitude;
+			
 			$availableRestaurant = array();
 			$adresseUser = $user_latitude.','.$user_longitude;
 			foreach ($restaurants as $restaurant) {
