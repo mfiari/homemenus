@@ -306,7 +306,6 @@ function openChatBox (id_commande) {
 }
 
 function openQuestionBox () {
-	alert('ok');
 	$("#live-chat").show();
 	$('#live-chat header').on('click', function() {
 		$('.chat').slideToggle(300, 'swing');
