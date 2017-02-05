@@ -324,7 +324,10 @@ class Model_Restaurant extends Model_Template {
 	}
 	
 	public function getAllRestaurantEnable () {
-		$sql = "SELECT id, nom, rue, code_postal, ville, latitude, longitude, enabled FROM restaurants WHERE enabled = true Order by ville, nom";
+		$sql = "SELECT id, nom, rue, code_postal, ville, latitude, longitude, short_desc 
+		FROM restaurants 
+		WHERE enabled = true 
+		Order by ville, nom";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
@@ -339,9 +342,35 @@ class Model_Restaurant extends Model_Template {
 			$restaurant->rue = $value['rue'];
 			$restaurant->code_postal = $value['code_postal'];
 			$restaurant->ville = $value['ville'];
+			$restaurant->short_desc = $value['short_desc'];
 			$restaurant->latitude = $value['latitude'];
 			$restaurant->longitude = $value['longitude'];
-			$restaurant->is_enable = $value['enabled'];
+			
+			$sql = "SELECT certif.id, certif.nom, certif.description AS description_certif, certif.logo, rc.url, rc.description AS description
+			FROM certificats certif
+			JOIN restaurant_certificat rc ON rc.id_certificat = certif.id
+			WHERE rc.id_restaurant = :id";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindValue(":id", $restaurant->id);
+			if (!$stmt->execute()) {
+				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+				return false;
+			}
+			$certificats = $stmt->fetchAll();
+			foreach ($certificats as $certif) {
+				$certificat = new Model_Certificat();
+				$certificat->id = $certif["id"];
+				$certificat->nom = $certif["nom"];
+				if ($certif["description"] != '') {
+					$certificat->description = $certif["description"];
+				} else {
+					$certificat->description = $certif["description_certif"];
+				}
+				$certificat->logo = $certif["logo"];
+				$certificat->url = $certif["url"];
+				$restaurant->addCertificat($certificat);
+			}
+			
 			$list[] = $restaurant;
 		}
 		return $list;

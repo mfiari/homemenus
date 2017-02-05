@@ -20,17 +20,36 @@ div.center {
 }
 
 #page-container {
-	background-color: #EEEEFF;
 	width : 100%;
 }
 
-div.background {
-	background-image : url("../img/banniere.png");
+#page-container .container {
+	width : 100%;
+}
+
+div.home-background {
+	background-image : url("../img/background2.png");
 	background-repeat : no-repeat;
-	background-size : auto 100%;
+	background-size : 100% 100%;
 	bottom : 0;
-	height : 500px;
+	height : 689px;
 	left : 0;
+	margin : 0 auto;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 100%;
+	z-index : 0;
+}
+
+div.background {
+	background-image : url("../img/background3.png");
+	background-repeat : no-repeat;
+	background-size : 100% 100%;
+	bottom : 0;
+	height : 100px;
+	left : 0;
+	margin : 0 auto;
 	position : absolute;
 	right : 0;
 	top : 0;
@@ -39,9 +58,12 @@ div.background {
 }
 
 div.gradient {
-	height : 500px;
+	bottom : 0;
+	height : 689px;
 	left : 0;
+	margin : 0 auto;
 	position : absolute;
+	right : 0;
 	top : 0;
 	width : 100%;
 	z-index : 1;
@@ -60,104 +82,192 @@ span.glyphicon {
 	cursor : pointer;
 }
 
+a.link-more {
+	background-color: rgba(138, 138, 138, 0.5);
+    border-radius: 12px;
+    color: #ffffff;
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 200px;
+}
+
+a.link-more span.glyphicon-chevron-right {
+	background-color: #ff2a00;
+    border-radius: 10px;
+    margin-left: 30px;
+    padding: 5px;
+}
+
+button.send-button {
+	background-color: rgba(138, 138, 138, 0.3);
+    border-radius: 12px;
+    color: #ffffff;
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 150px;
+}
+
+button.send-button span.glyphicon-chevron-right {
+	background-color: #ff2a00;
+    border-radius: 10px;
+    margin-left: 30px;
+    padding: 5px;
+}
+
+.validate-button {
+	background-color: #FF2A00;
+    border-radius: 12px;
+    color: #ffffff;
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 150px;
+}
+
+button.close-button {
+	background-color: rgba(138, 138, 138, 0.3);
+    border-radius: 12px;
+    color: #ffffff;
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 150px;
+}
+
+button.close-button span.glyphicon-remove {
+	background-color: #ff2a00;
+    border-radius: 10px;
+    margin-left: 30px;
+    padding: 5px;
+}
+
+a.link {
+	color : #ff2a00;
+}
+
+a.link-livraison {
+	border: 1px solid;
+    border-radius: 15px;
+    color: #ffffff;
+    display: inline-block;
+    height: 30px;
+	margin-top: 20px;
+    padding-top: 5px;
+    width: 200px;
+}
+
+div.div-livreur {
+	background-image : url("../img/livreur.png");
+	background-repeat : no-repeat;
+	background-size : 100% 100%;
+	bottom : 0;
+	height : 300px;
+	left : 0;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 50%;
+	z-index : 0;
+}
+
+div.gradient-livreur {
+	bottom : 0;
+	height : 300px;
+	left : 0;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 50%;
+	z-index : 1;
+	background : rgba(0, 0, 0, 0) linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2)) repeat scroll 0 0;
+}
+
+div.div-restaurant {
+	background-image : url("../img/restaurant.png");
+	background-repeat : no-repeat;
+	background-size : 100% 100%;
+	bottom : 0;
+	height : 300px;
+	left : 0;
+	margin-left: 50%;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 50%;
+	z-index : 0;
+}
+
+div.gradient-restaurant {
+	bottom : 0;
+	height : 300px;
+	left : 0;
+	margin-left: 50%;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 50%;
+	z-index : 1;
+	background : rgba(0, 0, 0, 0) linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2)) repeat scroll 0 0;
+}
+
 /* header */
 
-header.home {
-	height : 500px;
+header {
+	height : 100px;
 	margin-top: 20px;
 	position : relative;
 	width : 100%;
 	z-index : 2;
 }
 
-header.home #logo {
-	left: -130px;
+header.home {
+	height : 669px;
+}
+
+header #logo {
     position: relative;
-    width: 180px;
+    width: 120px;
 }
 
-header.home ul.menu li {
-	display: block;
-    float: left;
-    margin-left: 15px;
-    margin-top: 15px;
-    position: relative;
+header a {
+	color : #FFFFFF;
 }
 
-header.home ul.menu a {
-	border: 1px solid #fff;
-	border-radius : 5px;
-	color: #FFF;
-	cursor: pointer;
-	padding: 10px;
+header a:hover {
+	color : #FFFFFF;
 }
 
-header.home ul.dropdown-menu a {
-	border: none;
-	color: #000;
-	padding: 5px;
-	border-radius : 0px;
+#menu-link {
+	display: inline-block;
+    font-size: 16px;
+    margin-left: 100px;
 }
 
-header.top {
-	height : 85px;
-	background-image : linear-gradient(#999,#DDD);
-}
-
-header span.slogan {
-	color: #ffffff;
-    display: inline-block;
-    font-family: Verdana;
-    margin-top: 14px;
-}
-
-@media (max-width: 1024px) {
-	header span.slogan {
-		display: none;
-	}
-}
-
-header a.logo {
-	float: left;
-    font-size: 18px;
-    height: 65px;
-    line-height: 13px;
-    padding: 4px 10px 0 5px;
-}
- 
-#logo {
-	width : 130px;
-}
- 
-#slogan {
-	margin-top : 26px;
-	width : 150px;
+#menu-link a {
+    margin-left: 20px;
 }
 
 header ul.menu {
-	float: right;
-	display: block;
-    list-style-type: none;
-    padding: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    float: right;
+    font-size: 17px;
+    margin-right: 50px;
+    margin-top: 12px;
 }
 
 header ul.menu li {
-	display: block;
-    position: relative;
+	list-style: outside none none;
+	float: left;
+	margin-right : 20px;
 }
 
-header ul.menu a {
-	color: #000000;
-	cursor: pointer;
-}
-
-header ul.dropdown-menu li {
-    float: none;
-    margin: 0px;
-}
-
-header ul.dropdown-menu span {
-	margin-right : 10px;
+header ul.menu li.user {
+	background-color: #2E0727;
+	border-radius: 50px;
+	padding : 5px;
 }
 
 header h1 {
@@ -165,53 +275,37 @@ header h1 {
 	margin-top : 120px;
 }
 
-div#adress-search {
-	margin-top : 80px;
-}
-
-form#adress-form {
+div.search-block {
+	width : 50%;
 	margin : 0 auto;
 }
 
-#adress-form button.btn {
-	font-size : 18px;
-}
-
-#adress-form #full_address {
+div.search-block input#full_address {
+	border-radius: 15px;
+	width: 90%;
 	height : 40px;
 }
 
-::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-	color: black;
-    font-size: 16px;
-    font-weight: bold;
+div.search-block a.search-button{
+	background-color: #ff2a00;
+    border-radius: 30px;
+    display: inline-block;
+    height: 30px;
+    left: 83%;
+    position: relative;
+    top: 35px;
+    width: 30px;
 }
 
-::-moz-placeholder { /* Firefox 19+ */
-	color: black;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-:-ms-input-placeholder { /* IE 10+ */
-	color: black;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-:-moz-placeholder { /* Firefox 18- */
-	color: black;
-    font-size: 16px;
-    font-weight: bold;
+div.search-block a.search-button span.glyphicon-search{
+	font-size : 18px;
+	top : 5px;
+	left : 5px;
 }
 
 /* fin header */
 
 /* Main content */
-
-#main-content {
-	margin-top : 65px;
-}
 
 #subscribeForm input {
 	padding: 10px;
@@ -223,6 +317,16 @@ form#adress-form {
     padding: 10px;
     border: 1px solid #000;
     margin: 0 0 10px;
+}
+
+div.background-violet {
+	background-color : #3C0833;
+	color : #FFFFFF;
+}
+
+.background-orange {
+	background-color : #FF2A00;
+	color : #FFFFFF;
 }
 
 div.pass-container {
@@ -256,6 +360,10 @@ div.even {
 
 .badge.coming{
     background-color: #0000FF;
+}
+
+#myCarousel .item {
+    border: none;
 }
 
 .item {
@@ -379,7 +487,7 @@ table .glyphicon {
 }
 
 .stepper {
-	float : right;
+	text-align : center;
 }
 
 .stepper-value {
@@ -390,26 +498,26 @@ table .glyphicon {
 }
 
 .stepper-button {
-	background-color:#337ab7;
+	background-color:#FF2A00;
 	-moz-border-radius:16px;
 	-webkit-border-radius:16px;
-	border-radius:16px;
-	border:1px solid #566963;
+	border-radius:20px;
+	border:1px solid #FF2A00;
 	display:inline-block;
 	cursor:pointer;
 	color:#ffffff;
 	font-family:Arial;
-	font-size:28px;
-	font-weight:bold;
-	padding:2px 18px;
+	font-size:25px;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #2b665e;
+	width: 40px;
+	text-align: center;
+	height: 40px;
 }
 
-.stepper-button:hover {
-	background-color:#286090;
-	color:#ffffff;
-	text-decoration:none;
+.stepper-button:active {
+	position:relative;
+	top:1px;
 }
 
 .stepper-button:active {
@@ -422,9 +530,8 @@ table .glyphicon {
 /* footer */
 
 footer {
-	background-image : linear-gradient(#222, #222);
 	clear : both;
-	color : #FFF;
+	color : #000000;
 	margin-top : 20px;
 	text-align : center;
 }
@@ -434,7 +541,7 @@ footer h3 {
 }
 
 footer a {
-	color : #FFF;
+	color : #000000;
 }
 
 footer img.social-media {
@@ -442,3 +549,4 @@ footer img.social-media {
 }
 
 /* fin footer */
+

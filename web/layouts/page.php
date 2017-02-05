@@ -3,9 +3,8 @@
 	<?php include('header.php'); ?>
 	<body>
 		<?php 
-			if ($request->_auth) {
-				include('panier.html');
-			} else {
+			include('panier.html');
+			if (!$request->_auth) {
 				include('login.html');
 				include('forgot_password.php');
 			}
@@ -83,20 +82,24 @@
 				</div>
 			</div>
 			<?php
-				if ($request->_auth) {
-					if ($request->_auth->status == USER_ADMIN) {
-						include('footer_admin.html');
-					} else if ($request->_auth->status == USER_LIVREUR) {
-						include('footer_livreur.html');
-					} else if ($request->_auth->status == USER_RESTAURANT) {
-						include('footer_restaurant.html');
-					} else if ($request->_auth->status == USER_ADMIN_RESTAURANT) {
-						include('footer_admin_restaurant.html');
+				if ($request->home) {
+					include('footer-home.html');
+				} else {
+					if ($request->_auth) {
+						if ($request->_auth->status == USER_ADMIN) {
+							include('footer_admin.html');
+						} else if ($request->_auth->status == USER_LIVREUR) {
+							include('footer_livreur.html');
+						} else if ($request->_auth->status == USER_RESTAURANT) {
+							include('footer_restaurant.html');
+						} else if ($request->_auth->status == USER_ADMIN_RESTAURANT) {
+							include('footer_admin_restaurant.html');
+						} else {
+							include('footer.html');
+						}
 					} else {
 						include('footer.html');
 					}
-				} else {
-					include('footer.html');
 				}
 			?>
 		</div>

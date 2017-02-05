@@ -40,22 +40,17 @@
 						<?php foreach ($categorie->contenus as $contenu) : ?>
 							<hr />
 							<div data-id="<?php echo $contenu->id; ?>" class="row carte-item">
-								<div class="col-md-12">
-									<p class="carte-item-title"><?php echo utf8_encode($contenu->nom); ?></p>
+								<div class="col-md-12 col-sm-12">
 									<div class="row">
-										<div class="col-sm-3">
-											<div class="row">
-												<div class="vignette"><img src="<?php echo $contenu->logo; ?>"></div>
-											</div>
-											<div class="row">
-												<span>Prix : <?php echo formatPrix($contenu->prix); ?></span>
-											</div>
+										<div class="col-md-8 col-sm-8 col-xs-8">
+											<p class="carte-item-title"><?php echo utf8_encode($contenu->nom); ?></p>
+											<span><i><?php echo utf8_encode($contenu->commentaire); ?></i></span>
 										</div>
-										<div class="col-sm-7">
-											<?php echo utf8_encode($contenu->commentaire); ?>
+										<div class="col-md-2 col-sm-2 col-xs-2">
+											<b><?php echo formatPrix($contenu->prix); ?></b>
 										</div>
-										<div class="col-sm-2">
-											<span class="add-button">+</span>
+										<div class="col-md-2 col-sm-2 col-xs-2">
+											<span class="add-button" style="display : none;">+</span>
 										</div>
 									</div>
 								</div>
@@ -166,41 +161,71 @@
 		$("#panier").show();
 	});
 	
+	$(window).scroll(function(){
+		if ($(this).scrollTop() > 450) {
+			$('#restaurant .categories').addClass('fixed');
+			$('#restaurant .panier').addClass('fixed');
+		} else {
+			$('#restaurant .categories').removeClass('fixed');
+			$('#restaurant .panier').removeClass('fixed');
+		}
+	});
+	
 </script>
 <style>
 	#restaurant .vignette img{
-		height: 150px;
-		width: 150px;
+		height: 80px;
+		width: 80px;
 	}
 	
 	#restaurant .carte-item:hover {
-		background-color : #CCCCCC;
+		background-color : #F4F4F4;
+		cursor : pointer;
 	}
 	
 	#restaurant .carte-item .add-button {
 		display : block !important;
-		color: green;
-		font-size: 40px;
+		background-color: #FF2A00;
+		color: #FFFFFF;
+		font-size: 28px;
+		border-radius : 20px;
+		text-align : center;
+		width : 40px;
 	}
 	
 	#restaurant .carte-item-title {
-		font-size : 20px;
+		font-size : 16px;
 		text-align : center;
 	}
 	
 	#restaurant .menu-item:hover {
-		background-color : #CCCCCC;
+		background-color : #F4F4F4;
+		cursor : pointer;
 	}
 	
 	#restaurant .menu-item .add-button {
 		display : block !important;
-		color: green;
-		font-size: 60px;
+		background-color: #FF2A00;
+		color: #FFFFFF;
+		font-size: 28px;
+		border-radius : 20px;
+		text-align : center;
+		width : 40px;
 	}
 	
 	#restaurant .menu-item-title {
-		font-size : 20px;
+		font-size : 16px;
 		text-align : center;
+	}
+	
+	#restaurant-block hr {
+		margin-top : 5px;
+		margin-bottom : 5px;
+	}
+	
+	#restaurant .fixed {
+		position: fixed; 
+		top : 0;
 	}
 	
 	#panier {

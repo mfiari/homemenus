@@ -1,119 +1,151 @@
-<div class="row">
-	<div class="col-md-10  col-md-offset-1">
-		<div id="myCarousel" class="carousel slide" data-ride="carousel">
-			<!-- Indicators -->
-			<ol class="carousel-indicators">
-				<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-				<li data-target="#myCarousel" data-slide-to="1"></li>
-			</ol>
-
-			<!-- Wrapper for slides -->
-			<div class="carousel-inner" role="listbox">
-				<!--<div class="item active">
-					<a href="#">
-						<img style="height : 350px; width : 100%;" src="res/img/slider1b.jpg" title="HoMe Menus - Livraison gratuite" alt="HoMe Menus - Livraison gratuite">
-						<div class="carousel-caption">
-							<h3>Livraison gratuite</h3>
-							<p>Livraison Gratuite Mardi 15 Novembre de 19h à 23h à l'occasion du match de l'équipe de France.</p>
-						</div>
-					</a>
-				</div>-->
-				<div class="item active">
-					<a href="plats-favoris.html">
-						<img style="height : 350px; width : 100%;" src="res/img/plats_favoris.png" title="HoMe Menus - Plats favoris" alt="HoMe Menus - Plats favoris">
-						<div class="carousel-caption">
-							<h3>Plats favoris</h3>
-							<p>Vous ne savez pas quoi commander ? Venez voir les 10 plats les plus commandé par nos clients.</p>
-						</div>
-					</a>
+<div class="row background-violet">
+	<div class="row">
+		<h2>HoMe Menus, Livraison de repas à domicile</h2>
+	</div>
+	<div class="row center">
+		<div class="col-md-12 col-sm-12">
+			<div class="col-lg-3 col-lg-offset-1 col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-12 col-xs-offset-0">
+				<div class="row">
+					<a href="inscription.html"><img src="res/img/particulier.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
 				</div>
-				<div class="item">
-					<a href="contact-livreur.html">
-						<img style="height : 350px; width : 100%;" src="res/img/livreurs.jpg" title="HoMe Menus - Livreur" alt="HoMe Menus - Livreur">
-						<div class="carousel-caption">
-							<h3>Recrutement livreur</h3>
-							<p>Nous cherchons des livreurs disponible de 11h à 14h ou de 19h à 23h ! Contactez-nous dès maintenant.</p>
-						</div>
-					</a>
+				<div class="row">
+					<h3><a href="inscription.html" style="color : #FFFFFF;">Particuliers</a></h3>
+				</div>
+				<div class="row">
+					<p>Savourez et dégustez la cuisine des meilleurs restaurants aux environs de chez vous en vous les faisant livrer.</p>
 				</div>
 			</div>
+			<div class="col-lg-3 col-lg-offset-1 col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-12 col-xs-offset-0">
+				<div class="row">
+					<a href="contact-entreprise.html"><img src="res/img/entreprises.png" alt="HoMe Menus - Entreprises" Title="HoMe Menus - Entreprises"></a>
+				</div>
+				<div class="row">
+					<h3><a href="contact-entreprise.html" style="color : #FFFFFF;">Entreprises</a></h3>
+				</div>
+				<div class="row">
+					<p>Bons repas au bureau ou déjeuners d'équipe ? HoMe Menus a prévu une gamme exceptionnelle de produits et services.</p>
+				</div>
+			</div>
+			<div class="col-lg-3 col-lg-offset-1 col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-12 col-xs-offset-0">
+				<div class="row">
+					<a href="contact-evenement.html"><img src="res/img/evenement.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
+				</div>
+				<div class="row">
+					<h3><a href="contact-evenement.html" style="color : #FFFFFF;">Evénement</a></h3>
+				</div>
+				<div class="row">
+					<p>Un repas d'anniversaire, une réunion, un événement, la commande spéciale est faite pour vous.</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12 col-sm-12">
+			<a class="link-more" href="">En savoir plus <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="row">
+		<h2>Les nouveaux restaurants</h2>
+	</div>
+	<div style="width : 100%; height : 100%; overflow : hidden;">
+		<div class="row" style="margin-bottom : 20px; position: relative; width : 200%;">
+			<div style="bottom : 0; color : #FFFFFF; left : 20px; position : absolute; z-index : 2;">
+				<h3>Le volonté</h3>
+				<p>Restaurant chinois</p>
+			</div>
+			<a href="restaurant-14-Mantes-la-Jolie-Le-volonte.html" style="margin-right : 20px;">
+				<img style="height : 450px;" src="res/img/le-volonte.png" alt="HoMe Menus - Le volonté" Title="HoMe Menus - Le volonté">
+			</a>
+			<div style="bottom : 50px; color : #FFFFFF; left : 650px; position : absolute; z-index : 2;">
+				<h3>La Villa Mantes</h3>
+				<p>Restaurant franco asiatique</p>
+			</div>
+			<a href="restaurant-10-Mantes-la-Ville-La-Villa-Mantes.html" style="margin-right : 20px;">
+				<img style="height : 360px;" src="res/img/la-villa-mantes.png" alt="HoMe Menus - La villa mantes" Title="HoMe Menus - La villa mantes">
+			</a>
+		</div>
+		<div class="row" style="margin-bottom : 20px; position: relative; width : 200%;">
+			<div style="bottom : 50px; color : #FFFFFF; left : 20px; position : absolute; z-index : 2;">
+				<h3>Comme à la maison</h3>
+				<p>Restaurant Hispano italien</p>
+			</div>
+			<a href="restaurant-15-Mantes-la-Jolie-Comme-a-la-maison.html" style="margin-right : 20px;">
+				<img style="height : 360px;" src="res/img/comme-a-la-maison.png" alt="HoMe Menus - Comme à la maison" Title="HoMe Menus - Comme à la maison">
+			</a>
+			<div style="bottom : 0; color : #FFFFFF; left : 550px; position : absolute; z-index : 2;">
+				<h3>Taj Mahal</h3>
+				<p>Restaurant indien</p>
+			</div>
+			<a href="restaurant-5-Mantes-la-Jolie-Taj-Mahal.html" style="margin-right : 20px;">
+				<img style="height : 450px;" src="res/img/taj-mahal.png" alt="HoMe Menus - Taj Mahal" Title="HoMe Menus - Taj Mahal">
+			</a>
+		</div>
+	</div>
+	<div class="row center">
+		<a class="link" href="restaurants-partenaire.html"><b>Voir</b> tous les restaurants</a>
+	</div>
+</div>
+<div class="row">
+	<div class="row">
+		<h2>Nos news <br />A la Une</h2>
+	</div>
+	<div id="myCarousel" class="carousel slide" data-ride="carousel">
+		<!-- Indicators -->
+		<ol class="carousel-indicators">
+			<?php $index = 0; ?>
+			<?php foreach ($request->news as $news) : ?>
+				<li data-target="#myCarousel" data-slide-to="<?php echo $index; ?>" class="<?php echo $index == 0 ? 'active' : ''; ?>"></li>
+				<?php $index++; ?>
+			<?php endforeach; ?>
+		</ol>
 
-			<!-- Left and right controls -->
-			<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-				<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-				<span class="sr-only">Previous</span>
-			</a>
-			<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-				<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-				<span class="sr-only">Next</span>
-			</a>
+		<!-- Wrapper for slides -->
+		<div class="carousel-inner" role="listbox">
+			<?php $index = 0; ?>
+			<?php foreach ($request->news as $news) : ?>
+				<div class="row item <?php echo $index == 0 ? 'active' : ''; ?>">
+					<div class="col-md-6 col-sm-6" style="background-color : #F4F4F4; color : #000000; padding : 80px;">
+						<h3><?php echo utf8_encode($news->titre); ?></h3>
+						<p><?php echo utf8_encode($news->text); ?></p>
+						<a class="link" href="<?php echo $news->link_url; ?>"><?php echo $news->link_text; ?></a>
+					</div>
+					<div class="col-md-6 col-sm-6" style="margin-top: 50px; margin-left: -80px;">
+						<img style="width : 600px" src="<?php echo $news->image; ?>" alt="HoMe Menus - <?php echo utf8_encode($news->titre); ?>" Title="HoMe Menus - <?php echo utf8_encode($news->titre); ?>">
+					</div>
+				</div>
+				<?php $index++; ?>
+			<?php endforeach; ?>
 		</div>
 	</div>
 </div>
-<div class="col-md-12 even">
-	<h2>HoMe Menus</h2>
-	<div class="row">
-		<div class="col-md-9 col-sm-9 col-xs-9">
-			<p>HoMe Menus est un service de livraison de plats de vos restaurants préférés proches ou éloignés de chez vous.</p>
-			<p>Notre objectif principal est de vous permettre de savourer et déguster la cuisine des meilleurs restaurants aux environs de chez vous 
-				en vous les livrant. Génial non ?! évidemment !</p>
-			<p>Vous souhaitez en savoir plus sur l'entreprise, rendez-vous sur notre page <a href="qui-sommes-nous.html">qui sommes-nous</a></p>
-			<p>Vous avez des questions sur le site et son fonctionnement. Rendez-vous sur la page <a href="faq.html">FAQ</a> pour avoir tous les renseignements.</p>
+<div class="row" style="position: relative; height: 300px; margin-top : 100px;">
+	<div class="div-livreur"></div>
+	<div class="gradient-livreur"></div>
+	<div class="col-md-6 col-sm-6" style="color: #FFFFFF; text-align: center; z-index : 2;">
+		<div class="row">
+			<h3>Devenir livreur</h3>
 		</div>
-		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/logo_mail.png" alt="HoMe Menus - livraison" Title="HoMe Menus">
+		<div class="row">
+			<p>Vous êtes sportif, dynamique et avez envie de vous faire un extra, rejoignez l’aventure HoMe Menus.</p>
 		</div>
-	</div>
-</div>
-<div class="col-md-12 odd">
-	<h2>Commande spéciale</h2>
-	<div class="row">
-		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/special.jpg" alt="HoMe Menus - livraison - commande spéciale" Title="Commande spéciale HoMe Menus">
-		</div>
-		<div class="col-md-9 col-sm-9 col-xs-9">
-			<p>Besoin d’organiser un repas d’anniversaire, une réunion, un événement, la commande spéciale est faite pour vous.</p>
-			<p>Avec HoMe Menus vous avez la possibilité de commander et vous faire livrer vos plats pour toutes vos occasions.</p>
-			<p><a href="contact-evenement.html">Contactez-nous</a> afin que nous satisfaisions vos envies.</p>
+		<div class="row">
+			<a class="link-more" href="contact-livreur.html">Devenir livreur <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
 		</div>
 	</div>
-</div>
-<div class="col-md-12 even">
-	<h2>Pour les entreprises</h2>
-	<div class="row">
-		<div class="col-md-9 col-sm-9 col-xs-9">
-			<p>La meilleure solution pour vos déjeuners d’équipe et autres événements ou tout simplement pour de bons repas au bureau. 
-			HoMe Menus a prévu une gamme exceptionnelle de produits et services. Venez découvrir ce que nous avons prévu pour vous ! </p>
-			<p>Contactez-nous dès maintenant via notre <a href="contact-entreprise.html">page de contact</a></p>
+	<div class="div-restaurant"></div>
+	<div class="gradient-restaurant"></div>
+	<div class="col-md-6 col-sm-6" style="color: #FFFFFF; text-align: center; z-index : 2;">
+		<div class="row">
+			<h3>Devenir restaurant partenaire</h3>
 		</div>
-		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/entreprise.png" alt="HoMe Menus - livraison - entreprise" Title="Entreprises">
+		<div class="row">
+			<p>Besoin d’offrir une nouvelle dimension à votre restaurant. Envie de faire plus de commandes et d’avoir plus de couverts, 
+			sans faire d’effort, ni même faire d’investissement, avec HoMe Menus c’est garanti.</p>
+			<p>Faites nous confiance nous nous occupons de tout !</p>
+			<p>Contactez-nous dès maintenant</p>
 		</div>
-	</div>
-</div>
-<div class="col-md-12 odd">
-	<h2>Devenir Livreur</h2>
-	<div class="row">
-		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/livreur.jpg" alt="HoMe Menus - livraison - livreur" Title="Livreur">
-		</div>
-		<div class="col-md-9 col-sm-9 col-xs-9">
-			<p>Vous  êtes sportif, dynamique et avez envie de vous faire un extra, rejoignez l’aventure HoMe Menus. 
-			<a href="contact-livreur.html">Postulez dès maintenant</a> !</p>
-		</div>
-	</div>
-</div>
-<div class="col-md-12 even">
-	<h2>Devenir restaurant partenaire</h2>
-	<div class="row">
-		<div class="col-md-9 col-sm-9 col-xs-9">
-			<p>Besoin d’offrir une nouvelle dimension à votre restaurant. Envie de faire plus de commandes et d’avoir plus de couverts, sans faire d’effort, 
-			ni même faire d’investissement, avec HoMe Menus c’est garanti.</p>
-			<p>Faites nous confiance nous nous occupons de tout !</p>
-				<p>Contactez-nous dès maintenant via notre <a href="contact-restaurant.html">page de contact</a></p>
-		</div>
-		<div class="col-md-3 col-sm-3 col-xs-3" style="text-align : center">
-			<img style="max-width : 90%; max-height : 90%;" src="res/img/partenaire.jpg" alt="HoMe Menus - livraison - restaurant" Title="Restaurant partenaire">
+		<div class="row">
+			<a class="link-more" href="contact-restaurant.html" style="width : 260px;">Devenir restaurant partenaire <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
 		</div>
 	</div>
 </div>

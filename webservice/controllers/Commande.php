@@ -13,6 +13,7 @@ include_once MODEL_PATH."OptionValue.php";
 include_once MODEL_PATH."Accompagnement.php";
 include_once MODEL_PATH."PDF.php";
 include_once MODEL_PATH."Clickatell.php";
+include_once MODEL_PATH."Nexmo.php";
 include_once MODEL_PATH."Parametre.php";
 
 class Controller_Commande extends Controller_Template {
@@ -186,7 +187,7 @@ class Controller_Commande extends Controller_Template {
 			}
 			$client = $commande->getClient();
 			if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
-				$sms = new Clickatell();
+				$sms = new Nexmo();
 				$sms->message = "Votre commande #".$commande->id." a été refusé par le restaurant";
 				$sms->addNumero($client->telephone);
 				$sms->sendMessage();
@@ -227,7 +228,7 @@ class Controller_Commande extends Controller_Template {
 			/*var_dump($client);
 			var_dump($client->parametre);*/
 			if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
-				$sms = new Clickatell();
+				$sms = new Nexmo();
 				$sms->message = "Bonjour, votre commande est en cours de preparation. L'equipe HoMe Menus.";
 				$sms->addNumero($client->telephone);
 				$sms->sendMessage();

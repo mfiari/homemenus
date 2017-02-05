@@ -23,7 +23,35 @@
 	<?php endif; ?>
 <?php endif; ?>
 <div class="row">
-	<div class="col-md-10 col-md-offset-1">
+	<div class="col-md-5">
+		<div class="row" style="background-color : #DDDDDD;">
+			<div class="col-md-10 col-md-offset-1">
+				<div class="row">
+					<h2>Vous êtes client ? </h2>
+					<div class="row">
+						<p>Inscrivez-vous dès maintenant et passez votre première commande</p>
+					</div>
+					<div class="row center">
+						<a class="link-more" href="inscription.html">Inscription <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+					</div>
+				</div>
+				<div class="row">
+					<h2>Vous êtes restaurateur ? </h2>
+					<div class="row">
+						<p>Besoin d’offrir une nouvelle dimension à votre restaurant. Envie de faire plus de commandes et d’avoir plus de couverts, 
+						sans faire d’effort, ni même faire d’investissement, avec HoMe Menus c’est garanti.</p>
+						<p>Faites nous confiance nous nous occupons de tout !</p>
+						<p>Contactez-nous dès maintenant</p>
+					</div>
+					<div class="row center">
+						<a class="link-more" href="contact-restaurant.html" style="width : 260px;">Devenir restaurant partenaire <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6 col-md-offset-1">
+		<h2>Une question ? Contactez-nous</h2>
 		<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="">
 			<fieldset>
 				<div class="form-group">
@@ -44,7 +72,7 @@
 				</div>
 				<div class="g-recaptcha" data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>"></div>
 				<input name="status" type="text" hidden="hidden" value="user"/>
-				<button class="btn btn-primary" type="submit">Envoyer</button>
+				<button class="send-button" type="submit">Envoyer <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></button>
 			</fieldset>
 		</form>
 	</div>

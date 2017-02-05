@@ -751,7 +751,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getLivreurAvailableForCommande ($commande) {
-		$sql = "SELECT user.uid, user.login, user.is_login, us.gcm_token, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin
+		$sql = "SELECT user.uid, user.login, user.is_login, ul.telephone, us.gcm_token, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin
 		FROM users user
 		JOIN user_livreur ul ON ul.uid = user.uid
 		JOIN user_livreur_dispo uld ON uld.uid = user.uid
@@ -778,6 +778,7 @@ class Model_User extends Model_Template {
 			$user->id = $livreur['uid'];
 			$user->login = $livreur['login'];
 			$user->is_login = $livreur['is_login'];
+			$user->telephone = $livreur['telephone'];
 			$user->gcm_token = $livreur['gcm_token'];
 			$list[] = $user;
 		}

@@ -17,6 +17,9 @@ include_once ROOT_PATH."models/PDF.php";
 include_once ROOT_PATH."models/Paypal.php";
 include_once ROOT_PATH."models/PaypalItem.php";
 include_once ROOT_PATH."models/CodePromo.php";
+include_once ROOT_PATH."models/Option.php";
+include_once ROOT_PATH."models/OptionValue.php";
+include_once ROOT_PATH."models/Accompagnement.php";
 
 
 class Controller_Paypal extends Controller_Default_Template {

@@ -18,3 +18,7 @@ RewriteRule ^web/contact-evenement.html$ web/index.php?controler=contact&action=
 RewriteRule ^web/mention-legal.html$ web/index.php?action=mention_legal [L]
 RewriteRule ^web/cgv.html$ web/index.php?action=cgv [L]
 RewriteRule ^web/cgu.html$ web/index.php?action=cgu [L]
+RewriteRule ^web/particuliers.html$ web/index.php?action=particuliers [L]
+RewriteRule ^web/entreprises.html$ web/index.php?action=entreprises [L]
+RewriteRule ^web/evenement.html$ web/index.php?action=evenement [L]
+RewriteRule ^web/inscription.html$ web/index.php?action=inscription [L]

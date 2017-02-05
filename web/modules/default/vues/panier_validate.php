@@ -32,14 +32,6 @@
 			<input class="form-control" name="nom" type="text" value="<?php echo utf8_encode($request->panier->rue); ?>, <?php echo utf8_encode($request->panier->code_postal); ?> <?php echo utf8_encode($request->panier->ville); ?>" disabled>
 		</div>
 	</div>
-	<!--<div class="row">
-		<div class="col-md-3">
-			<span>Complémént d'adresse : </span>
-		</div>
-		<div class="col-md-9">
-			<input class="form-control" name="nom" type="text" value="" >
-		</div>
-	</div>-->
 	<div class="row">
 		<div class="col-md-3">
 			<span>Téléphone : </span>
@@ -253,7 +245,7 @@
 	<div id="paiementsForm" class="row" style="display : none;">
 		<div class="col-md-6">
 			<form style="text-align : center;" id="payPaypal" action="?controler=paypal" method="POST">
-				<input id="command" class="btn btn-primary" type="submit" value="Payer avec paypal">
+				<input id="command" class="validate-button" type="submit" value="Payer avec paypal">
 			</form>
 			<div class="col-md-offset-2 col-md-10">
 				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
@@ -288,7 +280,7 @@
 			$("#accept_cgv_error_message").hide();
 			$("#paiementsForm").show();
 			$("#payCard .stripe-button-el span").css("min-height", "0");
-			$("#payCard .stripe-button-el").removeClass("stripe-button-el").addClass("btn btn-primary");
+			$("#payCard .stripe-button-el").removeClass("stripe-button-el").addClass("validate-button");
 		} else {
 			$("#accept_cgv_error_message").show();
 			$("#paiementsForm").hide();

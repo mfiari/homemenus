@@ -10,6 +10,7 @@ include_once ROOT_PATH."models/Menu.php";
 include_once ROOT_PATH."models/Certificat.php";
 include_once ROOT_PATH."models/Commentaire.php";
 include_once ROOT_PATH."models/Carte.php";
+include_once ROOT_PATH."models/News.php";
 
 class Controller_Index extends Controller_Default_Template {
 	
@@ -29,6 +30,15 @@ class Controller_Index extends Controller_Default_Template {
 					break;
 				case "faq" :
 					$this->faq($request);
+					break;
+				case "particuliers" :
+					$this->particuliers($request);
+					break;
+				case "entreprises" :
+					$this->entreprises($request);
+					break;
+				case "evenement" :
+					$this->evenement($request);
 					break;
 				case "restaurants_partenaire" :
 					$this->restaurants_partenaire($request);
@@ -85,6 +95,8 @@ class Controller_Index extends Controller_Default_Template {
 	public function home ($request) {
 		$request->home = true;
 		$request->title = "HoMe Menus - vos envies sont servies";
+		$modelNews = new Model_News();
+		$request->news = $modelNews->getAllActiveNews();
 		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places", "res/js/home.js");
 		$request->vue = $this->render("home");
 	}
@@ -102,6 +114,21 @@ class Controller_Index extends Controller_Default_Template {
 	public function faq ($request) {
 		$request->title = "HoMe Menus - FAQ";
 		$request->vue = $this->render("faq");
+	}
+	
+	public function particuliers ($request) {
+		$request->title = "HoMe Menus - Particuliers";
+		$request->vue = $this->render("particuliers");
+	}
+	
+	public function entreprises ($request) {
+		$request->title = "HoMe Menus - Entreprises";
+		$request->vue = $this->render("entreprises");
+	}
+	
+	public function evenement ($request) {
+		$request->title = "HoMe Menus - Evénement";
+		$request->vue = $this->render("evenement");
 	}
 	
 	public function restaurants_partenaire ($request) {

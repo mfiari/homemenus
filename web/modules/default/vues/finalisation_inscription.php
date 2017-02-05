@@ -36,7 +36,7 @@
 				<div>
 					<span class="required">* Obligatoire</span>
 				</div>
-				<button id="subscribe-button" name="subscribeButton" class="btn btn-primary" type="submit">Créer mon compte</button>
+				<button id="subscribe-button" name="subscribeButton" class="validate-button" type="submit">Créer mon compte</button>
 			</fieldset>
 		</form>
 	</div>
@@ -62,7 +62,7 @@
 					<label for="password">Mot de passe<span class="required">*</span> : </label>
 					<input class="form-control" id="password" name="password" type="password" maxlength="32" required>
 				</div>
-				<button id="login-button" name="loginButton" class="btn btn-primary" type="submit">Connexion</button>
+				<button id="login-button" name="loginButton" class="validate-button" type="submit">Connexion</button>
 			</fieldset>
 		</form>
 	</div>

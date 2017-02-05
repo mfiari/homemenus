@@ -64,7 +64,7 @@
 				</div>
 				<div class="g-recaptcha" data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>"></div>
 				<input name="status" type="text" hidden="hidden" value="user"/>
-				<button class="btn btn-primary" type="submit">Envoyer</button>
+				<button class="validate-button" type="submit">Envoyer</button>
 			</fieldset>
 		</form>
 	</div>

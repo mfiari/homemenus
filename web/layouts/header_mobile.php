@@ -3,6 +3,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="description" content="HoMe Menus, livraison à domicile de plats de restaurants dans les Yvelines 78 à Mantes la jolie. 
 	Restaurants japonais, Italien, Indien, provençale."/>
+	<meta name="viewport" content="width=device-width"/>
 	<link rel="icon" href="res/img/favicon.ico" />
 	<title><?php echo $request->title; ?></title>
 	<script type="text/javascript" src="res/js/jquery-2.1.1.js"></script>

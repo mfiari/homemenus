@@ -32,6 +32,10 @@ $(function() {
 			$("#notation-modal").modal('hide');
 		});
 	});
+	$("#adress-search a.search-button").click(function() {
+		$("#adress-form").submit();
+	});
+	openQuestionBox ();
 });
 
 function openCard () {
@@ -298,5 +302,18 @@ function openChatBox (id_commande) {
 			e.preventDefault();
 			$('#live-chat').fadeOut(300);
 		});
+	});
+}
+
+function openQuestionBox () {
+	alert('ok');
+	$("#live-chat").show();
+	$('#live-chat header').on('click', function() {
+		$('.chat').slideToggle(300, 'swing');
+		$('.chat-message-counter').fadeToggle(300, 'swing');
+	});
+	$('.chat-close').on('click', function(e) {
+		e.preventDefault();
+		$('#live-chat').fadeOut(300);
 	});
 }

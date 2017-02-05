@@ -38,34 +38,33 @@
 		<?php
 			$current_heure = date('H');
 			$current_minute = date('i');
-			$indice = 0;
 			$totalRestaurant = count($request->restaurants);
 			$totalRestaurantOuvert = 0;
 		?>
 		<?php foreach ($request->restaurants as $restaurant) : ?>
 			<?php $horaire = $restaurant->horaire; ?>
 			<?php if ($horaire->heure_debut != '' && $restaurant->distance < 16 && $restaurant->distance > 0) : ?>
-				<div class="row">
-					<div class="col-sm-12 item">
-						<span class="title">
+				<div class="row" style="background-color : #F4F4F4;">
+					<div class="col-md-5 col-sm-5 col-xs-5">
+						<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
+							<img style="width : 100%" src="res/img/restaurant/<?php echo $restaurant->logo; ?>" alt="HoMe Menus - <?php echo utf8_encode($restaurant->nom); ?>" Title="HoMe Menus - <?php echo utf8_encode($restaurant->nom); ?>">
+						</a>
+					</div>
+					<div class="col-md-7 col-sm-7 col-xs-7">
+						<h2>
 							<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
 								<?php echo utf8_encode($restaurant->nom); ?>
 							</a>
-						</span>
-						<div class="logo_restaurant">
-							<a href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
-								<img src="res/img/restaurant/<?php echo $restaurant->logo; ?>">
-							</a>
-						</div>
+						</h2>
+						<span><?php echo utf8_encode($restaurant->short_desc); ?></span><br />
+						<hr />
+						<span>Horaires d'ouverture <?php echo formatHeureMinute($horaire->heure_debut,$horaire->minute_debut); ?> - <?php echo formatHeureMinute($horaire->heure_fin,$horaire->minute_fin); ?></span>
+						<hr />
 					</div>
-				</div>
-				<?php $indice++; ?>
+				</div><br />
 				<?php $totalRestaurantOuvert++; ?>
 			<?php endif; ?>
 		<?php endforeach; ?>
-		<?php if ($indice %4 == 1) : ?>
-			</div>
-		<?php endif; ?>
 	<?php endif; ?>
 </div>
 <?php if ((count($request->restaurants) > 0) && ($totalRestaurantOuvert < $totalRestaurant)) : ?>

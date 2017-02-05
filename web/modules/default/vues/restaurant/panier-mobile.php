@@ -83,7 +83,7 @@
 	<?php endforeach; ?>
 </script>
 <div id="panier-content">
-	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
+	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=restaurant&action=index&id=<?php echo $request->panier->restaurant->id; ?>">
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour à la carte du restaurant
 	</a>
 	<div>

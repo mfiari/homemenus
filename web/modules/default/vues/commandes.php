@@ -1,6 +1,7 @@
 <ul class="nav nav-tabs">
   <li role="presentation" class="active"><a href="#">Commande en cours</a></li>
   <li role="presentation"><a href="?controler=commande&action=finish">Commande réalisée(s)</a></li>
+  <li role="presentation"><a href="?controler=commande&action=history">Historique des commandes</a></li>
 </ul>
 <h2>Commandes en cours <span class="badge"></span></h2>
 <div id="commandes">

@@ -29,6 +29,8 @@
 	
 	$dateDebut = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d')-7, date('Y')));
 	$dateFin = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d')-1, date('Y')));
+	/*$dateDebut = '2016-06-03';
+	$dateFin = '2017-01-11';*/
 	$today = date('Y-m-d');
 		
 	$CommandeDir = ROOT_PATH.'files/commandes/'.$today.'/';
@@ -58,7 +60,7 @@
 		$messageContent = str_replace("[DATE_DEBUT]", formatTimestampToDate($dateDebut), $messageContent);
 		$messageContent = str_replace("[DATE_FIN]", formatTimestampToDate($dateFin), $messageContent);
 		
-		send_mail ("informatique@homemenus.fr", "Bilan des commandes", $messageContent, MAIL_FROM_DEFAULT, $attachments);
+		send_mail ("admin@homemenus.fr", "Bilan des commandes", $messageContent, MAIL_FROM_DEFAULT, $attachments);
 	}
 	
 	writeLog (CRON_LOG, "fin bilan commande restaurant");

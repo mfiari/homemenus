@@ -8,6 +8,8 @@
 	include_once ROOT_PATH."models/User.php";
 	include_once ROOT_PATH."models/Restaurant.php";
 	include_once ROOT_PATH."models/GCMPushMessage.php";
+	include_once ROOT_PATH."models/Nexmo.php";
+	include_once ROOT_PATH."models/SMS.php";
 	
 	$modelCommande = new Model_Commande();
 	$commandes = $modelCommande->getCommandeNonAttribue();
@@ -28,6 +30,7 @@
 		
 		if ($livreur->is_login) {
 			sendNotificationMessage ($livreur);
+			sendSMS ($livreur);
 		}
 		$commande->uid = $livreur->id;
 		$commande->attributionLivreur();
@@ -113,4 +116,11 @@
 			$message = 'Le livreur '.$livreur->id.' ne possède pas de gcm_token';
 			writeLog(CRON_LOG, $message, LOG_LEVEL_WARNING);
 		}
+	}
+	
+	function sendSMS ($livreur) {
+		$sms = new Nexmo();
+		$sms->message = "Une nouvelle commande vient de vous êtes attribuer";
+		$sms->addNumero($livreur->telephone);
+		$sms->sendMessage();
 	}

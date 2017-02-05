@@ -1,5 +1,5 @@
 <div id="panier-info-modal" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -29,8 +29,14 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button id="validationButton" class="btn btn-primary" type="submit">Valider</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+				<div class="row">
+					<div class="col-md-6 center">
+						<button id="validationButton" class="validate-button" type="submit">Valider</button>
+					</div>
+					<div class="col-md-6 center">
+						<button type="button" class="close-button" data-dismiss="modal">Fermer <span class="glyphicon glyphicon-remove" aria-hidden="true"></button>
+					</div>
+				</div>
 				<div style="display : none; text-align: center;" class="alert alert-danger" role="alert">
 					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 					<span class="sr-only">Error:</span>

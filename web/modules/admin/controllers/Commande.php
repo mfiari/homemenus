@@ -108,6 +108,9 @@ class Controller_Commande extends Controller_Admin_Template {
 				case "facture" :
 					$this->facture($request);
 					break;
+				case "rapport_commandes" :
+					$this->rapport_commandes($request);
+					break;
 			}
 		} else {
 			$this->index($request);
@@ -117,6 +120,8 @@ class Controller_Commande extends Controller_Admin_Template {
 	public function index ($request) {
 		$modelCommande = new Model_Commande();
 		$request->commandes = $modelCommande->getAll();
+		$modelRestaurant = new Model_Restaurant();
+		$request->restaurants = $modelRestaurant->getAllRestaurantEnable();
 		$request->title = "Administration - commandes";
 		$request->vue = $this->render("commande/index.php");
 	}
@@ -881,6 +886,59 @@ class Controller_Commande extends Controller_Admin_Template {
 		$pdf = new PDF ();
 		$pdf->generateFactureClientAdmin($commande);
 		$pdf->render();
+	}
+	
+	public function rapport_commandes ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+	
+		$modelRestaurant = new Model_Restaurant();
+		$modelCommande = new Model_Commande_History();
+		
+		$id_restaurant = $_POST['restaurant'];
+		$email = $_POST['email'];
+		
+		if (isset($_POST['date_debut'])) {
+			$dateDebut = datepickerToDatetime($_POST['date_debut']);
+		} else {
+			$dateDebut = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d')-7, date('Y')));
+		}
+		
+		if (isset($_POST['date_fin'])) {
+			$dateFin = datepickerToDatetime($_POST['date_fin']);
+		} else {
+			$dateFin = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d')-1, date('Y')));
+		}
+		
+		$today = date('Y-m-d');
+		
+		$CommandeDir = ROOT_PATH.'files/commandes/'.$today.'/';
+	
+		if(!is_dir($CommandeDir)){
+		   mkdir($CommandeDir, 0777, true);
+		}
+	
+		$commandes = $modelCommande->getCommandesByRestaurant($id_restaurant, $dateDebut.' 00:00:00', $dateFin.' 23:59:59');
+	
+		if (count($commandes) == 0) {
+			writeLog (SERVER_LOG, "Aucune commande réalisé pour le restaurant $restaurant->id", LOG_LEVEL_WARNING);
+			continue;
+		}
+		
+		$pdf = new PDF();
+		$pdf->generateTotalFactureRestaurant($commandes, formatTimestampToDate($dateDebut), formatTimestampToDate($dateFin));
+		$pdf->render('F', $CommandeDir.'bilan'.$id_restaurant.'.pdf');
+	
+		$messageContent =  file_get_contents (ROOT_PATH.'mails/bilan_commande_restaurant.html');
+		
+		$attachments = array(
+			$CommandeDir.'bilan'.$id_restaurant.'.pdf'
+		);
+
+		$messageContent = str_replace("[DATE_DEBUT]", formatTimestampToDate($dateDebut), $messageContent);
+		$messageContent = str_replace("[DATE_FIN]", formatTimestampToDate($dateFin), $messageContent);
+		
+		send_mail ($email, "Bilan des commandes", $messageContent, MAIL_FROM_DEFAULT, $attachments);
 	}
 	
 }

@@ -1,42 +1,34 @@
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal">&times;</button>
-	<div class="vignette"><img style="float : left; width : 130px;" src="<?php echo $request->carte->logo; ?>"></div>
 	<h2 class="modal-title"><?php echo utf8_encode($request->carte->nom); ?></h2>
 	<?php if ($request->carte->commentaire != "") : ?>
-		<div style="text-align : center;"><span>(<?php echo utf8_encode($request->carte->commentaire); ?>)</span></div>
+		<div style="text-align : center;"><span><i><?php echo utf8_encode($request->carte->commentaire); ?></i></span></div>
 	<?php endif; ?>
-	<div style="clear : both;"></div>
 </div>
 <div class="modal-body">
 	<form method="post" enctype="x-www-form-urlencoded" id="carteForm" action="">
 		<input type="hidden" name="id_carte" value="<?php echo $request->carte->id; ?>" />
 		<input type="hidden" name="id_restaurant" value="<?php echo $request->id_restaurant; ?>" />
-		<div id="stepper" class="stepper" data-min-value="1" data-max-value="5">
-			<label>Quantité</label>
-			<a class="stepper-less stepper-button">-</a>
-			<input type="text" name="quantite" value="0" class="stepper-value">
-			<a class="stepper-more stepper-button">+</a>
-		</div>
 		<?php if (count($request->carte->formats) == 1) : ?>
 			<?php $format = $request->carte->formats[0]; ?>
 			<input type="hidden" name="format" value="<?php echo $format->id; ?>" />
 			<div>
-				<p>Prix : <?php echo formatPrix($format->prix); ?></p>
+				<p style="text-align : center"><b><?php echo formatPrix($format->prix); ?></b></p>
 			</div>
 		<?php else : ?>
-			<div class="row">
+			<div>
 				<?php foreach ($request->carte->formats as $format) : ?>
-					<div class="col-md-4 col-sm-12">
-						<div><input type="radio" name="format" value="<?php echo $format->id; ?>"><span style="margin-left : 10px;"><?php echo utf8_encode($format->nom); ?></span></div>
-						<div>Prix : <?php echo formatPrix($format->prix); ?></div>
+					<div class="row center">
+						<input type="radio" name="format" value="<?php echo $format->id; ?>"><span style="margin-left : 10px;"><?php echo utf8_encode($format->nom); ?></span>
+						<b><?php echo formatPrix($format->prix); ?></b>
 					</div>
 				<?php endforeach; ?>
 			</div>
 		<?php endif; ?>
-		<div class="row">
+		<div class="row" style="margin-bottom : 50px; margin-right : auto; margin-left : auto;">
 			<?php if (count($request->carte->options) > 0) : ?>
 				<?php foreach ($request->carte->options as $option) : ?>
-					<h3>Choisissez votre <?php echo utf8_encode($option->nom); ?> </h3>
+					<span><b>Choisissez votre <?php echo utf8_encode($option->nom); ?> </b></span>
 					<input type="hidden" class="option_ids" value="<?php echo $option->id; ?>" />
 					<?php foreach ($option->values as $value) : ?>
 						<div style="margin-left : 20px;">
@@ -47,7 +39,7 @@
 				<?php endforeach; ?>
 			<?php endif; ?>
 			<?php if (count($request->carte->accompagnements) > 0) : ?>
-				<h3>Accompagnement</h3>
+				<span><b>Accompagnement</b></span>
 				<?php foreach ($request->carte->accompagnements as $accompagnement) : ?>
 					<?php $typeChoix = $accompagnement->limite == 1 ? 'radio' : 'checkbox'; ?>
 					<?php foreach ($accompagnement->cartes as $carte) : ?>
@@ -59,7 +51,7 @@
 				<?php endforeach; ?>
 			<?php endif; ?>
 			<?php if (count($request->carte->supplements) > 0) : ?>
-				<h3>Suppléments</h3>
+				<span><b>Suppléments</b></span>
 				<?php foreach ($request->carte->supplements as $supplement) : ?>
 					<div>
 						<input type="checkbox" name="check_supplement_<?php echo $supplement->id; ?>"/>
@@ -72,6 +64,11 @@
 				<?php endforeach; ?>
 			<?php endif; ?>
 		</div>
+		<div id="stepper" class="stepper" data-min-value="1" data-max-value="5">
+			<a class="stepper-less stepper-button">-</a>
+			<input type="text" name="quantite" value="0" class="stepper-value">
+			<a class="stepper-more stepper-button">+</a>
+		</div>
 	</form>
 </div>
 <div class="modal-footer">
@@ -79,28 +76,28 @@
 		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 		Votre produit a bien été ajouté au panier
 	</div>
-	<div style="display : none;" class="alert alert-danger" role="alert">
-		<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-		<span class="sr-only">Error:</span>
-		Veuillez vous connecter afin d'ajouter un produit au panier, <a data-toggle="modal" onclick="$('#carte-modal').modal('hide');" data-target="#login-modal">Connectez-vous</a>
+	<div class="row">
+		<div class="col-md-6 col-sm-6 center">
+			<?php if ($request->has_livreur_dispo === false) : ?>
+				<div class="alert alert-danger" role="alert" style="text-align: center;">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					<span class="sr-only">Error:</span>
+					Il n'y a aucun livreur disponible pour vous livrer ce restaurant
+				</div>
+			<?php elseif ($request->_id_restaurant_panier !== false && $request->id_restaurant != $request->_id_restaurant_panier) : ?>
+				<div class="alert alert-danger" role="alert">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					<span class="sr-only">Error:</span>
+					Vous avez une commande en cours dans un autre restaurant. Veuillez finaliser votre commande avant de commander dans ce restaurant
+				</div>
+			<?php else : ?>
+				<button id="addtocard" class="validate-button" type="submit">Ajouter au panier</button>
+			<?php endif; ?>
+		</div>
+		<div class="col-md-6 col-sm-6 center">
+			<button type="button" class="close-button" data-dismiss="modal">Fermer <span class="glyphicon glyphicon-remove" aria-hidden="true"></button>
+		</div>
 	</div>
-	<?php if ($request->has_livreur_dispo === false) : ?>
-		<div class="alert alert-danger" role="alert" style="text-align: center;">
-			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-			<span class="sr-only">Error:</span>
-			Il n'y a aucun livreur disponible pour vous livrer ce restaurant
-		</div>
-	<?php elseif ($request->_id_restaurant_panier !== false && $request->id_restaurant != $request->_id_restaurant_panier) : ?>
-		<div class="alert alert-danger" role="alert">
-			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-			<span class="sr-only">Error:</span>
-			Vous avez une commande en cours dans un autre restaurant. Veuillez finaliser votre commande avant de commander dans ce restaurant
-		</div>
-	<?php else : ?>
-		<button id="addtocard" class="btn btn-primary" type="submit">Ajouter au panier</button>
-	<?php endif; ?>
-	<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-	
 	<span style="display : none;" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
 </div>
 <script type="text/javascript">

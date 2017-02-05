@@ -75,5 +75,29 @@
 				</tfoot>
 			</table>
 		</div>
+		<div>
+			<form method="post" action="?controler=commande&action=rapport_commandes">
+				<fieldset>
+					<div class="form-group">
+						<label for="nom">Restaurant : </label>
+						<select name="restaurant">
+							<option value=""></option>
+							<?php foreach ($request->restaurants as $restaurant) : ?>
+								<option value="<?php echo $restaurant->id; ?>"><?php echo $restaurant->nom; ?> (<?php echo $restaurant->ville; ?>)</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					<div class="form-group">
+						<span>Début : </span><input class="datepicker" type="text" name="date_debut" value="">
+						<span>Fin : </span><input class="datepicker" type="text" name="date_fin" value="">
+					</div>
+					<div class="form-group">
+						<label for="eùail">Email : </label>
+						<input type="text" name="email" value="admin@homemenus.fr">
+					</div>
+					<button class="btn btn-primary" type="submit">Generer rapport commandes</button>
+				</fieldset>
+			</form>
+		</div>
 	</div>
 </div>

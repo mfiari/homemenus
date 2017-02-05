@@ -4,6 +4,9 @@
 
 	DEFINE ("GTM_INTERVAL", 1);
 
+	DEFINE ("MAINTENANCE", true);
+	DEFINE ("ALLOWED_IP", "::1");
+
 	/* path config */
 	DEFINE ("ROOT_PATH", "D:/wamp/www/projets/homemenus/website/");
 	DEFINE ("MODEL_PATH", ROOT_PATH."models/");
@@ -77,8 +80,13 @@
 	DEFINE("STRIPE_PUBLIC_KEY", "pk_test_M0qVCl3qzju6XEHOi5jIDWg8");
 	DEFINE("STRIPE_SECRET_KEY", "sk_test_lIqBT1ebwHGK3sN2xkHIX8kc");
 	
-	/* CLICKATELL */
 	DEFINE ("SEND_SMS", false);
+	
+	/* CLICKATELL */
 	DEFINE("CLICKATELL_REST_API_KEY", "g2qvIp01iGV16u7l9Kc9mhdRfU2gHeTaambzE1aIyXXEYHH3w9hUTWdxQcCaJ44GNHkOBgMmmUu");
+	
+	/* NEXMO */
+	DEFINE("NEXMO_API_KEY", "f9a64675");
+	DEFINE("NEXMO_API_SECRET", "aeaddfefe19860ca");
 
 ?>

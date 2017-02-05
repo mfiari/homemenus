@@ -36,7 +36,7 @@
 				<div>
 					<?php $totalQte = 0; ?>
 					<?php $totalPrix = 0; ?>
-					<table class="table table-striped">
+					<table class="table">
 						<thead>
 							<tr>
 								<th>Nom</th>
@@ -131,20 +131,6 @@
 					</table>
 				</div>
 			</div>
-			<div id="codePromoBlock" style="margin-bottom : 20px;">
-				<span>Code promo</span><br />
-				<input id="code_promo" name="code_promo" type="text" maxlength="10">
-				<button id="codePromoButton" class="btn btn-primary" type="button">Valider</button>
-				<div style="display : none;" class="alert alert-success" role="alert">
-					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-					Votre code promo a été validé.
-				</div>
-				<div style="display : none;" class="alert alert-danger" role="alert">
-					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-					<span class="sr-only">Error:</span>
-					<span class="message"></span>
-				</div>
-			</div>
 			<?php if ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
 				<div class="alert alert-danger" role="alert">
 					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -153,9 +139,9 @@
 				</div>
 			<?php else : ?>
 				<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
-					<button id="command" class="btn btn-primary" type="submit">Précommander</button>
+					<button id="command" class="validate-button" type="submit">Précommander</button>
 				<?php else : ?>
-					<button id="command" class="btn btn-primary" type="submit">Commander</button>
+					<button id="command" class="validate-button" type="submit">Commander</button>
 				<?php endif; ?>
 			<?php endif; ?>
 		</form>

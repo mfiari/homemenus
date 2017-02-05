@@ -20,6 +20,14 @@ $mobileDetect = new Mobile_Detect;
 
 $request->mobileDetect = $mobileDetect;
 
+if (MAINTENANCE) {
+	$allowedUrls = explode(',', ALLOWED_IP);
+	if (!in_array($_SERVER['REMOTE_ADDR'], $allowedUrls)) {
+		require WEBSITE_PATH.'layouts/maintenance.php';
+		exit;
+	}
+}
+
 if (isset($_SESSION["uid"]) && isset($_SESSION["session"])) {
 	include_once ROOT_PATH."models/Template.php";
 	include_once ROOT_PATH."models/User.php";

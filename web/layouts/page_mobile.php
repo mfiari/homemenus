@@ -29,8 +29,10 @@
 				}
 			?>
 			<div id="main-content">
-				<div class="col-md-12" style="padding-top : 50px;">
-					<?php include($request->vue); ?>
+				<div class="row">
+					<div class="col-md-12 col-xs-12" style="padding-top : 50px;">
+						<?php include($request->vue); ?>
+					</div>
 				</div>
 			</div>
 			<div id="loading-modal" class="modal fade" role="dialog">

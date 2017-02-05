@@ -2,7 +2,7 @@
 
 class Model_Modification extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $tables;
 	private $id_column;
 	private $field;

@@ -1,6 +1,6 @@
 <h1>HoMe Menus - Qui sommes-nous</h1>
 
-<div class="row">
+<div class="row" style="background-color : #DDDDDD;">
 	<div class="col-md-10 col-md-offset-1">
 		<div class="row">
 			<h2>L'entreprise</h2>
@@ -18,18 +18,18 @@
 			<h2>Nos restaurants partenaires</h2>
 			<div>
 				<p>HoMe Menus a sélectionné pour vous les meilleurs restaurants de votre région.<p>
-				<p>Rendez-vous sur la page de <a href="restaurants-partenaire.html">nos restaurants partenaires</a> afin de voir tous les restaurants avec lesquels nous travaillons</p>
+				<p>Rendez-vous sur la page de <a class="link" href="restaurants-partenaire.html">nos restaurants partenaires</a> afin de voir tous les restaurants avec lesquels nous travaillons</p>
 			</div>
 		</div>
 		<div class="row">
 			<h2>Nous contactez</h2>
 			<div class="row">
 				<div class="col-md-8">
-					<p>Vous avez une question. N'hésitez pas à nous joindre via notre <a href="contact.html">page de contact</a>.</p>
-					<p>Vous souhaitez devenir livreur pour HoMe Menus. Postulez via notre <a href="contact-livreur.html">page de contact pour les livreurs</a>.</p>
-					<p>Vous souhaitez devenir restaurant partenaire. Envoyez-nous votre demande via notre <a href="contact-restaurant.html">page de contact pour les restaurants</a>.</p>
-					<p>Vous souhaitez créer un compte entreprise pour vos salariés. Envoyez-nous votre demande via notre <a href="contact-entreprise.html">page de contact pour les entreprises</a>.</p>
-					<p>Vous souhaitez organiser un évènement. Contactez-nous via notre <a href="contact-evenement.html">page de contact</a>.</p>
+					<p>Vous avez une question. N'hésitez pas à nous joindre via notre <a class="link" href="contact.html">page de contact</a>.</p>
+					<p>Vous souhaitez devenir livreur pour HoMe Menus. Postulez via notre <a class="link" href="contact-livreur.html">page de contact pour les livreurs</a>.</p>
+					<p>Vous souhaitez devenir restaurant partenaire. Envoyez-nous votre demande via notre <a class="link" href="contact-restaurant.html">page de contact pour les restaurants</a>.</p>
+					<p>Vous souhaitez créer un compte entreprise pour vos salariés. Envoyez-nous votre demande via notre <a class="link" href="contact-entreprise.html">page de contact pour les entreprises</a>.</p>
+					<p>Vous souhaitez organiser un évènement. Contactez-nous via notre <a class="link" href="contact-evenement.html">page de contact</a>.</p>
 					<p>Nous sommes également joignable par téléphone tous les jours de 10h à 23h au 06 61 45 97 33</p>
 				</div>
 				<div class="col-md-4">
@@ -59,7 +59,7 @@
 <style>
 
 	#main-content h2 {
-		color : #23527C;
+		color : #FF2A00;
 	}
 
 	#main-content div p {

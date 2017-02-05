@@ -82,96 +82,108 @@
 	<?php endforeach; ?>
 </script>
 <input id="id_restaurant" value="<?php echo $restaurant->id; ?>" hidden="hidden" />
-<div id="restaurant">
-	<h2><?php echo utf8_encode($request->restaurant->nom); ?></h2>
-	<a style="margin-bottom: 10px;" class="btn btn-primary" href="?controler=restaurant&action=recherche">
-		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour au resultat de la recherche
+
+<div class="row">
+	<a style="float : left;" class="" href="?controler=restaurant&action=recherche">
+		<span style="margin-right: 10px;" class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
 	</a>
-	<div class="row">
-		<div class="panel panel-default panel-primary">
-			<div class="panel-heading">
-				Informations générales
-			</div>
-			<div class="row">
-				<div class="col-md-6 col-sm-6">
-					<div style="margin-left : 10px; margin-top : 10px;">
-						<p><span>Adresse : </span><?php echo utf8_encode($restaurant->rue); ?>, <?php echo $restaurant->code_postal; ?> <?php echo $restaurant->ville; ?></p>
-						<p><?php echo utf8_encode($restaurant->short_desc); ?></p>
-						<p><i><?php echo utf8_encode($restaurant->long_desc); ?></i></p>
-						<p>
-							<?php if ($horaire === false || $horaire->id_jour == '') : ?>
-								<span>Fermé</span>
-							<?php else : ?>
-								<span>
-									<?php 
-										$link = 'Ouvert de';
-										foreach ($horaires as $h) {
-											echo $link.' '.formatHeureMinute($h->heure_debut,$h->minute_debut).' à '.formatHeureMinute($h->heure_fin,$h->minute_fin);
-											$link = ' et de ';
-										}
-									?>
-								</span>
-							<?php endif; ?>
-						</p>
-						<p>Distance : <?php echo $restaurant->distance; ?> km</p>
-						<p>Prix de livraison : <?php echo formatPrix($request->prix_livraison); ?></p>
+	<h1><?php echo utf8_encode($restaurant->nom); ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-6 col-sm-6" style="text-align : left;">
+		<?php if (!$restaurant->has_livreur_dispo) : ?>
+			<span style="color : #FF0000;">Pas de livreur disponible</span>
+		<?php elseif ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
+			<span style="color : #FF0000;">Restaurant fermé</span>
+		<?php else : ?>
+			<span style="color : #00FF00;">Restaurant ouvert</span>
+		<?php endif; ?>
+	</div>
+	<div class="col-md-6 col-sm-6" style="text-align : right;">
+		<?php if ($restaurant->commentaire == 0) : ?>
+			<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - 0 commentaire
+		<?php else : ?>
+			<a onclick="openCommentairesRestaurant(<?php echo $restaurant->id; ?>)">
+				<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - <?php echo $restaurant->commentaire; ?> commentaire(s)
+			</a>
+		<?php endif; ?>
+	</div>
+</div>
+<div id="restaurant-block" class="row" style="background-color : #F4F4F4;">
+	<div class="col-md-4 col-sm-4">
+		<img style="width : 100%" src="<?php echo getLogoRestaurant($restaurant->id); ?>" alt="HoMe Menus - Dalla Famiglia" Title="HoMe Menus - Dalla Famiglia">
+	</div>
+	<div class="col-md-8 col-sm-8" style="font-size : 12px;">
+		<span><b style="font-size : 14px;"><?php echo utf8_encode($restaurant->rue); ?>, <?php echo $restaurant->code_postal; ?> <?php echo $restaurant->ville; ?></b></span><br /><br />
+		<span><?php echo utf8_encode($restaurant->short_desc); ?></span><br /><br />
+		<p><i><?php echo utf8_encode($restaurant->long_desc); ?></i></p>
+		<div class="row">
+			<div class="col-md-7 col-sm-7">
+				<hr />
+				<div class="row">
+					<div class="col-md-5 col-sm-5">
+						<span><b>Horaires d'ouverture</b></span>
+					</div>
+					<div class="col-md-7 col-sm-7">
+						<span>
+							<?php 
+								$link = '';
+								foreach ($horaires as $h) {
+									echo $link.' '.formatHeureMinute($h->heure_debut,$h->minute_debut).' - '.formatHeureMinute($h->heure_fin,$h->minute_fin);
+									$link = ' et de ';
+								}
+							?>
+						</span>
 					</div>
 				</div>
-				<div class="col-md-6  col-sm-6">
-					<div id="googleMap" class="col-md-10 col-md-offset-1" style="height:200px; margin-top : 10px;"></div>
+				<hr />
+				<div class="row">
+					<div class="col-md-5 col-sm-5">
+						<span><b>Distance</b></span>
+					</div>
+					<div class="col-md-7 col-sm-7">
+						<span><?php echo $restaurant->distance; ?> KM</span>
+					</div>
 				</div>
+				<hr />
+				<div class="row">
+					<div class="col-md-5 col-sm-5">
+						<span><b>Prix de livraison</b></span>
+					</div>
+					<div class="col-md-7 col-sm-7">
+						<span><?php echo formatPrix($request->prix_livraison); ?></span>
+					</div>
+				</div>
+				<hr />
 			</div>
-			<div class="row">
-				<div class="col-md-8 col-sm-12">
+			<div class="col-md-5 col-sm-5">
+				<div>
 					<?php foreach ($restaurant->certificats as $certificat) : ?>
 						<a href="<?php echo $certificat->url; ?>" target="_blank" data-toggle="tooltip" title="<?php echo utf8_encode($certificat->description); ?>">
-							<img src="res/img/<?php echo $certificat->logo; ?>">
-							<span><?php echo utf8_encode($certificat->nom); ?></span>
+							<img  style="width : 70px" src="res/img/<?php echo $certificat->logo; ?>">
 						</a>
 					<?php endforeach; ?>
-				</div>
-				<div class="col-md-4 col-sm-12" style="text-align : center;">
-					<?php if ($restaurant->commentaire == 0) : ?>
-						<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - 0 commentaire
-					<?php else : ?>
-						<a onclick="openCommentairesRestaurant(<?php echo $restaurant->id; ?>)">
-							<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - <?php echo $restaurant->commentaire; ?> commentaire(s)
-						</a>
-					<?php endif; ?>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="row">
-		<?php if (!$restaurant->has_livreur_dispo) : ?>
-			<div class="alert alert-danger" role="alert">
-				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-				<span class="sr-only">Error:</span>
-				Il n'y a pour le moment aucun livreur disponible pour vous livrer ce restaurant. Veuillez réessayer dans quelques minutes.
-			</div>
-		<?php elseif ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
-			<div class="alert alert-warning" role="alert">
-				<span class="glyphicon glyphicon-alert" aria-hidden="true"></span>
-				<span class="sr-only">Error:</span>
-				Le restaurant est actuellement fermé. Il ouvrira à partir de <?php echo formatHeureMinute($horaire->heure_debut,$horaire->minute_debut); ?>.
-				Mais vous pouvez dès a présent faire une précommande en indiquant l'heure à laquelle vous souhaitez être livré.
-				Celle-ci sera prise en compte dès l'ouverture du restaurant.
-			</div>
-		<?php endif; ?>
-	</div>
-	<div class="row">
-		<div class="col-md-3 col-sm-12">
+</div>
+<div id="restaurant" class="row">
+	<div class="col-md-2 col-sm-2">
+		<div class="categories" style="margin-top: 50px; height: 400px; overflow-y: auto; overflow-x: hidden; font-size: 12px;">
 			<?php foreach ($restaurant->categories as $categorie) : ?>
 				<?php if (count($categorie->contenus) > 0) : ?>
 					<div class="row">
-						<a href="#categorie-<?php echo $categorie->id; ?>">
-							<?php 
-								if ($categorie->parent_categorie != '') {
-									echo utf8_encode($categorie->parent_categorie->nom).' : ';
-								}
-								echo utf8_encode($categorie->nom);
-							?>
-						</a>
+						<div class="col-md-12 col-sm-12">
+							<a href="#categorie-<?php echo $categorie->id; ?>">
+								<?php 
+									if ($categorie->parent_categorie != '') {
+										echo utf8_encode($categorie->parent_categorie->nom).' : ';
+									}
+									echo utf8_encode($categorie->nom);
+								?>
+							</a>
+						</div>
 					</div>
 				<?php endif; ?>
 			<?php endforeach; ?>
@@ -181,259 +193,234 @@
 				</div>
 			<?php endif; ?>
 		</div>
-		<div class="col-md-6 col-sm-7">
-			<?php foreach ($restaurant->categories as $categorie) : ?>
-				<?php if (count($categorie->contenus) > 0) : ?>
-					<div class="row">
-						<h3 id="categorie-<?php echo $categorie->id; ?>">
-							<?php 
-								if ($categorie->parent_categorie != '') {
-									echo utf8_encode($categorie->parent_categorie->nom).' : ';
-								}
-								echo utf8_encode($categorie->nom);
-							?>
-						</h3>
-						<?php foreach ($categorie->contenus as $contenu) : ?>
-							<hr />
-							<div data-id="<?php echo $contenu->id; ?>" class="row carte-item">
-								<div class="col-md-12">
+	</div>
+	<div class="col-md-6 col-sm-6">
+		<?php foreach ($restaurant->categories as $categorie) : ?>
+			<?php if (count($categorie->contenus) > 0) : ?>
+				<h3 id="categorie-<?php echo $categorie->id; ?>"><b>
+					<?php 
+						if ($categorie->parent_categorie != '') {
+							echo utf8_encode($categorie->parent_categorie->nom).' : ';
+						}
+						echo utf8_encode($categorie->nom);
+					?>
+				</b></h3>
+				<?php foreach ($categorie->contenus as $contenu) : ?>
+					<hr />
+					<div data-id="<?php echo $contenu->id; ?>" class="row carte-item">
+						<div class="col-md-12 col-sm-12">
+							<div class="row">
+								<div class="col-md-8 col-sm-8">
 									<p class="carte-item-title"><?php echo utf8_encode($contenu->nom); ?></p>
-									<div class="row">
-										<div class="col-md-4 col-sm-4">
-											<div class="row">
-												<div class="vignette"><img src="<?php echo $contenu->logo; ?>"></div>
-											</div>
-											<div class="row">
-												<span>Prix : <?php echo formatPrix($contenu->prix); ?></span>
-											</div>
-										</div>
-										<div class="col-md-6 col-sm-6">
-											<?php echo utf8_encode($contenu->commentaire); ?>
-										</div>
-										<div class="col-md-2 col-sm-2">
-											<span class="add-button" style="display : none;">+</span>
-										</div>
-									</div>
+									<span><i><?php echo utf8_encode($contenu->commentaire); ?></i></span>
+								</div>
+								<div class="col-md-2 col-sm-2">
+									<b><?php echo formatPrix($contenu->prix); ?></b>
+								</div>
+								<div class="col-md-2 col-sm-2">
+									<span class="add-button" style="display : none;">+</span>
 								</div>
 							</div>
-							<?php if ($contenu->supplement->note != '') : ?>
-								<div class="row">
-									<div class="col-md-12" style="text-align : center;">
-										<?php if ($contenu->supplement->commentaire == 0) : ?>
-											<?php echo $contenu->supplement->note; ?> / 5 (<?php echo $contenu->supplement->vote; ?> vote(s)) - 0 commentaire
-										<?php else : ?>
-											<a onclick="openCommentaires(<?php echo $contenu->id; ?>)">
-												<?php echo $contenu->supplement->note; ?> / 5 (<?php echo $contenu->supplement->vote; ?> vote(s))
-												- <?php echo $contenu->supplement->commentaire; ?> commentaire(s)
-											</a>
-										<?php endif; ?>
-									</div>
-								</div>
-							<?php endif; ?>
-						<?php endforeach; ?>
+						</div>
 					</div>
-				<?php endif; ?>
-			<?php endforeach; ?>
-			<?php if (count($restaurant->menus) > 0) : ?>
-				<div class="row">
-					<h3 id="categorie-menu">Menus</h3>
-					<?php foreach ($restaurant->menus as $menu) : ?>
-						<hr />
-						<div data-id="<?php echo $menu->id; ?>" class="row menu-item">
-							<div class="col-md-12">
-								<p class="carte-item-title"><?php echo utf8_encode($menu->nom); ?></p>
-								<div class="row">
-									<div class="col-md-4 col-sm-4">
-										<div class="row">
-											<div class="vignette"><img src="<?php echo $menu->logo; ?>"></div>
-										</div>
-										<div class="row">
-											<span>Prix : <?php echo formatPrix($menu->prix); ?></span>
-										</div>
-									</div>
-									<div class="col-md-6 col-sm-6">
-										<?php echo utf8_encode($menu->commentaire); ?>
-									</div>
-									<div class="col-md-2 col-sm-2">
-										<span class="add-button" style="display : none;">+</span>
-									</div>
+					<?php if ($contenu->supplement->note != '') : ?>
+							<div class="row">
+								<div class="col-md-12 col-sm-12" style="text-align : center;">
+									<?php if ($contenu->supplement->commentaire == 0) : ?>
+										<?php echo $contenu->supplement->note; ?> / 5 (<?php echo $contenu->supplement->vote; ?> vote(s)) - 0 commentaire
+									<?php else : ?>
+										<a onclick="openCommentaires(<?php echo $contenu->id; ?>)">
+											<?php echo $contenu->supplement->note; ?> / 5 (<?php echo $contenu->supplement->vote; ?> vote(s))
+											- <?php echo $contenu->supplement->commentaire; ?> commentaire(s)
+										</a>
+									<?php endif; ?>
 								</div>
 							</div>
-						</div>
+						<?php endif; ?>
 					<?php endforeach; ?>
-				</div>
 			<?php endif; ?>
-		</div>
-		<div id="panier" class="col-md-3 col-sm-5">
-			<h3>Panier</h3>
-			<div id="panier-content">
-				<?php if ($request->panier) : ?>
-					<form method="post" enctype="x-www-form-urlencoded" id="panierForm" action="">
-						<input type="hidden" id="id_panier" name="id_panier" value="<?php echo $request->panier->id; ?>" />
-						<div>
-							<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
-								<input type="hidden" name="type_commande" value="pre_commande">
-								<span style="color : red;">
-									Le <?php echo utf8_encode($request->panier->restaurant->nom); ?> est actuellement fermé. Ouverture
-										de <?php echo formatHeureMinute($horaire->heure_debut, $horaire->minute_debut); ?> 
-										à <?php echo formatHeureMinute($horaire->heure_fin, $horaire->minute_fin); ?><br />
-									Précommande possible dès maintenant.
-								</span><br /><br />
-								<span><b>Heure de livraison souhaitée : </b></span><br />
-								<div id="heure_livraison">
-									<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
+		<?php endforeach; ?>
+		<?php if (count($restaurant->menus) > 0) : ?>
+			<div class="row">
+				<h3 id="categorie-menu">Menus</h3>
+				<?php foreach ($restaurant->menus as $menu) : ?>
+					<hr />
+					<div data-id="<?php echo $menu->id; ?>" class="row menu-item">
+						<div class="col-md-12 col-sm-12">
+							<p class="carte-item-title"><?php echo utf8_encode($menu->nom); ?></p>
+							<div class="row">
+								<div class="col-md-4 col-sm-4">
+									<div class="row">
+										<div class="vignette"><img src="<?php echo $menu->logo; ?>"></div>
+									</div>
+									<div class="row">
+										<span>Prix : <?php echo formatPrix($menu->prix); ?></span>
+									</div>
 								</div>
-							<?php else : ?>
-								<input type="radio" name="type_commande" value="now" checked>Au plus tôt
-								<input type="radio" name="type_commande" value="pre_commande">Précommander
-								<div id="heure_livraison">
-									<span>heure de commande : </span>
-									<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
+								<div class="col-md-6 col-sm-6">
+									<?php echo utf8_encode($menu->commentaire); ?>
 								</div>
-							<?php endif; ?>
-						</div><br />
-						<div class="panel panel-default panel-primary">
-							<div class="panel-heading">
-								Restaurant <?php echo utf8_encode($request->panier->restaurant->nom); ?>
-							</div>
-							<div>
-								<?php $totalQte = 0; ?>
-								<?php $totalPrix = 0; ?>
-								<table class="table table-striped">
-									<thead>
-										<tr>
-											<th>Nom</th>
-											<th>Quantité</th>
-											<th>prix</th>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php foreach ($request->panier->carteList as $carte) : ?>
-											<tr id="tr_carte_<?php echo $carte->id; ?>">
-												<td><?php echo utf8_encode($carte->nom); ?></td>
-												<td><?php echo $carte->quantite; ?></td>
-												<td><?php echo formatPrix($carte->prix); ?></td>
-												<td><a class="carte-item-delete" data-id="<?php echo $carte->id; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
-											</tr>
-											<?php $totalQte += $carte->quantite; ?>
-											<?php $totalPrix += $carte->prix; ?>
-										<?php endforeach; ?>
-										<?php foreach ($request->panier->menuList as $menu) : ?>
-											<tr>
-												<td><?php echo utf8_encode($menu->nom); ?></td>
-												<td><?php echo $menu->quantite; ?></td>
-												<td><?php echo formatPrix($menu->prix); ?></td>
-												<td><a class="menu-item-delete" data-id="<?php echo $menu->id; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
-											</tr>
-											<?php $totalQte += $menu->quantite; ?>
-											<?php $totalPrix += $menu->prix; ?>
-										<?php endforeach; ?>
-										<?php
-											$prix_livraison = $request->panier->prix_livraison;
-											if ($request->_auth && $request->_auth->is_premium) {
-												$prix_livraison -= $request->panier->reduction_premium;
-											}
-										?>
-										<tr>
-											<td>prix de livraison</td>
-											<td></td>
-											<td>
-												<?php 
-													if ($request->panier->code_promo->surPrixLivraison()) {
-														if ($request->panier->code_promo->estGratuit()) {
-															echo "OFFERT";
-															$prix_livraison = 0;
-														} else {
-															$prix_livraison -= $request->panier->code_promo->valeur_prix_livraison;
-															$totalPrix += $prix_livraison;
-															echo formatPrix($prix_livraison);
-														}
-													} else {
-														echo formatPrix($prix_livraison);
-														$totalPrix += $prix_livraison;
-													}
-												?>
-											</td>
-											<td></td>
-										</tr>
-									</tbody>
-									<tfoot>
-										<?php if ($request->panier->code_promo->description != '') : ?>
-											<tr>
-												<th>Promo :</th>
-												<td colspan="3"><?php echo utf8_encode($request->panier->code_promo->description); ?></td>
-											</tr>
-										<?php endif; ?>
-										<tr>
-											<th>Total :</th>
-											<th><?php echo $totalQte; ?></th>
-											<th>
-												<?php 
-													if ($request->panier->code_promo->surPrixTotal()) {
-														if ($request->panier->code_promo->estGratuit()) {
-															echo "OFFERT";
-														} else {
-															$prixReduc = $totalPrix;
-															if ($request->panier->code_promo->valeur_prix_total != -1) {
-																$prixReduc -= $request->panier->code_promo->valeur_prix_total;
-															}
-															if ($request->panier->code_promo->pourcentage_prix_total != -1) {
-																$prixReduc -= ($prixReduc * $request->panier->code_promo->pourcentage_prix_total) / 100;
-															}
-															echo formatPrix($prixReduc);
-														}
-													} else {
-														echo formatPrix($totalPrix);
-													}
-												?>
-											</th>
-											<td></td>
-										</tr>
-									</tfoot>
-								</table>
+								<div class="col-md-2 col-sm-2">
+									<span class="add-button" style="display : none;">+</span>
+								</div>
 							</div>
 						</div>
-						<div id="codePromoBlock" style="margin-bottom : 20px;">
-							<span>Code promo</span><br />
-							<input id="code_promo" name="code_promo" type="text" maxlength="10">
-							<button id="codePromoButton" class="btn btn-primary" type="button">Valider</button>
-							<div style="display : none;" class="alert alert-success" role="alert">
-								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-								Votre code promo a été validé.
-							</div>
-							<div style="display : none;" class="alert alert-danger" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+	</div>
+	<div id="panier" class="col-md-4 col-sm-4"><div class="panier" style="margin-top: 50px; height: 400px; overflow-y: auto; overflow-x: hidden; font-size: 12px;">
+		<h3>Panier</h3>
+		<div id="panier-content">
+			<?php if ($request->panier) : ?>
+				<form method="post" enctype="x-www-form-urlencoded" id="panierForm" action="">
+					<input type="hidden" id="id_panier" name="id_panier" value="<?php echo $request->panier->id; ?>" />
+					<div>
+						<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
+							<input type="hidden" name="type_commande" value="pre_commande">
+							<div class="alert alert-error" role="alert">
 								<span class="sr-only">Error:</span>
-								<span class="message"></span>
-							</div>
-						</div>
-						<?php if ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
-							<div class="alert alert-danger" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-								<span class="sr-only">Error:</span>
-								Le montant minimum pour commander est de <?php echo $request->panier->prix_minimum; ?> € (hors prix de livraison)
+								Le restaurant est actuellement fermé. Il ouvrira à partir de <?php echo formatHeureMinute($horaire->heure_debut, $horaire->minute_debut); ?>.
+								Mais vous pouvez dès a présent faire une précommande en indiquant l'heure à laquelle vous souhaitez être livré.
+							</div><br />
+							<span><b>Heure de livraison souhaitée : </b></span><br />
+							<div id="heure_livraison">
+								<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
 							</div>
 						<?php else : ?>
-							<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
-								<button id="command" class="btn btn-primary" type="submit">Précommander</button>
-							<?php else : ?>
-								<button id="command" class="btn btn-primary" type="submit">Commander</button>
-							<?php endif; ?>
+							<input type="radio" name="type_commande" value="now" checked>Au plus tôt
+							<input type="radio" name="type_commande" value="pre_commande">Précommander
+							<div id="heure_livraison">
+								<span>heure de commande : </span>
+								<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
+							</div>
 						<?php endif; ?>
-					</form>
-				<?php else : ?>
-					<span>(vide)</span>
-				<?php endif; ?>
-			</div>
+					</div><br />
+					<div class="panel panel-default panel-primary">
+						<div class="panel-heading">
+							<b>Restaurant <?php echo utf8_encode($request->panier->restaurant->nom); ?></b>
+						</div>
+						<div>
+							<?php $totalQte = 0; ?>
+							<?php $totalPrix = 0; ?>
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Nom</th>
+										<th>Qté</th>
+										<th>prix</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($request->panier->carteList as $carte) : ?>
+										<tr id="tr_carte_<?php echo $carte->id; ?>">
+											<td><?php echo utf8_encode($carte->nom); ?></td>
+											<td><?php echo $carte->quantite; ?></td>
+											<td><?php echo formatPrix($carte->prix); ?></td>
+											<td><a class="carte-item-delete" data-id="<?php echo $carte->id; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+										</tr>
+										<?php $totalQte += $carte->quantite; ?>
+										<?php $totalPrix += $carte->prix; ?>
+									<?php endforeach; ?>
+									<?php foreach ($request->panier->menuList as $menu) : ?>
+										<tr>
+											<td><?php echo utf8_encode($menu->nom); ?></td>
+											<td><?php echo $menu->quantite; ?></td>
+											<td><?php echo formatPrix($menu->prix); ?></td>
+											<td><a class="menu-item-delete" data-id="<?php echo $menu->id; ?>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+										</tr>
+										<?php $totalQte += $menu->quantite; ?>
+										<?php $totalPrix += $menu->prix; ?>
+									<?php endforeach; ?>
+									<?php
+										$prix_livraison = $request->panier->prix_livraison;
+										if ($request->_auth && $request->_auth->is_premium) {
+											$prix_livraison -= $request->panier->reduction_premium;
+										}
+									?>
+									<tr>
+										<td>prix de livraison</td>
+										<td></td>
+										<td>
+											<?php 
+												if ($request->panier->code_promo->surPrixLivraison()) {
+													if ($request->panier->code_promo->estGratuit()) {
+														echo "OFFERT";
+														$prix_livraison = 0;
+													} else {
+														$prix_livraison -= $request->panier->code_promo->valeur_prix_livraison;
+														$totalPrix += $prix_livraison;
+														echo formatPrix($prix_livraison);
+													}
+												} else {
+													echo formatPrix($prix_livraison);
+													$totalPrix += $prix_livraison;
+												}
+											?>
+										</td>
+										<td></td>
+									</tr>
+								</tbody>
+								<tfoot>
+									<?php if ($request->panier->code_promo->description != '') : ?>
+										<tr>
+											<th>Promo :</th>
+											<td colspan="3"><?php echo utf8_encode($request->panier->code_promo->description); ?></td>
+										</tr>
+									<?php endif; ?>
+									<tr>
+										<th>Total :</th>
+										<th><?php echo $totalQte; ?></th>
+										<th>
+											<?php 
+												if ($request->panier->code_promo->surPrixTotal()) {
+													if ($request->panier->code_promo->estGratuit()) {
+														echo "OFFERT";
+													} else {
+														$prixReduc = $totalPrix;
+														if ($request->panier->code_promo->valeur_prix_total != -1) {
+															$prixReduc -= $request->panier->code_promo->valeur_prix_total;
+														}
+														if ($request->panier->code_promo->pourcentage_prix_total != -1) {
+															$prixReduc -= ($prixReduc * $request->panier->code_promo->pourcentage_prix_total) / 100;
+														}
+														echo formatPrix($prixReduc);
+													}
+												} else {
+													echo formatPrix($totalPrix);
+												}
+											?>
+										</th>
+										<td></td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+					<?php if ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
+						<div class="alert alert-danger" role="alert">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							<span class="sr-only">Error:</span>
+							Le montant minimum pour commander est de <?php echo $request->panier->prix_minimum; ?> € (hors prix de livraison)
+						</div>
+					<?php else : ?>
+						<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
+							<button id="command" class="validate-button" type="submit">Précommander</button>
+						<?php else : ?>
+							<button id="command" class="validate-button" type="submit">Commander</button>
+						<?php endif; ?>
+					<?php endif; ?>
+				</form>
+			<?php else : ?>
+				<span>(vide)</span>
+			<?php endif; ?>
 		</div>
-	</div>
-	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=restaurant&action=recherche">
-		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour au resultat de la recherche
-	</a>
+	</div></div>
 </div>
 <div id="carte-modal" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 		</div>
 	</div>
@@ -461,29 +448,6 @@
 </div>
 <script type="text/javascript">
 	$(function() {
-		initialize();
-		var list = [];
-		
-		var homePoint = {};
-		homePoint.type = "HOME";
-		homePoint.adresse = "<?php echo $request->search_adresse; ?>";
-		
-		var restoPoint = {};
-		restoPoint.type = "ADRESSE";
-		restoPoint.adresse = "<?php echo $restaurant->rue.', '.$restaurant->ville; ?>";
-		restoPoint.content = "<?php echo utf8_encode($restaurant->nom); ?>";
-		
-		var circle = {};
-		circle.type = "CIRCLE";
-		circle.radius = 10000;
-		circle.latitude = <?php echo $restaurant->latitude; ?>;
-		circle.longitude = <?php echo $restaurant->longitude; ?>;
-		
-		list.push(homePoint);
-		list.push(restoPoint);
-		list.push(circle);
-		
-		boundToPoints(list);
 		
 		$(".carte-item").click(function () {
 			$("#loading-modal").modal();
@@ -675,6 +639,16 @@
 			$("#commentaire-modal").modal();
 		});
 	}
+	
+	$(window).scroll(function(){
+		if ($(this).scrollTop() > 450) {
+			$('#restaurant .categories').addClass('fixed');
+			$('#restaurant .panier').addClass('fixed');
+		} else {
+			$('#restaurant .categories').removeClass('fixed');
+			$('#restaurant .panier').removeClass('fixed');
+		}
+	});
 </script>
 <style>
 	#restaurant .vignette img{
@@ -683,14 +657,18 @@
 	}
 	
 	#restaurant .carte-item:hover {
-		background-color : #CCCCCC;
+		background-color : #F4F4F4;
 		cursor : pointer;
 	}
 	
-	#restaurant .carte-item:hover .add-button {
+	#restaurant .carte-item .add-button {
 		display : block !important;
-		color: green;
-		font-size: 30px;
+		background-color: #FF2A00;
+		color: #FFFFFF;
+		font-size: 28px;
+		border-radius : 20px;
+		text-align : center;
+		width : 40px;
 	}
 	
 	#restaurant .carte-item-title {
@@ -699,19 +677,39 @@
 	}
 	
 	#restaurant .menu-item:hover {
-		background-color : #CCCCCC;
+		background-color : #F4F4F4;
 		cursor : pointer;
 	}
 	
-	#restaurant .menu-item:hover .add-button {
+	#restaurant .menu-item .add-button {
 		display : block !important;
-		color: green;
-		font-size: 30px;
+		background-color: #FF2A00;
+		color: #FFFFFF;
+		font-size: 28px;
+		border-radius : 20px;
+		text-align : center;
+		width : 40px;
 	}
 	
 	#restaurant .menu-item-title {
 		font-size : 16px;
 		text-align : center;
+	}
+	
+	#restaurant-block hr {
+		margin-top : 5px;
+		margin-bottom : 5px;
+	}
+	
+	#restaurant .fixed {
+		position: fixed; 
+		top : 0;
+	}
+	
+	#panierForm .panel-heading {
+		background-color : #F4F4F4;
+		border-color : #F4F4F4;
+		color : #000000;
 	}
 	
 </style>

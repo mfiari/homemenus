@@ -2,7 +2,7 @@
 
 class Model_Pre_Commande extends Model_Template {
 	
-	private $id;
+	protected $id;
 	private $uid;
 	private $client;
 	private $rue;

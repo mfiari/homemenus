@@ -70,7 +70,11 @@ class Controller_Panier extends Controller_Default_Template {
 	public function view ($request) {
 		$request->disableLayout = true;
 		$panier = new Model_Panier();
-		$panier->uid = $request->_auth->id;
+		if ($request->_auth) {
+			$panier->uid = $request->_auth->id;
+		} else {
+			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+		}
 		$request->panier = $panier->loadPanier();
 		if (isset($_SESSION['search_adresse'])) {
 			$request->adresse = $_SESSION['search_adresse'];

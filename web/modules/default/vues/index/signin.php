@@ -54,8 +54,18 @@
 				<div>
 					<span class="required">* Obligatoire</span>
 				</div>
-				<button id="subscribe-button" class="btn btn-primary" type="button">Inscription</button>
+				<button id="subscribe-button" class="validate-button" type="button">Inscription</button>
 			</fieldset>
 		</form>
 	</div>
 </div>
+<style>
+	div.search-block {
+		width : 100%
+	}
+	
+	div.search-block input#full_address {
+		border-radius : 0px;
+		width : 100%;
+	}
+</style>
