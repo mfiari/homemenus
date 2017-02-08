@@ -4,6 +4,8 @@
 
 	DEFINE ("GTM_INTERVAL", 1);
 
+	DEFINE ("MAX_KM", 10);
+
 	DEFINE ("MAINTENANCE", true);
 	DEFINE ("ALLOWED_IP", "::1");
 

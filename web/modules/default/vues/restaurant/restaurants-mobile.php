@@ -72,14 +72,14 @@
 		$totalRestaurantNA = $totalRestaurantOuvert;
 		foreach ($request->restaurants as $restaurant) {
 			$horaire = $restaurant->horaire;
-			if ($horaire->heure_debut != '' && ($restaurant->distance >= 16 || $restaurant->distance < 0)) {
+			if ($horaire->heure_debut != '' && ($restaurant->distance >= (MAX_KM +1) || $restaurant->distance < 0)) {
 				$totalRestaurantNA++;
 			}
 		}
 	?>
 	<?php if ($totalRestaurantNA > $totalRestaurantOuvert) : ?>
 		<div style="margin-top : 100px;">
-			<h4>Les restaurants ci-dessous ne peuvent vous être livré car ils se trouvent en dehors de notre périmètre de livraison (qui est de 15km).
+			<h4>Les restaurants ci-dessous ne peuvent vous être livré car ils se trouvent en dehors de notre périmètre de livraison (qui est de <?php echo MAX_KM; ?>km).
 			Si vous souhaitez tout de même vous les faires livrer, merci de passer par la <a href="?controler=contact&action=evenement">commande spécial</a>.</h4>
 			<table class="table table-striped">
 				<tbody>

@@ -140,7 +140,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			if (!isset($_SESSION['search_serialized'])) {
 				$filter = array(
 					"search_adresse" => "Mantes la jolie",
-					"distanceKm" => 15
+					"distanceKm" => MAX_KM
 				);
 			} else {
 				$filter = unserialize($_SESSION['search_serialized']);
@@ -160,7 +160,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			if (isset($_POST["distance"]) && $_POST["distance"] != "") {
 				$filter["distanceKm"] = $_POST["distance"];
 			} else {
-				$filter["distanceKm"] = 15;
+				$filter["distanceKm"] = MAX_KM;
 			}
 			$_SESSION['search_serialized'] = serialize($filter);
 		} else {

@@ -341,7 +341,7 @@ class Controller_Panier extends Controller_Default_Template {
 			$result = array();
 			$result['distance'] = $distance;
 			
-			if ($distance < 16) {
+			if ($distance < (MAX_KM +1)) {
 				writeLog(SERVER_LOG, "Adresse correcte", LOG_LEVEL_INFO, "$rue, $code_postal $ville");
 			} else {
 				writeLog(SERVER_LOG, "Adresse en dehors du périmètre", LOG_LEVEL_ERROR, "$rue, $code_postal $ville");

@@ -14,7 +14,7 @@
 				<div class="form-group">
 					<label for="distance">Distance : </label>
 					<select class="form-control search-filter" name="distance">
-						<?php for ($i = 5 ; $i <= 15 ; $i += 5) :?>
+						<?php for ($i = 5 ; $i <= MAX_KM ; $i += 5) :?>
 							<option value="<?php echo $i; ?>" <?php echo $request->distance == $i ? "selected" : ""; ?>><?php echo $i; ?> km</option>
 						<?php endfor; ?>
 					</select>
@@ -65,7 +65,7 @@
 			?>
 			<?php foreach ($request->restaurants as $restaurant) : ?>
 				<?php $horaire = $restaurant->horaire; ?>
-				<?php if ($horaire->heure_debut != '' && $restaurant->distance < 16 && $restaurant->distance > 0) : ?>
+				<?php if ($horaire->heure_debut != '' && $restaurant->distance < (MAX_KM +1) && $restaurant->distance > 0) : ?>
 					<div class="row" style="background-color : #F4F4F4;">
 						<div class="col-md-5 col-sm-5">
 							<a href="<?php echo restaurantToLink($restaurant, $restaurant->ville); ?>">
@@ -109,7 +109,7 @@
 			?>
 			<?php if ($totalRestaurantNA > $totalRestaurantOuvert) : ?>
 				<div style="margin-bottom : 100px;">
-					<h3>Les restaurants ci-dessous ne peuvent vous être livré car ils se trouvent en dehors de notre périmètre de livraison (qui est de 15km).
+					<h3>Les restaurants ci-dessous ne peuvent vous être livré car ils se trouvent en dehors de notre périmètre de livraison (qui est de <?php echo MAX_KM; ?>km).
 					Si vous souhaitez tout de même vous les faires livrer, merci de passer par la <a href="?controler=contact&action=evenement">commande spécial</a>.</h3>
 					<table class="table table-striped">
 						<tbody>

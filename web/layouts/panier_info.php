@@ -70,7 +70,7 @@
 				if (data.distance < 16) {
 					document.location.href = "index.php?controler=panier&action=finalisation";
 				} else {
-					$("#panier-info-modal .modal-footer div.alert-danger span.message").html("Nous ne pouvons vous livrer ce restaurant car votre adresse se trouve à plus de 15km du restaurant (" + data.distance + " km)");
+					$("#panier-info-modal .modal-footer div.alert-danger span.message").html("Nous ne pouvons vous livrer ce restaurant car votre adresse se trouve à plus de <?php echo MAX_KM; ?>km du restaurant (" + data.distance + " km)");
 					$("#panier-info-modal .modal-footer div.alert-danger").css('display', 'block');
 					hideLoading('validationButton', true);
 				}
