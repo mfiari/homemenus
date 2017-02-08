@@ -1157,4 +1157,8 @@ class Model_User extends Model_Template {
 		}
 		return $value["total"];
 	}
+	
+	public function isAdmin () {
+		return $this->status == USER_ADMIN || $this->status == USER_ADMIN_INFO || $this->status == USER_ADMIN_CLIENT;
+	}
 }
