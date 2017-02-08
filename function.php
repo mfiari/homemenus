@@ -155,7 +155,7 @@ function writeLog ($type, $texte, $level = LOG_LEVEL_INFO, $message = null) {
 }
 
 function fatal_error_handler () {
-	$errfile = "unknown file";
+	/*$errfile = "unknown file";
 	$errstr  = "shutdown";
 	$errno   = E_CORE_ERROR;
 	$errline = 0;
@@ -167,13 +167,14 @@ function fatal_error_handler () {
 		$errfile = $error["file"];
 		$errline = $error["line"];
 		$errstr  = $error["message"];
-		$mailMessage = format_error( $errno, $errstr, $errfile, $errline);
+		$mailMessage = format_error($errno, $errstr, $errfile, $errline);
 		send_mail ("informatique@homemenus.fr", "Fatal error", $mailMessage);
-	}
+	}*/
 }
 
 function format_error ($errno, $errstr, $errfile, $errline) {
-	$trace = print_r( debug_backtrace( false ), true );
+	$trace ='';
+	//$trace = print_r(debug_backtrace(), true);
 
 	$content = "
 		<table>

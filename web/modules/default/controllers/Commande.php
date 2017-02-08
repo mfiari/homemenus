@@ -69,6 +69,16 @@ class Controller_Commande extends Controller_Default_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('commande/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('commande/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
 		if (isset($_GET["id"])) {
 			$commande = new Model_Commande();

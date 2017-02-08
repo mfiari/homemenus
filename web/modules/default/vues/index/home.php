@@ -20,7 +20,7 @@
 					<a href="contact-entreprise.html"><img src="res/img/entreprises.png" alt="HoMe Menus - Entreprises" Title="HoMe Menus - Entreprises"></a>
 				</div>
 				<div class="row">
-					<h3><a href="contact-entreprise.html" style="color : #FFFFFF;">Entreprises</a></h3>
+					<h3><a href="entreprises.html" style="color : #FFFFFF;">Entreprises</a></h3>
 				</div>
 				<div class="row">
 					<p>Bons repas au bureau ou déjeuners d'équipe ? HoMe Menus a prévu une gamme exceptionnelle de produits et services.</p>
@@ -82,7 +82,7 @@
 		</div>
 	</div>
 	<div class="row center">
-		<a class="link" href="restaurants.html"><b>Voir</b> tous les restaurants</a>
+		<a class="link" href="restaurants-partenaire.html"><b>Voir</b> tous les restaurants</a>
 	</div>
 </div>
 <div class="row">

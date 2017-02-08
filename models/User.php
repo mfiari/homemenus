@@ -1059,6 +1059,28 @@ class Model_User extends Model_Template {
 		return $this;
 	}
 	
+	public function getLivreurInfo () {
+		$sql = "SELECT user.nom, user.prenom, us.gcm_token, ul.telephone
+		FROM users user
+		JOIN user_livreur ul ON ul.uid = user.uid
+		JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
+		WHERE user.uid = :uid
+		LIMIT 1";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		$this->nom = $value['nom'];
+		$this->prenom = $value['prenom'];
+		$this->telephone = $value['telephone'];
+		$this->gcm_token = $value['gcm_token'];
+		return $this;
+	}
+	
 	public function getLivreurDispo () {
 		$sql = "SELECT uld.id, rue, ville, code_postal, latitude, longitude, perimetre, vehicule, id_jour, heure_debut, minute_debut, heure_fin, minute_fin, 
 		days.nom 

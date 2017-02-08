@@ -76,7 +76,6 @@ class Controller_Restaurant extends Controller_Default_Template {
 	
 	public function index ($request) {
 		if (isset($_GET['id'])) {
-			$request->title = "Restaurant";
 			$modelRestaurant = new Model_Restaurant();
 			$modelRestaurant->id = $_GET['id'];
 			$request->restaurant = $modelRestaurant->loadAll();
@@ -126,6 +125,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			if (isset($_SESSION['search_rue'])) {
 				$request->rue = $_SESSION['search_rue'];
 			}
+			$request->title = 'Restaurant '.utf8_encode($request->restaurant->nom);
 			$request->search_adresse = $_SESSION['search_adresse'];
 			$request->javascripts = array("res/js/menu.js", "https://maps.googleapis.com/maps/api/js?libraries=places");
 			$request->vue = $this->render("restaurant");

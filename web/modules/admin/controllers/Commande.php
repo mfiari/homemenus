@@ -23,6 +23,8 @@ include_once ROOT_PATH."models/Certificat.php";
 include_once ROOT_PATH."models/Commentaire.php";
 include_once ROOT_PATH."models/CodePromo.php";
 include_once ROOT_PATH."models/PDF.php";
+include_once ROOT_PATH."models/SMS.php";
+include_once ROOT_PATH."models/Nexmo.php";
 
 class Controller_Commande extends Controller_Admin_Template {
 	
@@ -146,7 +148,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			if ($livreur === false ||$livreur->id != $id_livreur) {
 				$modelUser = new Model_User();
 				$modelUser->id = $id_livreur;
-				$modelUser->get();
+				$modelUser->getLivreurInfo();
 				$commande->uid = $modelUser->id;
 				if ($commande->attributionLivreur()) {
 					$gcm = new GCMPushMessage(GOOGLE_API_KEY);
@@ -162,6 +164,12 @@ class Controller_Commande extends Controller_Admin_Template {
 					// On notifie nos utilisateurs
 					$result = $gcm->send($message, $data);
 					
+					/* Envoi de SMS */
+					$sms = new Nexmo();
+					$sms->message = "La commande #".$commande->id." vous a été attribué";
+					$sms->addNumero($modelUser->telephone);
+					$sms->sendMessage();
+					
 					$message = "Une commande vous a été retiré";
 					// listre des utilisateurs à notifier
 					$gcm->setDevices(array($livreur->gcm_token));
@@ -173,6 +181,12 @@ class Controller_Commande extends Controller_Admin_Template {
 					);
 					// On notifie nos utilisateurs
 					$result = $gcm->send($message, $data);
+					
+					/* Envoi de SMS */
+					$sms = new Nexmo();
+					$sms->message = "Le commande #".$commande->id." vous a été retiré";
+					$sms->addNumero($livreur->telephone);
+					$sms->sendMessage();
 				}
 			}
 		}

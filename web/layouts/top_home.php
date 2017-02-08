@@ -14,7 +14,7 @@
 				<li><a href="contact.html">Contact</a></li>
 				<li><a href="faq.html">FAQ</a></li>
 				<?php if ($request->_auth) : ?>
-					<li class="user"><a href="?controler=compte"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
+					<li class="user"><a href="index.php?controler=compte"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
 				<?php else : ?>
 					<li class="user"><a data-toggle="modal" data-target="#login-modal"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
 				<?php endif; ?>
@@ -33,7 +33,7 @@
 			<h1>Vous aussi, profitez de la livraison<br />de repas à domicile</h1>
 		</div>
 		<div id="adress-search">
-			<form id="adress-form" action="?controler=restaurant&action=recherche" method="POST">
+			<form id="adress-form" action="restaurants.html" method="POST">
 				<div class="search-block">
 					<?php
 						$adresse = "";
@@ -49,7 +49,7 @@
 			</form>
 		</div>
 		<div style="color : #FFFFFF; margin-top: 50px; text-align : center;">
-			<p>Cherchez parmis une selection de 150 restaurants</p>
+			<p>Cherchez parmis une selection de restaurants</p>
 			<span style="background-color: rgba(255, 42, 0, 0.7); font-weight : bold; padding: 2px 10px;">dans la région de Mantes-la-Jolie</span>
 		</div>
 	</div>
