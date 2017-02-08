@@ -50,7 +50,7 @@
 			ga('create', 'UA-75124157-1', 'auto');
 			ga('send', 'pageview');
 		</script>
-		<?php if ($request->_auth->status !== USER_ADMIN) : ?>
+		<?php if ((!$request->_auth) || ($request->_auth && !$request->_auth->isAdmin())) : ?>
 			<!-- Hotjar Tracking Code for https://homemenus.fr -->
 			<script>
 				(function(h,o,t,j,a,r){
