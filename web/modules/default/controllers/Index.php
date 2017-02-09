@@ -95,7 +95,7 @@ class Controller_Index extends Controller_Default_Template {
 	public function home ($request) {
 		$request->home = true;
 		$request->title = "HoMe Menus - vos envies sont servies";
-		$modelNews = new Model_News();
+		$modelNews = new Model_News(true, $request->dbConnector);
 		$request->news = $modelNews->getAllActiveNews();
 		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places", "res/js/home.js");
 		$request->vue = $this->render("home");
@@ -133,13 +133,13 @@ class Controller_Index extends Controller_Default_Template {
 	
 	public function restaurants_partenaire ($request) {
 		$request->title = "HoMe Menus - Restaurants partenaire";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$request->restaurants = $modelRestaurant->getAllRestaurantEnable();
 		$request->vue = $this->render("restaurants_partenaire");
 	}
 	
 	public function restaurant_partenaire ($request) {
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id'];
 		$request->restaurant = $modelRestaurant->loadAll();
 		$request->title = "HoMe Menus - Restaurant ".utf8_encode($request->restaurant->nom);
@@ -149,7 +149,7 @@ class Controller_Index extends Controller_Default_Template {
 	
 	public function plats_favoris ($request) {
 		$request->title = "HoMe Menus - Plats favoris";
-		$modelCarte = new Model_Carte();
+		$modelCarte = new Model_Carte(true, $request->dbConnector);
 		$request->cartes = $modelCarte->getBestProducts();
 		$request->vue = $this->render("plats_favoris");
 	}
@@ -193,7 +193,7 @@ class Controller_Index extends Controller_Default_Template {
 				$request->fieldTel = $_POST["telephone"];
 			}
 			if (count($errorMessage) == 0) {
-				$model = new Model_User();
+				$model = new Model_User(true, $request->dbConnector);
 				$model->nom = trim($_POST["nom"]);
 				$model->prenom = trim($_POST["prenom"]);
 				$model->login = trim($_POST["login"]);
@@ -255,7 +255,7 @@ class Controller_Index extends Controller_Default_Template {
 			if ($password == '') {
 				$this->error(400, "bad request");
 			}
-			$user = new Model_User();
+			$user = new Model_User(true, $request->dbConnector);
 			if (!$user->login($login, $password)) {
 				$this->error(404, "Not found");
 			}
@@ -298,7 +298,7 @@ class Controller_Index extends Controller_Default_Template {
 	}
 	
 	public function logout ($request) {
-		$user = new Model_User();
+		$user = new Model_User(true, $request->dbConnector);
 		$user->id = $_SESSION["uid"];
 		if ($user->logout()) {
 			session_destroy();
