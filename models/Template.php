@@ -9,14 +9,16 @@ abstract class Model_Template {
 
 	public function __construct($db = null){
 		if ($db === null) {
-			$this->db = new PDO("mysql:host=".MYSQL_HOST.";dbname=".MYSQL_DBNAME,MYSQL_LOGIN,MYSQL_PASSWORD);
-			// Forcer la communication en utf-8
-			$this->db->exec("SET character_set_client = 'utf8'");
+			$this->db = new DbConnector();
 		} else {
 			$this->db = $db;
 		}
 		$this->sqlHasFailed = false;
 		$this->id = -1;
+	}
+	
+	public static function getDbConnector () {
+		return new DbConnector();
 	}
 	
 	public function beginTransaction () {
@@ -31,8 +33,12 @@ abstract class Model_Template {
 		}
 	}
 	
-	public function getDbConnector () {
+	public function getDb () {
 		return $this->db;
+	}
+	
+	public function closeConnection () {
+		
 	}
 	
 	public function save () {

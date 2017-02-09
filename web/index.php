@@ -6,6 +6,8 @@ ini_set('max_execution_time', 120);
 include_once "../config.php";
 include_once WEBSITE_PATH."core/Request.php";
 include_once ROOT_PATH."function.php";
+include_once MODEL_PATH."Template.php";
+include_once MODEL_PATH."DbConnector.php";
 
 require_once WEBSITE_PATH.'res/lib/Mobile-Detect/Mobile_Detect.php';
 
@@ -21,6 +23,7 @@ $request->home = false;
 $mobileDetect = new Mobile_Detect;
 
 $request->mobileDetect = $mobileDetect;
+$request->dbConnector = Model_Template::getDbConnector();
 
 if (MAINTENANCE) {
 	$allowedUrls = explode(',', ALLOWED_IP);
@@ -31,10 +34,10 @@ if (MAINTENANCE) {
 }
 
 if (isset($_SESSION["uid"]) && isset($_SESSION["session"])) {
-	include_once ROOT_PATH."models/Template.php";
+	
 	include_once ROOT_PATH."models/User.php";
 	include_once ROOT_PATH."models/Parametre.php";
-	$user = new Model_User();
+	$user = new Model_User(true, $request->dbConnector);
 	if ($user->getBySession($_SESSION["uid"], $_SESSION["session"])) {
 		$request->_auth = $user;
 	} else {
@@ -46,11 +49,11 @@ if ($request->_auth) {
 	if ($request->_auth->status == USER_CLIENT) {
 		include_once ROOT_PATH."models/Panier.php";
 		include_once ROOT_PATH."models/Commande.php";
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $request->_auth->id;
 		$request->_itemsPanier = $panier->getNbArticle();
 		$request->_id_restaurant_panier = $panier->getRestaurant();
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$request->_hasCommandeEnCours = $commande->hasCommandeEnCours();
 		if ($request->_hasCommandeEnCours) {
@@ -58,7 +61,7 @@ if ($request->_auth) {
 		}
 	} else if ($request->_auth->status == USER_LIVREUR) {
 		include_once ROOT_PATH."models/Commande.php";
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$request->_hasCommandeEnCours = $commande->hasCommandeEnCoursLivreur();
 		if ($request->_hasCommandeEnCours) {
@@ -66,7 +69,7 @@ if ($request->_auth) {
 		}
 	} else if ($request->_auth->status == USER_ADMIN_RESTAURANT) {
 		include_once ROOT_PATH."models/Restaurant.php";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$fields = array('id', 'nom');
 		$request->_restaurant = $modelRestaurant->getByUser ($fields, $request->_auth->id);
 	}
@@ -136,5 +139,7 @@ if ($request->noRender === false) {
 		}
 	}
 }
+
+$request->dbConnector->closeConnection();
 
 ?>
