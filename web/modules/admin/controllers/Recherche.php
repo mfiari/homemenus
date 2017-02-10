@@ -1,6 +1,5 @@
 <?php
 
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Recherche.php";
 include_once ROOT_PATH."models/Restaurant.php";
 
@@ -25,6 +24,16 @@ class Controller_Recherche extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('recherche/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('recherche/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
 		if (isset($_POST['date_debut'])) {
 			$request->date_debut = $_POST['date_debut'];
@@ -41,16 +50,16 @@ class Controller_Recherche extends Controller_Admin_Template {
 		$dateFin = datepickerToDatetime($request->date_fin).' 23:59:59';
 		
 		$request->title = "Administration";
-		$modelRecherche = new Model_Recherche();
+		$modelRecherche = new Model_Recherche(true, $request->dbConnector);
 		$request->recherches = $modelRecherche->getAll($dateDebut, $dateFin);
-		$request->vue = $this->render("recherche/index.php");
+		$request->vue = $this->render("index");
 	}
 	
 	public function detail ($request) {
 		$request->title = "Administration";
-		$modelRecherche = new Model_Recherche();
+		$modelRecherche = new Model_Recherche(true, $request->dbConnector);
 		$modelRecherche->id = $_GET['id'];
 		$request->recherche = $modelRecherche->load();
-		$request->vue = $this->render("recherche/detail.php");
+		$request->vue = $this->render("detail");
 	}
 }
