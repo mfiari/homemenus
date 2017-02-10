@@ -81,16 +81,16 @@ class Controller_Commande extends Controller_Default_Template {
 	
 	public function index ($request) {
 		if (isset($_GET["id"])) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->uid = $request->_auth->id;
 			$commande->id = $_GET["id"];
 			$request->commande = $commande->load();
-			$request->vue = $this->render("commande.php");
+			$request->vue = $this->render("commande");
 		} else {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->uid = $request->_auth->id;
 			$request->commandes = $commande->loadNotFinishedCommande();
-			$request->vue = $this->render("commandes.php");
+			$request->vue = $this->render("commandes");
 		}
 	}
 	
@@ -98,7 +98,7 @@ class Controller_Commande extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$commande->id = $_GET["commande"];
 		$commande->load();
@@ -111,7 +111,7 @@ class Controller_Commande extends Controller_Default_Template {
 	public function modified ($request) {
 		$request->disableLayout = true;
 		$request->noRender = true;
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$list = $commande->getCommandeClientModified();
 		if (count($list) != 0) {
@@ -121,25 +121,25 @@ class Controller_Commande extends Controller_Default_Template {
 	
 	public function enCours ($request) {
 		$request->disableLayout = true;
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$request->commandes = $commande->loadNotFinishedCommande();
-		$request->vue = $this->render("enCours.php");
+		$request->vue = $this->render("enCours");
 	}
 	
 	public function finish ($request) {
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$request->commandes = $commande->loadFinishedCommande();
-		$request->vue = $this->render("finishedCommandes.php");
+		$request->vue = $this->render("finishedCommandes");
 	}
 	
 	public function view ($request) {
 		$request->disableLayout = true;
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $request->_auth->id;
 		$request->panier = $panier->load();
-		$request->vue = $this->render("panier.php");
+		$request->vue = $this->render("panier");
 	}
 	
 	public function addCarte ($request) {
@@ -154,16 +154,15 @@ class Controller_Commande extends Controller_Default_Template {
 		if (!isset($_POST['id_carte'])) {
 			$this->error(400, "Bad request");
 		}
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $request->_auth->id;
 		$panier->init();
 		$id_carte = $_POST['id_carte'];
 		$id_panier_carte = $panier->addCarte($id_carte);
-		$modelCarte = new Model_Carte();
+		$modelCarte = new Model_Carte(true, $request->dbConnector);
 		$modelCarte->id = $id_carte;
 		$carte = $modelCarte->getSupplements();
 		foreach ($carte->supplements as $supplement) {
-			var_dump($supplement);
 			if (isset($_POST['check_supplement_'.$supplement->id])) {
 				$panier->addCarteSupplement($id_panier_carte, $supplement->id);
 			}
@@ -183,7 +182,7 @@ class Controller_Commande extends Controller_Default_Template {
 		if (!isset($_POST['id_menu'])) {
 			$this->error(400, "Bad request");
 		}
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $request->_auth->id;
 		$panier->init();
 		$id_menu = $_POST['id_menu'];
@@ -193,7 +192,7 @@ class Controller_Commande extends Controller_Default_Template {
 		$id_formule = $_POST['id_formule'];
 		$id_panier_menu = $panier->addMenu($id_menu, $quantite, $id_format);
 		
-		$modelMenu = new Model_Menu();
+		$modelMenu = new Model_Menu(true, $request->dbConnector);
 		$modelMenu->id = $id_menu;
 		$categories = $modelMenu->getCategories($id_formule);
 		foreach ($categories as $categorie) {
@@ -231,10 +230,10 @@ class Controller_Commande extends Controller_Default_Template {
 		}
 		$request->disableLayout = true;
 		$request->noRender = true;
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $request->_auth->id;
 		$panier->load();
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		if ($commande->create($panier, $rue, $ville, $code_postal)) {
 			$panier->remove();
 		}
@@ -260,7 +259,7 @@ class Controller_Commande extends Controller_Default_Template {
 		}
 		$request->disableLayout = true;
 		$request->noRender = true;
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->id = $id_commande;
 		$commande->uid = $request->_auth->id;
 		$commande->noter($note, $commentaire);
@@ -270,7 +269,7 @@ class Controller_Commande extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		$id_commande = $_GET['id_commande'];
-		$chat = new Model_Chat();
+		$chat = new Model_Chat(true, $request->dbConnector);
 		$chat->id_commande = $id_commande;
 		echo $chat->hasChatClient();
 	}
@@ -279,14 +278,14 @@ class Controller_Commande extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$id_commande = $_GET['id_commande'];
 		$request->id_commande = $id_commande;
-		$chat = new Model_Chat();
+		$chat = new Model_Chat(true, $request->dbConnector);
 		$chat->id_commande = $id_commande;
 		$request->messages = $chat->getChatCommande();
 		$chat->vueClient();
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->id = $id_commande;
 		$request->livreur = $commande->getLivreur();
-		$request->vue = $this->render("commande/chat.php");
+		$request->vue = $this->render("chat");
 	}
 	
 	public function sendMessage ($request) {
@@ -295,12 +294,12 @@ class Controller_Commande extends Controller_Default_Template {
 		$id_commande = $_POST['id_commande'];
 		$message = $_POST['message'];
 		$sender = "USER";
-		$chat = new Model_Chat();
+		$chat = new Model_Chat(true, $request->dbConnector);
 		$chat->id_commande = $id_commande;
 		$chat->sender = $sender;
 		$chat->message = $message;
 		$chat->save();
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->id = $id_commande;
 		$livreur = $commande->getLivreur();
 		$registatoin_ids = array($livreur->gcm_token);
