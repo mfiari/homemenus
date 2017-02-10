@@ -35,6 +35,16 @@ class Controller_Contact extends Controller_Default_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('contact/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('contact/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
 		$sujets = array(
 			"QUESTION" => "J'ai une question",
@@ -97,7 +107,7 @@ class Controller_Contact extends Controller_Default_Template {
 		$request->sujets = $sujets;
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/contact.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "HoMe Menus - Contact";
-		$request->vue = $this->render("contact/contact.php");
+		$request->vue = $this->render("contact");
 	}
 	
 	public function livreur ($request) {
@@ -192,7 +202,7 @@ class Controller_Contact extends Controller_Default_Template {
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/livreur.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "HoMe Menus - Contact livreur";
-		$request->vue = $this->render("contact/livreur.php");
+		$request->vue = $this->render("livreur");
 	}
 	
 	public function restaurant ($request) {
@@ -283,7 +293,7 @@ class Controller_Contact extends Controller_Default_Template {
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/restaurant.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "HoMe Menus - Devenir restaurant partenaire";
-		$request->vue = $this->render("contact/restaurant.php");
+		$request->vue = $this->render("restaurant");
 	}
 	
 	public function entreprise ($request) {
@@ -386,7 +396,7 @@ class Controller_Contact extends Controller_Default_Template {
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/entreprise.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "HoMe Menus - Pour les entreprises";
-		$request->vue = $this->render("contact/entreprise.php");
+		$request->vue = $this->render("entreprise");
 	}
 	
 	public function evenement ($request) {
@@ -547,7 +557,7 @@ class Controller_Contact extends Controller_Default_Template {
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/evenement.js", "https://www.google.com/recaptcha/api.js");
 		$request->title = "HoMe Menus - Commande speciale";
-		$request->vue = $this->render("contact/evenements.php");
+		$request->vue = $this->render("evenements");
 	}
 	
 	public function avis ($request) {
