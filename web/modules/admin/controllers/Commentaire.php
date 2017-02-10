@@ -1,6 +1,5 @@
 <?php
 
-include_once MODEL_PATH."Template.php";
 include_once MODEL_PATH."CommandeHistory.php";
 include_once MODEL_PATH."Restaurant.php";
 include_once MODEL_PATH."Commentaire.php";
@@ -59,22 +58,32 @@ class Controller_Commentaire extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('commentaire/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('commentaire/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
 		$request->title = "Notes";
-		$modelCommande = new Model_Commande_History();
+		$modelCommande = new Model_Commande_History(true, $request->dbConnector);
 		$request->commandes = $modelCommande->getAllCommentaire();
-		$request->vue = $this->render("commentaire/index.php");
+		$request->vue = $this->render("index");
 	}
 	
 	public function annule ($request) {
-		$modelCommande = new Model_Commande_History();
+		$modelCommande = new Model_Commande_History(true, $request->dbConnector);
 		$modelCommande->id = $_GET['id_commande'];
 		$modelCommande->disableCommentaire();
 		$this->redirect('index', 'commentaire');
 	}
 	
 	public function enable ($request) {
-		$modelCommande = new Model_Commande_History();
+		$modelCommande = new Model_Commande_History(true, $request->dbConnector);
 		$modelCommande->id = $_GET['id_commande'];
 		$modelCommande->enableCommentaire();
 		$this->redirect('index', 'commentaire');
@@ -82,20 +91,20 @@ class Controller_Commentaire extends Controller_Admin_Template {
 	
 	public function restaurants ($request) {
 		$request->title = "Notes";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$request->restaurants = $modelRestaurant->getAllCommentaire();
-		$request->vue = $this->render("commentaire/restaurants.php");
+		$request->vue = $this->render("restaurants");
 	}
 	
 	public function annuleRestaurant ($request) {
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_commentaire'];
 		$modelRestaurant->disableCommentaire();
 		$this->redirect('restaurants', 'commentaire');
 	}
 	
 	public function enableRestaurant ($request) {
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_commentaire'];
 		$modelRestaurant->enableCommentaire();
 		$this->redirect('restaurants', 'commentaire');
@@ -103,34 +112,34 @@ class Controller_Commentaire extends Controller_Admin_Template {
 	
 	public function plats ($request) {
 		$request->title = "Commentaire - plats";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$request->restaurants = $modelRestaurant->getAllCommentairePlats();
-		$request->vue = $this->render("commentaire/cartes.php");
+		$request->vue = $this->render("cartes");
 	}
 	
 	public function annuleCarte ($request) {
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_commentaire'];
 		$modelRestaurant->disableCommentaireCarte();
 		$this->redirect('plats', 'commentaire');
 	}
 	
 	public function enableCarte ($request) {
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_commentaire'];
 		$modelRestaurant->enableCommentaireCarte();
 		$this->redirect('plats', 'commentaire');
 	}
 	
 	public function annuleMenu ($request) {
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_commentaire'];
 		$modelRestaurant->disableCommentaireMenu();
 		$this->redirect('plats', 'commentaire');
 	}
 	
 	public function enableMenu ($request) {
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_commentaire'];
 		$modelRestaurant->enableCommentaireMenu();
 		$this->redirect('plats', 'commentaire');
