@@ -1,6 +1,5 @@
 <?php
 
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/User.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Horaire.php";
@@ -72,7 +71,7 @@ class Controller_Compte extends Controller_Default_Template {
 		if ($request->_auth) {
 			$request->title = "Compte";
 			if ($request->request_method == "POST") {
-				$modelUser = new Model_User();
+				$modelUser = new Model_User(true, $request->dbConnector);
 				$modelUser->id = $request->_auth->id;
 				$oldUser = $modelUser->getById();
 				if (isset($_POST["nom"]) && trim($_POST["nom"]) != '') {
@@ -113,7 +112,7 @@ class Controller_Compte extends Controller_Default_Template {
 					$request->user = $oldUser;
 				}
 			} else {
-				$modelUser = new Model_User();
+				$modelUser = new Model_User(true, $request->dbConnector);
 				$modelUser->id = $request->_auth->id;
 				$request->user = $modelUser->getById();
 			}
@@ -125,7 +124,7 @@ class Controller_Compte extends Controller_Default_Template {
 	}
 	
 	public function modify_password ($request) {
-		$modelUser = new Model_User();
+		$modelUser = new Model_User(true, $request->dbConnector);
 		$modelUser->id = $request->_auth->id;
 		if ($request->request_method == "POST") {
 			$errors = array();
@@ -159,7 +158,7 @@ class Controller_Compte extends Controller_Default_Template {
 	
 	public function calendrier ($request) {
 		$request->title = "Compte";
-		$modelUser = new Model_User();
+		$modelUser = new Model_User(true, $request->dbConnector);
 		$modelUser->id = $request->_auth->id;
 		$request->user = $modelUser->getById();
 		$request->javascripts = array("res/js/calendar.js");
@@ -167,7 +166,7 @@ class Controller_Compte extends Controller_Default_Template {
 	}
 	
 	public function activation ($request) {
-		$model = new Model_User();
+		$model = new Model_User(true, $request->dbConnector);
 		$model->id = trim($_GET["uid"]);
 		$model->inscription_token = trim($_GET["token"]);
 		if ($model->confirm()) {
@@ -200,7 +199,7 @@ class Controller_Compte extends Controller_Default_Template {
 		if (!isset($_POST['login'])) {
 			$this->error(400, "bad request");
 		}
-		$model = new Model_User();
+		$model = new Model_User(true, $request->dbConnector);
 		$model->login = trim($_POST["login"]);
 		$user = $model->getByLogin();
 		if ($user) {
@@ -223,7 +222,7 @@ class Controller_Compte extends Controller_Default_Template {
 	public function reset_password ($request) {
 		if ($request->request_method == "POST") {
 			$errors = array();
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$modelUser->id = trim($_POST["uid"]);
 			$newPassword = trim($_POST["password"]);
 			$confirmPassword = trim($_POST["confirm_password"]);
@@ -250,7 +249,7 @@ class Controller_Compte extends Controller_Default_Template {
 	public function parametrage ($request) {
 		if ($request->request_method == "POST") {
 			$errors = array();
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$modelUser->id = $request->_auth->id;
 			$modelParametre = new Model_Parametre();
 			$modelParametre->default_adresse_search = (isset($_POST['default_adress']) && $_POST['default_adress'] == 'on');
