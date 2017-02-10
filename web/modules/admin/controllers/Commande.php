@@ -1,8 +1,5 @@
 <?php
 
-include_once ROOT_PATH."function.php";
-
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/CommandeHistory.php";
 include_once ROOT_PATH."models/Carte.php";
@@ -119,34 +116,44 @@ class Controller_Commande extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('commande/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('commande/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
-		$modelCommande = new Model_Commande();
+		$modelCommande = new Model_Commande(true, $request->dbConnector);
 		$request->commandes = $modelCommande->getAll();
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$request->restaurants = $modelRestaurant->getAllRestaurantEnable();
 		$request->title = "Administration - commandes";
-		$request->vue = $this->render("commande/index.php");
+		$request->vue = $this->render("index");
 	}
 	
 	public function view ($request) {
 		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_GET["id_commande"];
 			$request->commande = $commande->load();
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$request->livreurs = $modelUser->getAllActifLivreur();
-			$request->vue = $this->render("commande/view.php");
+			$request->vue = $this->render("view");
 		}
 	}
 	
 	public function updateLivreur ($request) {
 		if (isset($_POST["id_commande"])) {
 			$id_livreur = $_POST["livreur"];
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_POST["id_commande"];
 			$livreur = $commande->getLivreur();
 			if ($livreur === false ||$livreur->id != $id_livreur) {
-				$modelUser = new Model_User();
+				$modelUser = new Model_User(true, $request->dbConnector);
 				$modelUser->id = $id_livreur;
 				$modelUser->getLivreurInfo();
 				$commande->uid = $modelUser->id;
@@ -222,26 +229,26 @@ class Controller_Commande extends Controller_Admin_Template {
 		}
 		$nbItem = $request->nbItem;
 		
-		$modelCommande = new Model_Commande_History();
+		$modelCommande = new Model_Commande_History(true, $request->dbConnector);
 		$result = $modelCommande->getAll($dateDebut, $dateFin, $page, $nbItem);
 		$request->totalRows = $result["total_rows"];
 		$request->commandes = $result["list_commandes"];
 		$request->title = "Administration - commandes";
-		$request->vue = $this->render("commande/history.php");
+		$request->vue = $this->render("history");
 	}
 	
 	public function viewHistory ($request) {
 		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande_History();
+			$commande = new Model_Commande_History(true, $request->dbConnector);
 			$commande->id = $_GET["id_commande"];
 			$request->commande = $commande->load();
-			$request->vue = $this->render("commande/viewHistory.php");
+			$request->vue = $this->render("viewHistory");
 		}
 	}
 	
 	public function annule ($request) {
 		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_GET["id_commande"];
 			if ($commande->annule()) {
 				$livreur = $commande->getLivreur();
@@ -276,7 +283,7 @@ class Controller_Commande extends Controller_Admin_Template {
 	
 	public function validationRestaurant ($request) {
 		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_GET["id_commande"];
 			if ($commande->validation()) {
 				$livreur = $commande->getLivreur();
@@ -313,7 +320,7 @@ class Controller_Commande extends Controller_Admin_Template {
 	
 	public function preparationRestaurant ($request) {
 		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_GET["id_commande"];
 			if ($commande->finPreparation()) {
 				$livreur = $commande->getLivreur();
@@ -341,7 +348,7 @@ class Controller_Commande extends Controller_Admin_Template {
 	
 	public function recuperationLivreur ($request) {
 		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_GET["id_commande"];
 			if ($commande->recuperationCommande()) {
 				$client = $commande->getClient();
@@ -358,7 +365,7 @@ class Controller_Commande extends Controller_Admin_Template {
 	
 	public function livraisonCommande ($request) {
 		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_GET["id_commande"];
 			$commande->livraisonCommande();
 		}
@@ -367,7 +374,7 @@ class Controller_Commande extends Controller_Admin_Template {
 	
 	public function renew ($request) {
 		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_GET["id_commande"];
 			$commande->renew();
 		}
@@ -376,7 +383,7 @@ class Controller_Commande extends Controller_Admin_Template {
 	
 	public function remove ($request) {
 		if (isset($_GET["id_commande"])) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_GET["id_commande"];
 			$commande->remove();
 		}
@@ -399,7 +406,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			if (count($errorMessage) == 0) {
 				$id_user = $_POST["client"];
 				$id_restaurant = $_POST["restaurant"];
-				$panier = new Model_Panier();
+				$panier = new Model_Panier(true, $request->dbConnector);
 				$panier->uid = $id_user;
 				$panier->init();
 				if ($panier->id_restaurant == -1 || $panier->id_restaurant == $id_restaurant) {
@@ -417,7 +424,7 @@ class Controller_Commande extends Controller_Admin_Template {
 				}
 				if (count($errorMessage) == 0) {
 					
-					$modelRestaurant = new Model_Restaurant();
+					$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 					$modelRestaurant->id = $id_restaurant;
 					$request->restaurant = $modelRestaurant->loadAll();
 					
@@ -439,25 +446,25 @@ class Controller_Commande extends Controller_Admin_Template {
 				$request->errorMessage = $errorMessage;
 			}
 		}
-		$modelUser = new Model_User();
+		$modelUser = new Model_User(true, $request->dbConnector);
 		$request->clients = $modelUser->getAllClients();
 		
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$request->restaurants = $modelRestaurant->getAll();
 		
 		$request->title = "Administration - commande";
-		$request->vue = $this->render("commande/createCommande.php");
+		$request->vue = $this->render("createCommande");
 	}
 	
 	public function openCommande ($request) {
 		$id_user = $_GET["client"];
 		$id_restaurant = $_GET["restaurant"];
 		
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $id_user;
 		$panier->init();
 					
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $id_restaurant;
 		$request->restaurant = $modelRestaurant->loadAll();
 					
@@ -470,20 +477,20 @@ class Controller_Commande extends Controller_Admin_Template {
 			
 		$request->title = "Administration - commande";
 		$request->javascripts = array("res/js/menu.js");
-		$request->vue = $this->render("commande/addPanier.php");
+		$request->vue = $this->render("addPanier");
 	}
 	
 	private function carte ($request) {
 		if (isset($_GET["id_carte"])) {
 			$request->disableLayout = true;
-			$modelCarte = new Model_Carte();
+			$modelCarte = new Model_Carte(true, $request->dbConnector);
 			$modelCarte->id = $_GET['id_carte'];
 			$request->id_restaurant = $_GET['id'];
 			$request->id_user = $_GET['id_user'];
 			$request->carte = $modelCarte->load();
 			$request->carte->getLogo($request->id_restaurant);
 			
-			$request->vue = $this->render("commande/carteDetail.php");
+			$request->vue = $this->render("carteDetail");
 		} 
 	}
 	
@@ -499,14 +506,14 @@ class Controller_Commande extends Controller_Admin_Template {
 		$request->noRender = true;
 		$id_restaurant = $_POST['id_restaurant'];
 		
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_POST['id_user'];
 		$panier->init();
 		
 		$quantite = $_POST['quantite'];
 		$id_carte = $_POST['id_carte'];
 		$format = $_POST['format'];
-		$modelCarte = new Model_Carte();
+		$modelCarte = new Model_Carte(true, $request->dbConnector);
 		$modelCarte->id = $id_carte;
 		$modelCarte->load();
 		$id_panier_carte = $panier->addCarte($id_carte, $format, $quantite);
@@ -542,7 +549,7 @@ class Controller_Commande extends Controller_Admin_Template {
 		}
 		$request->disableLayout = true;
 		$request->noRender = true;
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_POST['id_user'];
 		$panier->id = $_POST['id_panier'];
 		$id_panier_carte = $_POST['id_panier_carte'];
@@ -566,10 +573,10 @@ class Controller_Commande extends Controller_Admin_Template {
 		$request->noRender = true;
 		$id_menu = $_POST['id_menu'];
 		$id_restaurant = $_POST['id_restaurant'];
-		$modelMenu = new Model_Menu();
+		$modelMenu = new Model_Menu(true, $request->dbConnector);
 		$modelMenu->id = $id_menu;
 		
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_POST['id_user'];
 		$panier->init();
 		
@@ -602,7 +609,7 @@ class Controller_Commande extends Controller_Admin_Template {
 		}
 		$request->disableLayout = true;
 		$request->noRender = true;
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_POST['id_user'];
 		$panier->id = $_POST['id_panier'];
 		$id_panier_menu = $_POST['id_panier_menu'];
@@ -623,10 +630,10 @@ class Controller_Commande extends Controller_Admin_Template {
 		} else {
 			$request->disableLayout = true;
 		}
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_GET['id_user'];
 		$request->panier = $panier->loadPanier();
-		$request->vue = $this->render("commande/panier.php");
+		$request->vue = $this->render("panier");
 	}
 	
 	public function addCodePromo ($request) {
@@ -635,7 +642,7 @@ class Controller_Commande extends Controller_Admin_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		
-		$modelCodePromo = new Model_CodePromo();
+		$modelCodePromo = new Model_CodePromo(true, $request->dbConnector);
 		$modelCodePromo->code = $codePromo;
 		if ($modelCodePromo->getByCode() === false) {
 			$this->error(404, "Not found");
@@ -653,7 +660,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			}
 		}
 		
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_POST['id_user'];
 		$panier->init();
 		
@@ -692,10 +699,10 @@ class Controller_Commande extends Controller_Admin_Template {
 			$minute_commande = $_POST['minute_commande'];
 		}
 		
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_POST['id_user'];
 		
-		$restaurant = new Model_Restaurant();
+		$restaurant = new Model_Restaurant(true, $request->dbConnector);
 		$restaurant->id = $panier->getRestaurant();
 		$fields = array ("latitude", "longitude");
 		$restaurant->get($fields);
@@ -741,15 +748,14 @@ class Controller_Commande extends Controller_Admin_Template {
 	}
 	
 	public function finalisation ($request) {
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_GET['id_user'];
 		$request->panier = $panier->load();
-		$request->vue = $this->render("commande/panier_validate.php");
+		$request->vue = $this->render("panier_validate");
 	}
 	
 	public function valideCarte ($request) {
-		
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_POST['id_user'];
 		$panier = $panier->load();
 		
@@ -809,10 +815,10 @@ class Controller_Commande extends Controller_Admin_Template {
 	}
 	
 	public function generateCommande ($request) {	
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $_POST['id_user'];
 		$panier->init();
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		if ($commande->create($panier)) {
 			$panier->remove();
 			$user = new Model_User();
@@ -893,7 +899,7 @@ class Controller_Commande extends Controller_Admin_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		
-		$commande = new Model_Commande();
+		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->id = $_GET["commande"];
 		$commande->load();
 		
@@ -906,8 +912,8 @@ class Controller_Commande extends Controller_Admin_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 	
-		$modelRestaurant = new Model_Restaurant();
-		$modelCommande = new Model_Commande_History();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
+		$modelCommande = new Model_Commande_History(true, $request->dbConnector);
 		
 		$id_restaurant = $_POST['restaurant'];
 		$email = $_POST['email'];
