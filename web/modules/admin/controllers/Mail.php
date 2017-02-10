@@ -1,6 +1,5 @@
 <?php
 
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Mail.php";
 
 class Controller_Mail extends Controller_Admin_Template {
@@ -30,6 +29,16 @@ class Controller_Mail extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('mails/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('mails/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
 		if (isset($_POST['date_debut'])) {
 			$request->date_debut = $_POST['date_debut'];
@@ -46,29 +55,29 @@ class Controller_Mail extends Controller_Admin_Template {
 		$dateFin = datepickerToDatetime($request->date_fin).' 23:59:59';
 		
 		$request->title = "Administration";
-		$modelMail = new Model_Mail();
+		$modelMail = new Model_Mail(true, $request->dbConnector);
 		$request->mails = $modelMail->getAll($dateDebut, $dateFin);
-		$request->vue = $this->render("mails/index.php");
+		$request->vue = $this->render("index");
 	}
 	
 	public function detail ($request) {
 		$request->title = "Administration";
-		$modelMail = new Model_Mail();
+		$modelMail = new Model_Mail(true, $request->dbConnector);
 		$modelMail->id = $_GET['id'];
 		$request->mail = $modelMail->load();
-		$request->vue = $this->render("mails/detail.php");
+		$request->vue = $this->render("detail");
 	}
 	
 	public function emailing ($request) {
-		$modelMail = new Model_Mail();
+		$modelMail = new Model_Mail(true, $request->dbConnector);
 		$request->users = $modelMail->getAllClientEmail();
 		$request->title = "Administration - Emailing";
 		$request->javascripts = array("res/lib/tinymce/jquery.tinymce.min.js", "res/lib/tinymce/tinymce.min.js");
-		$request->vue = $this->render("mails/emailing.php");
+		$request->vue = $this->render("emailing");
 	}
 	
 	public function send ($request) {
-		$modelMail = new Model_Mail();
+		$modelMail = new Model_Mail(true, $request->dbConnector);
 		$sujet = $_POST['sujet'];
 		$message = $_POST['message'];
 		$users = $modelMail->getAllClientEmail();
