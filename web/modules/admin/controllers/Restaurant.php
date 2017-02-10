@@ -1,8 +1,5 @@
 <?php
 
-include_once ROOT_PATH."function.php";
-
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Categorie.php";
 include_once ROOT_PATH."models/Contenu.php";
@@ -143,11 +140,21 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('restaurant/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('restaurant/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
 		$request->title = "Administration - restaurant";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$request->restaurants = $modelRestaurant->getAll();
-		$request->vue = $this->render("restaurant/index.php");
+		$request->vue = $this->render("index");
 	}
 	
 	public function edit ($request) {
@@ -187,7 +194,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				$latitude = $coord->{'lat'};
 				$longitude = $coord->{'lng'};
 				
-				$modelRestaurant = new Model_Restaurant();
+				$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 				$modelRestaurant->id = $id_restaurant;
 				$modelRestaurant->nom = $nom;
 				$modelRestaurant->rue = $rue;
@@ -240,31 +247,31 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		} else {
 			$request->title = "Administration - restaurant";
 			if (isset($_GET['id_restaurant'])) {
-				$modelRestaurant = new Model_Restaurant();
+				$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 				$modelRestaurant->id = $_GET['id_restaurant'];
 				$request->restaurant = $modelRestaurant->getOne();
 			}
 			$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
-			$request->vue = $this->render("restaurant/edit.php");
+			$request->vue = $this->render("edit");
 		}
 	}
 	
 	public function enable ($request) {
-		$model = new Model_Restaurant();
+		$model = new Model_Restaurant(true, $request->dbConnector);
 		$model->id = trim($_GET["id_restaurant"]);
 		$model->enable();
 		$this->redirect('index', 'restaurant');
 	}
 	
 	public function disable ($request) {
-		$model = new Model_Restaurant();
+		$model = new Model_Restaurant(true, $request->dbConnector);
 		$model->id = trim($_GET["id_restaurant"]);
 		$model->disable();
 		$this->redirect('index', 'restaurant');
 	}
 	
 	public function deleted ($request) {
-		$model = new Model_Restaurant();
+		$model = new Model_Restaurant(true, $request->dbConnector);
 		$model->id = trim($_GET["id_restaurant"]);
 		$model->deleted();
 		$this->redirect('index', 'restaurant');
@@ -275,10 +282,10 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$this->redirect();
 		}
 		$request->title = "Administration - restaurant";
-		$users = new Model_User();
+		$users = new Model_User(true, $request->dbConnector);
 		$request->users = $users->getByRestaurant($_GET['id_restaurant']);
 		
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_restaurant'];
 		$fields = array(
 			"nom", "rue", "code_postal", "ville", "latitude", "longitude"
@@ -292,7 +299,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		$request->restaurant->loadSupplements();
 		$request->restaurant->loadOptions();
 		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
-		$request->vue = $this->render("restaurant/view.php");
+		$request->vue = $this->render("view");
 	}
 	
 	public function adduser ($request) {
@@ -304,7 +311,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$status = $_POST['status'];
 			$restaurant = $_POST['restaurant'];
 			
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$modelUser->nom = $nom;
 			$modelUser->prenom = $prenom;
 			$modelUser->login = $login;
@@ -316,7 +323,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			
 			$modelUser->save();
 			
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id_restaurant'];
 			$modelRestaurant->loadMinInformation();
 			
@@ -337,19 +344,19 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		} else {
 			$request->title = "Administration - user";
 			if (isset($_GET['id_user'])) {
-				$modelUser = new Model_User();
+				$modelUser = new Model_User(true, $request->dbConnector);
 				$modelUser->id = $_GET['id_user'];
 				$request->user = $modelUser->get();
 			}
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id_restaurant'];
 			$request->restaurant = $modelRestaurant->getOne();
-			$request->vue = $this->render("restaurant/adduser.php");
+			$request->vue = $this->render("adduser");
 		}
 	}
 	
 	public function enableUser ($request) {
-		$model = new Model_User();
+		$model = new Model_User(true, $request->dbConnector);
 		$id_restaurant = trim($_GET["id_restaurant"]);
 		$model->id = trim($_GET["id_user"]);
 		$model->enable();
@@ -357,7 +364,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	}
 	
 	public function disableUser ($request) {
-		$model = new Model_User();
+		$model = new Model_User(true, $request->dbConnector);
 		$id_restaurant = trim($_GET["id_restaurant"]);
 		$model->id = trim($_GET["id_user"]);
 		$model->disable();
@@ -365,7 +372,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	}
 	
 	public function deleteUser ($request) {
-		$model = new Model_User();
+		$model = new Model_User(true, $request->dbConnector);
 		$id_restaurant = trim($_GET["id_restaurant"]);
 		$model->id = trim($_GET["id_user"]);
 		$model->deleted();
@@ -380,15 +387,15 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$this->redirect();
 		}
 		$request->title = "Administration - restaurant";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_restaurant'];
 		$request->restaurant = $modelRestaurant->loadMinInformation();
-		$modelCategorie = new Model_Categorie();
+		$modelCategorie = new Model_Categorie(true, $request->dbConnector);
 		$request->categorie = $modelCategorie;
 		$request->categorie->id = $_GET['id_categorie'];
 		$request->categorie->load();
 		$request->categorie->getContenu($modelRestaurant->id);
-		$request->vue = $this->render("restaurant/viewCategorie.php");
+		$request->vue = $this->render("viewCategorie");
 	}
 	
 	public function editMenu ($request) {
@@ -398,13 +405,13 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$nom = $_POST['nom'];
 			$commentaire = $_POST['commentaire'];
 			
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $id_restaurant;
 			$modelRestaurant->loadFormat();
 			$modelRestaurant->loadFormule();
 			$modelRestaurant->loadHoraires();
 			
-			$modelMenu = new Model_Menu();
+			$modelMenu = new Model_Menu(true, $request->dbConnector);
 			$modelMenu->id = $id_menu;
 			$modelMenu->nom = $nom;
 			$modelMenu->id_restaurant = $id_restaurant;
@@ -435,18 +442,18 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			if (!isset($_GET['id_restaurant'])) {
 				$this->redirect();
 			}
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id_restaurant'];
 			$request->restaurant = $modelRestaurant->loadMinInformation();
 			$request->restaurant->loadFormat();
 			$request->restaurant->loadFormule();
 			$request->restaurant->loadHoraires();
 			if (isset($_GET['id_contenu'])) {
-				$modelCarte = new Model_Carte();
+				$modelCarte = new Model_Carte(true, $request->dbConnector);
 				$modelCarte->id = $_GET['id_contenu'];
 				$request->carte = $modelCarte->load();
 			}
-			$request->vue = $this->render("restaurant/editMenu.php");
+			$request->vue = $this->render("editMenu");
 		}
 	}
 	
@@ -458,21 +465,21 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$this->redirect();
 		}
 		$request->title = "Administration - restaurant";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_restaurant'];
 		$request->restaurant = $modelRestaurant->loadMinInformation();
 		$request->restaurant->loadAllContenu();
-		$modelMenu = new Model_Menu();
+		$modelMenu = new Model_Menu(true, $request->dbConnector);
 		$request->menu = $modelMenu;
 		$request->menu->id = $_GET['id_menu'];
 		$request->menu->load();
-		$request->vue = $this->render("restaurant/viewMenu.php");
+		$request->vue = $this->render("viewMenu");
 	}
 	
 	public function modifyMenu ($request) {
 		if ($request->request_method == "POST") {
 			$id_restaurant = $_POST['id_restaurant'];
-			$modelMenu = new Model_Menu();
+			$modelMenu = new Model_Menu(true, $request->dbConnector);
 			$modelMenu->id = $_POST['id_menu'];
 			$modelMenu->nom = $_POST['nom'];
 			$modelMenu->save();
@@ -481,7 +488,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	}
 	
 	public function deleteMenu ($request) {
-		$model = new Model_Menu();
+		$model = new Model_Menu(true, $request->dbConnector);
 		$id_restaurant = trim($_GET["id_restaurant"]);
 		$model->id = trim($_GET["id_menu"]);
 		$model->deleted();
@@ -497,7 +504,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$is_visible = (isset($_POST['is_visible']) && $_POST['is_visible'] == 'on');
 			$commentaire = $_POST['commentaire'];
 			
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $id_restaurant;
 			$modelRestaurant->loadFormat();
 			$modelRestaurant->loadAccompagnements();
@@ -505,7 +512,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$modelRestaurant->loadOptions();
 			$modelRestaurant->loadHoraires();
 			
-			$modelCarte = new Model_Carte();
+			$modelCarte = new Model_Carte(true, $request->dbConnector);
 			$modelCarte->id = $id_contenu;
 			$modelCarte->nom = $nom;
 			$modelCarte->id_categorie = $id_categorie;
@@ -522,12 +529,12 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			}
 			foreach ($modelRestaurant->categories as $categorie) {
 				if (isset($_POST['limite_accompagnement_'.$categorie->id]) && $_POST['limite_accompagnement_'.$categorie->id] > 0) {
-					$accompagnement = new Model_Accompagnement();
+					$accompagnement = new Model_Accompagnement(false);
 					$accompagnement->limite = $_POST['limite_accompagnement_'.$categorie->id];
 					$accompagnement->id_categorie = $categorie->id;
 					foreach ($categorie->contenus as $contenu) {
 						if (isset($_POST['accompagnement_'.$categorie->id.'_'.$contenu->id]) && $_POST['accompagnement_'.$categorie->id.'_'.$contenu->id] == 'on') {
-							$carte = new Model_Carte();
+							$carte = new Model_Carte(false);
 							$carte->id = $contenu->id;
 							$accompagnement->addCarte($carte);
 						}
@@ -542,7 +549,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			}
 			foreach ($modelRestaurant->options as $option) {
 				if (isset($_POST['option_'.$option->id]) && $_POST['option_'.$option->id] == 'on') {
-					$modelOption = new Model_Option();
+					$modelOption = new Model_Option(false);
 					$modelOption->id = $option->id;
 					$modelCarte->addOption($modelOption);
 				}
@@ -572,7 +579,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			if (!isset($_GET['id_categorie'])) {
 				$this->redirect();
 			}
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id_restaurant'];
 			$request->restaurant = $modelRestaurant->loadMinInformation();
 			$request->restaurant->loadFormat();
@@ -585,19 +592,19 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$request->categorie->id = $_GET['id_categorie'];
 			$request->categorie->load();
 			if (isset($_GET['id_contenu'])) {
-				$modelCarte = new Model_Carte();
+				$modelCarte = new Model_Carte(true, $request->dbConnector);
 				$modelCarte->id = $_GET['id_contenu'];
 				$request->contenu = $modelCarte->load();
 				$request->contenu->getLogo($modelRestaurant->id);
 			}
-			$request->vue = $this->render("restaurant/editContenu.php");
+			$request->vue = $this->render("editContenu");
 		}
 	}
 	
 	public function removeStock ($request) {
 		$id_restaurant = $_GET['id_restaurant'];
 		$id_categorie = $_GET['id_categorie'];
-		$modelCarte = new Model_Carte();
+		$modelCarte = new Model_Carte(true, $request->dbConnector);
 		$modelCarte->id = $_GET['id_contenu'];
 		$modelCarte->removeStock();
 		$this->redirect('viewCategorie', 'restaurant', '', array ('id_restaurant' => $id_restaurant, 'id_categorie' => $id_categorie));
@@ -606,7 +613,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function addStock ($request) {
 		$id_restaurant = $_GET['id_restaurant'];
 		$id_categorie = $_GET['id_categorie'];
-		$modelCarte = new Model_Carte();
+		$modelCarte = new Model_Carte(true, $request->dbConnector);
 		$modelCarte->id = $_GET['id_contenu'];
 		$modelCarte->addStock();
 		$this->redirect('viewCategorie', 'restaurant', '', array ('id_restaurant' => $id_restaurant, 'id_categorie' => $id_categorie));
@@ -615,7 +622,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function deleteContenu ($request) {
 		$id_restaurant = $_GET['id_restaurant'];
 		$id_categorie = $_GET['id_categorie'];
-		$modelCarte = new Model_Carte();
+		$modelCarte = new Model_Carte(true, $request->dbConnector);
 		$modelCarte->id = $_GET['id_contenu'];
 		$modelCarte->deleted();
 		$this->redirect('viewCategorie', 'restaurant', '', array ('id_restaurant' => $id_restaurant, 'id_categorie' => $id_categorie));
@@ -631,7 +638,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$supplement = 0;
 			$accompagnement = 0;
 			$commentaire = "";
-			$modelMenu = new Model_Menu();
+			$modelMenu = new Model_Menu(true, $request->dbConnector);
 			$modelMenu->addContenuToMenu($id_categorie, $contenu, $obligatoire, $supplement, $accompagnement, $commentaire);
 			$this->redirect('viewMenu', 'restaurant', '', array ('id_restaurant' => $id_restaurant, 'id_menu' => $id_menu));
 		}
@@ -642,7 +649,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$id_restaurant = $_POST['id_restaurant'];
 			$nom = $_POST['nom'];
 			$parent = $_POST['parent'];
-			$modelCategorie = new Model_Categorie();
+			$modelCategorie = new Model_Categorie(true, $request->dbConnector);
 			$modelCategorie->parent_categorie = $parent;
 			$modelCategorie->id_restaurant = $id_restaurant;
 			$modelCategorie->nom = $nom;
@@ -655,7 +662,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function modifyCategorie ($request) {
 		if ($request->request_method == "POST") {
 			$id_restaurant = $_POST['id_restaurant'];
-			$modelCategorie = new Model_Categorie();
+			$modelCategorie = new Model_Categorie(true, $request->dbConnector);
 			$modelCategorie->id = $_POST['id_categorie'];
 			$modelCategorie->nom = $_POST['nom'];
 			$modelCategorie->save();
@@ -666,7 +673,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function deleteCategorie ($request) {
 		$id_restaurant = $_GET['id_restaurant'];
 		$id_categorie = $_GET['id_categorie'];
-		$modelCategorie = new Model_Categorie();
+		$modelCategorie = new Model_Categorie(true, $request->dbConnector);
 		$modelCategorie->id = $id_categorie;
 		$modelCategorie->deleted();
 		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
@@ -679,10 +686,10 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$id_formule = $_POST['id_formule'];
 			$nom = $_POST['categorie'];
 			$quantite = $_POST['quantite'];
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(true, $request->dbConnector);
 			$categorie->nom = $nom;
 			$categorie->quantite = $quantite;
-			$modelMenu = new Model_Menu();
+			$modelMenu = new Model_Menu(true, $request->dbConnector);
 			$modelMenu->id = $id_menu;
 			$modelMenu->id_formule = $id_formule;
 			$modelMenu->addCategorie($categorie);
@@ -694,7 +701,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		if ($request->request_method == "POST") {
 			$id_restaurant = $_POST['id_restaurant'];
 			$nom = $_POST['nom'];
-			$modelFormat = new Model_Format();
+			$modelFormat = new Model_Format(true, $request->dbConnector);
 			$modelFormat->id_restaurant = $id_restaurant;
 			$modelFormat->nom = $nom;
 			$modelFormat->save();
@@ -705,7 +712,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function modifyFormat ($request) {
 		if ($request->request_method == "POST") {
 			$id_restaurant = $_POST['id_restaurant'];
-			$modelFormat = new Model_Format();
+			$modelFormat = new Model_Format(true, $request->dbConnector);
 			$modelFormat->id = $_POST['id_format'];
 			$modelFormat->nom = $_POST['nom'];
 			$modelFormat->save();
@@ -716,7 +723,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function deleteFormat ($request) {
 		$id_restaurant = $_GET['id_restaurant'];
 		$id_format = $_GET['id_format'];
-		$modelFormat = new Model_Format();
+		$modelFormat = new Model_Format(true, $request->dbConnector);
 		$modelFormat->id = $id_format;
 		$modelFormat->deleted();
 		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
@@ -726,7 +733,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		if ($request->request_method == "POST") {
 			$id_restaurant = $_POST['id_restaurant'];
 			$nom = $_POST['nom'];
-			$modelFormule = new Model_Formule();
+			$modelFormule = new Model_Formule(true, $request->dbConnector);
 			$modelFormule->id_restaurant = $id_restaurant;
 			$modelFormule->nom = $nom;
 			$modelFormule->save();
@@ -737,7 +744,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function modifyFormule ($request) {
 		if ($request->request_method == "POST") {
 			$id_restaurant = $_POST['id_restaurant'];
-			$modelFormule = new Model_Formule();
+			$modelFormule = new Model_Formule(true, $request->dbConnector);
 			$modelFormule->id = $_POST['id_formule'];
 			$modelFormule->nom = $_POST['nom'];
 			$modelFormule->save();
@@ -748,7 +755,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function deleteFormule ($request) {
 		$id_formule = $_GET['id_formule'];
 		$id_restaurant = $_GET['id_restaurant'];
-		$modelFormule = new Model_Formule();
+		$modelFormule = new Model_Formule(true, $request->dbConnector);
 		$modelFormule->id = $id_formule;
 		$modelFormule->deleted();
 		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
@@ -760,7 +767,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$nom = $_POST['nom'];
 			$prix = $_POST['prix'];
 			$commentaire = $_POST['commentaire'];
-			$modelSupplement = new Model_Supplement();
+			$modelSupplement = new Model_Supplement(true, $request->dbConnector);
 			$modelSupplement->id_restaurant = $id_restaurant;
 			$modelSupplement->nom = $nom;
 			$modelSupplement->prix = $prix;
@@ -773,7 +780,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function modifySupplement ($request) {
 		if ($request->request_method == "POST") {
 			$id_restaurant = $_POST['id_restaurant'];
-			$modelSupplement = new Model_Supplement();
+			$modelSupplement = new Model_Supplement(true, $request->dbConnector);
 			$modelSupplement->id = $_POST['id_supplement'];
 			$modelSupplement->nom = $_POST['nom'];
 			$modelSupplement->prix = $_POST['prix'];
@@ -786,7 +793,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function deleteSupplement ($request) {
 		$id_restaurant = $_GET['id_restaurant'];
 		$id_supplement = $_GET['id_supplement'];
-		$modelSupplement = new Model_Supplement();
+		$modelSupplement = new Model_Supplement(true, $request->dbConnector);
 		$modelSupplement->id = $id_supplement;
 		$modelSupplement->deleted();
 		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
@@ -796,7 +803,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 		if ($request->request_method == "POST") {
 			$id_restaurant = $_POST['id_restaurant'];
 			$nom = $_POST['nom'];
-			$modelOption = new Model_Option();
+			$modelOption = new Model_Option(true, $request->dbConnector);
 			$modelOption->id_restaurant = $id_restaurant;
 			$modelOption->nom = $nom;
 			$modelOption->save();
@@ -807,7 +814,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function modifyOption ($request) {
 		if ($request->request_method == "POST") {
 			$id_restaurant = $_POST['id_restaurant'];
-			$modelOption = new Model_Option();
+			$modelOption = new Model_Option(true, $request->dbConnector);
 			$modelOption->id = $_POST['id_option'];
 			$modelOption->nom = $_POST['nom'];
 			$modelOption->save();
@@ -818,7 +825,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 	public function deleteOption ($request) {
 		$id_restaurant = $_GET['id_restaurant'];
 		$id_option = $_GET['id'];
-		$modelOption = new Model_Option();
+		$modelOption = new Model_Option(true, $request->dbConnector);
 		$modelOption->id = $id_option;
 		$modelOption->deleted();
 		$this->redirect('view', 'restaurant', '', array ('id_restaurant' => $id_restaurant));
@@ -832,14 +839,14 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$this->redirect();
 		}
 		$request->title = "Administration - restaurant";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_restaurant'];
 		$request->restaurant = $modelRestaurant->loadMinInformation();
-		$modelOption = new Model_Option();
+		$modelOption = new Model_Option(true, $request->dbConnector);
 		$request->option = $modelOption;
 		$request->option->id = $_GET['id_option'];
 		$request->option->load();
-		$request->vue = $this->render("restaurant/viewOption.php");
+		$request->vue = $this->render("viewOption");
 	}
 	
 	public function addOptionValue ($request) {
@@ -847,7 +854,7 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$id_restaurant = $_POST['id_restaurant'];
 			$id_option = $_POST['id_option'];
 			$nom = $_POST['nom'];
-			$modelOption = new Model_Option();
+			$modelOption = new Model_Option(true, $request->dbConnector);
 			$modelOption->id = $id_option;
 			$modelOptionValue = new Model_Option_Value();
 			$modelOptionValue->nom = $nom;
