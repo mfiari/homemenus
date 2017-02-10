@@ -1,8 +1,5 @@
 <?php
 
-include_once ROOT_PATH."function.php";
-
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Panier.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Carte.php";
@@ -35,18 +32,28 @@ class Controller_Panier extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('panier/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('panier/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
 		$request->title = "Administration - panier";
-		$modelPanier = new Model_Panier();
+		$modelPanier = new Model_Panier(true, $request->dbConnector);
 		$request->paniers = $modelPanier->getAll();
-		$request->vue = $this->render("panier/index.php");
+		$request->vue = $this->render("index");
 	}
 	
 	public function view ($request) {
 		$request->title = "Administration - panier";
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->id = $_GET['id_panier'];
 		$request->panier = $panier->loadById();
-		$request->vue = $this->render("panier/view.php");
+		$request->vue = $this->render("view");
 	}
 }
