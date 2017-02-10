@@ -1,8 +1,5 @@
 <?php
 
-include_once ROOT_PATH."function.php";
-
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/User.php";
 include_once ROOT_PATH."models/Horaire.php";
 include_once ROOT_PATH."models/Perimetre.php";
@@ -57,8 +54,18 @@ class Controller_User extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('user/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('user/'.$vue.'.php');
+	}
+	
 	public function enable ($request) {
-		$model = new Model_User();
+		$model = new Model_User(true, $request->dbConnector);
 		$model->id = trim($_GET["id_user"]);
 		$model->enable();
 		$type = $_GET["type"];
@@ -70,7 +77,7 @@ class Controller_User extends Controller_Admin_Template {
 	}
 	
 	public function disable ($request) {
-		$model = new Model_User();
+		$model = new Model_User(true, $request->dbConnector);
 		$model->id = trim($_GET["id_user"]);
 		$model->disable();
 		$type = $_GET["type"];
@@ -82,7 +89,7 @@ class Controller_User extends Controller_Admin_Template {
 	}
 	
 	public function deleted ($request) {
-		$model = new Model_User();
+		$model = new Model_User(true, $request->dbConnector);
 		$model->id = trim($_GET["id_user"]);
 		$model->deleted();
 		$type = $_GET["type"];
@@ -94,32 +101,32 @@ class Controller_User extends Controller_Admin_Template {
 	}
 	
 	public function livreurs ($request) {
-		$modelUser = new Model_User();
+		$modelUser = new Model_User(true, $request->dbConnector);
 		$request->livreurs = $modelUser->getAllLivreurs();
 		$request->title = "Administration - livreurs";
-		$request->vue = $this->render("user/livreurs.php");
+		$request->vue = $this->render("livreurs");
 	}
 	
 	public function livreur ($request) {
-		$modelUser = new Model_User();
+		$modelUser = new Model_User(true, $request->dbConnector);
 		$modelUser->id = $_GET['id_user'];
 		$request->livreur = $modelUser->getLivreur();
-		$modelCommande = new Model_Commande();
+		$modelCommande = new Model_Commande(true, $request->dbConnector);
 		$modelCommande->uid = $_GET['id_user'];
 		$request->commandes = $modelCommande->loadCommandeLivreur();
-		$modelCommandeHistory = new Model_Commande_History();
+		$modelCommandeHistory = new Model_Commande_History(true, $request->dbConnector);
 		$modelCommandeHistory->uid = $_GET['id_user'];
 		$request->commandesHistory = $modelCommandeHistory->loadCommandeLivreur('0,20', 'date_commande DESC');
 		$request->title = "Administration - livreur";
 		$request->javascripts = array("https://maps.googleapis.com/maps/api/js?libraries=places");
-		$request->vue = $this->render("user/livreur.php");
+		$request->vue = $this->render("livreur");
 	}
 	
 	public function livreurDispo ($request) {
-		$modelUser = new Model_User();
+		$modelUser = new Model_User(true, $request->dbConnector);
 		$request->livreurs = $modelUser->getAllLivreurs();
 		$request->title = "Administration - livreurs";
-		$request->vue = $this->render("user/livreurs.php");
+		$request->vue = $this->render("livreurs");
 	}
 	
 	public function edit ($request) {
@@ -130,7 +137,7 @@ class Controller_User extends Controller_Admin_Template {
 			$email = $_POST['email'];
 			$telephone = $_POST['telephone'];
 			
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$modelUser->nom = $nom;
 			$modelUser->prenom = $prenom;
 			$modelUser->login = $login;
@@ -157,19 +164,19 @@ class Controller_User extends Controller_Admin_Template {
 		} else {
 			$request->title = "Administration - livreur";
 			if (isset($_GET['id_restaurant'])) {
-				$modelRestaurant = new Model_Restaurant();
+				$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 				$modelRestaurant->id = $_GET['id_restaurant'];
 				$request->restaurant = $modelRestaurant->getOne();
 			}
-			$request->vue = $this->render("user/edit.php");
+			$request->vue = $this->render("edit");
 		}
 	}
 	
 	public function clients ($request) {
-		$modelUser = new Model_User();
+		$modelUser = new Model_User(true, $request->dbConnector);
 		$request->clients = $modelUser->getAllClients();
 		$request->title = "Administration - clients";
-		$request->vue = $this->render("user/clients.php");
+		$request->vue = $this->render("clients");
 	}
 	
 	public function addClient ($request) {
@@ -208,7 +215,7 @@ class Controller_User extends Controller_Admin_Template {
 				$request->fieldTel = $_POST["telephone"];
 			}
 			if (count($errorMessage) == 0) {
-				$model = new Model_User();
+				$model = new Model_User(true, $request->dbConnector);
 				$model->nom = trim($_POST["nom"]);
 				$model->prenom = trim($_POST["prenom"]);
 				$model->login = trim($_POST["login"]);
@@ -241,27 +248,27 @@ class Controller_User extends Controller_Admin_Template {
 			}
 		}
 		$request->title = "Administration - client";
-		$request->vue = $this->render("user/addClient.php");
+		$request->vue = $this->render("addClient");
 	}
 	
 	public function client ($request) {
-		$modelUser = new Model_User();
+		$modelUser = new Model_User(true, $request->dbConnector);
 		$modelUser->id = $_GET['id_user'];
 		$request->client = $modelUser->getClient();
-		$modelCommande = new Model_Commande();
+		$modelCommande = new Model_Commande(true, $request->dbConnector);
 		$modelCommande->uid = $modelUser->id;
 		$request->commandes = $modelCommande->loadCommandeClient();
 		$modelCommandeHistory = new Model_Commande_History();
 		$modelCommandeHistory->uid = $modelUser->id;
 		$request->commandesHistory = $modelCommandeHistory->loadCommandeClient();
 		$request->title = "Administration - client";
-		$request->vue = $this->render("user/client.php");
+		$request->vue = $this->render("client");
 	}
 	
 	public function add_dispo ($request) {
 		if ($request->request_method == "POST") {
 			
-			$dispo = new Model_Dispo();
+			$dispo = new Model_Dispo(true, $request->dbConnector);
 			$dispo->id_livreur = $_POST['id_livreur'];
 			$dispo->rue = $_POST['rue'];
 			$dispo->ville = $_POST['ville'];
@@ -286,7 +293,7 @@ class Controller_User extends Controller_Admin_Template {
 	}
 	
 	public function deleteDispo ($request) {
-		$dispo = new Model_Dispo();
+		$dispo = new Model_Dispo(true, $request->dbConnector);
 		$dispo->id = $_GET['id_dispo'];
 		$dispo->remove();
 		$this->redirect('livreur', 'user', '', array('id_user' => $_GET['id_user']));
