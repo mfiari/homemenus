@@ -1,6 +1,5 @@
 <?php
 
-include_once MODEL_PATH."Template.php";
 include_once MODEL_PATH."CommandeHistory.php";
 include_once MODEL_PATH."Restaurant.php";
 include_once MODEL_PATH."Commentaire.php";
@@ -63,7 +62,7 @@ class Controller_Notes extends Controller_Default_Template {
 	
 	public function index ($request) {
 		$request->title = "Notes";
-		$modelCommande = new Model_Commande_History();
+		$modelCommande = new Model_Commande_History(true, $request->dbConnector);
 		$modelCommande->uid = $request->_auth->id;
 		$request->commandes = $modelCommande->getByUser();
 		$request->javascripts = array("res/js/bootstrap-star-rating.js");
@@ -72,7 +71,7 @@ class Controller_Notes extends Controller_Default_Template {
 	
 	public function noter ($request) {
 		if ($request->request_method == "POST") {
-			$modelCommande = new Model_Commande_History();
+			$modelCommande = new Model_Commande_History(true, $request->dbConnector);
 			$modelCommande->id = $_POST['id_commande'];
 			$modelCommande->note = $_POST['note'];
 			$modelCommande->commentaire = $_POST['commentaire'];
@@ -83,7 +82,7 @@ class Controller_Notes extends Controller_Default_Template {
 	
 	public function restaurants ($request) {
 		$request->title = "Notes";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->user = $request->_auth;
 		$request->restaurants = $modelRestaurant->getCommentaireByUser();
 		$request->javascripts = array("res/js/bootstrap-star-rating.js");
@@ -92,7 +91,7 @@ class Controller_Notes extends Controller_Default_Template {
 	
 	public function noterRestaurant ($request) {
 		if ($request->request_method == "POST") {
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_POST['id_restaurant'];
 			$modelRestaurant->user = $request->_auth;
 			$modelCommantaire= new Model_Commentaire();
@@ -105,7 +104,7 @@ class Controller_Notes extends Controller_Default_Template {
 	}
 	
 	public function viewRestaurant ($request) {
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_restaurant'];
 		$request->commentaires = $modelRestaurant->getCommentaireRestaurant();
 		$request->disableLayout = true;
@@ -114,7 +113,7 @@ class Controller_Notes extends Controller_Default_Template {
 	
 	public function plats ($request) {
 		$request->title = "Notes";
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->user = $request->_auth;
 		$request->restaurants = $modelRestaurant->getCommentaireCarteByUser();
 		$request->javascripts = array("res/js/bootstrap-star-rating.js");
@@ -123,7 +122,7 @@ class Controller_Notes extends Controller_Default_Template {
 	
 	public function noterCarte ($request) {
 		if ($request->request_method == "POST") {
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_POST['id_carte'];
 			$modelRestaurant->user = $request->_auth;
 			$modelCommantaire= new Model_Commentaire();
@@ -136,7 +135,7 @@ class Controller_Notes extends Controller_Default_Template {
 	}
 	
 	public function viewCarte ($request) {
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_carte'];
 		$request->commentaires = $modelRestaurant->getCommentaireCarte();
 		$request->disableLayout = true;
@@ -145,7 +144,7 @@ class Controller_Notes extends Controller_Default_Template {
 	
 	public function noterMenu ($request) {
 		if ($request->request_method == "POST") {
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_POST['id_menu'];
 			$modelRestaurant->user = $request->_auth;
 			$modelCommantaire= new Model_Commentaire();
