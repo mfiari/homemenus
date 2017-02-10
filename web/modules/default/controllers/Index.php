@@ -1,6 +1,5 @@
 <?php
 
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/User.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Horaire.php";
