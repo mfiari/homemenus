@@ -1,8 +1,5 @@
 <?php
 
-include_once ROOT_PATH."function.php";
-
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Panier.php";
 include_once ROOT_PATH."models/User.php";
 include_once ROOT_PATH."models/Restaurant.php";
@@ -76,11 +73,11 @@ class Controller_Restaurant extends Controller_Default_Template {
 	
 	public function index ($request) {
 		if (isset($_GET['id'])) {
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id'];
 			$request->restaurant = $modelRestaurant->loadAll();
 			
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$livreurs = $modelUser->getLivreurAvailableForRestaurant($request->restaurant);
 			$request->restaurant->has_livreur_dispo = count($livreurs) > 0;
 			foreach ($livreurs as $livreur) {
@@ -105,7 +102,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 				$request->prix_livraison = $request->restaurant->getPrixLivraison();
 			}
 			
-			$panier = new Model_Panier();
+			$panier = new Model_Panier(true, $request->dbConnector);
 			if ($request->_auth) {
 				$panier->uid = $request->_auth->id;
 			} else {
@@ -171,8 +168,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$city = $filter["ville"];
 		}
 		$distanceKm = $filter["distanceKm"];
-		
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		
 		$restaurants = $modelRestaurant->filter($filter);
 		
@@ -182,7 +178,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 		$query = sprintf($geocoder,$localisation);
 		$rd = json_decode(file_get_contents($query));
 		
-		$recherche = new Model_Recherche();
+		$recherche = new Model_Recherche(true, $request->dbConnector);
 		$recherche->recherche = $filter["search_adresse"];
 		$recherche->distance = $filter["distanceKm"];
 		if (isset($filter["ville"])) {
@@ -255,10 +251,10 @@ class Controller_Restaurant extends Controller_Default_Template {
 	private function categories ($request) {
 		$id_categorie = $_GET["id_categorie"];
 		$id_restaurant = $_GET["id_restaurant"];
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_restaurant'];
 		$restaurant = $modelRestaurant->loadMinInformation();
-		$modelCategorie = new Model_Categorie();
+		$modelCategorie = new Model_Categorie(true, $request->dbConnector);
 		$modelCategorie->id = $_GET['id_categorie'];
 		$childrens = $modelCategorie->getChildren();
 		$modelCategorie->loadContenu($id_restaurant);
@@ -274,16 +270,16 @@ class Controller_Restaurant extends Controller_Default_Template {
 	private function carte ($request) {
 		if (isset($_GET["id_carte"])) {
 			$request->disableLayout = true;
-			$modelCarte = new Model_Carte();
+			$modelCarte = new Model_Carte(true, $request->dbConnector);
 			$modelCarte->id = $_GET['id_carte'];
 			$request->id_restaurant = $_GET['id'];
 			$request->carte = $modelCarte->load();
 			$request->carte->getLogo($request->id_restaurant);
 			
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$ville = $_SESSION['search_ville'];
 			$codePostal = $_SESSION['search_cp'];
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(true, $request->dbConnector);
 			$restaurant->id = $request->id_restaurant;
 			$fields = array ("code_postal", "ville");
 			$restaurant->get($fields);
@@ -292,7 +288,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			
 			$request->vue = $this->render("carteDetail");
 		} else {
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id'];
 			$request->restaurant = $modelRestaurant->loadCarte();
 			$request->vue = $this->render("carte.php");
@@ -303,14 +299,14 @@ class Controller_Restaurant extends Controller_Default_Template {
 		if (isset($_GET["id_menu"])) {
 			$request->disableLayout = true;
 			$request->id_restaurant = $_GET['id'];
-			$modelMenu = new Model_Menu();
+			$modelMenu = new Model_Menu(true, $request->dbConnector);
 			$modelMenu->id = $_GET['id_menu'];
 			$request->menu = $modelMenu->load();
 			
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$ville = $_SESSION['search_ville'];
 			$codePostal = $_SESSION['search_cp'];
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(true, $request->dbConnector);
 			$restaurant->id = $request->id_restaurant;
 			$fields = array ("code_postal", "ville");
 			$restaurant->get($fields);
@@ -319,7 +315,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			
 			$request->vue = $this->render("menu.php");
 		} else {
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id'];
 			$restaurant = $modelRestaurant->loadMinInformation();
 			$restaurant->loadMenus();
@@ -336,7 +332,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$restaurants = $_GET['restaurant'];
 			// Mot tapé par l'utilisateur
 			$q = htmlentities($_GET['term']);
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$suggestions = array();
 			$list = $modelRestaurant->filterTags ($q, $restaurants);
 			foreach ($list as $tag) {
@@ -356,7 +352,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$restaurants = $_GET['restaurant'];
 			// Mot tapé par l'utilisateur
 			$q = htmlentities($_GET['term']);
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$suggestions = array();
 			$list = $modelRestaurant->filterRestaurant ($q, $restaurants);
 			foreach ($list as $restaurant) {
@@ -370,7 +366,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 	}
 	
 	private function panier ($request) {
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		if ($request->_auth) {
 			$panier->uid = $request->_auth->id;
 		} else {
@@ -381,11 +377,11 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$request->disableLayout = true;
 		} else if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
 			$request->disableLayout = false;
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $request->panier->restaurant->id;
 			$request->restaurant = $modelRestaurant->loadAll();
 			
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$livreurs = $modelUser->getLivreurAvailableForRestaurant($request->restaurant);
 			$request->restaurant->has_livreur_dispo = count($livreurs) > 0;
 			foreach ($livreurs as $livreur) {
