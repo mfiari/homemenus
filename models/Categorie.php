@@ -127,7 +127,7 @@ class Model_Categorie extends Model_Template {
 		$categories = $stmt->fetchAll();
 		$list = array();
 		foreach ($categories as $c) {
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(false);
 			$categorie->id = $c["id"];
 			$categorie->nom = $c["nom"];
 			$categorie->nb_child = $c["nb_child"];
@@ -149,7 +149,7 @@ class Model_Categorie extends Model_Template {
 		$categories = $stmt->fetchAll();
 		$list = array();
 		foreach ($categories as $c) {
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(false);
 			$categorie->id = $c["id"];
 			$categorie->nom = $c["nom"];
 			$list[] = $categorie;
@@ -158,17 +158,6 @@ class Model_Categorie extends Model_Template {
 	}
 	
 	public function loadContenu ($id_restaurant, $directory = "default") {
-		/*$sql = "SELECT carte.id, carte.nom FROM carte
-		JOIN carte_disponibilite cd ON cd.id_carte = carte.id
-		JOIN restaurant_horaires rh ON rh.id = cd.id_horaire AND rh.id_jour = WEEKDAY(CURRENT_DATE)-1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
-		OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin > HOUR(CURRENT_TIME)))
-		WHERE id_categorie = :id AND is_visible = 1 ORDER BY ordre";*/
-		/*$sql = "SELECT carte.id, carte.nom, carte.commentaire, (SELECT MIN(cf.prix) FROM carte_format cf WHERE cf.id_carte = carte.id) AS prix
-		FROM carte
-		JOIN carte_disponibilite cd ON cd.id_carte = carte.id
-		JOIN restaurant_horaires rh ON rh.id = cd.id_horaire AND rh.id_jour = WEEKDAY(CURRENT_DATE)+1 AND (rh.heure_debut > HOUR(CURRENT_TIME) 
-		OR (rh.heure_debut < HOUR(CURRENT_TIME) AND rh.heure_fin > HOUR(CURRENT_TIME)))
-		WHERE id_categorie = :id AND is_visible = 1 GROUP BY carte.id ORDER BY ordre";*/
 		$sql = "SELECT carte.id, carte.nom, carte.commentaire, (SELECT MIN(cf.prix) FROM carte_format cf WHERE cf.id_carte = carte.id) AS prix,
 		(SELECT (SUM(note) / COUNT(*)) FROM commentaire_carte WHERE id_carte = carte.id) AS note,
 		(SELECT COUNT(*) FROM commentaire_carte WHERE id_carte = carte.id) AS vote,
@@ -183,7 +172,7 @@ class Model_Categorie extends Model_Template {
 		}
 		$contenus = $stmt->fetchAll();
 		foreach ($contenus as $c) {
-			$contenu = new Model_Contenu();
+			$contenu = new Model_Contenu(false);
 			$contenu->id = $c["id"];
 			$contenu->nom = $c["nom"];
 			$contenu->prix = $c["prix"];
@@ -212,7 +201,7 @@ class Model_Categorie extends Model_Template {
 		}
 		$contenus = $stmt->fetchAll();
 		foreach ($contenus as $c) {
-			$contenu = new Model_Contenu();
+			$contenu = new Model_Contenu(false);
 			$contenu->id = $c["id"];
 			$contenu->nom = $c["nom"];
 			$contenu->stock = $c["stock"];
