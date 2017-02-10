@@ -1,7 +1,5 @@
 <?php
 
-include_once ROOT_PATH."function.php";
-
 include_once ROOT_PATH."models/CodePromo.php";
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/CommandeHistory.php";
@@ -40,11 +38,21 @@ class Controller_CodePromo extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('code_promo/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('code_promo/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
-		$modelCodePromo = new Model_CodePromo();
+		$modelCodePromo = new Model_CodePromo(true, $request->dbConnector);
 		$request->promos = $modelCodePromo->getAll();
 		$request->title = "Administration - code promo";
-		$request->vue = $this->render("code_promo/index.php");
+		$request->vue = $this->render("index");
 	}
 	
 	public function edit ($request) {
@@ -63,7 +71,7 @@ class Controller_CodePromo extends Controller_Admin_Template {
 			$valeur_prix_total = $_POST['valeur_prix_total'];
 			$pourcentage_prix_total = $_POST['pourcentage_prix_total'];
 			
-			$modelCodePromo = new Model_CodePromo();
+			$modelCodePromo = new Model_CodePromo(true, $request->dbConnector);
 			$modelCodePromo->id = $id_code_promo;
 			$modelCodePromo->code = $code;
 			$modelCodePromo->description = $description;
@@ -84,22 +92,22 @@ class Controller_CodePromo extends Controller_Admin_Template {
 		} else {
 			$request->title = "Administration - code promo";
 			if (isset($_GET['id_code_promo'])) {
-				$modelCodePromo = new Model_CodePromo();
+				$modelCodePromo = new Model_CodePromo(true, $request->dbConnector);
 				$modelCodePromo->id = $_GET['id_code_promo'];
 				$request->codePromo = $modelCodePromo->load();
 			}
-			$request->vue = $this->render("code_promo/edit.php");
+			$request->vue = $this->render("edit");
 		}
 	}
 	
 	public function view ($request) {
 		if (isset($_GET["id"])) {
-			$modelCodePromo = new Model_CodePromo();
+			$modelCodePromo = new Model_CodePromo(true, $request->dbConnector);
 			$modelCodePromo->id = $_GET['id'];
 			$request->codePromo = $modelCodePromo->load();
-			$modelUser = new Model_User();
+			$modelUser = new Model_User(true, $request->dbConnector);
 			$request->clients = $modelUser->getAllClients();
-			$request->vue = $this->render("code_promo/view.php");
+			$request->vue = $this->render("view");
 		}
 	}
 	
@@ -108,11 +116,11 @@ class Controller_CodePromo extends Controller_Admin_Template {
 			$id_code_promo = $_POST['id_code_promo'];
 			$id_user = $_POST['id_user'];
 			
-			$modelCodePromo = new Model_CodePromo();
+			$modelCodePromo = new Model_CodePromo(true, $request->dbConnector);
 			$modelCodePromo->id = $id_code_promo;
 			if ($modelCodePromo->addClient($id_user)) {
 				$modelCodePromo->getById();
-				$modelUser = new Model_User();
+				$modelUser = new Model_User(true, $request->dbConnector);
 				$modelUser->id = $id_user;
 				$modelUser->getById();
 				
