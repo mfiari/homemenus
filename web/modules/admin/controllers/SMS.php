@@ -1,6 +1,5 @@
 <?php
 
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/SMS.php";
 include_once ROOT_PATH."models/Clickatell.php";
 
@@ -31,6 +30,16 @@ class Controller_SMS extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('sms/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('sms/'.$vue.'.php');
+	}
+	
 	public function index ($request) {
 		if (isset($_POST['date_debut'])) {
 			$request->date_debut = $_POST['date_debut'];
@@ -47,28 +56,28 @@ class Controller_SMS extends Controller_Admin_Template {
 		$dateFin = datepickerToDatetime($request->date_fin).' 23:59:59';
 		
 		$request->title = "Administration";
-		$modelSMS = new Model_SMS();
+		$modelSMS = new Model_SMS(true, $request->dbConnector);
 		$request->smsList = $modelSMS->getAll($dateDebut, $dateFin);
-		$request->vue = $this->render("sms/index.php");
+		$request->vue = $this->render("index");
 	}
 	
 	public function detail ($request) {
 		$request->title = "Administration";
-		$modelSMS = new Model_SMS();
+		$modelSMS = new Model_SMS(true, $request->dbConnector);
 		$modelSMS->id = $_GET['id'];
 		$request->sms = $modelSMS->load();
-		$request->vue = $this->render("sms/detail.php");
+		$request->vue = $this->render("detail");
 	}
 	
 	public function smsling ($request) {
-		$modelSMS = new Model_SMS();
+		$modelSMS = new Model_SMS(true, $request->dbConnector);
 		$request->users = $modelSMS->getAllClientTel();
 		$request->title = "Administration - SMSling";
-		$request->vue = $this->render("sms/smsling.php");
+		$request->vue = $this->render("smsling");
 	}
 	
 	public function send ($request) {
-		$modelSMS = new Model_SMS();
+		$modelSMS = new Model_SMS(true, $request->dbConnector);
 		$message = $_POST['message'];
 		$users = $modelSMS->getAllClientTel();
 		foreach ($users as $user) {
