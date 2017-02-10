@@ -1,6 +1,5 @@
 <?php
 
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/User.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Horaire.php";
@@ -66,10 +65,20 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('precommande/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('precommande/'.$vue.'.php');
+	}
+	
 	public function search ($request) {
 		unset($_SESSION['id_commande']);
 		$request->date = $_POST['date'];
-		$request->vue = $this->render("precommande/search.php");
+		$request->vue = $this->render("search");
 	}
 	
 	public function commande_search ($request) {
@@ -98,7 +107,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 			} else {
 				$filter["distanceKm"] = 5;
 			}
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		
 			$tags = $modelRestaurant->getTags();
 			
@@ -120,7 +129,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		}
 		$distanceKm = $filter["distanceKm"];
 		
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		
 		$request->tags = $filter["tags"];
 		$request->tagsFilter = $filter["tagsFilter"];
@@ -192,7 +201,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		$request->ville = $city;
 		$request->villes = array_unique(array_object_column($restaurants, 'ville'));
 		$request->restaurants = $restaurants;
-		$request->vue = $this->render("precommande/restaurants.php");
+		$request->vue = $this->render("restaurants");
 	}
 	
 	public function restaurant ($request) {
@@ -201,23 +210,23 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 				$_SESSION['id_commande'] = $_GET['id_commande'];
 			}
 			$request->title = "Restaurant";
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id'];
 			$request->restaurant = $modelRestaurant->getOne();
-			$modelCategorie = new Model_Categorie();
+			$modelCategorie = new Model_Categorie(true, $request->dbConnector);
 			$request->restaurant->categories = $modelCategorie->getParentContenu($request->restaurant->id);
 			$request->search_adresse = $_SESSION['search_adresse'];
-			$request->vue = $this->render("precommande/restaurant.php");
+			$request->vue = $this->render("restaurant");
 		}	
 	}
 	
 	private function categories ($request) {
 		$id_categorie = $_GET["id_categorie"];
 		$id_restaurant = $_GET["id_restaurant"];
-		$modelRestaurant = new Model_Restaurant();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$modelRestaurant->id = $_GET['id_restaurant'];
 		$restaurant = $modelRestaurant->loadMinInformation();
-		$modelCategorie = new Model_Categorie();
+		$modelCategorie = new Model_Categorie(true, $request->dbConnector);
 		$modelCategorie->id = $_GET['id_categorie'];
 		$childrens = $modelCategorie->getChildren();
 		$modelCategorie->loadContenu($id_restaurant);
@@ -227,28 +236,28 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 			$restaurant->addCategorie($children);
 		}
 		$request->restaurant = $restaurant;
-		$request->vue = $this->render("precommande/categories.php");
+		$request->vue = $this->render("categories");
 	}
 	
 	private function carte ($request) {
 		if (isset($_GET["id_carte"])) {
 			$request->disableLayout = true;
-			$modelCarte = new Model_Carte();
+			$modelCarte = new Model_Carte(true, $request->dbConnector);
 			$modelCarte->id = $_GET['id_carte'];
 			$request->id_restaurant = $_GET['id'];
 			$request->carte = $modelCarte->load();
 			$request->carte->getLogo($request->id_restaurant);
 			
-			$request->vue = $this->render("precommande/carteDetail.php");
+			$request->vue = $this->render("carteDetail");
 		}
 	}
 	
 	private function initCommande ($request, $id_restaurant) {
-		$commande = new Model_Pre_Commande();
+		$commande = new Model_Pre_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$commande->init();
 		if ($commande->id_restaurant == -1) {
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(true, $request->dbConnector);
 			$restaurant->id = $id_restaurant;
 			$fields = array ("latitude", "longitude");
 			$restaurant->get($fields);
@@ -296,7 +305,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		$request->noRender = true;
 		$id_restaurant = $_POST['id_restaurant'];
 		if (isset($_SESSION['id_commande'])) {
-			$commande = new Model_Pre_Commande();
+			$commande = new Model_Pre_Commande(true, $request->dbConnector);
 			$commande->uid = $request->_auth->id;
 			$commande->id = $_SESSION['id_commande'];
 			$commande->id_restaurant = $id_restaurant;
@@ -307,7 +316,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		$quantite = $_POST['quantite'];
 		$id_carte = $_POST['id_carte'];
 		$format = $_POST['format'];
-		$modelCarte = new Model_Carte();
+		$modelCarte = new Model_Carte(true, $request->dbConnector);
 		$modelCarte->id = $id_carte;
 		$modelCarte->load();
 		$id_panier_carte = $commande->addCarte($id_carte, $format, $quantite);
@@ -338,19 +347,19 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		if (isset($_GET["id_menu"])) {
 			$request->disableLayout = true;
 			$request->id_restaurant = $_GET['id'];
-			$modelMenu = new Model_Menu();
+			$modelMenu = new Model_Menu(true, $request->dbConnector);
 			$modelMenu->id = $_GET['id_menu'];
 			$request->menu = $modelMenu->load();
 			
-			$request->vue = $this->render("precommande/menu.php");
+			$request->vue = $this->render("menu");
 		} else {
-			$modelRestaurant = new Model_Restaurant();
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id'];
 			$restaurant = $modelRestaurant->loadMinInformation();
 			$restaurant->loadMenus();
 			$request->restaurant = $restaurant;
 			$request->javascripts = array("res/js/menu.js");
-			$request->vue = $this->render("precommande/menus.php");
+			$request->vue = $this->render("menus");
 		}
 	}
 	
@@ -358,7 +367,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		$month = $_GET['month'];
-		$commande = new Model_Pre_Commande();
+		$commande = new Model_Pre_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$list = $commande->getCommandeInMonth($month);
 		$retour = array();
@@ -380,7 +389,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		$request->noRender = true;
 		$month = $_GET['month'];
 		$day = $_GET['day'];
-		$commande = new Model_Pre_Commande();
+		$commande = new Model_Pre_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$list = $commande->getCommandeDay($month, $day);
 		$retour = array();
@@ -398,21 +407,21 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 	}
 	
 	private function detailCommande ($request) {
-		$commande = new Model_Pre_Commande();
+		$commande = new Model_Pre_Commande(true, $request->dbConnector);
 		$commande->id = $_GET['id_commande'];
 		$request->commande = $commande->load();
-		$request->vue = $this->render("precommande/commande.php");
+		$request->vue = $this->render("commande");
 	}
 	
 	private function validationCommande ($request) {
-		$commande = new Model_Pre_Commande();
+		$commande = new Model_Pre_Commande(true, $request->dbConnector);
 		$commande->id = $_GET['commande'];
 		$request->commande = $commande->get();
-		$request->vue = $this->render("precommande/validation.php");
+		$request->vue = $this->render("validation");
 	}
 	
 	private function payment ($request) {
-		$commande = new Model_Pre_Commande();
+		$commande = new Model_Pre_Commande(true, $request->dbConnector);
 		$commande->id = $_POST['id_commande'];
 		$commande->get();
 		$paymentMode = $_POST['payment'];
@@ -428,7 +437,7 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 	}
 	
 	private function confirmPayment ($request) {
-		$preCommande = new Model_Pre_Commande();
+		$preCommande = new Model_Pre_Commande(true, $request->dbConnector);
 		if (isset($_GET['id_commande'])) {
 			$preCommande->id = $_GET['id_commande'];
 		} else {
@@ -436,6 +445,6 @@ class Controller_Pre_Commande extends Controller_Default_Template {
 		}
 		$preCommande->payment = "PAYPAL";
 		$preCommande->validate();
-		$request->vue = $this->render("precommande/payment_success.php");
+		$request->vue = $this->render("payment_success");
 	}
 }
