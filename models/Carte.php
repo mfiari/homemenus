@@ -308,7 +308,7 @@ class Model_Carte extends Model_Template {
 		}
 		$formats = $stmt->fetchAll();
 		foreach ($formats as $form) {
-			$format = new Model_Format();
+			$format = new Model_Format(false);
 			$format->id = $form["id"];
 			$format->nom = $form["nom"];
 			$format->prix = $form["prix"];
@@ -325,7 +325,7 @@ class Model_Carte extends Model_Template {
 		}
 		$accompagnements = $stmt->fetchAll();
 		foreach ($accompagnements as $acc) {
-			$accompagnement = new Model_Accompagnement();
+			$accompagnement = new Model_Accompagnement(false);
 			$accompagnement->id = $acc["id"];
 			$accompagnement->limite = $acc["limite"];
 			$accompagnement->id_categorie = $acc["id_categorie"];
@@ -340,7 +340,7 @@ class Model_Carte extends Model_Template {
 			}
 			$cartes = $stmt->fetchAll();
 			foreach ($cartes as $c) {
-				$carte = new Model_Carte();
+				$carte = new Model_Carte(false);
 				$carte->id = $c["id"];
 				$carte->nom = $c["nom"];
 				$accompagnement->addCarte($carte);
@@ -361,7 +361,7 @@ class Model_Carte extends Model_Template {
 		}
 		$supplements = $stmt->fetchAll();
 		foreach ($supplements as $sup) {
-			$supplement = new Model_Supplement();
+			$supplement = new Model_Supplement(false);
 			$supplement->id = $sup["id"];
 			$supplement->nom = $sup["nom"];
 			$supplement->prix = $sup["prix"];
@@ -381,7 +381,7 @@ class Model_Carte extends Model_Template {
 		}
 		$options = $stmt->fetchAll();
 		foreach ($options as $opt) {
-			$option = new Model_Option();
+			$option = new Model_Option(false);
 			$option->id = $opt["id"];
 			$option->nom = $opt["nom"];
 			
@@ -418,7 +418,7 @@ class Model_Carte extends Model_Template {
 		}
 		$supplements = $stmt->fetchAll();
 		foreach ($supplements as $sup) {
-			$supplement = new Model_Supplement();
+			$supplement = new Model_Supplement(false);
 			$supplement->id = $sup["id"];
 			$supplement->nom = $sup["nom"];
 			$supplement->prix = $sup["prix"];
@@ -447,19 +447,19 @@ class Model_Carte extends Model_Template {
 		$results = $stmt->fetchAll();
 		$cartes = array();
 		foreach ($results as $result) {
-			$carte = new Model_Carte();
+			$carte = new Model_Carte(false);
 			$carte->id = $result["id_carte"];
 			$carte->nom = $result["nom_carte"];
 			$carte->commentaire = $result["commentaire"];
 			
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $result["id_resto"];
 			$restaurant->nom = $result["nom_resto"];
 			$restaurant->ville = $result["ville_resto"];
 			
 			$carte->restaurant = $restaurant;
 			
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(false);
 			$categorie->nom = $result["nom_categorie"];
 			
 			$carte->categorie = $categorie;
