@@ -1,8 +1,5 @@
 <?php
 
-include_once ROOT_PATH."function.php";
-
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/Carte.php";
 include_once ROOT_PATH."models/Supplement.php";
