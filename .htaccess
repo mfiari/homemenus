@@ -23,3 +23,8 @@ RewriteRule ^web/particuliers.html$ web/index.php?action=particuliers [L]
 RewriteRule ^web/entreprises.html$ web/index.php?action=entreprises [L]
 RewriteRule ^web/evenement.html$ web/index.php?action=evenement [L]
 RewriteRule ^web/inscription.html$ web/index.php?action=inscription [L]
+
+<IfModule mod_php5.c>
+    php_flag always_populate_raw_post_data -1
+    php_value always_populate_raw_post_data -1
+</IfModule>
