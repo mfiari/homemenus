@@ -1,8 +1,5 @@
 <?php
 
-include_once ROOT_PATH."function.php";
-
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/CommandeHistory.php";
 include_once ROOT_PATH."models/Dispo.php";
@@ -34,11 +31,21 @@ class Controller_Index extends Controller_Admin_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('resultats/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('resultats/'.$vue.'.php');
+	}
+	
 	public function stats ($request) {
 		$request->title = "Administration";
-		$modelUser = new Model_User();
+		$modelUser = new Model_User(true, $request->dbConnector);
 		$request->livreursDispo = $modelUser->getLivreurAvailableToday();
-		$modelCommande = new Model_Commande();
+		$modelCommande = new Model_Commande(true, $request->dbConnector);
 		$request->resultats = $modelCommande->getTotal();
 		$request->livreurs = $modelCommande->getTotalByLivreur();
 		$request->restaurants = $modelCommande->getTotalByRestaurant();
@@ -64,7 +71,7 @@ class Controller_Index extends Controller_Admin_Template {
 		}
 		$dateFin = datepickerToDatetime($request->date_fin);
 		
-		$modelCommande = new Model_Commande_History();
+		$modelCommande = new Model_Commande_History(true, $request->dbConnector);
 		$request->resultats = $modelCommande->getTotal($dateDebut, $dateFin);
 		$request->days = $modelCommande->getTotalByDayAndRestaurant($dateDebut, $dateFin);
 		$request->months = $modelCommande->getTotalByMonth($dateDebut, $dateFin);
@@ -74,7 +81,7 @@ class Controller_Index extends Controller_Admin_Template {
 		$request->villes = $modelCommande->getTotalByVille($dateDebut, $dateFin);
 		$request->timeRestaurant = $modelCommande->getAvgTimeByRestaurant($dateDebut, $dateFin);
 		$request->timeLivreur = $modelCommande->getAvgTimeByLivreur($dateDebut, $dateFin);
-		$request->vue = $this->render("resultats/history.php");
+		$request->vue = $this->render("history.php");
 	}
 	
 	public function logout ($request) {
