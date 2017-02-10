@@ -1,6 +1,5 @@
 <?php
 
-include_once ROOT_PATH."models/Template.php";
 include_once ROOT_PATH."models/User.php";
 include_once ROOT_PATH."models/Panier.php";
 include_once ROOT_PATH."models/Restaurant.php";
@@ -67,9 +66,19 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 	}
 	
+	protected function render ($vue) {
+		if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
+			$mobileVue = parent::render('panier/'.$vue.'-mobile.php');
+			if (file_exists($mobileVue)){
+				return $mobileVue;
+			}
+		}
+		return parent::render('panier/'.$vue.'.php');
+	}
+	
 	public function view ($request) {
 		$request->disableLayout = true;
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		if ($request->_auth) {
 			$panier->uid = $request->_auth->id;
 		} else {
@@ -88,11 +97,11 @@ class Controller_Panier extends Controller_Default_Template {
 		if (isset($_SESSION['search_rue'])) {
 			$request->rue = $_SESSION['search_rue'];
 		}
-		$request->vue = $this->render("panier.php");
+		$request->vue = $this->render("panier");
 	}
 	
 	private function initPanier ($request, $id_restaurant) {
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		if ($request->_auth) {
 			$panier->uid = $request->_auth->id;
 		} else {
@@ -100,7 +109,7 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 		$panier->init();
 		if ($panier->id_restaurant == -1) {
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(true, $request->dbConnector);
 			$restaurant->id = $id_restaurant;
 			$fields = array ("latitude", "longitude");
 			$restaurant->get($fields);
@@ -134,10 +143,6 @@ class Controller_Panier extends Controller_Default_Template {
 			$this->error(405, "Method not allowed");
 			return;
 		}
-		/*if (!$request->_auth) {
-			$this->error(403, "Not authorized");
-			return;
-		}*/
 		if (!isset($_POST['id_carte'])) {
 			$this->error(409, "Conflict");
 		}
@@ -148,7 +153,7 @@ class Controller_Panier extends Controller_Default_Template {
 		$quantite = $_POST['quantite'];
 		$id_carte = $_POST['id_carte'];
 		$format = $_POST['format'];
-		$modelCarte = new Model_Carte();
+		$modelCarte = new Model_Carte(true, $request->dbConnector);
 		$modelCarte->id = $id_carte;
 		$modelCarte->load();
 		$id_panier_carte = $panier->addCarte($id_carte, $format, $quantite);
@@ -180,10 +185,6 @@ class Controller_Panier extends Controller_Default_Template {
 			$this->error(405, "Method not allowed");
 			return;
 		}
-		/*if (!$request->_auth) {
-			$this->error(403, "Not authorized");
-			return;
-		}*/
 		if (!isset($_POST['id_panier'])) {
 			$this->error(400, "Bad request");
 		}
@@ -192,7 +193,7 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 		$request->disableLayout = true;
 		$request->noRender = true;
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		if ($request->_auth) {
 			$panier->uid = $request->_auth->id;
 		} else {
@@ -213,9 +214,6 @@ class Controller_Panier extends Controller_Default_Template {
 		if ($request->request_method != "POST") {
 			$this->error(405, "Method not allowed");
 		}
-		/*if (!$request->_auth) {
-			$this->error(403, "Not authorized");
-		}*/
 		if (!isset($_POST['id_menu'])) {
 			$this->error(400, "Bad request");
 		}
@@ -223,7 +221,7 @@ class Controller_Panier extends Controller_Default_Template {
 		$request->noRender = true;
 		$id_menu = $_POST['id_menu'];
 		$id_restaurant = $_POST['id_restaurant'];
-		$modelMenu = new Model_Menu();
+		$modelMenu = new Model_Menu(true, $request->dbConnector);
 		$modelMenu->id = $id_menu;
 		$panier = $this->initPanier ($request, $id_restaurant);
 		
@@ -248,10 +246,6 @@ class Controller_Panier extends Controller_Default_Template {
 			$this->error(405, "Method not allowed");
 			return;
 		}
-		/*if (!$request->_auth) {
-			$this->error(403, "Not authorized");
-			return;
-		}*/
 		if (!isset($_POST['id_panier'])) {
 			$this->error(400, "Bad request");
 		}
@@ -260,7 +254,7 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 		$request->disableLayout = true;
 		$request->noRender = true;
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		if ($request->_auth) {
 			$panier->uid = $request->_auth->id;
 		} else {
@@ -304,14 +298,14 @@ class Controller_Panier extends Controller_Default_Template {
 			$minute_commande = $_POST['minute_commande'];
 		}
 		
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		if ($request->_auth) {
 			$panier->uid = $request->_auth->id;
 		} else {
 			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
 		}
 		
-		$restaurant = new Model_Restaurant();
+		$restaurant = new Model_Restaurant(true, $request->dbConnector);
 		$restaurant->id = $panier->getRestaurant();
 		$fields = array ("latitude", "longitude");
 		$restaurant->get($fields);
@@ -391,7 +385,7 @@ class Controller_Panier extends Controller_Default_Template {
 		$code_postal = $_POST['code_postal'];
 		$telephone = $_POST['telephone'];
 		$request->disableLayout = true;
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $request->_auth->id;
 		$panier->validate($rue, $ville, $code_postal, $telephone, $heure_commande, $minute_commande);
 	}
@@ -419,10 +413,10 @@ class Controller_Panier extends Controller_Default_Template {
 					$errorMessageSubscribe["EMPTY_PASSWORD"] = "Le mot de passe ne peut être vide";
 				}
 				if (count($errorMessageSubscribe) == 0) {
-					$panier = new Model_Panier();
+					$panier = new Model_Panier(true, $request->dbConnector);
 					$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
 					$panier->get();
-					$model = new Model_User();
+					$model = new Model_User(true, $request->dbConnector);
 					$model->nom = trim($_POST["nom"]);
 					$model->prenom = trim($_POST["prenom"]);
 					$model->login = trim($_POST["login"]);
@@ -487,7 +481,7 @@ class Controller_Panier extends Controller_Default_Template {
 				if (count($errorMessageLogin) == 0) {
 					$login = $_POST["login"];
 					$password = $_POST["password"];
-					$user = new Model_User();
+					$user = new Model_User(true, $request->dbConnector);
 					if (!$user->login($login, $password)) {
 						$errorMessageLogin["LOGIN_NOT_FOUND"] = "Le login ou le mot de passe est incorrecte";
 					} else if (!$user->is_enable) {
@@ -496,7 +490,7 @@ class Controller_Panier extends Controller_Default_Template {
 						$_SESSION["uid"] = $user->id;
 						$_SESSION["session"] = $user->session;
 						
-						$panier = new Model_Panier();
+						$panier = new Model_Panier(true, $request->dbConnector);
 						$panier->uid = $user->id;
 						if ($panier->init() !== false) {
 							$panier->remove();
@@ -518,22 +512,22 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/inscription_panier.js");
 		$request->title = "Inscription";
-		$request->vue = $this->render("finalisation_inscription.php");
+		$request->vue = $this->render("finalisation_inscription");
 	}
 	
 	public function finalisation ($request) {
 		if (!$request->_auth) {
 			$this->redirect("finalisation_inscription", "panier");
 		}
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $request->_auth->id;
 		$request->panier = $panier->load();
-		$request->vue = $this->render("panier_validate.php");
+		$request->vue = $this->render("panier_validate");
 	}
 	
 	public function valideCarte ($request) {
 		
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $request->_auth->id;
 		$panier = $panier->load();
 		
@@ -584,13 +578,13 @@ class Controller_Panier extends Controller_Default_Template {
 				"description" => "validation commande user ".$request->_auth->id
 				));
 				
-				$panier = new Model_Panier();
+				$panier = new Model_Panier(true, $request->dbConnector);
 				$panier->uid = $request->_auth->id;
 				$panier->init();
-				$commande = new Model_Commande();
+				$commande = new Model_Commande(true, $request->dbConnector);
 				if ($commande->create($panier)) {
 					$panier->remove();
-					$user = new Model_User();
+					$user = new Model_User(true, $request->dbConnector);
 					
 					$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
 					if (count($restaurantUsers) > 0) {
@@ -674,7 +668,7 @@ class Controller_Panier extends Controller_Default_Template {
 						send_mail ($restaurantUser->email, "Nouvelle commande", $messageContentRestaurant, MAIL_FROM_DEFAULT, $attachments2);
 					}*/
 				}
-				$request->vue = $this->render("paypal_success.php");
+				$request->vue = $this->render("paypal_success");
 				
 			} catch(\Stripe\Error\Card $e) {
 				
@@ -688,7 +682,7 @@ class Controller_Panier extends Controller_Default_Template {
 		$request->disableLayout = true;
 		$request->noRender = true;
 		
-		$modelCodePromo = new Model_CodePromo();
+		$modelCodePromo = new Model_CodePromo(true, $request->dbConnector);
 		$modelCodePromo->code = $codePromo;
 		if ($modelCodePromo->getByCode() === false) {
 			$this->error(404, "Not found");
@@ -706,7 +700,7 @@ class Controller_Panier extends Controller_Default_Template {
 			}
 		}
 		
-		$panier = new Model_Panier();
+		$panier = new Model_Panier(true, $request->dbConnector);
 		if ($request->_auth) {
 			$panier->uid = $request->_auth->id;
 		} else {
