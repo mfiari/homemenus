@@ -293,7 +293,7 @@ class Model_Commande_History extends Model_Template {
 		$result = $stmt->fetchAll();
 		$listCommande = array();
 		foreach ($result as $c) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(false);
 			$commande->id = $c["id"];
 			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
 			$commande->prix = $c["prix"];
@@ -303,7 +303,7 @@ class Model_Commande_History extends Model_Template {
 			$commande->client->id = $c['id_user'];
 			$commande->client->nom = $c['nom_user'];
 			$commande->client->prenom = $c['prenom_user'];
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $c["id_restaurant"];
 			$restaurant->nom = $c["nom_restaurant"];
 			$restaurant->ville = $c["ville_restaurant"];
@@ -331,7 +331,7 @@ class Model_Commande_History extends Model_Template {
 		$result = $stmt->fetchAll();
 		$listCommande = array();
 		foreach ($result as $c) {
-			$commande = new Model_Commande_History();
+			$commande = new Model_Commande_History(false);
 			$commande->id = $c["id"];
 			$commande->id_commande = $c["id_commande"];
 			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
@@ -346,7 +346,7 @@ class Model_Commande_History extends Model_Template {
 			$commande->livreur->nom = $c['nom_livreur'];
 			$commande->livreur->prenom = $c['prenom_livreur'];
 			$commande->livreur->login = $c['login_livreur'];
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $c["id_restaurant"];
 			$restaurant->nom = $c["nom_restaurant"];
 			$restaurant->ville = $c["ville_restaurant"];
@@ -372,20 +372,20 @@ class Model_Commande_History extends Model_Template {
 		$result = $stmt->fetchAll();
 		$listCommande = array();
 		foreach ($result as $c) {
-			$commande = new Model_Commande_History();
+			$commande = new Model_Commande_History(false);
 			$commande->id = $c["id"];
 			$commande->id_commande = $c["id_commande"];
 			$commande->date_commande = $c["date_commande"];
 			$commande->prix = $c["prix"] + $c["prix_livraison"];
 			$commande->note = $c["note"];
 			
-			$livreur = new Model_User();
+			$livreur = new Model_User(false);
 			$livreur->id = $c["id_livreur"];
 			$livreur->prenom = $c["prenom_livreur"];
 			
 			$commande->livreur = $livreur;
 			
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $c["id_restaurant"];
 			$restaurant->nom = $c["nom_restaurant"];
 			$restaurant->ville = $c["ville_restaurant"];
@@ -433,7 +433,7 @@ class Model_Commande_History extends Model_Template {
 		$result = $stmt->fetchAll();
 		$listCommande = array();
 		foreach ($result as $c) {
-			$commande = new Model_Commande();
+			$commande = new Model_Commande(false);
 			$commande->id = $c["id"];
 			$commande->id_commande = $c["id_commande"];
 			$commande->ville = $c["ville_commande"];
@@ -443,21 +443,21 @@ class Model_Commande_History extends Model_Template {
 			$commande->prix = $c["prix"] + $c["prix_livraison"];
 			$commande->note = $c["note"];
 			
-			$client = new Model_User();
+			$client = new Model_User(false);
 			$client->id = $c["id_client"];
 			$client->nom = $c["nom_user"];
 			$client->prenom = $c["prenom_user"];
 			
 			$commande->client = $client;
 			
-			$livreur = new Model_User();
+			$livreur = new Model_User(false);
 			$livreur->id = $c["id_livreur"];
 			$livreur->login = $c["login"];
 			$livreur->prenom = $c["prenom_livreur"];
 			
 			$commande->livreur = $livreur;
 			
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $c["id_restaurant"];
 			$restaurant->nom = $c["nom_restaurant"];
 			$restaurant->ville = $c["ville_restaurant"];
@@ -583,13 +583,13 @@ class Model_Commande_History extends Model_Template {
 			$menu->quantite = $commandeMenu['quantite'];
 			$menu->prix = $commandeMenu['prix'] * $commandeMenu['quantite'];
 			
-			$format = new Model_Format();
+			$format = new Model_Format(false);
 			$format->id = $commandeMenu['id_format'];
 			$format->nom = $commandeMenu['nom_format'];
 			
 			$menu->addFormat($format);
 			
-			$formule = new Model_Formule();
+			$formule = new Model_Formule(false);
 			$formule->id = 0;
 			$formule->nom = 'formule';
 			
@@ -641,7 +641,7 @@ class Model_Commande_History extends Model_Template {
 		
 		$results = $stmt->fetchAll();
 		foreach ($results as $result) {
-			$commande = new Model_Commande_History();
+			$commande = new Model_Commande_History(false);
 			$commande->id = $result['id'];
 			$commande->id_commande = $result['id_commande'];
 			$commande->livreur = new Model_User(false);
@@ -720,13 +720,13 @@ class Model_Commande_History extends Model_Template {
 				$menu->quantite = $commandeMenu['quantite'];
 				$menu->prix = $commandeMenu['prix'] * $commandeMenu['quantite'];
 				
-				$format = new Model_Format();
+				$format = new Model_Format(false);
 				$format->id = $commandeMenu['id_format'];
 				$format->nom = $commandeMenu['nom_format'];
 				
 				$menu->addFormat($format);
 				
-				$formule = new Model_Formule();
+				$formule = new Model_Formule(false);
 				$formule->id = 0;
 				$formule->nom = 'formule';
 				
@@ -938,7 +938,7 @@ class Model_Commande_History extends Model_Template {
 		$result = $stmt->fetchAll();
 		$listCommande = array();
 		foreach ($result as $c) {
-			$commande = new Model_Commande_History();
+			$commande = new Model_Commande_History(false);
 			$commande->id = $c["id"];
 			$commande->id_commande = $c["id_commande"];
 			$commande->date_commande = $c["date_commande"];
@@ -946,20 +946,20 @@ class Model_Commande_History extends Model_Template {
 			$commande->commentaire = $c["commentaire"];
 			$commande->validation_commentaire = $c["validation_commentaire"];
 			
-			$client = new Model_User();
+			$client = new Model_User(false);
 			$client->id = $c["id_user"];
 			$client->nom = $c["nom_user"];
 			$client->prenom = $c["prenom_user"];
 			
 			$commande->client = $client;
 			
-			$livreur = new Model_User();
+			$livreur = new Model_User(false);
 			$livreur->id = $c["id_livreur"];
 			$livreur->login = $c["login_livreur"];
 			
 			$commande->livreur = $livreur;
 			
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $c["id_restaurant"];
 			$restaurant->nom = $c["nom_restaurant"];
 			
