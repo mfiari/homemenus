@@ -228,7 +228,7 @@ class Model_Panier extends Model_Template {
 		$paniers = $stmt->fetchAll();
 		$list = array();
 		foreach ($paniers as $key => $value) {
-			$panier = new Model_Panier();
+			$panier = new Model_Panier(false);
 			$panier->id = $value['id'];
 			$panier->adresse_ip = $value['adresse_ip'];
 		
@@ -385,7 +385,7 @@ class Model_Panier extends Model_Template {
 		}
 		$listCarte = $stmt->fetchAll();
 		foreach ($listCarte as $c) {
-			$carte = new Model_Carte();
+			$carte = new Model_Carte(false);
 			$carte->id = $c["id"];
 			$carte->nom = $c["nom"];
 			$carte->prix = ($c["prix"] + $c["prix_supp"]) * $c["quantite"];
@@ -405,7 +405,7 @@ class Model_Panier extends Model_Template {
 		}
 		$listMenu = $stmt->fetchAll();
 		foreach ($listMenu as $m) {
-			$menu = new Model_Menu();
+			$menu = new Model_Menu(false);
 			$menu->id = $m["id"];
 			$menu->nom = $m["nom"];
 			$menu->prix = $m["prix"] * $m["quantite"];
@@ -507,13 +507,13 @@ class Model_Panier extends Model_Template {
 			$menu->quantite = $panierMenu['quantite'];
 			$menu->prix = $panierMenu['prix'] * $panierMenu['quantite'];
 			
-			$format = new Model_Format();
+			$format = new Model_Format(false);
 			$format->id = $panierMenu['id_format'];
 			$format->nom = $panierMenu['nom_format'];
 			
 			$menu->addFormat($format);
 			
-			$formule = new Model_Formule();
+			$formule = new Model_Formule(false);
 			$formule->id = 0;
 			$formule->nom = 'formule';
 			
@@ -568,7 +568,7 @@ class Model_Panier extends Model_Template {
 			$carte->prix = $panierCarte['prix'] * $panierCarte['quantite'];
 			$carte->quantite = $panierCarte['quantite'];
 			
-			$format = new Model_Format();
+			$format = new Model_Format(false);
 			$format->id = $panierCarte['id_format'];
 			$format->nom = $panierCarte['nom_format'];
 			
@@ -725,13 +725,13 @@ class Model_Panier extends Model_Template {
 			$menu->quantite = $panierMenu['quantite'];
 			$menu->prix = $panierMenu['prix'] * $panierMenu['quantite'];
 			
-			$format = new Model_Format();
+			$format = new Model_Format(false);
 			$format->id = $panierMenu['id_format'];
 			$format->nom = $panierMenu['nom_format'];
 			
 			$menu->addFormat($format);
 			
-			$formule = new Model_Formule();
+			$formule = new Model_Formule(false);
 			$formule->id = 0;
 			$formule->nom = 'formule';
 			
@@ -786,7 +786,7 @@ class Model_Panier extends Model_Template {
 			$carte->prix = $panierCarte['prix'] * $panierCarte['quantite'];
 			$carte->quantite = $panierCarte['quantite'];
 			
-			$format = new Model_Format();
+			$format = new Model_Format(false);
 			$format->id = $panierCarte['id_format'];
 			$format->nom = $panierCarte['nom_format'];
 			
