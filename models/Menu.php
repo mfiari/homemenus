@@ -150,7 +150,7 @@ class Model_Menu extends Model_Template {
 		}
 		$formats = $stmt->fetchAll();
 		foreach ($formats as $form) {
-			$format = new Model_Format();
+			$format = new Model_Format(false);
 			$format->id = $form["id"];
 			$format->nom = $form["nom"];
 			$format->prix = $form["prix"];
@@ -170,7 +170,7 @@ class Model_Menu extends Model_Template {
 		}
 		$formules = $stmt->fetchAll();
 		foreach ($formules as $form) {
-			$formule = new Model_Formule();
+			$formule = new Model_Formule(false);
 			$formule->id = $form["id"];
 			$formule->nom = $form["nom"];
 			
@@ -186,7 +186,7 @@ class Model_Menu extends Model_Template {
 			}
 			$categories = $stmt->fetchAll();
 			foreach ($categories as $cat) {
-				$categorie = new Model_Categorie();
+				$categorie = new Model_Categorie(false);
 				$categorie->id = $cat["id"];
 				$categorie->nom = $cat["nom"];
 				$categorie->quantite = $cat["quantite"];
@@ -202,13 +202,13 @@ class Model_Menu extends Model_Template {
 				}
 				$contenus = $stmt->fetchAll();
 				foreach ($contenus as $cont) {
-					$contenu = new Model_Contenu();
+					$contenu = new Model_Contenu(false);
 					$contenu->id = $cont['id'];
 					$contenu->obligatoire = $cont['obligatoire'];
 					$contenu->limite_supplement = $cont['limite_supplement'];
 					$contenu->commentaire = $cont['commentaire'];
 					
-					$modelCarte = new Model_Carte();
+					$modelCarte = new Model_Carte(true, $this->db);
 					$modelCarte->id = $cont['id_carte'];
 					$contenu->carte = $modelCarte->load($id_restaurant);
 					
