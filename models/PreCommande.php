@@ -356,7 +356,7 @@ class Model_Pre_Commande extends Model_Template {
 		if ($value == null) {
 			return;
 		}
-		$this->client = new Model_User();
+		$this->client = new Model_User(false);
 		$this->client->id = $value['uid'];
 		$this->client->nom = $value['nom'];
 		$this->client->prenom = $value['prenom'];
@@ -450,7 +450,7 @@ class Model_Pre_Commande extends Model_Template {
 		$result = $stmt->fetchAll();
 		$listCommande = array();
 		foreach ($result as $c) {
-			$commande = new Model_Pre_Commande();
+			$commande = new Model_Pre_Commande(false);
 			$commande->id = $c["id"];
 			$commande->client = new Model_User(false);
 			$commande->client->id = $c["uid"];
@@ -471,7 +471,7 @@ class Model_Pre_Commande extends Model_Template {
 		$result = $stmt->fetchAll();
 		$listCommande = array();
 		foreach ($result as $c) {
-			$commande = new Model_Pre_Commande();
+			$commande = new Model_Pre_Commande(false);
 			$commande->id = $c["id"];
 			$listCommande[] = $commande;
 		}
