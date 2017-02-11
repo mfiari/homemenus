@@ -472,7 +472,7 @@ class Model_Restaurant extends Model_Template {
 			$restaurant->short_desc = $value['short_desc'];
 			$restaurant->latitude = $value['latitude'];
 			$restaurant->longitude = $value['longitude'];
-			$horaire = new Model_Horaire(false);
+			$horaire = new Model_Horaire();
 			$horaire->id_jour = $value['id_jour'];
 			$horaire->heure_debut = $value['heure_debut'];
 			$horaire->minute_debut = $value['minute_debut'];
@@ -543,7 +543,7 @@ class Model_Restaurant extends Model_Template {
 		$this->nb_note = $value['nb_note'];
 		$this->commentaire = $value['nb_commentaire'];
 		
-		$horaire = new Model_Horaire(false);
+		$horaire = new Model_Horaire();
 		$horaire->id = $value['id_horaire'];
 		$horaire->id_jour = $value['id_jour'];
 		$horaire->heure_debut = $value['heure_debut'];
@@ -610,7 +610,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$categories = $stmt->fetchAll();
 		foreach ($categories as $c) {
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(true, $this->db);
 			$categorie->id = $c["id"];
 			$categorie->nom = $c["nom"];
 						
@@ -636,7 +636,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$menus = $stmt->fetchAll();
 		foreach ($menus as $m) {
-			$menu = new Model_Menu();
+			$menu = new Model_Menu(false);
 			$menu->id = $m["id"];
 			$menu->nom = $m["nom"];
 			$menu->prix = $m["prix"];
@@ -672,7 +672,7 @@ class Model_Restaurant extends Model_Template {
 		$this->long_desc = $value['long_desc'];
 		$this->latitude = $value['latitude'];
 		$this->longitude = $value['longitude'];
-		$horaire = new Model_Horaire(false);
+		$horaire = new Model_Horaire();
 		$horaire->id_jour = $value['id_jour'];
 		$horaire->heure_debut = $value['heure_debut'];
 		$horaire->minute_debut = $value['minute_debut'];
@@ -715,7 +715,7 @@ class Model_Restaurant extends Model_Template {
 		$this->longitude = $value['longitude'];
 		$this->pourcentage = $value['pourcentage'];
 		$this->virement = $value['virement'];
-		$user = new Model_User();
+		$user = new Model_User(false);
 		$user->uid = $uid;
 		$user->nom = $value['user_nom'];
 		$user->prenom = $value['user_prenom'];
@@ -757,7 +757,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$categories = $stmt->fetchAll();
 		foreach ($categories as $c) {
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(false);
 			$categorie->id = $c["id"];
 			$categorie->nom = $c["nom"];
 			$this->categories[] = $categorie;
@@ -792,10 +792,8 @@ class Model_Restaurant extends Model_Template {
 			$categorie = $c["categorie"];
 			if (!isset($this->carte[$categorie])) {
 				$this->carte[$categorie] = array();
-				/*$this->carte[$categorie]["id"] = $c["id_categorie"];*/
-				//$this->carte[$categorie]["carte"] = array();
 			}
-			$carte = new Model_Carte();
+			$carte = new Model_Carte(false);
 			$carte->id = $c["id_carte"];
 			$carte->nom = $c["carte"];
 			$this->carte[$categorie][] = $carte;
@@ -813,7 +811,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$categories = $stmt->fetchAll();
 		foreach ($categories as $c) {
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(true, $this->db);
 			$categorie->id = $c["id"];
 			$categorie->nom = $c["nom"];
 			$categorie->getContenu($this->id);
@@ -832,7 +830,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$menus = $stmt->fetchAll();
 		foreach ($menus as $m) {
-			$menu = new Model_Menu();
+			$menu = new Model_Menu(false);
 			$menu->id = $m["id"];
 			$menu->nom = $m["nom"];
 			$menu->getLogo($this->id);
@@ -851,7 +849,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$formats = $stmt->fetchAll();
 		foreach ($formats as $f) {
-			$format = new Model_Format();
+			$format = new Model_Format(false);
 			$format->id = $f["id"];
 			$format->nom = $f["nom"];
 			$this->formats[] = $format;
@@ -869,7 +867,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$formules = $stmt->fetchAll();
 		foreach ($formules as $f) {
-			$formule = new Model_Formule();
+			$formule = new Model_Formule(false);
 			$formule->id = $f["id"];
 			$formule->nom = $f["nom"];
 			$this->formules[] = $formule;
@@ -887,7 +885,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$categories = $stmt->fetchAll();
 		foreach ($categories as $cat) {
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(false);
 			$categorie->id = $cat["id"];
 			$categorie->nom = $cat["nom"];
 			
@@ -900,7 +898,7 @@ class Model_Restaurant extends Model_Template {
 			}
 			$contenus = $stmt->fetchAll();
 			foreach ($contenus as $cont) {
-				$contenu = new Model_Contenu();
+				$contenu = new Model_Contenu(false);
 				$contenu->id = $cont['id'];
 				$contenu->nom = $cont['nom'];
 				
@@ -921,7 +919,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$supplements = $stmt->fetchAll();
 		foreach ($supplements as $sup) {
-			$supplement = new Model_Supplement();
+			$supplement = new Model_Supplement(false);
 			$supplement->id = $sup["id"];
 			$supplement->nom = $sup["nom"];
 			$supplement->prix = $sup["prix"];
@@ -1025,7 +1023,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$options = $stmt->fetchAll();
 		foreach ($options as $opt) {
-			$option = new Model_Option();
+			$option = new Model_Option(false);
 			$option->id = $opt["id"];
 			$option->nom = $opt["nom"];
 			$this->options[] = $option;
@@ -1095,7 +1093,7 @@ class Model_Restaurant extends Model_Template {
 		$restaurants = $stmt->fetchAll();
 		$list = array();
 		foreach ($restaurants as $resto) {
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $resto['id'];
 			$restaurant->latitude = $resto['latitude'];
 			$restaurant->longitude = $resto['longitude'];
@@ -1131,11 +1129,11 @@ class Model_Restaurant extends Model_Template {
 		$restaurants = $stmt->fetchAll();
 		$list = array();
 		foreach ($restaurants as $resto) {
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $resto['id_restaurant'];
 			$restaurant->nom = $resto['nom'];
 			
-			$client = new Model_User();
+			$client = new Model_User(false);
 			$client->id = $resto["id_user"];
 			$client->nom = $resto["nom_user"];
 			$client->prenom = $resto["prenom_user"];
@@ -1172,7 +1170,7 @@ class Model_Restaurant extends Model_Template {
 		$list = array();
 		foreach ($commentaires as $com) {
 			
-			$user = new Model_User();
+			$user = new Model_User(false);
 			$user->id = $com["id_user"];
 			$user->nom = $com["nom_user"];
 			$user->prenom = $com["prenom_user"];
@@ -1232,22 +1230,22 @@ class Model_Restaurant extends Model_Template {
 		$restaurants = $stmt->fetchAll();
 		$list = array();
 		foreach ($restaurants as $resto) {
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $resto['id_restaurant'];
 			$restaurant->nom = $resto['restaurant'];
 			
-			$client = new Model_User();
+			$client = new Model_User(false);
 			$client->id = $resto["id_user"];
 			$client->nom = $resto["nom_user"];
 			$client->prenom = $resto["prenom_user"];
 			
 			$restaurant->user = $client;
 			
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(false);
 			$categorie->id = $resto["id_categorie"];
 			$categorie->nom = $resto["nom_categorie"];
 			
-			$contenu = new Model_Contenu();
+			$contenu = new Model_Contenu(false);
 			$contenu->id = $resto["id_carte"];
 			$contenu->nom = $resto["carte"];
 			$contenu->getLogo($restaurant->id);
@@ -1283,18 +1281,18 @@ class Model_Restaurant extends Model_Template {
 		}
 		$restaurants = $stmt->fetchAll();
 		foreach ($restaurants as $resto) {
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $resto['id_restaurant'];
 			$restaurant->nom = $resto['restaurant'];
 			
-			$client = new Model_User();
+			$client = new Model_User(false);
 			$client->id = $resto["id_user"];
 			$client->nom = $resto["nom_user"];
 			$client->prenom = $resto["prenom_user"];
 			
 			$restaurant->user = $client;
 			
-			$menu = new Model_Menu();
+			$menu = new Model_Menu(false);
 			$menu->id = $resto["id_menu"];
 			$menu->nom = $resto["menu"];
 			$menu->getLogo($restaurant->id);
@@ -1331,7 +1329,7 @@ class Model_Restaurant extends Model_Template {
 		$list = array();
 		foreach ($commentaires as $com) {
 			
-			$user = new Model_User();
+			$user = new Model_User(false);
 			$user->id = $com["id_user"];
 			$user->nom = $com["nom_user"];
 			$user->prenom = $com["prenom_user"];
@@ -1411,7 +1409,7 @@ class Model_Restaurant extends Model_Template {
 		$restaurants = $stmt->fetchAll();
 		$list = array();
 		foreach ($restaurants as $resto) {
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $resto['id_restaurant'];
 			$restaurant->nom = $resto['nom'];
 			$restaurant->rue = $resto['rue'];
@@ -1465,15 +1463,15 @@ class Model_Restaurant extends Model_Template {
 		$restaurants = $stmt->fetchAll();
 		$list = array();
 		foreach ($restaurants as $resto) {
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $resto['id_restaurant'];
 			$restaurant->nom = $resto['restaurant'];
 			
-			$categorie = new Model_Categorie();
+			$categorie = new Model_Categorie(false);
 			$categorie->id = $resto["id_categorie"];
 			$categorie->nom = $resto["nom_categorie"];
 			
-			$contenu = new Model_Contenu();
+			$contenu = new Model_Contenu(false);
 			$contenu->id = $resto["id_carte"];
 			$contenu->nom = $resto["carte"];
 			$contenu->getLogo($restaurant->id);
@@ -1507,11 +1505,11 @@ class Model_Restaurant extends Model_Template {
 		}
 		$restaurants = $stmt->fetchAll();
 		foreach ($restaurants as $resto) {
-			$restaurant = new Model_Restaurant();
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $resto['id_restaurant'];
 			$restaurant->nom = $resto['restaurant'];
 			
-			$menu = new Model_Menu();
+			$menu = new Model_Menu(false);
 			$menu->id = $resto["id_menu"];
 			$menu->nom = $resto["menu"];
 			$menu->getLogo($restaurant->id);
