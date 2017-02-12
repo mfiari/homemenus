@@ -2,9 +2,9 @@
 
 class Model_Database extends Model_Template {
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 	}
 	

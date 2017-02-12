@@ -8,9 +8,9 @@ class Model_Format extends Model_Template {
 	private $prix;
 	private $temps_preparation;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 		$this->_tableName = "restaurant_format";
 	}

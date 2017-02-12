@@ -24,9 +24,9 @@ class Model_Panier extends Model_Template {
 	private $carteList;
 	private $menuList;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 		$this->id = -1;
 		$this->uid = -1;

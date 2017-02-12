@@ -40,9 +40,9 @@ class Model_Restaurant extends Model_Template {
 	private $nb_note;
 	private $commentaire;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 		$this->id = -1;
 		$this->horaires = array();

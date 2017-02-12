@@ -1,12 +1,9 @@
 <?php
 
-class Model_Option_Value extends Model_Template {
+class Model_Option_Value {
 	
 	protected $id;
 	private $nom;
-	
-	public function __construct() {
-	}
 	
 	public function __get($property) {
 		if (property_exists($this, $property)) {

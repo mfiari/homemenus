@@ -13,9 +13,9 @@ class Model_Categorie extends Model_Template {
 	private $nb_child;
 	private $nb_carte;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 		$this->id = -1;
 		$this->contenus = array();
@@ -149,7 +149,7 @@ class Model_Categorie extends Model_Template {
 		$categories = $stmt->fetchAll();
 		$list = array();
 		foreach ($categories as $c) {
-			$categorie = new Model_Categorie(false);
+			$categorie = new Model_Categorie(true, $this->db);
 			$categorie->id = $c["id"];
 			$categorie->nom = $c["nom"];
 			$list[] = $categorie;

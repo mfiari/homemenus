@@ -8,9 +8,9 @@ class Model_Chat extends Model_Template {
 	private $message;
 	private $date;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 	}
 	

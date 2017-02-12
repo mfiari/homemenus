@@ -7,9 +7,9 @@ class Model_Option extends Model_Template {
 	private $nom;
 	private $values;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 		$this->values = array();
 		$this->_tableName = "restaurant_option";

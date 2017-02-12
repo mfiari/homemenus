@@ -7,9 +7,9 @@ class Model_Accompagnement extends Model_Template {
 	private $limite;
 	private $cartes;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 		$this->cartes = array();
 	}

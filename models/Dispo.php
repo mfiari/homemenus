@@ -21,6 +21,12 @@ class Model_Dispo extends Model_Template {
 	private $minute_fin;
 	private $commande;
 	
+	public function __construct($callParent = true, $db = null) {
+		if ($callParent) {
+			parent::__construct($db);
+		}
+	}
+	
 	public function __get($property) {
 		if (property_exists($this, $property)) {
 			return $this->$property;

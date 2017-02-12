@@ -712,7 +712,7 @@ class Model_User extends Model_Template {
 		$livreurs = $stmt->fetchAll();
 		$list = array();
 		foreach ($livreurs as $livreur) {
-			$user = new Model_User(false);
+			$user = new Model_User(true, $this->db);
 			$user->id = $livreur['uid'];
 			$list[] = $user;
 		}

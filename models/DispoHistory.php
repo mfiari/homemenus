@@ -20,6 +20,12 @@ class Model_Dispo_History extends Model_Template {
 	private $heure_fin;
 	private $minute_fin;
 	
+	public function __construct($callParent = true, $db = null) {
+		if ($callParent) {
+			parent::__construct($db);
+		}
+	}
+	
 	public function __get($property) {
 		if (property_exists($this, $property)) {
 			return $this->$property;

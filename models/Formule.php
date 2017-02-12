@@ -7,9 +7,9 @@ class Model_Formule extends Model_Template {
 	private $nom;
 	private $categories;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 		$this->categories = array();
 		$this->_tableName = "restaurant_formule";

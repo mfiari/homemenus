@@ -93,7 +93,11 @@
 	<div class="col-md-6 col-sm-6" style="text-align : left;">
 		<?php if (!$restaurant->has_livreur_dispo) : ?>
 			<span style="color : #FF0000;">Pas de livreur disponible</span>
-		<?php elseif ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
+		<?php elseif (($horaire->heure_debut > $current_heure) || 
+				($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute) ||
+				($horaire->heure_debut < $current_heure && $horaire->heure_fin < $current_heure) ||
+				($horaire->heure_fin == $current_heure && $horaire->minute_fin < $current_minute)
+		) : ?>
 			<span style="color : #FF0000;">Restaurant fermé</span>
 		<?php elseif (!$horaires) : ?>
 			<span style="color : #FF0000;">Restaurant fermé</span>

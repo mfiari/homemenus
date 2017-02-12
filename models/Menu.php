@@ -17,9 +17,9 @@ class Model_Menu extends Model_Template {
 	private $horaires;
 	private $logo;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 		$this->formats = array();
 		$this->formules = array();

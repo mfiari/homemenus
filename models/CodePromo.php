@@ -18,9 +18,9 @@ class Model_CodePromo extends Model_Template {
 	private $restaurants;
 	private $users;
 	
-	public function __construct($callParent = true) {
+	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
-			parent::__construct();
+			parent::__construct($db);
 		}
 		$this->id = -1;
 		$this->restaurants = array();
