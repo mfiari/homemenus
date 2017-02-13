@@ -73,11 +73,11 @@
 				<img style="height : 360px;" src="res/img/comme-a-la-maison.png" alt="HoMe Menus - Comme à la maison" Title="HoMe Menus - Comme à la maison">
 			</a>
 			<div style="bottom : 0; color : #FFFFFF; left : 550px; position : absolute; z-index : 2;">
-				<h3>Taj Mahal</h3>
-				<p>Restaurant indien</p>
+				<h3>La brasserie des halles</h3>
+				<p>Brasserie</p>
 			</div>
-			<a href="restaurant-5-Mantes-la-Jolie-Taj-Mahal.html" style="margin-right : 20px;">
-				<img style="height : 450px;" src="res/img/taj-mahal.png" alt="HoMe Menus - Taj Mahal" Title="HoMe Menus - Taj Mahal">
+			<a href="restaurant-16-Mantes-la-Jolie-La-brasserie-des-halles.html" style="margin-right : 20px;">
+				<img style="height : 450px;" src="res/img/brasserie.png" alt="HoMe Menus - Brasserie des halles" Title="HoMe Menus - Brasserie des halles">
 			</a>
 		</div>
 	</div>
