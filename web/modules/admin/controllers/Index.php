@@ -51,7 +51,7 @@ class Controller_Index extends Controller_Admin_Template {
 		$request->restaurants = $modelCommande->getTotalByRestaurant();
 		$request->clients = $modelCommande->getTotalByClient();
 		$request->villes = $modelCommande->getTotalByVille();
-		$request->vue = $this->render("resultats/index.php");
+		$request->vue = $this->render("index");
 	}
 	
 	public function stats_history ($request) {
@@ -81,7 +81,7 @@ class Controller_Index extends Controller_Admin_Template {
 		$request->villes = $modelCommande->getTotalByVille($dateDebut, $dateFin);
 		$request->timeRestaurant = $modelCommande->getAvgTimeByRestaurant($dateDebut, $dateFin);
 		$request->timeLivreur = $modelCommande->getAvgTimeByLivreur($dateDebut, $dateFin);
-		$request->vue = $this->render("history.php");
+		$request->vue = $this->render("history");
 	}
 	
 	public function logout ($request) {
