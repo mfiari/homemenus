@@ -107,6 +107,29 @@
 					}
 				}
 			?>
+			<?php if ((count($request->restaurants) > 0) && ($totalRestaurantOuvert < $totalRestaurant)) : ?>
+				<div style="margin-bottom : 100px;">
+					<h3>Restaurants fermé aujourd'hui mais correspondant à votre recherche</h3>
+					<table class="table table-striped">
+						<tbody>
+							<?php foreach ($request->restaurants as $restaurant) : ?>
+								<?php $horaire = $restaurant->horaire; ?>
+								<?php if ($horaire->heure_debut == '') : ?>
+									<tr>
+										<td>
+											<a href="<?php echo restaurantToLink($restaurant, $restaurant->ville); ?>">
+												<?php echo utf8_encode($restaurant->nom); ?>
+											</a>
+										</td>
+										<td><?php echo utf8_encode($restaurant->short_desc); ?></td>
+										<td><?php echo $restaurant->distance > 0 ? $restaurant->distance.' Km' : 'Distance non trouvée'; ?></td>
+									</tr>
+								<?php endif; ?>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+			<?php endif; ?>
 			<?php if ($totalRestaurantNA > $totalRestaurantOuvert) : ?>
 				<div style="margin-bottom : 100px;">
 					<h3>Les restaurants ci-dessous ne peuvent vous être livré car ils se trouvent en dehors de notre périmètre de livraison (qui est de <?php echo MAX_KM; ?>km).
@@ -132,29 +155,6 @@
 					</table>
 				</div>
 			<?php endif; ?>
-		<?php endif; ?>
-		<?php if ((count($request->restaurants) > 0) && ($totalRestaurantOuvert < $totalRestaurant)) : ?>
-			<div style="margin-bottom : 100px;">
-				<h3>Restaurants fermé aujourd'hui mais correspondant à votre recherche</h3>
-				<table class="table table-striped">
-					<tbody>
-						<?php foreach ($request->restaurants as $restaurant) : ?>
-							<?php $horaire = $restaurant->horaire; ?>
-							<?php if ($horaire->heure_debut == '') : ?>
-								<tr>
-									<td>
-										<a href="<?php echo restaurantToLink($restaurant, $restaurant->ville); ?>">
-											<?php echo utf8_encode($restaurant->nom); ?>
-										</a>
-									</td>
-									<td><?php echo utf8_encode($restaurant->short_desc); ?></td>
-									<td><?php echo $restaurant->distance > 0 ? $restaurant->distance.' Km' : 'Distance non trouvée'; ?></td>
-								</tr>
-							<?php endif; ?>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
-			</div>
 		<?php endif; ?>
 		<h3>Vous ne trouvez pas votre restaurant, faites nous part de vos suggestions</h3>
 		<?php if (isset($_GET['avis_send']) && $_GET['avis_send'] == 'success') : ?>
