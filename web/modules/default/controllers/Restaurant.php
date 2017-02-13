@@ -75,11 +75,11 @@ class Controller_Restaurant extends Controller_Default_Template {
 		if (isset($_GET['id'])) {
 			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 			$modelRestaurant->id = $_GET['id'];
-			$request->restaurant = $modelRestaurant->loadAll();
+			$restaurant = $modelRestaurant->loadAll();
 			
 			$modelUser = new Model_User(true, $request->dbConnector);
-			$livreurs = $modelUser->getLivreurAvailableForRestaurant($request->restaurant);
-			$request->restaurant->has_livreur_dispo = count($livreurs) > 0;
+			$livreurs = $modelUser->getLivreurAvailableForRestaurant($restaurant);
+			$restaurant->has_livreur_dispo = count($livreurs) > 0;
 			foreach ($livreurs as $livreur) {
 				$livreur->getLivreurDispo();
 			}
@@ -94,12 +94,12 @@ class Controller_Restaurant extends Controller_Default_Template {
 			}
 			
 			$adresseUser = $_SESSION['search_latitude'].','.$_SESSION['search_longitude'];
-			$adresseResto = $request->restaurant->latitude.','.$request->restaurant->longitude;
+			$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
 			$result = getDistance($adresseUser, $adresseResto);
 			if ($result['status'] == "OK") {
 				$distanceRestoKm = $result['distance'] / 1000;
-				$request->restaurant->distance = $distanceRestoKm;
-				$request->prix_livraison = $request->restaurant->getPrixLivraison();
+				$restaurant->distance = $distanceRestoKm;
+				$request->prix_livraison = $restaurant->getPrixLivraison();
 			}
 			
 			$panier = new Model_Panier(true, $request->dbConnector);
@@ -122,7 +122,8 @@ class Controller_Restaurant extends Controller_Default_Template {
 			if (isset($_SESSION['search_rue'])) {
 				$request->rue = $_SESSION['search_rue'];
 			}
-			$request->title = 'Restaurant '.utf8_encode($request->restaurant->nom);
+			$request->title = 'Restaurant '.utf8_encode($restaurant->nom);
+			$request->restaurant = $restaurant;
 			$request->search_adresse = $_SESSION['search_adresse'];
 			$request->javascripts = array("res/js/menu.js", "https://maps.googleapis.com/maps/api/js?libraries=places");
 			$request->vue = $this->render("restaurant");
