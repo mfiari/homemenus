@@ -26,6 +26,7 @@ include_once ROOT_PATH."models/Nexmo.php";
 class Controller_Commande extends Controller_Admin_Template {
 	
 	public function manage ($request) {
+		$this->request = $request;
 		if (isset($_GET["action"])) {
 			$action = $_GET["action"];
 			switch ($action) {
