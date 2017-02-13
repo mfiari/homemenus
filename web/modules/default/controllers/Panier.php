@@ -18,6 +18,8 @@ include_once ROOT_PATH."models/OptionValue.php";
 include_once ROOT_PATH."models/Accompagnement.php";
 include_once ROOT_PATH."models/CodePromo.php";
 include_once ROOT_PATH."models/PDF.php";
+include_once ROOT_PATH."models/Nexmo.php";
+include_once ROOT_PATH."models/SMS.php";
 
 
 class Controller_Panier extends Controller_Default_Template {
@@ -593,6 +595,12 @@ class Controller_Panier extends Controller_Default_Template {
 						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
 						foreach ($restaurantUsers as $restaurantUser) {
 							array_push($registatoin_ids, $restaurantUser->gcm_token);
+							
+							$sms = new Nexmo();
+							$sms->message = "Vous avez reçu une nouvelle commande";
+							$sms->addNumero($restaurantUser->telephone);
+							$sms->sendMessage();
+							
 						}
 						$message = "Vous avez reçu une nouvelle commande";
 						// listre des utilisateurs à notifier

@@ -883,7 +883,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getRestaurantUsers ($id_restaurant) {
-		$sql = "SELECT users.uid, users.email, us.gcm_token FROM users 
+		$sql = "SELECT users.uid, users.email, us.gcm_token, ur.telephone FROM users 
 		JOIN user_restaurant ur ON ur.uid = users.uid
 		JOIN user_session us ON us.uid = users.uid AND date_logout = '0000-00-00 00:00:00'
 		WHERE ur.id_restaurant = :restaurant AND users.is_login = true AND us.gcm_token IS NOT NULL";
@@ -901,6 +901,7 @@ class Model_User extends Model_Template {
 			$user->id = $usr['uid'];
 			$user->email = $usr['email'];
 			$user->gcm_token = $usr['gcm_token'];
+			$user->telephone = $usr['telephone'];
 			$list[] = $user;
 		}
 		return $list;
