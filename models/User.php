@@ -1064,7 +1064,7 @@ class Model_User extends Model_Template {
 		$sql = "SELECT user.nom, user.prenom, us.gcm_token, ul.telephone
 		FROM users user
 		JOIN user_livreur ul ON ul.uid = user.uid
-		JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
+		LEFT JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
 		WHERE user.uid = :uid
 		LIMIT 1";
 		$stmt = $this->db->prepare($sql);
