@@ -594,7 +594,9 @@ class Controller_Panier extends Controller_Default_Template {
 						$registatoin_ids = array();
 						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
 						foreach ($restaurantUsers as $restaurantUser) {
-							array_push($registatoin_ids, $restaurantUser->gcm_token);
+							if ($restaurantUser->gcm_token) {
+								array_push($registatoin_ids, $restaurantUser->gcm_token);
+							}
 							
 							$sms = new Nexmo();
 							$sms->message = "Vous avez reçu une nouvelle commande";
@@ -602,20 +604,23 @@ class Controller_Panier extends Controller_Default_Template {
 							$sms->sendMessage();
 							
 						}
-						$message = "Vous avez reçu une nouvelle commande";
-						// listre des utilisateurs à notifier
-						$gcm->setDevices($registatoin_ids);
-					 
-						// Le titre de la notification
-						$data = array(
-							"title" => "Nouvelle commande",
-							"key" => "restaurant-new-commande",
-							"id_commande" => $commande->id
-						);
-					 
-						// On notifie nos utilisateurs
-						$result = $gcm->send($message, $data);
-						//$result = $gcm->send('/topics/restaurant-commande',$message, $data);
+						if (count($registatoin_ids) > 0) {
+							$message = "Vous avez reçu une nouvelle commande";
+							// listre des utilisateurs à notifier
+							$gcm->setDevices($registatoin_ids);
+						 
+							// Le titre de la notification
+							$data = array(
+								"title" => "Nouvelle commande",
+								"key" => "restaurant-new-commande",
+								"id_commande" => $commande->id
+							);
+						 
+							// On notifie nos utilisateurs
+							$result = $gcm->send($message, $data);
+						}
+					} else {
+						writeLog(SERVER_LOG, "Auncun utilisateur restaurant trouvé pour la commande #".$commande->id, LOG_LEVEL_WARNING);
 					}
 					
 					$commande->load();

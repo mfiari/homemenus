@@ -885,8 +885,8 @@ class Model_User extends Model_Template {
 	public function getRestaurantUsers ($id_restaurant) {
 		$sql = "SELECT users.uid, users.email, us.gcm_token, ur.telephone FROM users 
 		JOIN user_restaurant ur ON ur.uid = users.uid
-		JOIN user_session us ON us.uid = users.uid AND date_logout = '0000-00-00 00:00:00'
-		WHERE ur.id_restaurant = :restaurant AND users.is_login = true AND us.gcm_token IS NOT NULL";
+		LEFT JOIN user_session us ON us.uid = users.uid AND date_logout = '0000-00-00 00:00:00'
+		WHERE ur.id_restaurant = :restaurant AND users.is_login = true";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $id_restaurant);
 		if (!$stmt->execute()) {
