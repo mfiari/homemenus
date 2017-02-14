@@ -47,7 +47,7 @@ class Nexmo {
 		
 		foreach ($this->numeros as $numero) {
 			
-			$requete = $this->url.'?api_key='.$this->api_key.'&api_secret='.$this->api_secret.'&to='.$numero.'&from='.$this->from.'&text='.urlencode($this->message);
+			$requete = $this->url.'?api_key='.$this->api_key.'&api_secret='.$this->api_secret.'&to='.$numero.'&from='.$this->from.'&text='.urlencode(utf8_encode($this->message));
 
 			// Initialise notre session cURL. On lui donne la requête à exécuter
 			$ch = curl_init($requete);
