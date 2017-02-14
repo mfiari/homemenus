@@ -178,23 +178,25 @@ class Controller_Commande extends Controller_Admin_Template {
 					$sms->addNumero($modelUser->telephone);
 					$sms->sendMessage();
 					
-					$message = "Une commande vous a été retiré";
-					// listre des utilisateurs à notifier
-					$gcm->setDevices(array($livreur->gcm_token));
-					// Le titre de la notification
-					$data = array(
-						"title" => "Changement commande",
-						"key" => "livreur-change-commande",
-						"id_commande" => $commande->id
-					);
-					// On notifie nos utilisateurs
-					$result = $gcm->send($message, $data);
-					
-					/* Envoi de SMS */
-					$sms = new Nexmo();
-					$sms->message = "Le commande #".$commande->id." vous a été retiré";
-					$sms->addNumero($livreur->telephone);
-					$sms->sendMessage();
+					if ($livreur) {
+						$message = "Une commande vous a été retiré";
+						// listre des utilisateurs à notifier
+						$gcm->setDevices(array($livreur->gcm_token));
+						// Le titre de la notification
+						$data = array(
+							"title" => "Changement commande",
+							"key" => "livreur-change-commande",
+							"id_commande" => $commande->id
+						);
+						// On notifie nos utilisateurs
+						$result = $gcm->send($message, $data);
+						
+						/* Envoi de SMS */
+						$sms = new Nexmo();
+						$sms->message = "Le commande #".$commande->id." vous a été retiré";
+						$sms->addNumero($livreur->telephone);
+						$sms->sendMessage();
+					}
 				}
 			}
 		}
