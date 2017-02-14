@@ -318,8 +318,6 @@ class Controller_Commande extends Controller_Admin_Template {
 					$sms->sendMessage();
 				}
 				$client = $commande->getClient();
-				/*var_dump($client);
-				var_dump($client->parametre);*/
 				if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
 					$sms = new Nexmo();
 					$sms->message = "Bonjour, votre commande est en cours de preparation. L'equipe HoMe Menus.";
@@ -337,7 +335,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			$commande->id = $_GET["id_commande"];
 			if ($commande->finPreparation()) {
 				$livreur = $commande->getLivreur();
-				if ($livreur->is_login) {
+				if ($livreur && $livreur->is_login) {
 					if ($livreur->gcm_token) {
 						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
 						$registatoin_ids = array($livreur->gcm_token);
@@ -353,6 +351,11 @@ class Controller_Commande extends Controller_Admin_Template {
 						// On notifie nos utilisateurs
 						$result = $gcm->send($message, $data);
 					}
+					/* Envoi de SMS */
+					$sms = new Nexmo();
+					$sms->message = "La commande #".$commande->id." est prête";
+					$sms->addNumero($livreur->telephone);
+					$sms->sendMessage();
 				}
 			}
 		}
@@ -366,8 +369,8 @@ class Controller_Commande extends Controller_Admin_Template {
 			if ($commande->recuperationCommande()) {
 				$client = $commande->getClient();
 				if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
-					$sms = new Clickatell();
-					$sms->message = "Bonjour, votre commande #".$commande->id." est prête et est en cours de livraison. L'équipe HoMe Menus.";
+					$sms = new Nexmo();
+					$sms->message = "Votre commande est en cours de livraison";
 					$sms->addNumero($client->telephone);
 					$sms->sendMessage();
 				}
