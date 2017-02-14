@@ -21,6 +21,9 @@
 					<span><b>Heure de livraison souhaitée : </b></span><br />
 					<div id="heure_livraison">
 						<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
+					</div><br />
+					<div>
+						<span>Temps de livraison estimé : <?php echo $request->panier->getTempsLivraison(); ?> min</span>
 					</div>
 				<?php else : ?>
 					<input type="radio" name="type_commande" value="now" checked>Au plus tôt
@@ -28,11 +31,11 @@
 					<div id="heure_livraison">
 						<span>heure de commande : </span>
 						<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
+					</div><br />
+					<div>
+						<span>Temps de livraison estimé : <?php echo $request->panier->getTempsLivraison(); ?> min</span>
 					</div>
 				<?php endif; ?>
-				<div>
-					<span>Temps de livraison estimé : <?php echo $request->panier->getTempsLivraison(); ?> min</span>
-				</div>
 			</div><br />
 			<div class="panel panel-default panel-primary">
 				<div class="panel-heading">

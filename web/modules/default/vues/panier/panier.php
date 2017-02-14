@@ -37,7 +37,10 @@
 						<?php for ($i = 0 ; $i <= 60 ; $i++) : ?>
 							<option <?php echo $i == $horaire->minute_debut ? 'selected' : ''; ?>><?php echo $i; ?></option>
 						<?php endfor; ?>
-					</select>
+					</select><br />
+					<div>
+						<span>Temps de livraison estimé : <?php echo $request->panier->getTempsLivraison(); ?> min</span>
+					</div>
 				<?php else : ?>
 					<input type="radio" name="type_commande" value="now" checked>Au plus tôt
 					<input type="radio" name="type_commande" value="pre_commande">Précommander
@@ -58,7 +61,10 @@
 						<?php for ($i = 0 ; $i <= 60 ; $i++) : ?>
 							<option <?php echo $i == $horaire->minute_debut ? 'selected' : ''; ?>><?php echo $i; ?></option>
 						<?php endfor; ?>
-					</select>
+					</select><br />
+					<div>
+						<span>Temps de livraison estimé : <?php echo $request->panier->getTempsLivraison(); ?> min</span>
+					</div>
 				<?php endif; ?>
 			</div><br />
 			<div class="panel panel-default panel-primary">
@@ -165,7 +171,7 @@
 					<div id="codePromoPanierBlock" style="margin-bottom : 20px;">
 						<span>Code promo : </span>
 						<input id="code_promo" name="code_promo" type="text" maxlength="10">
-						<button id="codePromoPanierButton" class="btn btn-primary" type="button">Valider</button>
+						<button id="codePromoPanierButton" class="validate-button" type="button">Valider</button>
 						<div style="display : none;" class="alert alert-success" role="alert">
 							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 							Votre code promo a été validé.
@@ -194,9 +200,9 @@
 			</div>
 		<?php else : ?>
 			<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
-				<button id="command" class="btn btn-primary" type="submit">Précommander</button>
+				<button id="command" class="validate-button" type="submit">Précommander</button>
 			<?php else : ?>
-				<button id="command" class="btn btn-primary" type="submit">Commander</button>
+				<button id="command" class="validate-button" type="submit">Commander</button>
 			<?php endif; ?>
 		<?php endif; ?>
 	<?php endif; ?>
@@ -300,5 +306,11 @@
 <style>
 	a.carte-item, a.menu-item {
 		cursor : pointer;
+	}
+	
+	#panierFormModal .panel-heading {
+		background-color : #F4F4F4;
+		border-color : #F4F4F4;
+		color : #000000;
 	}
 </style>
