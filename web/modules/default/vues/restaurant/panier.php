@@ -30,6 +30,9 @@
 						<select id="heure_commande" name="heure_commande"></select>h<select id="minute_commande" name="minute_commande"></select>
 					</div>
 				<?php endif; ?>
+				<div>
+					<span>Temps de livraison estimé : <?php echo $request->panier->getTempsLivraison(); ?> min</span>
+				</div>
 			</div><br />
 			<div class="panel panel-default panel-primary">
 				<div class="panel-heading">
