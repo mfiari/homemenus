@@ -16,6 +16,7 @@ class Model_Restaurant extends Model_Template {
 	private $longitude;
 	private $short_desc;
 	private $long_desc;
+	private $temps_preparation;
 	private $distance;
 	private $pourcentage;
 	private $virement;

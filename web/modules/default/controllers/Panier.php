@@ -114,7 +114,7 @@ class Controller_Panier extends Controller_Default_Template {
 		if ($panier->id_restaurant == -1) {
 			$restaurant = new Model_Restaurant(true, $request->dbConnector);
 			$restaurant->id = $id_restaurant;
-			$fields = array ("latitude", "longitude");
+			$fields = array ("latitude", "longitude", "temps_preparation");
 			$restaurant->get($fields);
 			$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
 			
@@ -124,8 +124,10 @@ class Controller_Panier extends Controller_Default_Template {
 			
 			$result = getDistance($adresseUser, $adresseResto);
 			$distance = 0;
+			$duration = 0;
 			if ($result['status'] == "OK") {
 				$distance = $result['distance'] / 1000;
+				$duration = ceil($result['duration'] / 60);
 			}
 			$panier->id_restaurant = $id_restaurant;
 			$panier->rue = $_SESSION['search_rue'];
@@ -134,6 +136,8 @@ class Controller_Panier extends Controller_Default_Template {
 			$panier->latitude = $user_latitude;
 			$panier->longitude = $user_longitude;
 			$panier->distance = $distance;
+			$panier->temps_livraison = $duration;
+			$panier->preparation_restaurant = $restaurant->temps_preparation;
 			$panier->update();
 		} else if ($panier->id_restaurant != $id_restaurant) {
 			$this->error(400, "Bad request");

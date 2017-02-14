@@ -17,6 +17,8 @@ class Model_Panier extends Model_Template {
 	private $reduction_premium;
 	private $heure_souhaite;
 	private $minute_souhaite;
+	private $preparation_restaurant;
+	private $temps_livraison;
 	private $restaurant;
 	private $user;
 	private $code_promo;
@@ -96,7 +98,8 @@ class Model_Panier extends Model_Template {
 	
 	public function update () {
 		$sql = "UPDATE panier SET id_restaurant = :restaurant, rue = :rue, ville = :ville, code_postal = :code_postal, latitude = :latitude, 
-		longitude = :longitude, telephone = :telephone, distance = :distance WHERE id = :id";
+		longitude = :longitude, telephone = :telephone, distance = :distance, preparation_restaurant = :preparation_restaurant, temps_livraison = :temps_livraison
+		WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $this->id_restaurant);
 		$stmt->bindValue(":rue", $this->rue);
@@ -106,6 +109,8 @@ class Model_Panier extends Model_Template {
 		$stmt->bindValue(":longitude", $this->longitude);
 		$stmt->bindValue(":telephone", $this->telephone);
 		$stmt->bindValue(":distance", $this->distance);
+		$stmt->bindValue(":preparation_restaurant", $this->preparation_restaurant);
+		$stmt->bindValue(":temps_livraison", $this->temps_livraison);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
