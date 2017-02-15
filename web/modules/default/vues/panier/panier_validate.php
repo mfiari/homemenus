@@ -242,21 +242,28 @@
 			</table>
 		</div>
 	</div>
-	<a href="<?php echo restaurantToLink($request->panier->restaurant, $request->panier->restaurant->ville); ?>" class="btn btn-default" >Retour à la carte</a>
-	<div id="codePromoPanierBlock" style="margin-bottom : 20px;">
-		<span>Code promo : </span>
-		<input id="code_promo" name="code_promo" type="text" maxlength="10">
-		<button id="codePromoPanierButton" class="validate-button" type="button">Valider</button>
-		<div style="display : none;" class="alert alert-success" role="alert">
-			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-			Votre code promo a été validé.
+	<div class="row">
+		<div class="col-md-6">
+			<div id="codePromoPanierBlock" style="margin-bottom : 20px;">
+				<span>Code promo : </span>
+				<input id="code_promo" name="code_promo" type="text" maxlength="10">
+				<button id="codePromoPanierButton" class="validate-button" type="button">Valider</button>
+				<div style="display : none;" class="alert alert-success" role="alert">
+					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+					Votre code promo a été validé.
+				</div>
+				<div style="display : none;" class="alert alert-danger" role="alert">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					<span class="sr-only">Error:</span>
+					<span class="message"></span>
+				</div>
+			</div>
 		</div>
-		<div style="display : none;" class="alert alert-danger" role="alert">
-			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-			<span class="sr-only">Error:</span>
-			<span class="message"></span>
+		<div class="col-md-6" style="text-align : right;">
+			<a href="<?php echo restaurantToLink($request->panier->restaurant, $request->panier->restaurant->ville); ?>" class="btn btn-default" >Retour à la carte</a>
 		</div>
 	</div>
+	
 </div>
 <div>
 	<input id="accept_cgv" type="checkbox" /> Avant de continuer, vous devez accepter les <a href="?action=cgv" target="_blank">conditions générales de vente</a>.
@@ -354,5 +361,9 @@
 		background-color : #F4F4F4;
 		border-color : #F4F4F4;
 		color : #000000;
+	}
+	
+	#code_promo {
+		border : 1px solid #000000;
 	}
 </style>
