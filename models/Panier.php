@@ -6,6 +6,7 @@ class Model_Panier extends Model_Template {
 	private $uid;
 	private $adresse_ip;
 	private $rue;
+	private $complement;
 	private $ville;
 	private $code_postal;
 	private $latitude;
