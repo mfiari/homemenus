@@ -11,20 +11,24 @@
 					<input id="heure_commande" name="heure_commande" value="-1" hidden="hidden" />
 					<input id="minute_commande" name="minute_commande" value="0" hidden="hidden" />
 					<div class="form-group">
-						<label for="login">Rue<span class="required">*</span> : </label>
+						<label for="rue">Rue<span class="required">*</span> : </label>
 						<input id="rue_field" class="form-control" name="rue" type="text" value="<?php echo isset($_SESSION['search_rue']) ? $_SESSION['search_rue'] : ''; ?>" required>
 					</div>
 					<div class="form-group">
-						<label for="login">Code postal<span class="required">*</span> : </label>
+						<label for="complement">Complément : </label>
+						<input id="complement_field" class="form-control" name="complement" type="text" value="<?php echo isset($_SESSION['complement']) ? $_SESSION['complement'] : ''; ?>">
+					</div>
+					<div class="form-group">
+						<label for="code_postal">Code postal<span class="required">*</span> : </label>
 						<input id="cp_field" class="form-control" name="code_postal" type="text" value="<?php echo isset($_SESSION['search_cp']) ? $_SESSION['search_cp'] : ''; ?>" required>
 					</div>
 					<div class="form-group">
-						<label for="login">Ville<span class="required">*</span> : </label>
+						<label for="ville">Ville<span class="required">*</span> : </label>
 						<input id="ville_field" class="form-control" name="ville" type="text" value="<?php echo isset($_SESSION['search_ville']) ? $_SESSION['search_ville'] : ''; ?>" required>
 					</div>
 					<div class="form-group">
-						<label for="login">Téléphone<span class="required">*</span> : </label>
-						<input id="phone_field" class="form-control" name="telephone" type="text" required>
+						<label for="telephone">Téléphone<span class="required">*</span> : </label>
+						<input id="phone_field" class="form-control" name="telephone" type="text" value="<?php echo isset($_SESSION['telephone']) ? $_SESSION['telephone'] : ''; ?>" required>
 					</div>
 				</form>
 			</div>
@@ -49,6 +53,7 @@
 <script type="text/javascript">
 	$("#validationButton").click(function(event) {
 		var rue = $("#rue_field").val();
+		var complement = $("#complement_field").val();
 		var cp = $("#cp_field").val();
 		var ville = $("#ville_field").val();
 		var phone = $("#phone_field").val();
@@ -67,7 +72,7 @@
 			}).done(function( msg ) {
 				var data = $.parseJSON(msg);
 				console.log(data);
-				if (data.distance < 16) {
+				if (data.distance < <?php echo MAX_KM; ?>) {
 					document.location.href = "index.php?controler=panier&action=finalisation";
 				} else {
 					$("#panier-info-modal .modal-footer div.alert-danger span.message").html("Nous ne pouvons vous livrer ce restaurant car votre adresse se trouve à plus de <?php echo MAX_KM; ?>km du restaurant (" + data.distance + " km)");

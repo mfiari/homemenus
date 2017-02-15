@@ -284,19 +284,28 @@ class Controller_Panier extends Controller_Default_Template {
 			return;
 		}
 		$rue = "";
+		$complement = "";
 		$ville = "";
 		$code_postal = "";
 		if (isset($_POST['rue'])) {
 			$rue = $_POST['rue'];
+			$_SESSION['search_rue'] = $rue;
+		}
+		if (isset($_POST['complement'])) {
+			$complement = $_POST['complement'];
+			$_SESSION['complement'] = $complement;
 		}
 		if (isset($_POST['ville'])) {
 			$ville = $_POST['ville'];
+			$_SESSION['search_ville'] = $ville;
 		}
 		if (isset($_POST['code_postal'])) {
 			$code_postal = $_POST['code_postal'];
+			$_SESSION['search_cp'] = $code_postal;
 		}
 		if (isset($_POST['telephone'])) {
 			$telephone = $_POST['telephone'];
+			$_SESSION['telephone'] = $telephone;
 		}
 		$heure_commande = -1;
 		$minute_commande = 0;
@@ -339,7 +348,7 @@ class Controller_Panier extends Controller_Default_Template {
 				$duration = ceil($result['duration'] / 60);
 			}
 			
-			$panier->validate($rue, $ville, $code_postal, $telephone, $heure_commande, $minute_commande, $distance, $duration);
+			$panier->validate($rue, $complement, $ville, $code_postal, $telephone, $heure_commande, $minute_commande, $distance, $duration);
 			
 			$result = array();
 			$result['distance'] = $distance;

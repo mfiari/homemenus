@@ -950,9 +950,9 @@ class Model_Panier extends Model_Template {
 		return $this->db->lastInsertId();
 	}
 	
-	public function validate($rue, $ville, $code_postal, $telephone, $heure_souhaite = -1, $minute_souhaite = 0, $distance = 0, $duration = 0) {
-		$sql = "UPDATE panier SET rue = :rue, ville = :ville, code_postal = :code_postal, telephone = :telephone, heure_souhaite = :heure_souhaite, 
-		minute_souhaite = :minute_souhaite, distance = :distance, temps_livraison = :temps_livraison";
+	public function validate($rue, $complement, $ville, $code_postal, $telephone, $heure_souhaite = -1, $minute_souhaite = 0, $distance = 0, $duration = 0) {
+		$sql = "UPDATE panier SET rue = :rue, complement = :complement, ville = :ville, code_postal = :code_postal, telephone = :telephone, 
+		heure_souhaite = :heure_souhaite, minute_souhaite = :minute_souhaite, distance = :distance, temps_livraison = :temps_livraison";
 		if ($this->uid == -1) {
 			$sql .= " WHERE adresse_ip = :ip";
 		} else {
@@ -960,6 +960,7 @@ class Model_Panier extends Model_Template {
 		}
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":rue", $rue);
+		$stmt->bindValue(":complement", $complement);
 		$stmt->bindValue(":ville", $ville);
 		$stmt->bindValue(":code_postal", $code_postal);
 		$stmt->bindValue(":telephone", $telephone);
