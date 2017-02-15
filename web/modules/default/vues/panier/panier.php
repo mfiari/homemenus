@@ -168,20 +168,6 @@
 							</tr>
 						</tfoot>
 					</table>
-					<div id="codePromoPanierBlock" style="margin-bottom : 20px;">
-						<span>Code promo : </span>
-						<input id="code_promo" name="code_promo" type="text" maxlength="10">
-						<button id="codePromoPanierButton" class="validate-button" type="button">Valider</button>
-						<div style="display : none;" class="alert alert-success" role="alert">
-							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-							Votre code promo a été validé.
-						</div>
-						<div style="display : none;" class="alert alert-danger" role="alert">
-							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-							<span class="sr-only">Error:</span>
-							<span class="message"></span>
-						</div>
-					</div>
 				</div>
 			</div>
 		</form>
@@ -191,6 +177,7 @@
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+	<a href="<?php echo restaurantToLink($request->panier->restaurant, $request->panier->restaurant->ville); ?>" class="btn btn-default" >Retour à la carte</a>
 	<?php if ($request->panier) : ?>
 		<?php if ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
 			<div class="alert alert-danger" role="alert">

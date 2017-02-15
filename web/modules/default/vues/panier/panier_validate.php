@@ -32,6 +32,16 @@
 			<input class="form-control" name="nom" type="text" value="<?php echo utf8_encode($request->panier->rue); ?>, <?php echo utf8_encode($request->panier->code_postal); ?> <?php echo utf8_encode($request->panier->ville); ?>" disabled>
 		</div>
 	</div>
+	<?php if ($request->panier->complement != '') : ?>
+		<div class="row">
+			<div class="col-md-3">
+				<span>Complément : </span>
+			</div>
+			<div class="col-md-9">
+				<input class="form-control" name="nom" type="text" value="<?php echo utf8_encode($request->panier->complement); ?>" disabled>
+			</div>
+		</div>
+	<?php endif; ?>
 	<div class="row">
 		<div class="col-md-3">
 			<span>Téléphone : </span>
@@ -232,6 +242,21 @@
 			</table>
 		</div>
 	</div>
+	<a href="<?php echo restaurantToLink($request->panier->restaurant, $request->panier->restaurant->ville); ?>" class="btn btn-default" >Retour à la carte</a>
+	<div id="codePromoPanierBlock" style="margin-bottom : 20px;">
+		<span>Code promo : </span>
+		<input id="code_promo" name="code_promo" type="text" maxlength="10">
+		<button id="codePromoPanierButton" class="validate-button" type="button">Valider</button>
+		<div style="display : none;" class="alert alert-success" role="alert">
+			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+			Votre code promo a été validé.
+		</div>
+		<div style="display : none;" class="alert alert-danger" role="alert">
+			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			<span class="sr-only">Error:</span>
+			<span class="message"></span>
+		</div>
+	</div>
 </div>
 <div>
 	<input id="accept_cgv" type="checkbox" /> Avant de continuer, vous devez accepter les <a href="?action=cgv" target="_blank">conditions générales de vente</a>.
@@ -285,6 +310,43 @@
 			$("#accept_cgv_error_message").show();
 			$("#paiementsForm").hide();
 		}
+	});
+	
+	$("#codePromoPanierButton").click(function () {
+		$("#loading-modal").modal();
+		var codePromo = $("#code_promo").val();
+		$.ajax({
+			type: "POST",
+			url: "index.php?controler=panier&action=addCodePromo",
+			dataType: "html",
+			data: {code_promo : codePromo}
+		}).done(function( msg ) {
+			$("#loading-modal").modal('hide');
+			location.reload ();
+		}).error(function(jqXHR, textStatus, errorThrown) {
+			switch (jqXHR.status) {
+				case 400 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Le code promo n'est pas applicable sur ce restaurant.");
+					break;
+				case 401 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Vous n'êtes pas autorisé à utiliser ce code promo.");
+					break;
+				case 403 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Veuillez vous connecter pour utiliser ce code promo.");
+					break;
+				case 404 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Ce code promo n'existe pas.");
+					break;
+				case 410 :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Vous avez déjà utilisé ce code promo.");
+					break;
+				default :
+					$("#codePromoPanierBlock div.alert-danger span.message").html("Une erreur est survenu, veuillez réessayé.");
+					break;
+			}
+			$("#codePromoPanierBlock div.alert-danger").css('display', 'block');
+			$("#loading-modal").modal('hide');
+		});
 	});
 </script>
 <style>
