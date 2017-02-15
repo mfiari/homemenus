@@ -423,9 +423,9 @@ class Model_Panier extends Model_Template {
 	}
 	
 	public function load () {
-		$sql = "SELECT panier.id, panier.rue, panier.ville, panier.code_postal, panier.telephone, panier.heure_souhaite, panier.minute_souhaite, panier.distance,
-			resto.id AS id_restaurant, resto.nom, resto.rue AS rue_restaurant, resto.ville AS ville_restaurant, resto.code_postal AS cp_restaurant, 
-			user.uid AS uid, user.nom AS nom_user, user.prenom AS prenom, user.email, 
+		$sql = "SELECT panier.id, panier.rue, panier.ville, panier.code_postal, panier.telephone, panier.heure_souhaite, panier.minute_souhaite, 
+			panier.preparation_restaurant, panier.temps_livraison, panier.distance, resto.id AS id_restaurant, resto.nom, resto.rue AS rue_restaurant, 
+			resto.ville AS ville_restaurant, resto.code_postal AS cp_restaurant, user.uid AS uid, user.nom AS nom_user, user.prenom AS prenom, user.email, 
 			rh.id_jour, rh.heure_debut, rh.minute_debut, rh.heure_fin, rh.minute_fin, pl.prix, pl.montant_min, pl.reduction_premium, promo.description,
 			promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM panier 
@@ -453,6 +453,8 @@ class Model_Panier extends Model_Template {
 		$this->telephone = $value['telephone'];
 		$this->heure_souhaite = $value['heure_souhaite'];
 		$this->minute_souhaite = $value['minute_souhaite'];
+		$this->preparation_restaurant = $value['preparation_restaurant'];
+		$this->temps_livraison = $value['temps_livraison'];
 		$this->distance = $value['distance'];
 		$this->id_restaurant = $value['id_restaurant'];
 		$this->prix_livraison = $value['prix'];
@@ -948,9 +950,9 @@ class Model_Panier extends Model_Template {
 		return $this->db->lastInsertId();
 	}
 	
-	public function validate($rue, $ville, $code_postal, $telephone, $heure_souhaite = -1, $minute_souhaite = 0, $distance = 0) {
+	public function validate($rue, $ville, $code_postal, $telephone, $heure_souhaite = -1, $minute_souhaite = 0, $distance = 0, $duration = 0) {
 		$sql = "UPDATE panier SET rue = :rue, ville = :ville, code_postal = :code_postal, telephone = :telephone, heure_souhaite = :heure_souhaite, 
-		minute_souhaite = :minute_souhaite, distance = :distance";
+		minute_souhaite = :minute_souhaite, distance = :distance, temps_livraison = :temps_livraison";
 		if ($this->uid == -1) {
 			$sql .= " WHERE adresse_ip = :ip";
 		} else {
@@ -964,6 +966,7 @@ class Model_Panier extends Model_Template {
 		$stmt->bindValue(":heure_souhaite", $heure_souhaite);
 		$stmt->bindValue(":minute_souhaite", $minute_souhaite);
 		$stmt->bindValue(":distance", $distance);
+		$stmt->bindValue(":temps_livraison", $duration);
 		if ($this->uid == -1) {
 			$stmt->bindValue(":ip", $this->adresse_ip);
 		} else {

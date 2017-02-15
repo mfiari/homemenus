@@ -58,9 +58,9 @@
 	<h3>Votre commande</h3>
 	<div class="row">
 		<?php if ($request->panier->heure_souhaite == -1) : ?>
-			<span>Heure souhaitée : Au plus tôt</span>
+			<span>Temps de livraison estimé : <?php echo $request->panier->getTempsLivraison(); ?> min</span>
 		<?php else : ?>
-			<span>Heure souhaitée : <?php echo utf8_encode($request->panier->heure_souhaite); ?>h<?php echo utf8_encode($request->panier->minute_souhaite); ?></span>
+			<span>Heure de livraison souhaitée : <?php echo utf8_encode($request->panier->heure_souhaite); ?>h<?php echo utf8_encode($request->panier->minute_souhaite); ?></span>
 		<?php endif; ?>
 	</div>
 	<div class="panel panel-default panel-primary">
@@ -286,37 +286,11 @@
 			$("#paiementsForm").hide();
 		}
 	});
-	/*$("#payPaypal").submit(function(event) {
-		event.preventDefault();
-		if ($("#accept_cgv").is(":checked")) {
-			$.ajax({
-				type: "POST",
-				url: "?controler=panier&action=commande",
-				dataType: "html",
-				data: $("#panierForm").serialize()
-			}).done(function( msg ) {
-				$("#panier-modal").modal('hide');
-				document.location.href="?controler=paypal"
-			});
-		} else {
-			$("#accept_cgv_error_message").show();
-		}
-	});
-	$("#payCard").submit(function(event) {
-		if ($("#accept_cgv").is(":checked")) {
-			return true;
-			$.ajax({
-				type: "POST",
-				url: "?controler=panier&action=commande",
-				dataType: "html",
-				data: $("#panierForm").serialize()
-			}).done(function( msg ) {
-				$("#panier-modal").modal('hide');
-				document.location.href="?controler=panier&action=valideCarte"
-			});
-		} else {
-			$("#accept_cgv_error_message").show();
-			event.preventDefault();
-		}
-	});*/
 </script>
+<style>
+	#commande .panel-heading {
+		background-color : #F4F4F4;
+		border-color : #F4F4F4;
+		color : #000000;
+	}
+</style>
