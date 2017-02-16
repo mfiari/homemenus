@@ -983,6 +983,28 @@ class Model_Panier extends Model_Template {
 		return true;
 	}
 	
+	public function setPaymentError ($paymentMethod, $paymentErreurCode) {
+		$sql = "UPDATE panier SET paiement_method = :paiement_method, paiement_erreur_code = :paiement_erreur_code";
+		if ($this->uid == -1) {
+			$sql .= " WHERE adresse_ip = :ip";
+		} else {
+			$sql .= " WHERE uid = :uid";
+		}
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":paiement_method", $paymentMethod);
+		$stmt->bindValue(":paiement_erreur_code", $paymentErreurCode);
+		if ($this->uid == -1) {
+			$stmt->bindValue(":ip", $this->adresse_ip);
+		} else {
+			$stmt->bindValue(":uid", $this->uid);
+		}
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
 	public function removePanierCarte ($panier_carte) {
 		$sql = "DELETE FROM panier_carte_supplement WHERE id_panier_carte = :id";
 		$stmt = $this->db->prepare($sql);

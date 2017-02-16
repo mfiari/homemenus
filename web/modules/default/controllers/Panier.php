@@ -595,7 +595,7 @@ class Controller_Panier extends Controller_Default_Template {
 				"source" => $token,
 				"description" => "validation commande user ".$request->_auth->id
 				));
-				
+				var_dump("charge succed"); die();
 				$panier = new Model_Panier(true, $request->dbConnector);
 				$panier->uid = $request->_auth->id;
 				$panier->init();
@@ -700,7 +700,9 @@ class Controller_Panier extends Controller_Default_Template {
 				$request->vue = $this->render("paypal_success");
 				
 			} catch(\Stripe\Error\Card $e) {
-				
+				$stripeCode = $e->stripeCode;
+				$panier->setPaymentError("STRIPE", $stripeCode);
+				$this->redirect("finalisation", "panier", '', array('payment' => 'refused'));
 			}
 		}
 	}

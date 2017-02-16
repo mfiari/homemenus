@@ -1,3 +1,10 @@
+<?php if (isset($_GET['payment']) && $_GET['payment'] == 'refused') : ?>
+	<div class="alert alert-danger" role="alert">
+		<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		<span class="sr-only">Error:</span>
+		Votre paiement a été refusée
+	</div>
+<?php endif; ?>
 <div id="informations">
 	<h3>Vos informations</h3>
 	<div class="row">

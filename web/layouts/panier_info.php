@@ -72,7 +72,7 @@
 			}).done(function( msg ) {
 				var data = $.parseJSON(msg);
 				console.log(data);
-				if (data.distance < <?php echo MAX_KM; ?>) {
+				if (data.distance < <?php echo MAX_KM +1; ?>) {
 					document.location.href = "index.php?controler=panier&action=finalisation";
 				} else {
 					$("#panier-info-modal .modal-footer div.alert-danger span.message").html("Nous ne pouvons vous livrer ce restaurant car votre adresse se trouve à plus de <?php echo MAX_KM; ?>km du restaurant (" + data.distance + " km)");
