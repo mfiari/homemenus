@@ -595,12 +595,13 @@ class Controller_Panier extends Controller_Default_Template {
 				"source" => $token,
 				"description" => "validation commande user ".$request->_auth->id
 				));
-				var_dump("charge succed"); die();
+				
 				$panier = new Model_Panier(true, $request->dbConnector);
 				$panier->uid = $request->_auth->id;
 				$panier->init();
 				$commande = new Model_Commande(true, $request->dbConnector);
 				if ($commande->create($panier)) {
+					$commande->setPaiementMethod("STRIPE", $token);
 					$panier->remove();
 					$user = new Model_User(true, $request->dbConnector);
 					
@@ -684,18 +685,6 @@ class Controller_Panier extends Controller_Default_Template {
 					$pdf2 = new PDF();
 					$pdf2->generateFactureRestaurant($commande);
 					$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
-					
-					/*$messageContentRestaurant =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_restaurant.html');
-					
-					$messageContentRestaurant = str_replace("[COMMANDE_ID]", $commande->id, $messageContentRestaurant);
-					$messageContentRestaurant = str_replace("[TOTAL]", $commande->prix, $messageContentRestaurant);
-					
-					$attachments2 = array(
-						$restaurantDir.'commande'.$commande->id.'.pdf'
-					);
-					foreach ($restaurantUsers as $restaurantUser) {
-						send_mail ($restaurantUser->email, "Nouvelle commande", $messageContentRestaurant, MAIL_FROM_DEFAULT, $attachments2);
-					}*/
 				}
 				$request->vue = $this->render("paypal_success");
 				
