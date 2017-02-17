@@ -17,6 +17,7 @@
 						<th>Restaurant</th>
 						<th>client</th>
 						<th>Date de commande</th>
+						<th>Heure souhaitée</th>
 						<th>Prix</th>
 						<th>Vue par livreur</th>
 						<th>Statut</th>
@@ -42,6 +43,13 @@
 								(<?php echo utf8_encode($commande->ville); ?>)
 							</a></td>
 							<td><?php echo $commande->date_commande; ?></td>
+							<td>
+								<?php if ($commande->heure_souhaite == -1) : ?>
+									Au plus tôt
+								<?php else : ?>
+									<?php echo ($commande->heure_souhaite); ?>h<?php echo ($commande->minute_souhaite); ?>
+								<?php endif; ?>
+							</td>
 							<td><?php echo $commande->prix; ?> €</td>
 							<td><?php echo $commande->date_validation_livreur != '0000-00-00 00:00:00' ? $commande->date_validation_livreur : '<span style="color : red; ">Non</span>'; ?></td>
 							<td><?php echo $commande->getStatus(); ?></td>
