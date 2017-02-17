@@ -3,7 +3,7 @@
 	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 </a>
 <div id="restaurant">
-	<h3><?php echo utf8_encode($request->commande->restaurant->nom); ?></h3>
+	<h3>Restaurant : <?php echo utf8_encode($request->commande->restaurant->nom); ?></h3>
 	<p>Adresse : <?php echo utf8_encode($request->commande->restaurant->rue); ?>, <?php echo $request->commande->restaurant->code_postal; ?> <?php echo utf8_encode($request->commande->restaurant->ville); ?></p>
 	<p>Téléphone : <?php echo $request->commande->restaurant->telephone; ?></p>
 </div>
@@ -11,6 +11,7 @@
 	<h3>Client</h3>
 	<span><?php echo utf8_encode($request->commande->client->nom); ?> <?php echo utf8_encode($request->commande->client->prenom); ?></span>
 	<p>Adresse : <?php echo utf8_encode($request->commande->rue); ?>, <?php echo $request->commande->code_postal; ?> <?php echo utf8_encode($request->commande->ville); ?></p>
+	<p>Complément : <?php echo utf8_encode($request->commande->complement); ?></p>
 	<p>Téléphone : <?php echo $request->commande->telephone; ?></p>
 </div>
 <div id="livreur">
@@ -36,7 +37,20 @@
 </div>
 <div id="commande">
 	<h3>Commande</h3>
-	<span>status : <?php echo $request->commande->getStatus(); ?></span>
+	<span>status : <?php echo $request->commande->getStatus(); ?></span><br /><br />
+	<span>Date de commande : <?php echo $request->commande->date_commande; ?></span><br /><br />
+	<?php if ($request->commande->heure_souhaite == -1) : ?>
+		<span>Heure de livraison souhaitée : Au plus tôt</span>
+	<?php else : ?>
+		<span>Heure de livraison souhaitée : <?php echo utf8_encode($request->commande->heure_souhaite); ?>h<?php echo utf8_encode($request->commande->minute_souhaite); ?></span>
+	<?php endif; ?>
+	<br /><br />
+	<span>Temps de preparation estimé : <?php echo $request->commande->preparation_restaurant; ?> min</span><br /><br />
+	<span>Temps de livraison estimé : <?php echo $request->commande->temps_livraison; ?> min</span><br /><br />
+	<?php if ($request->commande->heure_souhaite != -1) : ?>
+		<span>Heure de livraison estimé : <?php echo $request->commande->getHeureLivraison(); ?></span><br /><br />
+	<?php endif; ?>
+	<span>Methode de paiement : <?php echo $request->commande->paiement_method; ?></span><br /><br />
 	<?php $totalPrix = 0; ?>
 	<?php $totalQte = 0; ?>
 	<?php foreach ($request->commande->menus as $menu) : ?>
@@ -185,6 +199,7 @@
 		<a class="btn btn-primary" href="?controler=commande&action=livraisonCommande&id_commande=<?php echo $request->commande->id; ?>">Valider la livraison de la commande</a>
 	<?php endif; ?>
 </div>
+<a class="btn btn-primary" href="?controler=commande&action=anule&id_commande=<?php echo $request->commande->id; ?>">Anuler et rembourser</a>
 <a class="btn btn-primary" href="?controler=commande&action=facture&commande=<?php echo $request->commande->id; ?>">Générer la facture</a>
 <a class="btn btn-primary" href="?controler=commande&action=index">
 	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour

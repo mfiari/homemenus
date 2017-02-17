@@ -273,7 +273,7 @@ class Controller_Commande extends Controller_Admin_Template {
 					}
 					/* Envoi de SMS */
 					$sms = new Nexmo();
-					$sms->message = "Le commande #".$commande->id." a été refusé par le restaurant";
+					$sms->message = "La commande #".$commande->id." a été refusé par le restaurant";
 					$sms->addNumero($livreur->telephone);
 					$sms->sendMessage();
 				}
@@ -284,6 +284,16 @@ class Controller_Commande extends Controller_Admin_Template {
 					$sms->addNumero($client->telephone);
 					$sms->sendMessage();
 				}
+				$commande->getPaymentMethod();
+				if ($commande->paiement_method == "STRIPE") {
+					require_once WEBSITE_PATH.'res/lib/stripe/init.php';
+					\Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
+
+					$re = \Stripe\Refund::create(array(
+					  "charge" => $commande->paiement_token;
+					));
+				}
+				
 			}
 		}
 		$this->redirect('index', 'commande');

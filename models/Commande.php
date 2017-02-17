@@ -21,6 +21,8 @@ class Model_Commande extends Model_Template {
 	private $date_commande;
 	private $heure_souhaite;
 	private $minute_souhaite;
+	private $preparation_restaurant;
+	private $temps_livraison;
 	private $livreur;
 	private $restaurant;
 	private $codePromo;
@@ -34,6 +36,8 @@ class Model_Commande extends Model_Template {
 	private $date_fin_preparation_restaurant;
 	private $date_recuperation_livreur;
 	private $date_livraison;
+	private $paiement_method;
+	private $paiement_token;
 	
 	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
@@ -564,6 +568,23 @@ class Model_Commande extends Model_Template {
 		return true;
 	}
 	
+	public function getPaymentMethod () {
+		$sql = "SELECT paiement_method, paiement_token FROM commande WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return;
+		}
+		$this->paiement_method = $value['paiement_method'];
+		$this->paiement_token = $value['paiement_token'];
+		return $this;
+	}
+	
 	public function load () {
 		$sql = "
 		SELECT 
@@ -571,7 +592,8 @@ class Model_Commande extends Model_Template {
 			com.code_postal AS com_cp, com.telephone, com.id_livreur AS id_livreur, resto.id AS id_resto, resto.nom AS nom_resto, resto.rue AS rue_resto, 
 			resto.ville AS ville_resto, resto.code_postal AS cp_resto, resto.telephone AS tel_resto, livreur.uid AS id_livreur, livreur.prenom AS prenom_livreur, 
 			ul.latitude AS lat_livreur, ul.longitude AS lon_livreur, ul.is_ready AS livreur_ready, com.date_commande, com.heure_souhaite, com.minute_souhaite, 
-			com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.etape, com.prix, com.prix_livraison, com.distance
+			com.preparation_restaurant, com.temps_livraison, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, 
+			com.etape, com.prix, com.prix_livraison, com.distance, com.paiement_method
 		FROM commande com
 		JOIN users client ON client.uid = com.uid
 		JOIN user_client uc ON uc.uid = client.uid
@@ -615,6 +637,8 @@ class Model_Commande extends Model_Template {
 		$this->date_commande = $value['date_commande'];
 		$this->heure_souhaite = $value['heure_souhaite'];
 		$this->minute_souhaite = $value['minute_souhaite'];
+		$this->preparation_restaurant = $value['preparation_restaurant'];
+		$this->temps_livraison = $value['temps_livraison'];
 		$this->date_validation_restaurant = $value['date_validation_restaurant'];
 		$this->date_fin_preparation_restaurant = $value['date_fin_preparation_restaurant'];
 		$this->date_recuperation_livreur = $value['date_recuperation_livreur'];
@@ -622,6 +646,7 @@ class Model_Commande extends Model_Template {
 		$this->prix = $value['prix'];
 		$this->prix_livraison = $value['prix_livraison'];
 		$this->distance = $value['distance'];
+		$this->paiement_method = $value['paiement_method'];
 		$this->cartes = array();
 		
 		$sql = "SELECT cc.id AS id, carte.id AS id_carte, carte.nom, carte.id_categorie, cc.quantite, cf.id AS id_format, cf.prix, rf.nom AS nom_format
@@ -2548,5 +2573,13 @@ class Model_Commande extends Model_Template {
 			default :
 				return "";
 		}
+	}
+	
+	public function getHeureLivraison () {
+		list($date, $heure) = explode(" ", $timestamp);
+		list($hour, $minute) = explode(":", $heure);
+		$tempsLivraison = $this->preparation_restaurant + $this->temps_livraison + 5;
+		list($newHour, $newMinute) = addMinuteToTime($hour, $minute, $tempsLivraison);
+		return formatHeureMinute($newHour, $newMinute);
 	}
 }

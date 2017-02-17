@@ -40,17 +40,6 @@ function array_object_column($array,$column_name) {
 	return array_map(function($element) use($column_name){return $element->$column_name;}, $array);
 }
 
-function formatTimestampToDateHeure ($timestamp) {
-	list($date, $heure) = explode(" ", $timestamp);
-	list($year, $month, $day) = explode("-", $date);
-	return $day.'/'.$month.'/'.$year.' '.$heure;
-}
-
-function formatTimestampToDate ($timestamp) {
-	list($year, $month, $day) = explode("-", $timestamp);
-	return $day.'/'.$month.'/'.$year;
-}
-
 function generateToken ($length = 32) {
 	$characters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-_";
 	$chaine = "";
@@ -272,9 +261,39 @@ function ajout_environnement_mail ($messageContent) {
 	return $messageContent;
 }
 
+function formatTimestampToDateHeure ($timestamp) {
+	list($date, $heure) = explode(" ", $timestamp);
+	list($year, $month, $day) = explode("-", $date);
+	return $day.'/'.$month.'/'.$year.' '.$heure;
+}
+
+function formatTimestampToDate ($timestamp) {
+	list($year, $month, $day) = explode("-", $timestamp);
+	return $day.'/'.$month.'/'.$year;
+}
+
 function datepickerToDatetime ($date) {
 	list($day, $month, $year) = explode('/', $date);
 	return $year.'-'.$month.'-'.$day;
+}
+
+function addMinuteToTime ($hour, $minute, $time) {
+	$addHour = 0;
+	$minute += $time;
+	
+	while ($minute >= 60) {
+		$addHour++;
+		$minute -= 60;
+	}
+	$hour += $addHour;
+	return array($hour, $minute);
+}
+
+function formatHeureMinute ($heure, $minute) {
+	if (strlen($minute) == 1) {
+		$minute = '0'.$minute;
+	}
+	return $heure.'h'.$minute;
 }
 
 function formatPrix ($prix) {
@@ -292,13 +311,6 @@ function formatPrix ($prix) {
 	}
 	$prixFinal .= ' €';
 	return $prixFinal;
-}
-
-function formatHeureMinute ($heure, $minute) {
-	if (strlen($minute) == 1) {
-		$minute = '0'.$minute;
-	}
-	return $heure.'h'.$minute;
 }
 
 function construit_url_paypal() {
