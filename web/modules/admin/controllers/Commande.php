@@ -289,9 +289,13 @@ class Controller_Commande extends Controller_Admin_Template {
 					require_once WEBSITE_PATH.'res/lib/stripe/init.php';
 					\Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
 
-					$re = \Stripe\Refund::create(array(
-					  "charge" => $commande->paiement_token
-					));
+					try {
+						$re = \Stripe\Refund::create(array(
+						  "charge" => $commande->paiement_token
+						));
+					} catch(Stripe\Error\InvalidRequest $e) {
+						var_dump($e); die();
+					}
 				}
 				
 			}

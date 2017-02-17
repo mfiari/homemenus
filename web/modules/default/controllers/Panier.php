@@ -589,19 +589,21 @@ class Controller_Panier extends Controller_Default_Template {
 
 			// Create the charge on Stripe's servers - this will charge the user's card
 			try {
-			  $charge = \Stripe\Charge::create(array(
-				"amount" => $totalPrix * 100, // amount in cents, again
-				"currency" => "eur",
-				"source" => $token,
-				"description" => "validation commande user ".$request->_auth->id
+				$charge = \Stripe\Charge::create(array(
+					"amount" => $totalPrix * 100, // amount in cents, again
+					"currency" => "eur",
+					"source" => $token,
+					"description" => "validation commande user ".$request->_auth->id
 				));
+				
+				$paymentToken = $charge->id;
 				
 				$panier = new Model_Panier(true, $request->dbConnector);
 				$panier->uid = $request->_auth->id;
 				$panier->init();
 				$commande = new Model_Commande(true, $request->dbConnector);
 				if ($commande->create($panier)) {
-					$commande->setPaiementMethod("STRIPE", $token);
+					$commande->setPaiementMethod("STRIPE", $paymentToken);
 					$panier->remove();
 					$user = new Model_User(true, $request->dbConnector);
 					
