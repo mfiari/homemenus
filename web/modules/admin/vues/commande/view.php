@@ -47,7 +47,7 @@
 	<br /><br />
 	<span>Temps de preparation estimé : <?php echo $request->commande->preparation_restaurant; ?> min</span><br /><br />
 	<span>Temps de livraison estimé : <?php echo $request->commande->temps_livraison; ?> min</span><br /><br />
-	<?php if ($request->commande->heure_souhaite != -1) : ?>
+	<?php if ($request->commande->heure_souhaite == -1) : ?>
 		<span>Heure de livraison estimé : <?php echo $request->commande->getHeureLivraison(); ?></span><br /><br />
 	<?php endif; ?>
 	<span>Methode de paiement : <?php echo $request->commande->paiement_method; ?></span><br /><br />

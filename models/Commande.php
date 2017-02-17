@@ -2576,7 +2576,7 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getHeureLivraison () {
-		list($date, $heure) = explode(" ", $timestamp);
+		list($date, $heure) = explode(" ", $this->date_commande);
 		list($hour, $minute) = explode(":", $heure);
 		$tempsLivraison = $this->preparation_restaurant + $this->temps_livraison + 5;
 		list($newHour, $newMinute) = addMinuteToTime($hour, $minute, $tempsLivraison);
