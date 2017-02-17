@@ -290,7 +290,7 @@ class Controller_Commande extends Controller_Admin_Template {
 					\Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
 
 					$re = \Stripe\Refund::create(array(
-					  "charge" => $commande->paiement_token;
+					  "charge" => $commande->paiement_token
 					));
 				}
 				
