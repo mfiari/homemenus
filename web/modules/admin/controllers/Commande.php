@@ -48,6 +48,9 @@ class Controller_Commande extends Controller_Admin_Template {
 				case "annule" :
 					$this->annule($request);
 					break;
+				case "annomalie" :
+					$this->annomalie($request);
+					break;
 				case "validationRestaurant" :
 					$this->validationRestaurant($request);
 					break;
@@ -249,10 +252,39 @@ class Controller_Commande extends Controller_Admin_Template {
 		}
 	}
 	
-	public function annule ($request) {
-		if (isset($_GET["id_commande"])) {
+	public function annomalie ($request) {
+		if (isset($_POST["id_commande"])) {
 			$commande = new Model_Commande(true, $request->dbConnector);
-			$commande->id = $_GET["id_commande"];
+			$commande->id = $_POST["id_commande"];
+			$commande->annomalie_montant = $_POST["montant"];
+			$commande->annomalie_commentaire = $_POST["commentaire"];
+			if ($commande->annomalie()) {
+				if ($commande->annomalie_montant > 0) {
+					$commande->getPaymentMethod();
+					if ($commande->paiement_method == "STRIPE") {
+						require_once WEBSITE_PATH.'res/lib/stripe/init.php';
+						\Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
+
+						try {
+							$re = \Stripe\Refund::create(array(
+							  "charge" => $commande->paiement_token,
+							  "amount" => $commande->annomalie_montant * 100
+							));
+						} catch(Stripe\Error\InvalidRequest $e) {
+							var_dump($e); die();
+						}
+					}
+				}
+			}
+		}
+		$this->redirect('index', 'commande');
+	}
+	
+	public function annule ($request) {
+		if (isset($_POST["id_commande"])) {
+			$commande = new Model_Commande(true, $request->dbConnector);
+			$commande->id = $_POST["id_commande"];
+			$commande->annulation_commentaire = $_POST["commentaire"];
 			if ($commande->annule()) {
 				$livreur = $commande->getLivreur();
 				if ($livreur && $livreur->is_login) {

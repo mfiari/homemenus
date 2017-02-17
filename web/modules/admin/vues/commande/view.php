@@ -190,6 +190,23 @@
 		</div>
 	</div>
 </div>
+<?php if ($request->commande->annulation_commentaire != '') : ?>
+	<div class="row">
+		<h3>Commentaire annulation</h3>
+		<p><?php echo utf8_encode($request->commande->annulation_commentaire); ?></p>
+	</div>
+<?php endif; ?>
+<?php if ($request->commande->annomalie_commentaire != '') : ?>
+	<div class="row">
+		<h3>Anomalie</h3>
+		<div class="row">
+			<p><b>Montant du remboursement : </b><?php echo $request->commande->annomalie_montant; ?> €</p>
+		</div>
+		<div class="row">
+			<p><b>Commentaire : </b><?php echo utf8_encode($request->commande->annomalie_commentaire); ?></p>
+		</div>
+	</div>
+<?php endif; ?>
 <?php if ($request->commande->etape == 0) : ?>
 	<a class="btn btn-primary" href="?controler=commande&action=validationRestaurant&id_commande=<?php echo $request->commande->id; ?>">Préparaion de la commande</a>
 <?php elseif ($request->commande->etape == 1) : ?>
@@ -199,8 +216,72 @@
 <?php elseif ($request->commande->etape == 3) : ?>
 	<a class="btn btn-primary" href="?controler=commande&action=livraisonCommande&id_commande=<?php echo $request->commande->id; ?>">Valider la livraison de la commande</a>
 <?php endif; ?>
-<a class="btn btn-primary" href="?controler=commande&action=annule&id_commande=<?php echo $request->commande->id; ?>">Anuler et rembourser</a>
+<?php if ($request->commande->etape != -1) : ?>
+	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#annulation-modal">Anuler et rembourser</button>
+	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#annomalie-modal">Signaler une anomalie</button>
+<?php endif; ?>
+<a class="btn btn-primary" href="?controler=commande&action=remove&id_commande=<?php echo $request->commande->id; ?>">Supprimer</a>
 <a class="btn btn-primary" href="?controler=commande&action=facture&commande=<?php echo $request->commande->id; ?>">Générer la facture</a>
 <a class="btn btn-primary" href="?controler=commande&action=index">
 	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 </a>
+<div id="annulation-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Annuler et rembourser de la commande</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<form method="post" enctype="x-www-form-urlencoded" action="?controler=commande&action=annule">
+					<input name="id_commande" value="<?php echo $request->commande->id; ?>" hidden="hidden" />
+					<div class="form-group">
+						<label for="rue">Commentaire : </label>
+						<textarea id="annulation_commentaire" class="form-control" name="commentaire" rows="8" cols="45"></textarea>
+					</div>
+					<div class="row">
+						<div class="col-md-6 center">
+							<button class="validate-button" type="submit">Valider</button>
+						</div>
+						<div class="col-md-6 center">
+							<button type="button" class="close-button" data-dismiss="modal">Fermer</button>
+						</div>
+					</div>
+				</form>
+				
+			</div>
+		</div>
+	</div>
+</div>
+<div id="annomalie-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Signaler une anomalie</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<form method="post" enctype="x-www-form-urlencoded" action="?controler=commande&action=annomalie">
+					<input name="id_commande" value="<?php echo $request->commande->id; ?>" hidden="hidden" />
+					<div class="form-group">
+						<label for="rue">Montant : </label>
+						<input class="form-control" name="montant" type="text" value="0">
+					</div>
+					<div class="form-group">
+						<label for="rue">Commentaire : </label>
+						<textarea id="annomalie_commentaire" class="form-control" name="commentaire" rows="8" cols="45"></textarea>
+					</div>
+					<div class="row">
+						<div class="col-md-6 center">
+							<button class="validate-button" type="submit">Valider</button>
+						</div>
+						<div class="col-md-6 center">
+							<button type="button" class="close-button" data-dismiss="modal">Fermer</button>
+						</div>
+					</div>
+				</form>
+				
+			</div>
+		</div>
+	</div>
+</div>

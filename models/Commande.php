@@ -38,6 +38,9 @@ class Model_Commande extends Model_Template {
 	private $date_livraison;
 	private $paiement_method;
 	private $paiement_token;
+	private $annulation_commentaire;
+	private $annomalie_montant;
+	private $annomalie_commentaire;
 	
 	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
@@ -593,7 +596,7 @@ class Model_Commande extends Model_Template {
 			resto.ville AS ville_resto, resto.code_postal AS cp_resto, resto.telephone AS tel_resto, livreur.uid AS id_livreur, livreur.prenom AS prenom_livreur, 
 			ul.latitude AS lat_livreur, ul.longitude AS lon_livreur, ul.is_ready AS livreur_ready, com.date_commande, com.heure_souhaite, com.minute_souhaite, 
 			com.preparation_restaurant, com.temps_livraison, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, 
-			com.etape, com.prix, com.prix_livraison, com.distance, com.paiement_method
+			com.etape, com.prix, com.prix_livraison, com.distance, com.paiement_method, com.annulation_commentaire, com.annomalie_montant, com.annomalie_commentaire
 		FROM commande com
 		JOIN users client ON client.uid = com.uid
 		JOIN user_client uc ON uc.uid = client.uid
@@ -647,6 +650,9 @@ class Model_Commande extends Model_Template {
 		$this->prix_livraison = $value['prix_livraison'];
 		$this->distance = $value['distance'];
 		$this->paiement_method = $value['paiement_method'];
+		$this->annulation_commentaire = $value['annulation_commentaire'];
+		$this->annomalie_montant = $value['annomalie_montant'];
+		$this->annomalie_commentaire = $value['annomalie_commentaire'];
 		$this->cartes = array();
 		
 		$sql = "SELECT cc.id AS id, carte.id AS id_carte, carte.nom, carte.id_categorie, cc.quantite, cf.id AS id_format, cf.prix, rf.nom AS nom_format
@@ -1665,8 +1671,22 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function annule () {
-		$sql = "UPDATE commande SET etape = -1 WHERE id = :id";
+		$sql = "UPDATE commande SET etape = -1, annulation_commentaire = :commentaire WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":commentaire", $this->annulation_commentaire);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	public function annomalie () {
+		$sql = "UPDATE commande SET annomalie_montant = :montant, annomalie_commentaire = :commentaire WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":montant", $this->annomalie_montant);
+		$stmt->bindValue(":commentaire", $this->annomalie_commentaire);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
