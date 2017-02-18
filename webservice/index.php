@@ -9,6 +9,12 @@ include_once 'controllers/Commande.php';
 include_once 'controllers/Panier.php';
 include_once 'controllers/Livreur.php';
 
+include_once ROOT_PATH."function.php";
+include_once MODEL_PATH."Template.php";
+include_once MODEL_PATH."DbConnector.php";
+
+register_shutdown_function( "fatal_error_handler" );
+
 session_start();
 
 if (isset($_GET["module"])) {
