@@ -499,7 +499,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			
 					$request->title = "Administration - commande";
 					$request->javascripts = array("res/js/menu.js");
-					$request->vue = $this->render("commande/addPanier.php");
+					$request->vue = $this->render("addPanier");
 					return;
 				} else {
 					$request->errorMessage = $errorMessage;
