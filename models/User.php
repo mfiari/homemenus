@@ -886,7 +886,8 @@ class Model_User extends Model_Template {
 		$sql = "SELECT users.uid, users.email, us.gcm_token, ur.telephone FROM users 
 		JOIN user_restaurant ur ON ur.uid = users.uid
 		LEFT JOIN user_session us ON us.uid = users.uid AND date_logout = '0000-00-00 00:00:00'
-		WHERE ur.id_restaurant = :restaurant AND users.is_login = true";
+		WHERE ur.id_restaurant = :restaurant AND users.is_login = true
+		GROUP BY us.gcm_token";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":restaurant", $id_restaurant);
 		if (!$stmt->execute()) {

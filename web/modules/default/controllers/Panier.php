@@ -611,15 +611,22 @@ class Controller_Panier extends Controller_Default_Template {
 					if (count($restaurantUsers) > 0) {
 						$registatoin_ids = array();
 						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+						$telephone = '';
+						$oldTelephone = '';
 						foreach ($restaurantUsers as $restaurantUser) {
 							if ($restaurantUser->gcm_token) {
 								array_push($registatoin_ids, $restaurantUser->gcm_token);
 							}
 							
-							$sms = new Nexmo();
-							$sms->message = "Vous avez reçu une nouvelle commande";
-							$sms->addNumero($restaurantUser->telephone);
-							$sms->sendMessage();
+							$telephone = $restaurantUser->telephone;
+							
+							if ($telephone != $oldTelephone) {
+								$oldTelephone = $telephone;
+								$sms = new Nexmo();
+								$sms->message = "Vous avez recu une nouvelle commande";
+								$sms->addNumero($telephone);
+								$sms->sendMessage();
+							}
 							
 						}
 						if (count($registatoin_ids) > 0) {
