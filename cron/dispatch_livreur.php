@@ -3,25 +3,28 @@
     include_once '../config.php';
 	
 	include_once ROOT_PATH."function.php";
-	include_once ROOT_PATH."models/Template.php";
-	include_once ROOT_PATH."models/Commande.php";
-	include_once ROOT_PATH."models/User.php";
-	include_once ROOT_PATH."models/Restaurant.php";
-	include_once ROOT_PATH."models/GCMPushMessage.php";
-	include_once ROOT_PATH."models/Nexmo.php";
-	include_once ROOT_PATH."models/SMS.php";
+	include_once MODEL_PATH."Template.php";
+	include_once MODEL_PATH."DbConnector.php";
+	include_once MODEL_PATH."Commande.php";
+	include_once MODEL_PATH."User.php";
+	include_once MODEL_PATH."Parametre.php";
+	include_once MODEL_PATH."Restaurant.php";
+	include_once MODEL_PATH."GCMPushMessage.php";
+	include_once MODEL_PATH."Nexmo.php";
+	include_once MODEL_PATH."SMS.php";
+
+	register_shutdown_function("fatal_error_handler");
 	
-	$modelCommande = new Model_Commande();
+	$dbConnector = Model_Template::getDbConnector();
+	
+	$modelCommande = new Model_Commande(true, $dbConnector);
 	$commandes = $modelCommande->getCommandeNonAttribue();
-	//var_dump($commandes);
 	
-	$modelUser = new Model_User();
+	$modelUser = new Model_User(true, $dbConnector);
 	foreach ($commandes as $commande) {
 		$livreurs = $modelUser->getLivreurAvailableForCommande($commande);
 		
 		$livreur = getBestLivreur($livreurs, $commande);
-		
-		//var_dump($livreur);
 		
 		if ($livreur === false) {
 			writeLog(CRON_LOG, "Pas de livreur pour la commande ".$commande->id, LOG_LEVEL_ERROR);
@@ -30,6 +33,8 @@
 		
 		if ($livreur->is_login) {
 			sendNotificationMessage ($livreur);
+		}
+		if ($livreur->parametre->send_sms_commande && $livreur->telephone != '') {
 			sendSMS ($livreur);
 		}
 		$commande->uid = $livreur->id;
@@ -120,7 +125,7 @@
 	
 	function sendSMS ($livreur) {
 		$sms = new Nexmo();
-		$sms->message = "Une nouvelle commande vient de vous êtes attribuer";
+		$sms->message = "Une nouvelle commande vient de vous etre attribuer";
 		$sms->addNumero($livreur->telephone);
 		$sms->sendMessage();
 	}

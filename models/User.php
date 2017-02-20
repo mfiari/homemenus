@@ -751,12 +751,14 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getLivreurAvailableForCommande ($commande) {
-		$sql = "SELECT user.uid, user.login, user.is_login, ul.telephone, us.gcm_token, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin
+		$sql = "SELECT user.uid, user.login, user.is_login, ul.telephone, us.gcm_token, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin, 
+		up.send_sms_commande
 		FROM users user
+		JOIN user_parametre up ON up.uid = user.uid
 		JOIN user_livreur ul ON ul.uid = user.uid
 		JOIN user_livreur_dispo uld ON uld.uid = user.uid
 		JOIN distance_livreur_resto dlr ON dlr.id_restaurant = :restaurant AND dlr.id_dispo = uld.id AND dlr.perimetre <= uld.perimetre
-		JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
+		LEFT JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
 		WHERE user.is_enable = 1 AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1) ";
 		if ($commande->heure_souhaite == -1) {
 			$sql.= "AND (uld.heure_debut > HOUR(CURRENT_TIME) OR (uld.heure_debut < HOUR(CURRENT_TIME) AND uld.heure_fin >= HOUR(CURRENT_TIME)))";
@@ -780,6 +782,12 @@ class Model_User extends Model_Template {
 			$user->is_login = $livreur['is_login'];
 			$user->telephone = $livreur['telephone'];
 			$user->gcm_token = $livreur['gcm_token'];
+		
+			$parameter = new Model_Parametre();
+			$parameter->send_sms_commande = $livreur["send_sms_commande"];
+			
+			$user->parametre = $parameter;
+			
 			$list[] = $user;
 		}
 		return $list;

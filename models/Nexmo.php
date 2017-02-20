@@ -39,35 +39,32 @@ class Nexmo {
 	
 	public function sendMessage () {
 		
-		if (!SEND_SMS) {
-			return false;
-		}
-		
 		$modelSMS = new Model_SMS();
 		
 		foreach ($this->numeros as $numero) {
 			
-			$requete = $this->url.'?api_key='.$this->api_key.'&api_secret='.$this->api_secret.'&to='.$numero.'&from='.$this->from.'&text='.urlencode(utf8_encode($this->message));
+			if (SEND_SMS) {
+				$requete = $this->url.'?api_key='.$this->api_key.'&api_secret='.$this->api_secret.'&to='.$numero.'&from='.$this->from.'&text='.urlencode(utf8_encode($this->message));
 
-			// Initialise notre session cURL. On lui donne la requête à exécuter
-			$ch = curl_init($requete);
-			
-			// Modifie l'option CURLOPT_SSL_VERIFYPEER afin d'ignorer la vérification du certificat SSL. Si cette option est à 1, une erreur affichera que la vérification du certificat SSL a échoué, et rien ne sera retourné. 
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+				// Initialise notre session cURL. On lui donne la requête à exécuter
+				$ch = curl_init($requete);
+				
+				// Modifie l'option CURLOPT_SSL_VERIFYPEER afin d'ignorer la vérification du certificat SSL. Si cette option est à 1, une erreur affichera que la vérification du certificat SSL a échoué, et rien ne sera retourné. 
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-			// Retourne directement le transfert sous forme de chaîne de la valeur retournée par curl_exec() au lieu de l'afficher directement. 
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				// Retourne directement le transfert sous forme de chaîne de la valeur retournée par curl_exec() au lieu de l'afficher directement. 
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-			// On lance l'exécution de la requête URL et on récupère le résultat dans une variable
-			$resultat = curl_exec($ch);
+				// On lance l'exécution de la requête URL et on récupère le résultat dans une variable
+				$resultat = curl_exec($ch);
 
-			// On ferme notre session cURL.
-			curl_close($ch);
+				// On ferme notre session cURL.
+				curl_close($ch);
+			}
 			
 			$modelSMS->telephone = $numero;
 			$modelSMS->message = $this->message;
-			$modelSMS->is_send = true;
-			
+			$modelSMS->is_send = SEND_SMS;
 			$modelSMS->save();
 		}
 		
