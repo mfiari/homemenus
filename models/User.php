@@ -523,7 +523,7 @@ class Model_User extends Model_Template {
 			$this->sqlHasFailed = true;
 			return false;
 		}
-		$sql = "UPDATE user_session SET date_logout = NOW() WHERE uid = :id";
+		$sql = "UPDATE user_session SET date_logout = NOW() WHERE uid = :id AND date_logout IS NULL";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -1164,6 +1164,20 @@ class Model_User extends Model_Template {
 		$sql = "UPDATE user_session SET date_logout = NOW() WHERE date_login < :date AND date_logout IS NULL";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":date", $date);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$sql = "UPDATE users SET is_login = false WHERE uid IN (SELECT DISTINCT uid FROM user_session WHERE date_logout IS NOT NULL)";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$sql = "UPDATE user_livreur SET is_ready = false WHERE uid IN (SELECT DISTINCT uid FROM user_session WHERE date_logout IS NOT NULL)";
+		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
