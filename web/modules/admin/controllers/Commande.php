@@ -162,43 +162,49 @@ class Controller_Commande extends Controller_Admin_Template {
 				$modelUser->getLivreurInfo();
 				$commande->uid = $modelUser->id;
 				if ($commande->attributionLivreur()) {
-					$gcm = new GCMPushMessage(GOOGLE_API_KEY);
-					$message = "Vous avez reçu une nouvelle commande";
-					// listre des utilisateurs à notifier
-					$gcm->setDevices(array($modelUser->gcm_token));
-					// Le titre de la notification
-					$data = array(
-						"title" => "Nouvelle commande",
-						"key" => "livreur-new-commande",
-						"id_commande" => $commande->id
-					);
-					// On notifie nos utilisateurs
-					$result = $gcm->send($message, $data);
-					
-					/* Envoi de SMS */
-					$sms = new Nexmo();
-					$sms->message = "La commande #".$commande->id." vous a été attribué";
-					$sms->addNumero($modelUser->telephone);
-					$sms->sendMessage();
-					
-					if ($livreur) {
-						$message = "Une commande vous a été retiré";
+					if ($modelUser->gcm_token && $modelUser->parametre->send_notification_commande) {
+						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+						$message = "Vous avez reçu une nouvelle commande";
 						// listre des utilisateurs à notifier
-						$gcm->setDevices(array($livreur->gcm_token));
+						$gcm->setDevices(array($modelUser->gcm_token));
 						// Le titre de la notification
 						$data = array(
-							"title" => "Changement commande",
-							"key" => "livreur-change-commande",
+							"title" => "Nouvelle commande",
+							"key" => "livreur-new-commande",
 							"id_commande" => $commande->id
 						);
 						// On notifie nos utilisateurs
 						$result = $gcm->send($message, $data);
-						
+					}
+					if ($modelUser->parametre->send_sms_commande && $livreur->telephone != '') {
 						/* Envoi de SMS */
 						$sms = new Nexmo();
-						$sms->message = "Le commande #".$commande->id." vous a été retiré";
-						$sms->addNumero($livreur->telephone);
+						$sms->message = "La commande #".$commande->id." vous a ete attribue";
+						$sms->addNumero($modelUser->telephone);
 						$sms->sendMessage();
+					}
+					
+					if ($livreur) {
+						if ($livreur->gcm_token && $livreur->parametre->send_notification_commande) {
+							$message = "Une commande vous a été retiré";
+							// listre des utilisateurs à notifier
+							$gcm->setDevices(array($livreur->gcm_token));
+							// Le titre de la notification
+							$data = array(
+								"title" => "Changement commande",
+								"key" => "livreur-change-commande",
+								"id_commande" => $commande->id
+							);
+							// On notifie nos utilisateurs
+							$result = $gcm->send($message, $data);
+						}
+						if ($livreur->parametre->send_sms_commande && $livreur->telephone != '') {
+							/* Envoi de SMS */
+							$sms = new Nexmo();
+							$sms->message = "Le commande #".$commande->id." vous a ete retire";
+							$sms->addNumero($livreur->telephone);
+							$sms->sendMessage();
+						}
 					}
 				}
 			}

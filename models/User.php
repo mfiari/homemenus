@@ -1071,9 +1071,10 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getLivreurInfo () {
-		$sql = "SELECT user.nom, user.prenom, us.gcm_token, ul.telephone
+		$sql = "SELECT user.nom, user.prenom, us.gcm_token, ul.telephone, up.send_sms_commande, up.send_notification_commande
 		FROM users user
 		JOIN user_livreur ul ON ul.uid = user.uid
+		JOIN user_parametre up ON up.uid = user.uid
 		LEFT JOIN user_session us ON us.uid = user.uid AND date_logout = '0000-00-00 00:00:00'
 		WHERE user.uid = :uid
 		LIMIT 1";
@@ -1089,6 +1090,12 @@ class Model_User extends Model_Template {
 		$this->prenom = $value['prenom'];
 		$this->telephone = $value['telephone'];
 		$this->gcm_token = $value['gcm_token'];
+		
+		$parameter = new Model_Parametre();
+		$parameter->send_sms_commande = $value["send_sms_commande"];
+		$parameter->send_notification_commande = $value["send_notification_commande"];
+		$this->parametre = $parameter;
+		
 		return $this;
 	}
 	

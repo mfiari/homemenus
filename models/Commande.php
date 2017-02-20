@@ -816,9 +816,10 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getLivreur () {
-		$sql = "SELECT livreur.uid, livreur.nom, livreur.prenom, us.gcm_token, livreur.is_login, ul.telephone
+		$sql = "SELECT livreur.uid, livreur.nom, livreur.prenom, us.gcm_token, livreur.is_login, ul.telephone, up.send_sms_commande, up.send_notification_commande
 		FROM commande
 		JOIN users livreur ON livreur.uid = commande.id_livreur
+		JOIN user_parametre up ON up.uid = livreur.uid
 		LEFT JOIN user_livreur ul ON ul.uid = livreur.uid
 		LEFT JOIN user_session us ON us.uid = livreur.uid AND us.date_logout = '0000-00-00 00:00:00'
 		WHERE commande.id = :id
@@ -840,6 +841,12 @@ class Model_Commande extends Model_Template {
 		$this->livreur->gcm_token = $value['gcm_token'];
 		$this->livreur->is_login = $value['is_login'];
 		$this->livreur->telephone = $value['telephone'];
+		
+		$parameter = new Model_Parametre();
+		$parameter->send_sms_commande = $value["send_sms_commande"];
+		$parameter->send_notification_commande = $value["send_notification_commande"];
+		
+		$this->livreur->parametre = $parameter;
 		return $this->livreur;
 	}
 	
