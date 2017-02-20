@@ -69,7 +69,10 @@ class Controller_User extends Controller_Admin_Template {
 		$model = new Model_User(true, $request->dbConnector);
 		$model->id = trim($_GET["id_user"]);
 		$model->enable();
-		$type = $_GET["type"];
+		$type = "";
+		if (isset($_GET["type"])) {
+			$type = $_GET["type"];
+		}
 		if ($type == "client") {
 			$this->redirect('clients', 'user');
 		} else {
@@ -81,7 +84,10 @@ class Controller_User extends Controller_Admin_Template {
 		$model = new Model_User(true, $request->dbConnector);
 		$model->id = trim($_GET["id_user"]);
 		$model->disable();
-		$type = $_GET["type"];
+		$type = "";
+		if (isset($_GET["type"])) {
+			$type = $_GET["type"];
+		}
 		if ($type == "client") {
 			$this->redirect('clients', 'user');
 		} else {
@@ -93,7 +99,10 @@ class Controller_User extends Controller_Admin_Template {
 		$model = new Model_User(true, $request->dbConnector);
 		$model->id = trim($_GET["id_user"]);
 		$model->deleted();
-		$type = $_GET["type"];
+		$type = "";
+		if (isset($_GET["type"])) {
+			$type = $_GET["type"];
+		}
 		if ($type == "client") {
 			$this->redirect('clients', 'user');
 		} else {
