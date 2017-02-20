@@ -31,7 +31,7 @@
 			continue;
 		}
 		
-		if ($livreur->is_login) {
+		if ($livreur->is_login && $livreur->parametre->send_notification_commande) {
 			sendNotificationMessage ($livreur);
 		}
 		if ($livreur->parametre->send_sms_commande && $livreur->telephone != '') {

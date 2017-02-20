@@ -752,7 +752,7 @@ class Model_User extends Model_Template {
 	
 	public function getLivreurAvailableForCommande ($commande) {
 		$sql = "SELECT user.uid, user.login, user.is_login, ul.telephone, us.gcm_token, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin, 
-		up.send_sms_commande
+		up.send_sms_commande, up.send_notification_commande
 		FROM users user
 		JOIN user_parametre up ON up.uid = user.uid
 		JOIN user_livreur ul ON ul.uid = user.uid
@@ -785,6 +785,7 @@ class Model_User extends Model_Template {
 		
 			$parameter = new Model_Parametre();
 			$parameter->send_sms_commande = $livreur["send_sms_commande"];
+			$parameter->send_notification_commande = $livreur["send_notification_commande"];
 			
 			$user->parametre = $parameter;
 			

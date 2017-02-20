@@ -7,6 +7,7 @@ class Model_Parametre {
 	private $default_adresse_search;
 	private $send_mail_commande;
 	private $send_sms_commande;
+	private $send_notification_commande;
 	
 	public function __get($property) {
 		if (property_exists($this, $property)) {
