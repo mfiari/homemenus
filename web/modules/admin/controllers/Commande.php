@@ -176,7 +176,7 @@ class Controller_Commande extends Controller_Admin_Template {
 						// On notifie nos utilisateurs
 						$result = $gcm->send($message, $data);
 					}
-					if ($modelUser->parametre->send_sms_commande && $livreur->telephone != '') {
+					if ($modelUser->parametre->send_sms_commande && $modelUser->telephone != '') {
 						/* Envoi de SMS */
 						$sms = new Nexmo();
 						$sms->message = "La commande #".$commande->id." vous a ete attribue";
