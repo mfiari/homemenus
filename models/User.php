@@ -1160,6 +1160,18 @@ class Model_User extends Model_Template {
 		return $value["total"];
 	}
 	
+	public function closeSessionBeforeDate ($date) {
+		$sql = "UPDATE user_session SET date_logout = NOW() WHERE date_login < :date AND date_logout IS NULL";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date", $date);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
 	public function isAdmin () {
 		return $this->status == USER_ADMIN || $this->status == USER_ADMIN_INFO || $this->status == USER_ADMIN_CLIENT;
 	}
