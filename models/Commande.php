@@ -2085,7 +2085,7 @@ class Model_Commande extends Model_Template {
 		$result = $stmt->fetchAll();
 		$listCommande = array();
 		foreach ($result as $c) {
-			$commande = new Model_Commande(false);
+			$commande = new Model_Commande(true, $this->db);
 			$commande->id = $c["id_commande"];
 			$commande->rue = $c["rue_commande"];
 			$commande->ville = $c["ville_commande"];

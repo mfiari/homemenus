@@ -38,6 +38,10 @@ class DbConnector {
 		return $this->db->prepare($sql);
 	}
 	
+	public function query ($request) {
+		return $this->db->query($request);
+	}
+	
 	public function lastInsertId () {
 		return $this->db->lastInsertId();
 	}

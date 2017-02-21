@@ -3,8 +3,13 @@
     include_once '../config.php';
 	include_once ROOT_PATH."function.php";
 	
-	include_once ROOT_PATH."models/Template.php";
-	include_once ROOT_PATH."models/Database.php";
+	include_once MODEL_PATH."Template.php";
+	include_once MODEL_PATH."DbConnector.php";
+	include_once MODEL_PATH."Database.php";
+
+	register_shutdown_function("fatal_error_handler");
+	
+	writeLog (CRON_LOG, "début dump database");
 	
 	$today = date('Y-m-d');
 	
@@ -126,3 +131,5 @@
 	$dumpfile = fopen($fullPath, "a");
 	fwrite($dumpfile, $output);
 	fclose($dumpfile);
+	
+	writeLog (CRON_LOG, "fin dump database");

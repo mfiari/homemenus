@@ -3,9 +3,14 @@
     include_once '../config.php';
 	
 	include_once ROOT_PATH."function.php";
-	include_once ROOT_PATH."models/Template.php";
-	include_once ROOT_PATH."models/Restaurant.php";
-	include_once ROOT_PATH."models/Dispo.php";
+	include_once MODEL_PATH."Template.php";
+	include_once MODEL_PATH."DbConnector.php";
+	include_once MODEL_PATH."Restaurant.php";
+	include_once MODEL_PATH."Dispo.php";
+
+	register_shutdown_function("fatal_error_handler");
+	
+	writeLog (CRON_LOG, "début distance resto livreur");
 	
 	$modelRestaurant = new Model_Restaurant();
 	$restaurants = $modelRestaurant->getRestaurantsCalculeDistance();
@@ -28,3 +33,5 @@
 		}
 		$modelDispo->removeUpdateRestaurant($restaurant->id);
 	}
+	
+	writeLog (CRON_LOG, "fin distance resto livreur");

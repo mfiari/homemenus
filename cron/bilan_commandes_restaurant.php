@@ -3,22 +3,25 @@
     include_once '../config.php';
 	
 	include_once ROOT_PATH."function.php";
-	include_once ROOT_PATH."models/Template.php";
-	include_once ROOT_PATH."models/Commande.php";
-	include_once ROOT_PATH."models/User.php";
-	include_once ROOT_PATH."models/Restaurant.php";
-	include_once ROOT_PATH."models/CommandeHistory.php";
-	include_once ROOT_PATH."models/Menu.php";
-	include_once ROOT_PATH."models/Formule.php";
-	include_once ROOT_PATH."models/Contenu.php";
-	include_once ROOT_PATH."models/Carte.php";
-	include_once ROOT_PATH."models/Format.php";
-	include_once ROOT_PATH."models/Categorie.php";
-	include_once ROOT_PATH."models/Supplement.php";
-	include_once ROOT_PATH."models/CodePromo.php";
-	include_once ROOT_PATH."models/Option.php";
-	include_once ROOT_PATH."models/OptionValue.php";
-	include_once ROOT_PATH."models/PDF.php";
+	include_once MODEL_PATH."Template.php";
+	include_once MODEL_PATH."DbConnector.php";
+	include_once MODEL_PATH."Commande.php";
+	include_once MODEL_PATH."User.php";
+	include_once MODEL_PATH."Restaurant.php";
+	include_once MODEL_PATH."CommandeHistory.php";
+	include_once MODEL_PATH."Menu.php";
+	include_once MODEL_PATH."Formule.php";
+	include_once MODEL_PATH."Contenu.php";
+	include_once MODEL_PATH."Carte.php";
+	include_once MODEL_PATH."Format.php";
+	include_once MODEL_PATH."Categorie.php";
+	include_once MODEL_PATH."Supplement.php";
+	include_once MODEL_PATH."CodePromo.php";
+	include_once MODEL_PATH."Option.php";
+	include_once MODEL_PATH."OptionValue.php";
+	include_once MODEL_PATH."PDF.php";
+
+	register_shutdown_function("fatal_error_handler");
 	
 	writeLog (CRON_LOG, "début bilan commande restaurant");
 	

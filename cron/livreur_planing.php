@@ -3,10 +3,15 @@
     include_once '../config.php';
 	
 	include_once ROOT_PATH."function.php";
-	include_once ROOT_PATH."models/Template.php";
-	include_once ROOT_PATH."models/User.php";
-	include_once ROOT_PATH."models/PDF.php";
-	include_once ROOT_PATH."models/Dispo.php";
+	include_once MODEL_PATH."Template.php";
+	include_once MODEL_PATH."DbConnector.php";
+	include_once MODEL_PATH."User.php";
+	include_once MODEL_PATH."PDF.php";
+	include_once MODEL_PATH."Dispo.php";
+
+	register_shutdown_function("fatal_error_handler");
+	
+	writeLog (CRON_LOG, "début livreur planing");
 	
 	$modelUser = new Model_User();
 	$livreurs = $modelUser->getAllActifLivreur();
@@ -64,3 +69,5 @@
 		$messageContent = str_replace("[NOM]", $user->nom, $messageContent);
 		send_mail ($user->email, "Planing livreur", $messageContent, MAIL_FROM_DEFAULT, $attachments);
 	}
+	
+	writeLog (CRON_LOG, "fin livreur planing");

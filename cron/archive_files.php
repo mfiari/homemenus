@@ -3,6 +3,8 @@
     include_once '../config.php';
 	
 	include_once ROOT_PATH."function.php";
+
+	register_shutdown_function("fatal_error_handler");
 	
 	writeLog (CRON_LOG, "début archive files");
 	
