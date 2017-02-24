@@ -609,18 +609,37 @@ class Controller_Panier extends Controller_Default_Template {
 					
 					$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
 					if (count($restaurantUsers) > 0) {
-						$registatoin_ids = array();
 						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
 						$telephone = '';
 						$oldTelephone = '';
 						foreach ($restaurantUsers as $restaurantUser) {
 							if ($restaurantUser->gcm_token) {
-								array_push($registatoin_ids, $restaurantUser->gcm_token);
+								$message = "Vous avez reçu une nouvelle commande";
+								// listre des utilisateurs à notifier
+								$gcm->setDevices(array($restaurantUser->gcm_token));
+							 
+								// Le titre de la notification
+								$data = array(
+									"title" => "Nouvelle commande",
+									"key" => "restaurant-new-commande",
+									"id_commande" => $commande->id
+								);
+							 
+								// On notifie nos utilisateurs
+								$result = $gcm->send($message, $data);
+								
+								$notification = new Model_Notification();
+								$notification->id_user = $restaurantUser->id;
+								$notification->token = $restaurantUser->gcm_token;
+								$notification->message = $message;
+								$notification->datas = json_encode($data);
+								$notification->is_send = true;
+								$notification->save();
 							}
 							
 							$telephone = $restaurantUser->telephone;
 							
-							if ($telephone != $oldTelephone) {
+							if ($telephone != '' && $telephone != $oldTelephone) {
 								$oldTelephone = $telephone;
 								$sms = new Nexmo();
 								$sms->message = "Vous avez recu une nouvelle commande";
@@ -628,21 +647,6 @@ class Controller_Panier extends Controller_Default_Template {
 								$sms->sendMessage();
 							}
 							
-						}
-						if (count($registatoin_ids) > 0) {
-							$message = "Vous avez reçu une nouvelle commande";
-							// listre des utilisateurs à notifier
-							$gcm->setDevices($registatoin_ids);
-						 
-							// Le titre de la notification
-							$data = array(
-								"title" => "Nouvelle commande",
-								"key" => "restaurant-new-commande",
-								"id_commande" => $commande->id
-							);
-						 
-							// On notifie nos utilisateurs
-							$result = $gcm->send($message, $data);
 						}
 					} else {
 						writeLog(SERVER_LOG, "Auncun utilisateur restaurant trouvé pour la commande #".$commande->id, LOG_LEVEL_WARNING);

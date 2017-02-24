@@ -54,6 +54,16 @@ class Admin_Manager {
 					$controller = new Controller_SMS();
 					$controller->manage($request);
 					break;
+				case "notification" :
+					include_once WEBSITE_PATH."modules/admin/controllers/Notification.php";
+					$controller = new Controller_Notification();
+					$controller->manage($request);
+					break;
+				case "news" :
+					include_once WEBSITE_PATH."modules/admin/controllers/News.php";
+					$controller = new Controller_News();
+					$controller->manage($request);
+					break;
 				case "commentaire" :
 					include_once WEBSITE_PATH."modules/admin/controllers/Commentaire.php";
 					$controller = new Controller_Commentaire();
