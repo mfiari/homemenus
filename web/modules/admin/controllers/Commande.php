@@ -22,6 +22,7 @@ include_once ROOT_PATH."models/CodePromo.php";
 include_once ROOT_PATH."models/PDF.php";
 include_once ROOT_PATH."models/SMS.php";
 include_once ROOT_PATH."models/Nexmo.php";
+include_once MODEL_PATH."Notification.php";
 
 class Controller_Commande extends Controller_Admin_Template {
 	
@@ -162,9 +163,10 @@ class Controller_Commande extends Controller_Admin_Template {
 				$modelUser->getLivreurInfo();
 				$commande->uid = $modelUser->id;
 				if ($commande->attributionLivreur()) {
+					$restaurant = $commande->getRestaurant();
 					if ($modelUser->gcm_token && $modelUser->parametre->send_notification_commande) {
 						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
-						$message = "Vous avez reçu une nouvelle commande";
+						$message = "La commande #".$commande->id." vient de vous être attribuée au restaurant ".utf8_encode($restaurant->nom);
 						// listre des utilisateurs à notifier
 						$gcm->setDevices(array($modelUser->gcm_token));
 						// Le titre de la notification
@@ -175,18 +177,26 @@ class Controller_Commande extends Controller_Admin_Template {
 						);
 						// On notifie nos utilisateurs
 						$result = $gcm->send($message, $data);
+							
+						$notification = new Model_Notification();
+						$notification->id_user = $modelUser->id;
+						$notification->token = $modelUser->gcm_token;
+						$notification->message = $message;
+						$notification->datas = json_encode($data);
+						$notification->is_send = true;
+						$notification->save();
 					}
 					if ($modelUser->parametre->send_sms_commande && $modelUser->telephone != '') {
 						/* Envoi de SMS */
 						$sms = new Nexmo();
-						$sms->message = "La commande #".$commande->id." vous a ete attribue";
+						$sms->message = "La commande #".$commande->id." vient de vous etre attribuee au restaurant ".$restaurant->nom;
 						$sms->addNumero($modelUser->telephone);
 						$sms->sendMessage();
 					}
 					
 					if ($livreur) {
 						if ($livreur->gcm_token && $livreur->parametre->send_notification_commande) {
-							$message = "Une commande vous a été retiré";
+							$message = "La commande #".$commande->id." vous a été retirée";
 							// listre des utilisateurs à notifier
 							$gcm->setDevices(array($livreur->gcm_token));
 							// Le titre de la notification
@@ -197,11 +207,19 @@ class Controller_Commande extends Controller_Admin_Template {
 							);
 							// On notifie nos utilisateurs
 							$result = $gcm->send($message, $data);
+							
+							$notification = new Model_Notification();
+							$notification->id_user = $livreur->id;
+							$notification->token = $livreur->gcm_token;
+							$notification->message = $message;
+							$notification->datas = json_encode($data);
+							$notification->is_send = true;
+							$notification->save();
 						}
 						if ($livreur->parametre->send_sms_commande && $livreur->telephone != '') {
 							/* Envoi de SMS */
 							$sms = new Nexmo();
-							$sms->message = "Le commande #".$commande->id." vous a ete retire";
+							$sms->message = "La commande #".$commande->id." vous a ete retiree";
 							$sms->addNumero($livreur->telephone);
 							$sms->sendMessage();
 						}

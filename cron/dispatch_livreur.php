@@ -33,10 +33,10 @@
 		}
 		
 		if ($livreur->is_login && $livreur->parametre->send_notification_commande) {
-			sendNotificationMessage ($livreur, $commande->restaurant);
+			sendNotificationMessage ($livreur, $commande);
 		}
 		if ($livreur->parametre->send_sms_commande && $livreur->telephone != '') {
-			sendSMS ($livreur, $commande->restaurant);
+			sendSMS ($livreur, $commande);
 		}
 		$commande->uid = $livreur->id;
 		$commande->attributionLivreur();
@@ -103,11 +103,11 @@
 		return $bestLivreur;
 	}
 	
-	function sendNotificationMessage ($livreur, $restaurant) {
+	function sendNotificationMessage ($livreur, $commande) {
 		if ($livreur->gcm_token) {
 			$gcm = new GCMPushMessage(GOOGLE_API_KEY);
 			$registatoin_ids = array($livreur->gcm_token);
-			$message = "Une nouvelle commande vient de vous être attribuée au restaurant ".utf8_encode($restaurant->nom);
+			$message = "La commande #".$commande->id." vient de vous etre attribuee au restaurant ".utf8_encode($commande->restaurant->nom);
 			// listre des utilisateurs à notifier
 			$gcm->setDevices($registatoin_ids);
 			// Le titre de la notification
@@ -132,9 +132,9 @@
 		}
 	}
 	
-	function sendSMS ($livreur, $restaurant) {
+	function sendSMS ($livreur, $commande) {
 		$sms = new Nexmo();
-		$sms->message = "Une nouvelle commande vient de vous etre attribuee au restaurant ".$restaurant->nom;
+		$sms->message = "La commande #".$commande->id." vient de vous etre attribuee au restaurant ".$commande->restaurant->nom;
 		$sms->addNumero($livreur->telephone);
 		$sms->sendMessage();
 	}

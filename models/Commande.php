@@ -815,6 +815,34 @@ class Model_Commande extends Model_Template {
 		return $this;
 	}
 	
+	public function getRestaurant () {
+		$sql = "
+		SELECT resto.id AS id_resto, resto.nom AS nom_resto, resto.rue AS rue_resto, resto.ville AS ville_resto, resto.code_postal AS cp_resto, 
+		resto.telephone AS tel_resto
+		FROM commande com
+		JOIN restaurants resto ON resto.id = com.id_restaurant
+		WHERE com.id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return;
+		}
+		$this->restaurant = new Model_Restaurant(false);
+		$this->restaurant->id = $value['id_resto'];
+		$this->restaurant->nom = $value['nom_resto'];
+		$this->restaurant->rue = $value['rue_resto'];
+		$this->restaurant->ville = $value['ville_resto'];
+		$this->restaurant->code_postal = $value['cp_resto'];
+		$this->restaurant->telephone = $value['tel_resto'];
+		
+		return $this->restaurant;
+	}
+	
 	public function getLivreur () {
 		$sql = "SELECT livreur.uid, livreur.nom, livreur.prenom, us.gcm_token, livreur.is_login, ul.telephone, up.send_sms_commande, up.send_notification_commande
 		FROM commande
