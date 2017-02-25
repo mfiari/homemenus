@@ -56,7 +56,7 @@ class Model_Notification extends Model_Template {
 	*/
 	public function getAll ($dateDebut, $dateFin) {
 		$sql = "SELECT notif.id, user.uid, user.nom, user.prenom, user.status, notif.date_envoie, notif.is_send
-		FROM notifications 
+		FROM notifications notif
 		LEFT JOIN users user ON user.uid = notif.id_user
 		WHERE notif.date_envoie BETWEEN :date_debut AND :date_fin
 		ORDER BY notif.date_envoie DESC LIMIT 50";
