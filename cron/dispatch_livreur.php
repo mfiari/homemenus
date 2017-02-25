@@ -12,6 +12,7 @@
 	include_once MODEL_PATH."GCMPushMessage.php";
 	include_once MODEL_PATH."Nexmo.php";
 	include_once MODEL_PATH."SMS.php";
+	include_once MODEL_PATH."Notification.php";
 
 	register_shutdown_function("fatal_error_handler");
 	
@@ -32,10 +33,10 @@
 		}
 		
 		if ($livreur->is_login && $livreur->parametre->send_notification_commande) {
-			sendNotificationMessage ($livreur);
+			sendNotificationMessage ($livreur, $commande->restaurant);
 		}
 		if ($livreur->parametre->send_sms_commande && $livreur->telephone != '') {
-			sendSMS ($livreur);
+			sendSMS ($livreur, $commande->restaurant);
 		}
 		$commande->uid = $livreur->id;
 		$commande->attributionLivreur();
@@ -102,11 +103,11 @@
 		return $bestLivreur;
 	}
 	
-	function sendNotificationMessage ($livreur) {
+	function sendNotificationMessage ($livreur, $restaurant) {
 		if ($livreur->gcm_token) {
 			$gcm = new GCMPushMessage(GOOGLE_API_KEY);
 			$registatoin_ids = array($livreur->gcm_token);
-			$message = "Vous avez reçu une nouvelle commande";
+			$message = "Une nouvelle commande vient de vous être attribuée au restaurant ".utf8_encode($restaurant->nom);
 			// listre des utilisateurs à notifier
 			$gcm->setDevices($registatoin_ids);
 			// Le titre de la notification
@@ -117,15 +118,23 @@
 			);
 			// On notifie nos utilisateurs
 			$result = $gcm->send($message, $data);
+								
+			$notification = new Model_Notification();
+			$notification->id_user = $livreur->id;
+			$notification->token = $livreur->gcm_token;
+			$notification->message = $message;
+			$notification->datas = json_encode($data);
+			$notification->is_send = true;
+			$notification->save();
 		} else {
 			$message = 'Le livreur '.$livreur->id.' ne possède pas de gcm_token';
 			writeLog(CRON_LOG, $message, LOG_LEVEL_WARNING);
 		}
 	}
 	
-	function sendSMS ($livreur) {
+	function sendSMS ($livreur, $restaurant) {
 		$sms = new Nexmo();
-		$sms->message = "Une nouvelle commande vient de vous etre attribuer";
+		$sms->message = "Une nouvelle commande vient de vous etre attribuee au restaurant ".$restaurant->nom;
 		$sms->addNumero($livreur->telephone);
 		$sms->sendMessage();
 	}
