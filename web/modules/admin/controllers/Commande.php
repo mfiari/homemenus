@@ -369,7 +369,7 @@ class Controller_Commande extends Controller_Admin_Template {
 					if ($livreur->gcm_token) {
 						$gcm = new GCMPushMessage(GOOGLE_API_KEY);
 						$registatoin_ids = array($livreur->gcm_token);
-						$message = "La commande #".$commande->id." a été validé";
+						$message = "La commande #".$commande->id." est en cours de préparation";
 						// listre des utilisateurs à notifier
 						$gcm->setDevices($registatoin_ids);
 						// Le titre de la notification
@@ -380,17 +380,26 @@ class Controller_Commande extends Controller_Admin_Template {
 						);
 						// On notifie nos utilisateurs
 						$result = $gcm->send($message, $data);
+							
+						$notification = new Model_Notification();
+						$notification->id_user = $livreur->id;
+						$notification->token = $livreur->gcm_token;
+						$notification->message = $message;
+						$notification->datas = json_encode($data);
+						$notification->is_send = true;
+						$notification->save();
 					}
 					/* Envoi de SMS */
 					$sms = new Nexmo();
-					$sms->message = "La commande #".$commande->id." a été validé par le restaurant";
+					$sms->message = "La commande #".$commande->id." est en cours de preparation";
 					$sms->addNumero($livreur->telephone);
 					$sms->sendMessage();
 				}
 				$client = $commande->getClient();
 				if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
+					$restaurant = $commande->getRestaurant();
 					$sms = new Nexmo();
-					$sms->message = "Bonjour, votre commande est en cours de preparation. L'equipe HoMe Menus.";
+					$sms->message = "Bonjour, votre commande est en cours de preparation au restautant ".$restaurant->nom;
 					$sms->addNumero($client->telephone);
 					$sms->sendMessage();
 				}
