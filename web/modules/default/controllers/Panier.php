@@ -20,6 +20,7 @@ include_once ROOT_PATH."models/CodePromo.php";
 include_once ROOT_PATH."models/PDF.php";
 include_once ROOT_PATH."models/Nexmo.php";
 include_once ROOT_PATH."models/SMS.php";
+include_once ROOT_PATH."models/Notification.php";
 
 
 class Controller_Panier extends Controller_Default_Template {
