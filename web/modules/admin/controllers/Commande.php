@@ -432,7 +432,7 @@ class Controller_Commande extends Controller_Admin_Template {
 					}
 					/* Envoi de SMS */
 					$sms = new Nexmo();
-					$sms->message = "La commande #".$commande->id." est prête";
+					$sms->message = "La commande #".$commande->id." est prete";
 					$sms->addNumero($livreur->telephone);
 					$sms->sendMessage();
 				}
