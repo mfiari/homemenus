@@ -1202,6 +1202,24 @@ class Model_User extends Model_Template {
 		return true;
 	}
 	
+	public function getLastPosition () {
+		$sql = "SELECT latitude, longitude FROM user_livreur_position WHERE id_livreur = :uid ORDER BY date DESC LIMIT 1";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null ||$value == false) {
+			return false;
+		}
+		$this->latitude = $value["latitude"];
+		$this->longitude = $value["longitude"];
+		return $this;
+	}
+	
 	public function isAdmin () {
 		return $this->status == USER_ADMIN || $this->status == USER_ADMIN_INFO || $this->status == USER_ADMIN_CLIENT;
 	}

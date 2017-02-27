@@ -121,6 +121,7 @@ class Controller_User extends Controller_Admin_Template {
 		$modelUser = new Model_User(true, $request->dbConnector);
 		$modelUser->id = $_GET['id_user'];
 		$request->livreur = $modelUser->getLivreur();
+		$request->livreur->getLastPosition();
 		$modelCommande = new Model_Commande(true, $request->dbConnector);
 		$modelCommande->uid = $_GET['id_user'];
 		$request->commandes = $modelCommande->loadCommandeLivreur();

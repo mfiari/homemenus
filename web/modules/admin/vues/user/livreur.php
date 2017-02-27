@@ -4,6 +4,11 @@
 			<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 		</a>
 		<div class="row">
+			<div class="col-md-12 col-sm-12">
+				<div id="googleMap" class="col-md-10 col-md-offset-1" style="height:200px; margin-top : 10px;"></div>
+			</div>
+		</div>
+		<div class="row">
 			<h2>Coordonnées</h2>
 			<p>Nom : <?php echo utf8_encode($request->livreur->nom); ?> <?php echo utf8_encode($request->livreur->prenom); ?></p>
 			<p>Email : <?php echo $request->livreur->email; ?></p>
@@ -234,5 +239,16 @@
 			}
 			$("#ajoutDispoForm").submit();
 		});
+		initialize();
+		var list = [];
+		
+		var livreurPosition = {};
+		livreurPosition.type = "ADRESSE";
+		livreurPosition.latitude = "<?php echo $request->livreur->latitude; ?>";
+		livreurPosition.longitude = "<?php echo $request->livreur->longitude; ?>";
+		
+		list.push(livreurPosition);
+		
+		boundToPoints(list);
 	});
 </script>
