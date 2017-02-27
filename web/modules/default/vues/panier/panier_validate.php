@@ -282,15 +282,15 @@
 </div>
 <div style="margin-top : 20px;">
 	<div id="paiementsForm" class="row" style="display : none;">
-		<div class="col-md-6">
+		<!--<div class="col-md-6">
 			<form style="text-align : center;" id="payPaypal" action="?controler=paypal" method="POST">
 				<input id="command" class="validate-button" type="submit" value="Payer avec paypal">
 			</form>
 			<div class="col-md-offset-2 col-md-10">
 				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
 			</div>
-		</div>
-		<div class="col-md-6">
+		</div>-->
+		<div class="col-md-12">
 			<form style="text-align : center;" id="payCard" action="?controler=panier&action=valideCarte" method="POST">
 			  <script
 				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
@@ -308,7 +308,7 @@
 			  </script>
 			</form>
 			<div class="col-md-offset-2 col-md-10">
-				<img style="width : 80%; margin-top : 20px;" src="res/img/stripe-secure.png" title="HoMe Menus - paiement stripe secure" alt="HoMe Menus - paiement stripe secure">
+				<img style="width : 60%; margin-top : 20px;" src="res/img/stripe-secure.png" title="HoMe Menus - paiement stripe secure" alt="HoMe Menus - paiement stripe secure">
 			</div>
 		</div>
 	</div>
