@@ -14,7 +14,9 @@ include_once MODEL_PATH."Accompagnement.php";
 include_once MODEL_PATH."PDF.php";
 include_once MODEL_PATH."Clickatell.php";
 include_once MODEL_PATH."Nexmo.php";
+include_once MODEL_PATH."SMS.php";
 include_once MODEL_PATH."Parametre.php";
+include_once MODEL_PATH."Notification.php";
 
 class Controller_Commande extends Controller_Template {
 	
@@ -163,7 +165,7 @@ class Controller_Commande extends Controller_Template {
 		if (!isset($_POST["id_commande"])) {
 			die();
 		}
-		$commande = new Model_Commande();
+		/*$commande = new Model_Commande();
 		$commande->id = $_POST["id_commande"];
 		$commande->uid = $_POST["id_user_restaurant"];
 		if ($commande->annulationRestaurant()) {
@@ -186,13 +188,13 @@ class Controller_Commande extends Controller_Template {
 				}
 			}
 			$client = $commande->getClient();
-			if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
+			if ($client->parametre->send_sms_commande) {
 				$sms = new Nexmo();
 				$sms->message = "Votre commande #".$commande->id." a été refusé par le restaurant";
 				$sms->addNumero($client->telephone);
 				$sms->sendMessage();
 			}
-		}
+		}*/
 	}
 	
 	private function validationRestaurant () {
@@ -207,11 +209,11 @@ class Controller_Commande extends Controller_Template {
 		$commande->uid = $_POST["id_user_restaurant"];
 		if ($commande->validationRestaurant()) {
 			$livreur = $commande->getLivreur();
-			if ($livreur->is_login) {
+			if ($livreur && $livreur->is_login) {
 				if ($livreur->gcm_token) {
 					$gcm = new GCMPushMessage(GOOGLE_API_KEY);
 					$registatoin_ids = array($livreur->gcm_token);
-					$message = "La commande #".$commande->id." a été validé";
+					$message = "La commande #".$commande->id." est en cours de préparation";
 					// listre des utilisateurs à notifier
 					$gcm->setDevices($registatoin_ids);
 					// Le titre de la notification
@@ -222,14 +224,26 @@ class Controller_Commande extends Controller_Template {
 					);
 					// On notifie nos utilisateurs
 					$result = $gcm->send($message, $data);
+						
+					$notification = new Model_Notification();
+					$notification->id_user = $livreur->id;
+					$notification->token = $livreur->gcm_token;
+					$notification->message = $message;
+					$notification->datas = json_encode($data);
+					$notification->is_send = true;
+					$notification->save();
 				}
+				/* Envoi de SMS */
+				$sms = new Nexmo();
+				$sms->message = "La commande #".$commande->id." est en cours de preparation";
+				$sms->addNumero($livreur->telephone);
+				$sms->sendMessage();
 			}
 			$client = $commande->getClient();
-			/*var_dump($client);
-			var_dump($client->parametre);*/
 			if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
+				$restaurant = $commande->getRestaurant();
 				$sms = new Nexmo();
-				$sms->message = "Bonjour, votre commande est en cours de preparation. L'equipe HoMe Menus.";
+				$sms->message = "Bonjour, votre commande est en cours de preparation au restautant ".$restaurant->nom;
 				$sms->addNumero($client->telephone);
 				$sms->sendMessage();
 			}
@@ -248,7 +262,7 @@ class Controller_Commande extends Controller_Template {
 		$commande->uid = $_POST["id_user_restaurant"];
 		if ($commande->finPreparationRestaurant()) {
 			$livreur = $commande->getLivreur();
-			if ($livreur->is_login) {
+			if ($livreur && $livreur->is_login) {
 				if ($livreur->gcm_token) {
 					$gcm = new GCMPushMessage(GOOGLE_API_KEY);
 					$registatoin_ids = array($livreur->gcm_token);
@@ -264,6 +278,11 @@ class Controller_Commande extends Controller_Template {
 					// On notifie nos utilisateurs
 					$result = $gcm->send($message, $data);
 				}
+				/* Envoi de SMS */
+				$sms = new Nexmo();
+				$sms->message = "La commande #".$commande->id." est prete";
+				$sms->addNumero($livreur->telephone);
+				$sms->sendMessage();
 			}
 		}
 	}
@@ -318,8 +337,8 @@ class Controller_Commande extends Controller_Template {
 		if ($commande->recuperationLivreur()) {
 			$client = $commande->getClient();
 			if ($client->parametre->send_sms_commande /* && $client->telephone commence par 06 ou 07 */) {
-				$sms = new Clickatell();
-				$sms->message = "Bonjour, votre commande #".$commande->id." est prête et est en cours de livraison. L'équipe HoMe Menus.";
+				$sms = new Nexmo();
+				$sms->message = "Votre commande est en cours de livraison";
 				$sms->addNumero($client->telephone);
 				$sms->sendMessage();
 			}
