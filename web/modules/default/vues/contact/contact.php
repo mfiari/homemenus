@@ -58,7 +58,7 @@
 					<label for="sujet">Sujet<span class="required">*</span> : </label>
 					<select name="sujet">
 					<?php foreach ($request->sujets as $key => $sujet) : ?>
-						<option value="<?php echo $key; ?>"><?php echo $sujet; ?></option>
+						<option value="<?php echo $key; ?>" <?php echo $request->sujet !== false && $request->sujet == $key ? 'selected' : ''; ?>><?php echo $sujet; ?></option>
 					<?php endforeach; ?>
 					</select>
 				</div>

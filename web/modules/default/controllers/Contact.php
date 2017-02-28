@@ -100,6 +100,7 @@ class Controller_Contact extends Controller_Default_Template {
 					$request->mailSuccess = false;
 				}
 			} else {
+				$request->sujet = $sujet;
 				$request->errorMessage = $errorMessage;
 				$request->fieldEmail = $email;
 				$request->fieldMessage = $message;
