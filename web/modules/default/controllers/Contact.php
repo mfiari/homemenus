@@ -199,6 +199,7 @@ class Controller_Contact extends Controller_Default_Template {
 				$request->fieldTelephone = $telephone;
 				$request->fieldEmail = $email;
 				$request->fieldMessage = $message;
+				$request->transports = $transports;
 			}
 		}
 		$request->javascripts = array("res/js/jquery.validate.min.js", "res/js/contact/livreur.js", "https://www.google.com/recaptcha/api.js");
