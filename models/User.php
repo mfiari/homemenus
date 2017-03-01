@@ -250,6 +250,14 @@ class Model_User extends Model_Template {
 			return false;
 		}
 		$this->id = $this->db->lastInsertId();
+		$sql = "INSERT INTO user_parametre (uid) VALUES (:uid)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
 		if ($this->status == USER_LIVREUR) {
 			return $this->insertLivreur();
 		} else if ($this->status == USER_CLIENT) {
