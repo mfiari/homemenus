@@ -157,7 +157,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			$commande = new Model_Commande(true, $request->dbConnector);
 			$commande->id = $_POST["id_commande"];
 			$livreur = $commande->getLivreur();
-			if ($livreur === false ||$livreur->id != $id_livreur) {
+			if ($livreur === false || $livreur->id != $id_livreur) {
 				$modelUser = new Model_User(true, $request->dbConnector);
 				$modelUser->id = $id_livreur;
 				$modelUser->getLivreurInfo();

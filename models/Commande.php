@@ -860,7 +860,7 @@ class Model_Commande extends Model_Template {
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null) {
-			return;
+			return false;
 		}
 		$this->livreur = new Model_User(false);
 		$this->livreur->id = $value['uid'];
