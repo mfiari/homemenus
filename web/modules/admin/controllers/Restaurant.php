@@ -17,6 +17,7 @@ include_once ROOT_PATH."models/Accompagnement.php";
 class Controller_Restaurant extends Controller_Admin_Template {
 	
 	public function manage ($request) {
+		$this->request = $request;
 		if (isset($_GET["action"])) {
 			$action = $_GET["action"];
 			switch ($action) {
