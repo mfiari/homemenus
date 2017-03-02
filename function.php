@@ -22,6 +22,13 @@ function getDistance ($adresse1, $adresse2) {
 	$url='http://maps.googleapis.com/maps/api/distancematrix/json?origins='.$adresse1.'&destinations='.$adresse2.'&sensor=false';
 	$json = file_get_contents($url);
 	$details = json_decode($json, TRUE);
+	if (!isset($details['rows'][0]['elements'][0])) {
+		return array(
+			'status' => $details['status'],
+			'distance' => -1,
+			'duration' => -1
+		);
+	}
 	if ($details['rows'][0]['elements'][0]['status'] == 'ZERO_RESULTS') {
 		return array(
 			'status' => $details['status'],
