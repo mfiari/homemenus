@@ -51,7 +51,12 @@ class Controller_User extends Controller_Admin_Template {
 				case "deleteDispo" :
 					$this->deleteDispo($request);
 					break;
+				default :
+					$this->redirect('404');
+					break;
 			}
+		} else {
+			$this->redirect('404');
 		}
 	}
 	
