@@ -66,7 +66,12 @@ class Controller_Panier extends Controller_Default_Template {
 				case "addCodePromo" :
 					$this->addCodePromo($request);
 					break;
+				default :
+					$this->redirect('404');
+					break;
 			}
+		} else {
+			$this->redirect('404');
 		}
 	}
 	
