@@ -41,7 +41,10 @@
 </div>
 <div class="row" style="margin-top : 50px;">
 	<div class="col-md-8 col-sm-8">
-		<?php $restaurantIds = array(); ?>
+		<?php 
+			$restaurantIds = array();
+			$totalRestaurantOuvert = 0;
+		?>
 		<?php if ($request->adressError) : ?>
 			<div class="alert alert-danger" role="alert">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -61,7 +64,6 @@
 				$current_heure = date('H');
 				$current_minute = date('i');
 				$totalRestaurant = count($request->restaurants);
-				$totalRestaurantOuvert = 0;
 			?>
 			<?php foreach ($request->restaurants as $restaurant) : ?>
 				<?php $horaire = $restaurant->horaire; ?>
@@ -129,7 +131,7 @@
 						</tbody>
 					</table>
 				</div>
-			<?php endif; ?>
+			<?php endif; ?>	
 			<?php if ($totalRestaurantNA > $totalRestaurantOuvert) : ?>
 				<div style="margin-bottom : 100px;">
 					<h3>Les restaurants ci-dessous ne peuvent vous être livré car ils se trouvent en dehors de notre périmètre de livraison (qui est de <?php echo MAX_KM; ?>km).
