@@ -136,9 +136,9 @@ class Controller_Panier extends Controller_Default_Template {
 				$duration = ceil($result['duration'] / 60);
 			}
 			$panier->id_restaurant = $id_restaurant;
-			$panier->rue = $_SESSION['search_rue'];
-			$panier->ville = $_SESSION['search_ville'];
-			$panier->code_postal = $_SESSION['search_cp'];
+			$panier->rue = isset($_SESSION['search_rue']) ? $_SESSION['search_rue'] : '';
+			$panier->ville = isset($_SESSION['search_ville']) ? $_SESSION['search_ville'] : '';
+			$panier->code_postal = isset($_SESSION['search_cp']) ? $_SESSION['search_cp'] : '';
 			$panier->latitude = $user_latitude;
 			$panier->longitude = $user_longitude;
 			$panier->distance = $distance;
