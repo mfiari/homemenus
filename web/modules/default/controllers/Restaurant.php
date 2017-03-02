@@ -278,8 +278,8 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$request->carte->getLogo($request->id_restaurant);
 			
 			$modelUser = new Model_User(true, $request->dbConnector);
-			$ville = $_SESSION['search_ville'];
-			$codePostal = $_SESSION['search_cp'];
+			$ville = isset($_SESSION['search_ville']) ? $_SESSION['search_ville'] : '';
+			$codePostal = isset($_SESSION['search_cp']) ? $_SESSION['search_cp'] : '';
 			$restaurant = new Model_Restaurant(true, $request->dbConnector);
 			$restaurant->id = $request->id_restaurant;
 			$fields = array ("code_postal", "ville");
