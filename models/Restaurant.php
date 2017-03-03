@@ -758,7 +758,7 @@ class Model_Restaurant extends Model_Template {
 		}
 		$categories = $stmt->fetchAll();
 		foreach ($categories as $c) {
-			$categorie = new Model_Categorie(false);
+			$categorie = new Model_Categorie(true, $this->db);
 			$categorie->id = $c["id"];
 			$categorie->nom = $c["nom"];
 			$this->categories[] = $categorie;
