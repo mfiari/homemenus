@@ -1023,7 +1023,7 @@ class Model_User extends Model_Template {
 	public function getNouveauClient () {
 		$sql = "SELECT uid, nom, prenom, login, is_enable, is_premium
 		FROM users
-		WHERE deleted = 0 AND status = 'USER' AND DATE(date_confirmation) = DATE(NOW())";
+		WHERE deleted = 0 AND status = 'USER' AND DATE(date_creation) = DATE(NOW())";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
@@ -1046,9 +1046,9 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getNouveauClientByMonth ($dateDebut, $dateFin) {
-		$sql = "SELECT MONTH(date_confirmation) AS month, COUNT(*) AS total
+		$sql = "SELECT MONTH(date_creation) AS month, COUNT(*) AS total
 		FROM users
-		WHERE deleted = 0 AND status = 'USER' AND date_confirmation BETWEEN :date_debut AND :date_fin
+		WHERE deleted = 0 AND status = 'USER' AND date_creation BETWEEN :date_debut AND :date_fin
 		GROUP BY month";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":date_debut", $dateDebut);
