@@ -1020,6 +1020,47 @@ class Model_User extends Model_Template {
 		return $this;
 	}
 	
+	public function getNouveauClient () {
+		$sql = "SELECT uid, nom, prenom, login, is_enable, is_premium
+		FROM users
+		WHERE deleted = 0 AND status = 'USER' AND DATE(date_confirmation) = DATE(NOW())";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$users = $stmt->fetchAll();
+		$list = array();
+		foreach ($users as $usr) {
+			$user = new Model_User(false);
+			$user->id = $usr['uid'];
+			$user->nom = $usr['nom'];
+			$user->prenom = $usr['prenom'];
+			$user->login = $usr['login'];
+			$user->is_enable = $usr['is_enable'];
+			$user->is_premium = $usr['is_premium'];
+			$list[] = $user;
+		}
+		return $list;
+	}
+	
+	public function getNouveauClientByMonth ($dateDebut, $dateFin) {
+		$sql = "SELECT MONTH(date_confirmation) AS month, COUNT(*) AS total
+		FROM users
+		WHERE deleted = 0 AND status = 'USER' AND date_confirmation BETWEEN :date_debut AND :date_fin
+		GROUP BY month";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return $stmt->fetchAll();
+	}
+	
 	public function getLivreur () {
 		$sql = "SELECT user.uid, user.nom, user.prenom, user.login, user.email, user.status, user.is_enable, ul.telephone
 		FROM users user JOIN user_livreur ul ON ul.uid = user.uid WHERE user.uid = :id";

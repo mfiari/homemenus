@@ -1,10 +1,11 @@
 <div class="row">
 	<div class="col-md-10  col-md-offset-1">
-		<h2>Historique</h2>
+		<h1>Historique</h1>
 		<ul class="nav nav-tabs">
 			<li role="presentation"><a href="?action=stats">Résultats du jour</a></li>
 			<li role="presentation" class="active"><a href="?action=stats_history">Historique</a></li>
 		</ul>
+		<h2>Générale</h2>
 		<div>
 			<form method="post" enctype="x-www-form-urlencoded" action="">
 				<span>Début : </span><input class="datepicker" type="text" name="date_debut" value="<?php echo $request->date_debut ? $request->date_debut : ''; ?>">
@@ -12,314 +13,112 @@
 				<button class="btn btn-primary" type="submit">Valider</button>
 			</form>
 		</div>
-		<div class="col-md-10  col-md-offset-1">
-			<div class="row">
-				<h2>Total</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Nb de commande</th>
-							<th>Total restaurant</th>
-							<th>Total Livreur</th>
-							<th>Total HoMe Menus</th>
-							<th>Total</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><?php echo $request->resultats['total_commande']; ?></td>
-							<td><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></td>
-							<td><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></td>
-							<td><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
-							<td><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="col-md-10  col-md-offset-1">
-			<div class="row">
-				<h2>Total par jour et par restaurants</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Jour</th>
-							<th>Heure</th>
-							<th>Restaurant</th>
-							<th>Nb de commande</th>
-							<th>Total restaurant</th>
-							<th>Total Livreur</th>
-							<th>Total HoMe Menus</th>
-							<th>Total</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php $weekdayArray = array('Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'); ?>
-						<?php foreach ($request->days as $day) : ?>
-							<tr>
-								<td><?php echo $weekdayArray[$day['weekday']]; ?></td>
-								<td><?php echo $day['hour']; ?>h - <?php echo $day['hour']+1; ?>h</td>
-								<td><?php echo utf8_encode($day['nom_restaurant']); ?></td>
-								<td><?php echo $day['total_commande']; ?></td>
-								<td><?php echo number_format($day['part_restaurant'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($day['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($day['total_prix'] - $day['part_restaurant'] - $day['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($day['total_prix'], 2, ',', ' '); ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th colspan="3">Total</th>
-							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
-							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-		</div>
-		<div class="col-md-10  col-md-offset-1">
-			<div class="row">
-				<h2>Total par mois</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Mois</th>
-							<th>Nb de commande</th>
-							<th>Total restaurant</th>
-							<th>Total Livreur</th>
-							<th>Total HoMe Menus</th>
-							<th>Total</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ($request->months as $month) : ?>
-							<tr>
-								<td><?php echo $month['month']; ?></td>
-								<td><?php echo $month['total_commande']; ?></td>
-								<td><?php echo number_format($month['part_restaurant'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($month['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($month['total_prix'] - $month['part_restaurant'] - $month['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($month['total_prix'], 2, ',', ' '); ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th>Total</th>
-							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
-							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-		</div>
-		<div class="col-md-10  col-md-offset-1">
-			<div class="row">
-				<h2>Par livreur</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Livreur</th>
-							<th>Nb de commande</th>
-							<th>Total restaurant</th>
-							<th>Total Livreur</th>
-							<th>Total HoMe Menus</th>
-							<th>Total</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ($request->livreurs as $livreur) : ?>
-							<tr>
-								<td><?php echo utf8_encode($livreur['nom']); ?></td>
-								<td><?php echo $livreur['total_commande']; ?></td>
-								<td><?php echo number_format($livreur['part_restaurant'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($livreur['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($livreur['total_prix'] - $livreur['part_restaurant'] - $livreur['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($livreur['total_prix'], 2, ',', ' '); ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th>Total</th>
-							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
-							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-		</div>
-		<div class="col-md-10  col-md-offset-1">
-			<div class="row">
-				<h2>Par restaurant</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Restaurant</th>
-							<th>Nb de commande</th>
-							<th>Total restaurant</th>
-							<th>Total Livreur</th>
-							<th>Total HoMe Menus</th>
-							<th>Total</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ($request->restaurants as $restaurant) : ?>
-							<tr>
-								<td><?php echo utf8_encode($restaurant['nom']); ?></td>
-								<td><?php echo $restaurant['total_commande']; ?></td>
-								<td><?php echo number_format($restaurant['part_restaurant'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($restaurant['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($restaurant['total_prix'] - $restaurant['part_restaurant'] - $restaurant['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($restaurant['total_prix'], 2, ',', ' '); ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th>Total</th>
-							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
-							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-		</div>
-		<div class="col-md-10  col-md-offset-1">
-			<div class="row">
-				<h2>Par client</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Client</th>
-							<th>Nb de commande</th>
-							<th>Total restaurant</th>
-							<th>Total Livreur</th>
-							<th>Total HoMe Menus</th>
-							<th>Total</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ($request->clients as $client) : ?>
-							<tr>
-								<td><?php echo $client['nom']; ?> <?php echo $client['prenom']; ?></td>
-								<td><?php echo $client['total_commande']; ?></td>
-								<td><?php echo number_format($client['part_restaurant'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($client['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($client['total_prix'] - $client['part_restaurant'] - $client['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($client['total_prix'], 2, ',', ' '); ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th>Total</th>
-							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
-							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-		</div>
-		<div class="col-md-10  col-md-offset-1">
-			<div class="row">
-				<h2>Par ville</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Ville</th>
-							<th>Nb de commande</th>
-							<th>Total restaurant</th>
-							<th>Total Livreur</th>
-							<th>Total HoMe Menus</th>
-							<th>Total</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ($request->villes as $ville) : ?>
-							<tr>
-								<td><?php echo $ville['nom']; ?> (<?php echo $ville['cp']; ?>)</td>
-								<td><?php echo $ville['total_commande']; ?></td>
-								<td><?php echo number_format($ville['part_restaurant'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($ville['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($ville['total_prix'] - $ville['part_restaurant'] - $ville['part_livreur'], 2, ',', ' '); ?></td>
-								<td><?php echo number_format($ville['total_prix'], 2, ',', ' '); ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-					<tfoot>
-						<tr>
-							<th>Total</th>
-							<th><?php echo $request->resultats['total_commande']; ?></th>
-							<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
-							<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
-							<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-		</div>
-		<div class="col-md-10  col-md-offset-1">
-			<div class="row">
-				<h2>Temps moyen de préparation Par restaurant</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Restaurant</th>
-							<th>Temps de préparation</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ($request->timeRestaurant as $time) : ?>
-							<tr>
-								<td><?php echo utf8_encode($time['nom']); ?></td>
-								<td><?php echo number_format($time['diff'], 2, ',', ' '); ?> min</td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="col-md-10  col-md-offset-1">
-			<div class="row">
-				<h2>Temps moyen de livraison Par livreur</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Livreur</th>
-							<th>Restaurant</th>
-							<th>Ville</th>
-							<th>Temps de livraison</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ($request->timeLivreur as $time) : ?>
-							<tr>
-								<td><?php echo utf8_encode($time['livreur']); ?></td>
-								<td><?php echo utf8_encode($time['resto']); ?></td>
-								<td><?php echo utf8_encode($time['ville']); ?></td>
-								<td><?php echo number_format($time['diff'], 2, ',', ' '); ?> min</td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
+		<div class="row">
+			<div class="col-md-12">
+				<ul class="nav nav-tabs">
+					<li role="presentation" class="active"><a href="?action=stats_history">Général</a></li>
+					<li role="presentation"><a href="?action=restaurant_history">Par restaurant</a></li>
+					<li role="presentation"><a href="?action=livreur_history">Par livreur</a></li>
+					<li role="presentation"><a href="?action=client_history">Par client</a></li>
+					<li role="presentation"><a href="?action=ville_history">Par ville</a></li>
+					<li role="presentation"><a href="?action=jour_history">Par jour</a></li>
+				</ul>
+				<div class="col-md-10  col-md-offset-1">
+					<div class="row">
+						<h3>Total</h3>
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Nb de commande</th>
+									<th>Total restaurant</th>
+									<th>Total Livreur</th>
+									<th>Total HoMe Menus</th>
+									<th>Total</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><?php echo $request->resultats['total_commande']; ?></td>
+									<td><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="col-md-10  col-md-offset-1">
+					<div class="row">
+						<h2>Total par mois</h2>
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Mois</th>
+									<th>Nb de commande</th>
+									<th>Total restaurant</th>
+									<th>Total Livreur</th>
+									<th>Total HoMe Menus</th>
+									<th>Total</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ($request->months as $month) : ?>
+									<tr>
+										<td><?php echo $month['month']; ?></td>
+										<td><?php echo $month['total_commande']; ?></td>
+										<td><?php echo number_format($month['part_restaurant'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['part_livreur'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['total_prix'] - $month['part_restaurant'] - $month['part_livreur'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['total_prix'], 2, ',', ' '); ?></td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>Total</th>
+									<th><?php echo $request->resultats['total_commande']; ?></th>
+									<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+									<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+									<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+									<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+				<div class="col-md-10  col-md-offset-1">
+					<div class="row">
+						<h3>Nouveau client par mois</h3>
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Mois</th>
+									<th>Nouveau client</th>
+									<th>Nouveau client prenium</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php $totalClient = 0; ?>
+								<?php foreach ($request->clients as $client) : ?>
+									<tr>
+										<td><?php echo $client['month']; ?></td>
+										<td><?php echo $client['total']; ?></td>
+										<td>0</td>
+									</tr>
+									<?php $totalClient += $client['total']; ?>
+								<?php endforeach; ?>
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>Total</th>
+									<th><?php echo $totalClient; ?></th>
+									<th>0</th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
