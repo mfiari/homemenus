@@ -163,7 +163,7 @@ class Model_Categorie extends Model_Template {
 		(SELECT COUNT(*) FROM commentaire_carte WHERE id_carte = carte.id) AS vote,
 		(SELECT COUNT(*) FROM commentaire_carte WHERE id_carte = carte.id AND validation = 1) AS nb_commentaire
 		FROM carte
-		WHERE id_categorie = :id AND is_visible = 1 GROUP BY carte.id ORDER BY ordre";
+		WHERE id_categorie = :id AND is_visible = 1 AND deleted = 0 GROUP BY carte.id ORDER BY ordre";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
