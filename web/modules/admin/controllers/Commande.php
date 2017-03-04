@@ -498,13 +498,22 @@ class Controller_Commande extends Controller_Admin_Template {
 			} else {
 				$request->selectRestaurant = $_POST["restaurant"];
 			}
+			if (isset($_POST["id_panier"]) && $_POST["id_panier"] != -1) {
+				$request->id_panier = $_POST["id_panier"];
+			} else {
+				$request->id_panier = -1;
+			}
 			if (count($errorMessage) == 0) {
 				$id_user = $_POST["client"];
 				$id_restaurant = $_POST["restaurant"];
 				$panier = new Model_Panier(true, $request->dbConnector);
 				$panier->uid = $id_user;
+				if (isset($_POST["id_panier"]) && $_POST["id_panier"] != -1) {
+					$panier->id = $_POST["id_panier"];
+					$panier->associateUserToPanier();
+				}
 				$panier->init();
-				if ($panier->id_restaurant == -1 || $panier->id_restaurant == $id_restaurant) {
+				if ($panier->id_restaurant == -1) {
 					$distance = 0;
 					$panier->id_restaurant = $id_restaurant;
 					$panier->rue = '';
@@ -514,9 +523,12 @@ class Controller_Commande extends Controller_Admin_Template {
 					$panier->longitude = 0;
 					$panier->distance = $distance;
 					$panier->update();
+				} else if ($panier->id_restaurant == $id_restaurant) {
+					$distance = 0;
 				} else if ($panier->id_restaurant != $id_restaurant) {
-					$errorMessage["NOT_EMPTY_PANIER"] = "Le un panier existe déjà pour cette utilisateur";
+					$errorMessage["NOT_EMPTY_PANIER"] = "Un panier existe déjà pour cette utilisateur";
 				}
+				$request->id_panier = $panier->id;
 				if (count($errorMessage) == 0) {
 					
 					$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
@@ -541,6 +553,19 @@ class Controller_Commande extends Controller_Admin_Template {
 				$request->errorMessage = $errorMessage;
 			}
 		}
+		
+		if (isset($_GET["id_panier"])) {
+			$request->id_panier = $_GET["id_panier"];
+		} else {
+			$request->id_panier = -1;
+		}
+		
+		if (isset($_GET["restaurant"])) {
+			$request->restaurant = $_GET["restaurant"];
+		} else {
+			$request->restaurant = -1;
+		}
+		
 		$modelUser = new Model_User(true, $request->dbConnector);
 		$request->clients = $modelUser->getAllClients();
 		
@@ -552,6 +577,14 @@ class Controller_Commande extends Controller_Admin_Template {
 	}
 	
 	public function openCommande ($request) {
+		if (!isset($_GET["client"]) || $_GET["client"] == '') {
+			if (isset($_GET["panier"])) {
+				$this->redirect('create', 'commande', 'admin', array("id_panier" => $_GET["panier"], "restaurant" => $_GET["restaurant"]));
+			} else {
+				$this->redirect('index', 'panier');
+			}
+			
+		}
 		$id_user = $_GET["client"];
 		$id_restaurant = $_GET["restaurant"];
 		

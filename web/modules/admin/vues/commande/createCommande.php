@@ -13,6 +13,7 @@
 		<div id="commandes">
 			<form method="post" enctype="x-www-form-urlencoded" action="?controler=commande&action=create">
 				<fieldset>
+					<input name="id_panier" value="<?php echo $request->id_panier; ?>" hidden="hidden" />
 					<div class="form-group">
 						<label for="nom">Client : </label>
 						<select name="client">
@@ -27,7 +28,9 @@
 						<select name="restaurant">
 							<option value=""></option>
 							<?php foreach ($request->restaurants as $restaurant) : ?>
-								<option value="<?php echo $restaurant->id; ?>"><?php echo $restaurant->nom; ?> (<?php echo $restaurant->ville; ?>)</option>
+								<option value="<?php echo $restaurant->id; ?>" <?php echo $restaurant->id == $request->restaurant ? 'selected' : ''; ?>>
+									<?php echo $restaurant->nom; ?> (<?php echo $restaurant->ville; ?>)
+								</option>
 							<?php endforeach; ?>
 						</select>
 					</div>

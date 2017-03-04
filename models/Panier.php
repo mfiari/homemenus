@@ -132,6 +132,20 @@ class Model_Panier extends Model_Template {
 		return true;
 	}
 	
+	public function associateUserToPanier () {
+		$sql = "UPDATE panier SET uid = :uid WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->uid);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
+	
+	
+	
 	public function setRestaurant ($id_restaurant) {
 		$sql = "UPDATE panier SET id_restaurant = :restaurant WHERE id = :id";
 		$stmt = $this->db->prepare($sql);

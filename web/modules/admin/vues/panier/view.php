@@ -237,6 +237,6 @@
 <a class="btn btn-primary" href="?controler=panier">
 	<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 </a>
-<a class="btn btn-primary" href="?controler=commande&action=openCommande&client=<?php echo $request->panier->user->id; ?>&restaurant=<?php echo $restaurant->id; ?>">
+<a class="btn btn-primary" href="?controler=commande&action=openCommande&panier=<?php echo $request->panier->id; ?>&client=<?php echo $request->panier->user->id; ?>&restaurant=<?php echo $restaurant->id; ?>">
 	<span style="margin-right: 10px;"></span>Modifier
 </a>
