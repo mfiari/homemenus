@@ -177,7 +177,9 @@
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-	<a href="<?php echo restaurantToLink($request->panier->restaurant, $request->panier->restaurant->ville); ?>" class="btn btn-default" >Retour à la carte</a>
+	<?php if ($request->panier) : ?>
+		<a href="<?php echo restaurantToLink($request->panier->restaurant, $request->panier->restaurant->ville); ?>" class="btn btn-default" >Retour à la carte</a>
+	<?php endif; ?>
 	<?php if ($request->panier) : ?>
 		<?php if ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
 			<div class="alert alert-danger" role="alert">
