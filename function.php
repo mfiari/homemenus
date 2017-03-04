@@ -383,7 +383,7 @@ function restaurantToLink ($restaurant, $ville) {
 	$ville = cleanString($ville);
 	$name = cleanString($restaurant->nom);
 	
-	return "restaurant-".$restaurant->id.'-'.$ville.'-'.$name.'.html';
+	return 'restaurant-'.$restaurant->id.'-'.$ville.'-'.$name.'.html';
 }
 
 function cleanString ($name) {
