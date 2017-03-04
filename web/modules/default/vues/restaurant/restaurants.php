@@ -44,6 +44,7 @@
 		<?php 
 			$restaurantIds = array();
 			$totalRestaurantOuvert = 0;
+			$totalRestaurant = count($request->restaurants);
 		?>
 		<?php if ($request->adressError) : ?>
 			<div class="alert alert-danger" role="alert">
@@ -63,7 +64,6 @@
 			<?php
 				$current_heure = date('H');
 				$current_minute = date('i');
-				$totalRestaurant = count($request->restaurants);
 			?>
 			<?php foreach ($request->restaurants as $restaurant) : ?>
 				<?php $horaire = $restaurant->horaire; ?>
