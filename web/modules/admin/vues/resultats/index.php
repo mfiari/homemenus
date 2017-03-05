@@ -40,6 +40,25 @@
 				</div>
 				<div class="col-md-10  col-md-offset-1">
 					<div class="row">
+						<h3>Restaurant sans livreur</h3>
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Nom</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ($request->restaurants as $restaurant) : ?>
+									<tr>
+										<td><span style="color : red"><?php echo utf8_encode($restaurant->nom); ?></span></td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="col-md-10  col-md-offset-1">
+					<div class="row">
 						<h3>Total</h3>
 						<table class="table table-striped">
 							<thead>

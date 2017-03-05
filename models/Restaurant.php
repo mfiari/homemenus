@@ -1043,6 +1043,34 @@ class Model_Restaurant extends Model_Template {
 		return $stmt->fetch(PDO::FETCH_ASSOC);
 	}
 	
+	public function getRestaurantSansLivreur () {
+		$sql = "SELECT id, nom 
+		FROM restaurants
+		WHERE enabled = 1 AND deleted = 0 AND id NOT IN (
+			SELECT resto.id
+			FROM restaurants resto
+			JOIN distance_livreur_resto dlr ON dlr.id_restaurant = resto.id
+			JOIN user_livreur_dispo uld ON uld.id = dlr.id_dispo AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1)
+			WHERE resto.enabled = 1 AND resto.deleted = 0
+			GROUP BY resto.id
+		)";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$restaurants = $stmt->fetchAll();
+		$list = array();
+		foreach ($restaurants as $resto) {
+			$restaurant = new Model_Restaurant(false);
+			$restaurant->id = $resto['id'];
+			$restaurant->nom = $resto['nom'];
+			
+			$list[] = $restaurant;
+		}
+		return $list;
+	}
+	
 	public function getTopRestaurant () {
 		$sql = "SELECT id, nom, ville, short_desc FROM restaurants WHERE is_top = true";
 		$stmt = $this->db->prepare($sql);

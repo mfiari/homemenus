@@ -3,6 +3,7 @@
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/CommandeHistory.php";
 include_once ROOT_PATH."models/Dispo.php";
+include_once ROOT_PATH."models/Restaurant.php";
 
 class Controller_Index extends Controller_Admin_Template {
 	
@@ -74,6 +75,8 @@ class Controller_Index extends Controller_Admin_Template {
 		$modelUser = new Model_User(true, $request->dbConnector);
 		$request->livreursDispo = $modelUser->getLivreurAvailableToday();
 		$request->clients = $modelUser->getNouveauClient();
+		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
+		$request->restaurants = $modelRestaurant->getRestaurantSansLivreur();
 		$modelCommande = new Model_Commande(true, $request->dbConnector);
 		$request->resultats = $modelCommande->getTotal();
 		$request->vue = $this->render("index");
