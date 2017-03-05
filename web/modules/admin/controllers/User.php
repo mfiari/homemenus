@@ -24,6 +24,9 @@ class Controller_User extends Controller_Admin_Template {
 				case "livreurDispo" :
 					$this->livreurDispo($request);
 					break;
+				case "livreurPlaning" :
+					$this->livreurPlaning($request);
+					break;
 				case "edit" :
 					$this->edit($request);
 					break;
@@ -140,9 +143,16 @@ class Controller_User extends Controller_Admin_Template {
 	
 	public function livreurDispo ($request) {
 		$modelUser = new Model_User(true, $request->dbConnector);
-		$request->livreurs = $modelUser->getAllLivreurs();
+		$request->livreurs = $modelUser->getLivreurAvailableTodayForRestaurant();
 		$request->title = "Administration - livreurs";
-		$request->vue = $this->render("livreurs");
+		$request->vue = $this->render("livreurDispo");
+	}
+	
+	public function livreurPlaning ($request) {
+		$modelUser = new Model_User(true, $request->dbConnector);
+		$request->livreurs = $modelUser->getLivreurAvailableWeek();
+		$request->title = "Administration - livreurs";
+		$request->vue = $this->render("livreurPlaning");
 	}
 	
 	public function edit ($request) {

@@ -758,6 +758,88 @@ class Model_User extends Model_Template {
 		return $list;
 	}
 	
+	public function getLivreurAvailableTodayForRestaurant () {
+		$sql = "SELECT user.uid, user.login, user.nom, user.prenom, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin, dlr.perimetre, 
+		resto.id, resto.nom AS nom_resto
+		FROM users user
+		JOIN user_livreur ul ON ul.uid = user.uid
+		JOIN user_livreur_dispo uld ON uld.uid = user.uid
+		JOIN distance_livreur_resto dlr ON dlr.id_dispo = uld.id
+		JOIN restaurants resto ON resto.id = dlr.id_restaurant
+		WHERE user.is_enable = 1 AND resto.enabled = 1 AND resto.deleted = 0 AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1)";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$livreurs = $stmt->fetchAll();
+		$list = array();
+		foreach ($livreurs as $livreur) {
+			$user = new Model_User(false);
+			$user->id = $livreur['uid'];
+			$user->login = $livreur['login'];
+			$user->nom = $livreur['nom'];
+			$user->prenom = $livreur['prenom'];
+			
+			$dispo = new Model_Dispo(false);
+			$dispo->heure_debut = $livreur['heure_debut'];
+			$dispo->minute_debut = $livreur['minute_debut'];
+			$dispo->heure_fin = $livreur['heure_fin'];
+			$dispo->minute_fin = $livreur['minute_fin'];
+			$dispo->perimetre = $livreur['perimetre'];
+			
+			$restaurant = new Model_Restaurant(false);
+			$restaurant->id = $livreur['heure_debut'];
+			$restaurant->nom = $livreur['nom_resto'];
+			
+			$dispo->restaurants = $restaurant;
+			
+			$user->dispos = $dispo;
+			
+			$list[] = $user;
+		}
+		return $list;
+	}
+	
+	public function getLivreurAvailableWeek () {
+		$sql = "SELECT user.uid, user.login, user.nom, user.prenom, uld.id_jour, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin, days.nom AS jour
+		FROM users user
+		JOIN user_livreur ul ON ul.uid = user.uid
+		JOIN user_livreur_dispo uld ON uld.uid = user.uid
+		JOIN days ON days.id = uld.id_jour
+		WHERE user.is_enable = 1
+		ORDER BY uld.id_jour, user.nom, user.prenom, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin";
+		$stmt = $this->db->prepare($sql);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$livreurs = $stmt->fetchAll();
+		$list = array();
+		foreach ($livreurs as $livreur) {
+			$user = new Model_User(false);
+			$user->id = $livreur['uid'];
+			$user->login = $livreur['login'];
+			$user->nom = $livreur['nom'];
+			$user->prenom = $livreur['prenom'];
+			
+			$dispo = new Model_Dispo(false);
+			$dispo->id_jour = $livreur['id_jour'];
+			$dispo->jour = $livreur['jour'];
+			$dispo->heure_debut = $livreur['heure_debut'];
+			$dispo->minute_debut = $livreur['minute_debut'];
+			$dispo->heure_fin = $livreur['heure_fin'];
+			$dispo->minute_fin = $livreur['minute_fin'];
+			
+			$user->dispos = $dispo;
+			
+			$list[] = $user;
+		}
+		return $list;
+	}
+	
 	public function getLivreurAvailableForCommande ($commande) {
 		$sql = "SELECT user.uid, user.login, user.is_login, ul.telephone, us.gcm_token, uld.heure_debut, uld.minute_debut, uld.heure_fin, uld.minute_fin, 
 		up.send_sms_commande, up.send_notification_commande

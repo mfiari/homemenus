@@ -2,6 +2,11 @@
 	<div class="col-md-12">
 		<h2>Liste des livreurs</h2>
 		<div id="livreurs">
+			<ul class="nav nav-tabs">
+				<li role="presentation" class="active"><a href="?controler=user&action=livreurs">Liste des livreurs</a></li>
+				<li role="presentation"><a href="?controler=user&action=livreurDispo">Disponibilité du jour</a></li>
+				<li role="presentation"><a href="?controler=user&action=livreurPlaning">Disponibilité de la semaine</a></li>
+			</ul>
 			<table class="table table-striped">
 				<thead>
 					<tr>

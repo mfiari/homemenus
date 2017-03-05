@@ -20,11 +20,13 @@ class Model_Dispo extends Model_Template {
 	private $heure_fin;
 	private $minute_fin;
 	private $commande;
+	private $restaurants;
 	
 	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
 			parent::__construct($db);
 		}
+		$this->restaurants = array();
 	}
 	
 	public function __get($property) {
@@ -38,6 +40,10 @@ class Model_Dispo extends Model_Template {
 			$this->$property = $value;
 		}
 		return $this;
+	}
+	
+	public function addRestaurant ($restaurant) {
+		$this->restaurants[] = $restaurant;
 	}
 	
 	public function save () {
