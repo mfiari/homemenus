@@ -12,23 +12,23 @@
 					<input id="minute_commande" name="minute_commande" value="0" hidden="hidden" />
 					<div class="form-group">
 						<label for="rue">Rue<span class="required">*</span> : </label>
-						<input id="rue_field" class="form-control" name="rue" type="text" value="<?php echo isset($_SESSION['search_rue']) ? $_SESSION['search_rue'] : ''; ?>" required>
+						<input id="rue_field" class="form-control" name="rue" type="text" value="<?php echo isset($_SESSION['search_rue']) ? $_SESSION['search_rue'] : ''; ?>" maxlength="50" placeholder="ex : Rue de Paris" required>
 					</div>
 					<div class="form-group">
 						<label for="complement">Complément : </label>
-						<input id="complement_field" class="form-control" name="complement" type="text" value="<?php echo isset($_SESSION['complement']) ? $_SESSION['complement'] : ''; ?>">
+						<input id="complement_field" class="form-control" name="complement" type="text" value="<?php echo isset($_SESSION['complement']) ? $_SESSION['complement'] : ''; ?>" maxlength="50" placeholder="ex : Batiment 1, 3ème étage, appt 14">
 					</div>
 					<div class="form-group">
 						<label for="code_postal">Code postal<span class="required">*</span> : </label>
-						<input id="cp_field" class="form-control" name="code_postal" type="text" value="<?php echo isset($_SESSION['search_cp']) ? $_SESSION['search_cp'] : ''; ?>" required>
+						<input id="cp_field" class="form-control" name="code_postal" type="text" value="<?php echo isset($_SESSION['search_cp']) ? $_SESSION['search_cp'] : ''; ?>" maxlength="5" placeholder="ex : 78200" required>
 					</div>
 					<div class="form-group">
 						<label for="ville">Ville<span class="required">*</span> : </label>
-						<input id="ville_field" class="form-control" name="ville" type="text" value="<?php echo isset($_SESSION['search_ville']) ? $_SESSION['search_ville'] : ''; ?>" required>
+						<input id="ville_field" class="form-control" name="ville" type="text" value="<?php echo isset($_SESSION['search_ville']) ? $_SESSION['search_ville'] : ''; ?>" maxlength="50" placeholder="ex : Mantes la jolie" required>
 					</div>
 					<div class="form-group">
 						<label for="telephone">Téléphone<span class="required">*</span> : </label>
-						<input id="phone_field" class="form-control" name="telephone" type="text" value="<?php echo isset($_SESSION['telephone']) ? $_SESSION['telephone'] : ''; ?>" required>
+						<input id="phone_field" class="form-control" name="telephone" type="text" value="<?php echo isset($_SESSION['telephone']) ? $_SESSION['telephone'] : ''; ?>" placeholder="ex : 0600000000" maxlength="10" required>
 					</div>
 				</form>
 			</div>
