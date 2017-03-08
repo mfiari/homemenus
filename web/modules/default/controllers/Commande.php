@@ -8,6 +8,7 @@ include_once ROOT_PATH."models/Format.php";
 include_once ROOT_PATH."models/Formule.php";
 include_once ROOT_PATH."models/Categorie.php";
 include_once ROOT_PATH."models/Commande.php";
+include_once ROOT_PATH."models/CommandeHistory.php";
 include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Contenu.php";
 include_once ROOT_PATH."models/Chat.php";
@@ -36,6 +37,15 @@ class Controller_Commande extends Controller_Default_Template {
 					break;
 				case "view" :
 					$this->view($request);
+					break;
+				case "history" :
+					$this->history($request);
+					break;
+				case "viewHistory" :
+					$this->viewHistory($request);
+					break;
+				case "factureHistory" :
+					$this->factureHistory($request);
 					break;
 				case "addCarte" :
 					$this->addCarte($request);
@@ -138,6 +148,37 @@ class Controller_Commande extends Controller_Default_Template {
 		$panier->uid = $request->_auth->id;
 		$request->panier = $panier->load();
 		$request->vue = $this->render("panier");
+	}
+	
+	public function history ($request) {
+		$commande = new Model_Commande_History(true, $request->dbConnector);
+		$commande->uid = $request->_auth->id;
+		$request->commandes = $commande->getByUser();
+		$request->vue = $this->render("history");
+	}
+	
+	public function viewHistory ($request) {
+		if (isset($_GET["id"])) {
+			$commande = new Model_Commande_History(true, $request->dbConnector);
+			$commande->uid = $request->_auth->id;
+			$commande->id = $_GET["id"];
+			$request->commande = $commande->load();
+			$request->vue = $this->render("commandeHistory");
+		}
+	}
+	
+	public function factureHistory ($request) {
+		$request->disableLayout = true;
+		$request->noRender = true;
+		
+		$commande = new Model_Commande_History(true, $request->dbConnector);
+		$commande->uid = $request->_auth->id;
+		$commande->id = $_GET["commande"];
+		$commande->load();
+		
+		$pdf = new PDF ();
+		$pdf->generateFactureClient($commande);
+		$pdf->render();
 	}
 	
 	public function addCarte ($request) {
