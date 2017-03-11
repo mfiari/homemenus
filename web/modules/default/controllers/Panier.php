@@ -565,7 +565,7 @@ class Controller_Panier extends Controller_Default_Template {
 			$totalPrix += $menu->prix;
 		}
 		
-		if ($panier->code_promo->surPrixLivraison()) {
+		if ($panier->code_promo && $panier->code_promo->surPrixLivraison()) {
 			if (!$panier->code_promo->estGratuit()) {
 				$totalPrix += ($panier->prix_livraison - $panier->code_promo->valeur_prix_livraison);
 			}
