@@ -206,6 +206,7 @@ function send_mail ($to, $subject, $message, $from = MAIL_FROM_DEFAULT, $attachm
 	require_once MODEL_PATH.'Template.php';
 	require_once MODEL_PATH.'Mail.php';
 	
+	$message = str_replace("[WEBSITE_URL]", WEBSITE_URL, $message);
 	$message = ajout_environnement_mail ($message);
 	
 	$mailSend = false;

@@ -145,26 +145,33 @@ class Controller_Restaurant extends Controller_Default_Template {
 			}
 		} else if ($request->request_method == "POST") {
 			if (!isset($_POST['adresse']) || trim($_POST['adresse']) == "") {
-				$this->redirect();
-			}
-			$filter = array();
-			$filter["search_adresse"] = $_POST['adresse'];
-			if (isset($_POST["city"]) && $_POST["city"] != "") {
-				$filter["ville"] = $_POST["city"];
-			}
-			if (isset($_POST["groupe"]) && $_POST["groupe"] != "") {
-				$filter["groupe"] = $_POST["groupe"];
-			}
-			if (isset($_POST["distance"]) && $_POST["distance"] != "") {
-				$filter["distanceKm"] = $_POST["distance"];
+				if (!isset($_SESSION['search_serialized'])) {
+					$filter = array(
+						"search_adresse" => "Mantes la jolie",
+						"distanceKm" => MAX_KM
+					);
+				} else {
+					$filter = unserialize($_SESSION['search_serialized']);
+				}
 			} else {
-				$filter["distanceKm"] = MAX_KM;
+				$filter = array();
+				$filter["search_adresse"] = $_POST['adresse'];
+				if (isset($_POST["city"]) && $_POST["city"] != "") {
+					$filter["ville"] = $_POST["city"];
+				}
+				if (isset($_POST["groupe"]) && $_POST["groupe"] != "") {
+					$filter["groupe"] = $_POST["groupe"];
+				}
+				if (isset($_POST["distance"]) && $_POST["distance"] != "") {
+					$filter["distanceKm"] = $_POST["distance"];
+				} else {
+					$filter["distanceKm"] = MAX_KM;
+				}
 			}
-			$_SESSION['search_serialized'] = serialize($filter);
 		} else {
 			$this->redirect();
 		}
-		
+		$_SESSION['search_serialized'] = serialize($filter);
 		if (isset($filter["ville"])) {
 			$city = $filter["ville"];
 		}

@@ -586,6 +586,11 @@ class Controller_Contact extends Controller_Default_Template {
 			} else {
 				$email = $_POST["email"];
 			}
+			if (!isset($_POST["from"]) || trim($_POST["from"]) == "") {
+				$from = "recherche";
+			} else {
+				$from = $_POST["from"];
+			}
 			if (count($errorMessage) == 0) {
 			
 				$messageContent =  file_get_contents (ROOT_PATH.'mails/avis.html');
@@ -602,7 +607,11 @@ class Controller_Contact extends Controller_Default_Template {
 			} else {
 				
 			}
-			$this->redirect('recherche', 'restaurant', '', array('avis_send' => 'success'));
+			if ($from == "partenaires") {
+				$this->redirect('restaurants_partenaire', 'index', '', array('avis_send' => 'success'));
+			} else if ($from == "recherche") {
+				$this->redirect('recherche', 'restaurant', '', array('avis_send' => 'success'));
+			}
 		}
 	}
 }

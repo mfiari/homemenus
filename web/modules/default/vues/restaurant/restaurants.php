@@ -165,7 +165,7 @@
 				Votre suggestion a bien été transmise aux équipes d'HoMe Menus
 			</div>
 		<?php endif; ?>
-		<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="?controler=contact&action=avis">
+		<form method="post" enctype="x-www-form-urlencoded" id="contactForm" action="index.php?controler=contact&action=avis">
 			<fieldset>
 				<div class="form-group">
 					<label for="sujet">Nom du restaurant<span class="required">*</span> : </label>
