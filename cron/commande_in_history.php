@@ -34,13 +34,34 @@
 	$totalCommande = 0;
 	$montantTotal = 0;
 	
+	$totalCommandeAnnule = 0;
+	$montantTotalAnnule = 0;
+	
 	$totalCommandeError = 0;
 	$montantTotalError = 0;
 	
+	$totalAnomalie = 0;
+	$montantTotalAnomalie = 0;
+	
+	$totalNouveauClient = 0;
+	
 	$modelCommandeHistory = new Model_Commande_History();
 	
+	$modelUser = new Model_User();
+	$dateDebut = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d')-1, date('Y')));
+	$dateFin = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y')));
+	$clients = $modelUser->getNouveauClientByMonth($dateDebut, $dateFin);
+	foreach ($clients as $client) {
+		$totalNouveauClient += $client["total"];
+	}
+	
 	foreach ($commandes as $commande) {
-		if ($commande->etape != 4) {
+		if ($commande->etape == -1) {
+			$totalCommandeAnnule++;
+			$montantTotalAnnule += $commande->prix + $commande->prix_livraison;
+			writeLog (CRON_LOG, "Echec historisation commande #".$commande->id." : commande annulée", LOG_LEVEL_WARNING);
+			$commande->remove();
+		} else if ($commande->etape != 4) {
 			$totalCommandeError++;
 			$montantTotalError += $commande->prix + $commande->prix_livraison;
 			writeLog (CRON_LOG, "Echec historisation commande #".$commande->id." : commande ".$commande->getStatus (), LOG_LEVEL_ERROR);
@@ -48,9 +69,15 @@
 			$messageContent =  file_get_contents (ROOT_PATH.'mails/fin_commande.html');
 			send_mail ($commande->client->email, "Merci de votre commande", $messageContent);
 			
-			$commande->remove();
 			$totalCommande++;
 			$montantTotal += $commande->prix + $commande->prix_livraison;
+			
+			if ($commande->annomalie_montant) {
+				$totalAnomalie++;
+				$montantTotalAnomalie += $commande->annomalie_montant;
+			}
+			
+			$commande->remove();
 		} else {
 			$totalCommandeError++;
 			$montantTotalError += $commande->prix + $commande->prix_livraison;
@@ -60,10 +87,15 @@
 	
 	$messageContent =  file_get_contents (ROOT_PATH.'mails/bilan_commande.html');
 
+	$messageContent = str_replace("[NB_NOUVEAU_CLIENT]", $totalNouveauClient, $messageContent);
 	$messageContent = str_replace("[NB_TOTAL_COMMANDE]", $totalCommande, $messageContent);
 	$messageContent = str_replace("[MONTANT_TOTAL]", $montantTotal, $messageContent);
+	$messageContent = str_replace("[NB_TOTAL_COMMANDE_ANNULE]", $totalCommandeAnnule, $messageContent);
+	$messageContent = str_replace("[MONTANT_TOTAL_ANNULE]", $montantTotalAnnule, $messageContent);
 	$messageContent = str_replace("[NB_TOTAL_COMMANDE_ERROR]", $totalCommandeError, $messageContent);
 	$messageContent = str_replace("[MONTANT_TOTAL_ERROR]", $montantTotalError, $messageContent);
+	$messageContent = str_replace("[NB_TOTAL_ANOMALIE]", $totalAnomalie, $messageContent);
+	$messageContent = str_replace("[MONTANT_TOTAL_ANOMALIE]", $montantTotalAnomalie, $messageContent);
 	
 	send_mail ("admin@homemenus.fr", "Bilan des commandes", $messageContent);
 	

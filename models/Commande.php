@@ -2097,8 +2097,8 @@ class Model_Commande extends Model_Template {
 		resto.code_postal AS cp_restaurant, resto.telephone AS tel_restaurant, resto.latitude AS latitude_restaurant, resto.longitude AS longitude_restaurant, 
 		com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison, com.part_restaurant, com.distance, com.date_validation_restaurant, 
 		com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.date_livraison, com.etape, com.note, com.commentaire, com.is_premium,
-		cp.id AS id_code_promo, cp.code, cp.description, cp.date_debut, cp.date_fin, cp.publique, cp.sur_restaurant, cp.type_reduc, cp.sur_prix_livraison, 
-		cp.valeur_prix_livraison, cp.sur_prix_total, cp.valeur_prix_total, cp.pourcentage_prix_total	
+		com.annomalie_montant, cp.id AS id_code_promo, cp.code, cp.description, cp.date_debut, cp.date_fin, cp.publique, cp.sur_restaurant, cp.type_reduc, 
+		cp.sur_prix_livraison, cp.valeur_prix_livraison, cp.sur_prix_total, cp.valeur_prix_total, cp.pourcentage_prix_total	
 		FROM commande com
 		JOIN users user ON user.uid = com.uid
 		JOIN user_client uc ON uc.uid = user.uid
@@ -2136,6 +2136,7 @@ class Model_Commande extends Model_Template {
 			$commande->note = $c["note"];
 			$commande->commentaire = $c["commentaire"];
 			$commande->is_premium = $c["is_premium"];
+			$commande->annomalie_montant = $c["annomalie_montant"];
 			
 			$user = new Model_User(false);
 			$user->id = $c["id_client"];
