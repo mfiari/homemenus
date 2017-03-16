@@ -38,9 +38,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-12 col-sm-12">
-			<a class="link-more" href="">En savoir plus <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-		</div>
 	</div>
 </div>
 <div class="row">
