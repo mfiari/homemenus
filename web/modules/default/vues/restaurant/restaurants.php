@@ -25,7 +25,7 @@
 					<div class="form-group">
 						<label for="city">Ville : </label>
 						<select class="form-control search-filter" name="city">
-							<option value="">Tous</option>
+							<option value="">Toutes</option>
 							<?php foreach ($request->villes as $ville) : ?>
 								<option value="<?php echo $ville; ?>" <?php echo $request->ville == $ville ? "selected" : ""; ?>><?php echo $ville; ?></option>
 							<?php endforeach; ?>
