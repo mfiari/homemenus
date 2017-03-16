@@ -141,6 +141,7 @@ button.close-button span.glyphicon-remove {
 
 a.link {
 	color : #ff2a00;
+	cursor : pointer;
 }
 
 a.link-livraison {
