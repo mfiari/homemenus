@@ -1051,6 +1051,8 @@ class Model_Restaurant extends Model_Template {
 			FROM restaurants resto
 			JOIN distance_livreur_resto dlr ON dlr.id_restaurant = resto.id
 			JOIN user_livreur_dispo uld ON uld.id = dlr.id_dispo AND uld.id_jour = (WEEKDAY(CURRENT_DATE)+1)
+            JOIN user_livreur ul ON ul.uid = uld.uid
+            JOIN users user ON user.uid = ul.uid AND user.is_enable = 1
 			WHERE resto.enabled = 1 AND resto.deleted = 0
 			GROUP BY resto.id
 		)";
