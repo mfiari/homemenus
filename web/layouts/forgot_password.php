@@ -9,10 +9,10 @@
 				<p>Saisissez votre identifiant. Vous recevrez ensuite un mail vous permettant de renouveler votre mot de passe</p>
 				<form method="post" enctype="x-www-form-urlencoded" id="forgotPasswordForm" action="">
 					<div class="form-group">
-						<label for="login">email<span class="required">*</span> : </label>
+						<label for="login">Identifiant<span class="required">*</span> : </label>
 						<input id="login_field" class="form-control" name="login" type="text" required>
 					</div>
-					<button id="submitButton" class="btn btn-primary" type="submit">Envoyer</button>
+					<button id="submitButton" class="validate-button" type="submit">Envoyer</button>
 				</form>
 			</div>
 			<div class="modal-footer">
