@@ -6,10 +6,10 @@
 		<div class="col-md-12 col-sm-12">
 			<div class="col-lg-3 col-lg-offset-1 col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-12 col-xs-offset-0">
 				<div class="row">
-					<a href="inscription.html"><img src="res/img/particulier.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
+					<a href="particuliers.html"><img src="res/img/particulier.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
 				</div>
 				<div class="row">
-					<h3><a href="inscription.html" style="color : #FFFFFF;">Particuliers</a></h3>
+					<h3><a href="particuliers.html" style="color : #FFFFFF;">Particuliers</a></h3>
 				</div>
 				<div class="row">
 					<p>Savourez et dégustez la cuisine des meilleurs restaurants aux environs de chez vous en vous les faisant livrer.</p>
@@ -28,10 +28,10 @@
 			</div>
 			<div class="col-lg-3 col-lg-offset-1 col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-12 col-xs-offset-0">
 				<div class="row">
-					<a href="contact-evenement.html"><img src="res/img/evenement.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
+					<a href="evenement.html"><img src="res/img/evenement.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
 				</div>
 				<div class="row">
-					<h3><a href="contact-evenement.html" style="color : #FFFFFF;">Evénement</a></h3>
+					<h3><a href="evenement.html" style="color : #FFFFFF;">Evénement</a></h3>
 				</div>
 				<div class="row">
 					<p>Un repas d'anniversaire, une réunion, un événement, la commande spéciale est faite pour vous.</p>
