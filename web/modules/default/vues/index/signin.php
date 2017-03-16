@@ -10,7 +10,7 @@
 				</div>
 			<?php endforeach; ?>
 		<?php endif; ?>
-		<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?action=inscription">
+		<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="index.php?action=inscription">
 			<fieldset>
 				<div class="form-group">
 					<label for="nom">Nom<span class="required">*</span> : </label>
