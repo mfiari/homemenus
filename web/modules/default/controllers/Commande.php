@@ -3,6 +3,8 @@
 include_once ROOT_PATH."models/Commande.php";
 include_once ROOT_PATH."models/Carte.php";
 include_once ROOT_PATH."models/Supplement.php";
+include_once ROOT_PATH."models/Option.php";
+include_once ROOT_PATH."models/OptionValue.php";
 include_once ROOT_PATH."models/Menu.php";
 include_once ROOT_PATH."models/Format.php";
 include_once ROOT_PATH."models/Formule.php";
