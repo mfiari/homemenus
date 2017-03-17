@@ -106,6 +106,7 @@
 					<!--<li>Mon solde</li>
 					<li><a href="index.html?controler=compte&action=calendrier">Mon calendrier</a></li>-->
 					<li><a href="index.html?controler=commande">Mes commandes</a></li>
+					<li><a href="index.html?controler=notes">Mes notes</a></li>
 				</ul>
 			</div>
 		</div>
