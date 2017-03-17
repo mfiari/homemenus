@@ -84,7 +84,7 @@
 <input id="id_restaurant" value="<?php echo $restaurant->id; ?>" hidden="hidden" />
 
 <div class="row">
-	<a style="float : left;" class="" href="?controler=restaurant&action=recherche">
+	<a style="float : left;" class="" href="restaurants.html">
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
 	</a>
 	<h1><?php echo utf8_encode($restaurant->nom); ?></h1>
