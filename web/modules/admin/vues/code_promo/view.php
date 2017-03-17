@@ -4,7 +4,7 @@
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
 	</a>
 	<div class="row">
-		<p><?php echo $request->codePromo->description; ?></p>
+		<p><?php echo utf8_encode($request->codePromo->description); ?></p>
 	</div>
 	<div class="row">
 		<p>Du <?php echo $request->codePromo->date_debut; ?> au <?php echo $request->codePromo->date_fin; ?></p>
