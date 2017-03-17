@@ -398,4 +398,9 @@ function cleanString ($name) {
 	return $name;
 }
 
+function isVilleAvailable ($ville) {
+	$cities = array("mantes-la-jolie", "rosny-sur-seine", "gargenville", "mantes-la-ville", "guernes", "limay", "magnanville", "issou");
+	return in_array($ville, $cities);
+}
+
 ?>

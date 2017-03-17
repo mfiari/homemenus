@@ -136,12 +136,26 @@ class Controller_Restaurant extends Controller_Default_Template {
 		$city = "";
 		if ($request->request_method == "GET") {
 			if (!isset($_SESSION['search_serialized'])) {
-				$filter = array(
-					"search_adresse" => "Mantes la jolie",
-					"distanceKm" => MAX_KM
-				);
+				if (isset($_GET['ville'])) {
+					if (isVilleAvailable($_GET['ville'])) {
+						$filter = array(
+							"search_adresse" => str_replace('-', ' ', $_GET['ville']),
+							"distanceKm" => MAX_KM
+						);
+					} else {
+						$this->redirect('404');
+					}
+				} else {
+					$filter = array(
+						"search_adresse" => "Mantes la jolie",
+						"distanceKm" => MAX_KM
+					);
+				}
 			} else {
 				$filter = unserialize($_SESSION['search_serialized']);
+				if (isset($_GET['ville']) && isVilleAvailable($_GET['ville'])) {
+					$filter['search_adresse'] = str_replace('-', ' ', $_GET['ville']);
+				}
 			}
 		} else if ($request->request_method == "POST") {
 			if (!isset($_POST['adresse']) || trim($_POST['adresse']) == "") {
