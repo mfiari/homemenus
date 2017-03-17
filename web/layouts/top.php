@@ -13,7 +13,7 @@
 				<li><a href="contact.html">Contact</a></li>
 				<li><a href="faq.html">FAQ</a></li>
 				<?php if ($request->_auth) : ?>
-					<li class="user"><a href="?controler=compte"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
+					<li class="user"><a href="index.php?controler=compte"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
 				<?php else : ?>
 					<li class="user"><a data-toggle="modal" data-target="#login-modal"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a></li>
 				<?php endif; ?>
