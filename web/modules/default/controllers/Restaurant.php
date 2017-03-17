@@ -125,7 +125,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$request->title = 'Restaurant '.utf8_encode($restaurant->nom);
 			$request->restaurant = $restaurant;
 			$request->search_adresse = $_SESSION['search_adresse'];
-			$request->javascripts = array("res/js/menu.js", "https://maps.googleapis.com/maps/api/js?libraries=places");
+			$request->javascripts = array("res/js/menu.js", "res/js/bootstrap-star-rating.js");
 			$request->vue = $this->render("restaurant");
 		} else {
 			$this->redirect();

@@ -106,13 +106,13 @@
 		<?php endif; ?>
 	</div>
 	<div class="col-md-6 col-sm-6" style="text-align : right;">
-		<?php if ($restaurant->commentaire == 0) : ?>
-			<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - 0 commentaire
-		<?php else : ?>
-			<a onclick="openCommentairesRestaurant(<?php echo $restaurant->id; ?>)">
-				<?php echo $restaurant->note; ?> / 5 (<?php echo $restaurant->nb_note; ?> vote(s)) - <?php echo $restaurant->commentaire; ?> commentaire(s)
+		<?php if ($restaurant->commentaire > 0) : ?>
+			<a onclick="openCommentairesRestaurant(<?php echo $restaurant->id;?>)" title="Commentaire" style="text-decoration: none;">
+				<span class="glyphicon glyphicon-comment" aria-hidden="true" style="color: #BBB; font-size: 40px; margin-right: 25px;"></span>
+				<span style="color: #000;position: relative;top: -18px;left: -52px;"><?php echo $restaurant->commentaire; ?></span>
 			</a>
 		<?php endif; ?>
+		<span style="position: relative; top: -10px;" class="stars-default" data-rating="<?php echo $restaurant->note; ?>"></span>
 	</div>
 </div>
 <div id="restaurant-block" class="row" style="background-color : #F4F4F4;">
@@ -232,14 +232,13 @@
 					<?php if ($contenu->supplement->note != '') : ?>
 							<div class="row">
 								<div class="col-md-12 col-sm-12" style="text-align : center;">
-									<?php if ($contenu->supplement->commentaire == 0) : ?>
-										<?php echo $contenu->supplement->note; ?> / 5 (<?php echo $contenu->supplement->vote; ?> vote(s)) - 0 commentaire
-									<?php else : ?>
-										<a onclick="openCommentaires(<?php echo $contenu->id; ?>)">
-											<?php echo $contenu->supplement->note; ?> / 5 (<?php echo $contenu->supplement->vote; ?> vote(s))
-											- <?php echo $contenu->supplement->commentaire; ?> commentaire(s)
+									<?php if ($contenu->supplement->commentaire > 0) : ?>
+										<a onclick="openCommentaires(<?php echo $contenu->id;?>)" title="Commentaire" style="text-decoration: none;">
+											<span class="glyphicon glyphicon-comment" aria-hidden="true" style="color: #BBB; font-size: 35px; margin-right: 20px; top: 10px;"></span>
+											<span style="color: #000;position: relative;top: -7px;left: -45px;"><?php echo $contenu->supplement->commentaire; ?></span>
 										</a>
 									<?php endif; ?>
+									<span class="stars-default" data-rating="<?php echo $contenu->supplement->vote; ?>"></span>
 								</div>
 							</div>
 						<?php endif; ?>
@@ -468,7 +467,6 @@
 </div>
 <script type="text/javascript">
 	$(function() {
-		
 		$(".carte-item").click(function () {
 			$("#loading-modal").modal();
 			var id_carte = $(this).attr('data-id');
@@ -503,6 +501,10 @@
 		initPanierCommande();
 		initCodePromo ();
 		initHoraireCommande ();
+		
+		$(".stars-default").each(function () {
+			$(this).rating('create', {readonly : true});
+		});
 		
 	});
 	

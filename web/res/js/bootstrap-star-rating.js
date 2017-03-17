@@ -13,7 +13,8 @@
 			size: "2.0em",
 			cursor: "default",
 			onClick: function () {},
-            endofarray: "idontmatter"
+            endofarray: "idontmatter",
+			readonly : false
         }, options );
 		var style = "";
 		style = style + "font-size:" + settings.size + "; ";
@@ -53,10 +54,12 @@
 		}
 		//register the click events
 		this.find("span.ratingicon").click(function() {
-			rating = $(this).attr('data-value')
-			$(this).parent().attr('data-rating',rating);
-			paint($(this).parent());
-			settings.onClick.call( $(this).parent() );
+			if (!settings.readonly) {
+				rating = $(this).attr('data-value')
+				$(this).parent().attr('data-rating',rating);
+				paint($(this).parent());
+				settings.onClick.call( $(this).parent() );
+			}
 		})
 		function paint(div)
 		{
