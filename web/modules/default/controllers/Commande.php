@@ -15,6 +15,7 @@ include_once ROOT_PATH."models/Restaurant.php";
 include_once ROOT_PATH."models/Contenu.php";
 include_once ROOT_PATH."models/Chat.php";
 include_once ROOT_PATH."models/GCMPushMessage.php";
+include_once ROOT_PATH."models/CodePromo.php";
 include_once ROOT_PATH."models/PDF.php";
 
 

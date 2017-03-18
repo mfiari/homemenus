@@ -121,12 +121,10 @@
 												$prix_livraison = 0;
 											} else {
 												$prix_livraison -= $request->panier->code_promo->valeur_prix_livraison;
-												$totalPrix += $prix_livraison;
 												echo formatPrix($prix_livraison);
 											}
 										} else {
 											echo formatPrix($prix_livraison);
-											$totalPrix += $prix_livraison;
 										}
 									?>
 								</td>

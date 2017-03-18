@@ -596,13 +596,16 @@ class Model_Commande extends Model_Template {
 			resto.ville AS ville_resto, resto.code_postal AS cp_resto, resto.telephone AS tel_resto, livreur.uid AS id_livreur, livreur.prenom AS prenom_livreur, 
 			ul.latitude AS lat_livreur, ul.longitude AS lon_livreur, ul.is_ready AS livreur_ready, com.date_commande, com.heure_souhaite, com.minute_souhaite, 
 			com.preparation_restaurant, com.temps_livraison, com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, 
-			com.etape, com.prix, com.prix_livraison, com.distance, com.paiement_method, com.annulation_commentaire, com.annomalie_montant, com.annomalie_commentaire
+			com.etape, com.prix, com.prix_livraison, com.distance, com.paiement_method, com.annulation_commentaire, com.annomalie_montant, 
+			com.annomalie_commentaire, promo.description, promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, promo.sur_prix_total, 
+			promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM commande com
 		JOIN users client ON client.uid = com.uid
 		JOIN user_client uc ON uc.uid = client.uid
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		LEFT JOIN users livreur ON livreur.uid = com.id_livreur
 		LEFT JOIN user_livreur ul ON ul.uid = livreur.uid
+		LEFT JOIN code_promo promo ON promo.id = com.id_code_promo
 		WHERE com.id = :id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
@@ -653,6 +656,17 @@ class Model_Commande extends Model_Template {
 		$this->annulation_commentaire = $value['annulation_commentaire'];
 		$this->annomalie_montant = $value['annomalie_montant'];
 		$this->annomalie_commentaire = $value['annomalie_commentaire'];
+		
+		$codePromo = new Model_CodePromo(false);
+		$codePromo->description = $value['description'];
+		$codePromo->type_reduc = $value['type_reduc'];
+		$codePromo->sur_prix_livraison = $value['sur_prix_livraison'];
+		$codePromo->valeur_prix_livraison = $value['valeur_prix_livraison'];
+		$codePromo->sur_prix_total = $value['sur_prix_total'];
+		$codePromo->valeur_prix_total = $value['valeur_prix_total'];
+		$codePromo->pourcentage_prix_total = $value['pourcentage_prix_total'];
+		$this->codePromo = $codePromo;
+		
 		$this->cartes = array();
 		
 		$sql = "SELECT cc.id AS id, carte.id AS id_carte, carte.nom, carte.id_categorie, cc.quantite, cf.id AS id_format, cf.prix, rf.nom AS nom_format
@@ -980,10 +994,12 @@ class Model_Commande extends Model_Template {
 	public function loadNotFinishedCommande () {
 		$sql = "SELECT com.id AS id_commande, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison,
 		com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.etape, resto.id AS id_restaurant, resto.nom,
-		com.last_view_user, livreur.uid AS id_livreur, livreur.nom AS nom_livreur, livreur.prenom AS prenom_livreur
+		com.last_view_user, livreur.uid AS id_livreur, livreur.nom AS nom_livreur, livreur.prenom AS prenom_livreur, promo.type_reduc, promo.sur_prix_livraison, 
+		promo.valeur_prix_livraison, promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		LEFT JOIN users livreur ON livreur.uid = com.id_livreur
+		LEFT JOIN code_promo promo ON promo.id = com.id_code_promo
 		WHERE com.uid = :uid AND etape < 4";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
@@ -998,7 +1014,25 @@ class Model_Commande extends Model_Template {
 			$commande->id = $c["id_commande"];
 			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
 			$commande->etape = $c["etape"];
-			$commande->prix = $c["prix"] + $c["prix_livraison"];
+			if ($c["type_reduc"] == 'GRATUIT') {
+				if ($c["sur_prix_livraison"]) {
+					$commande->prix = $c["prix"];
+				} else if ($c["sur_prix_total"]) {
+					$commande->prix = 0;
+				}
+			} else if ($c["type_reduc"] == 'REDUCTION') {
+				if ($c["sur_prix_livraison"]) {
+					$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_livraison"];
+				} else if ($c["sur_prix_total"]) {
+					if ($c["valeur_prix_total"] > 0) {
+						$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_total"];
+					} else if ($c["pourcentage_prix_total"] > 0) {
+						$commande->prix = ($c["prix"] + $c["prix_livraison"]) - ((($c["prix"] + $c["prix_livraison"]) * $c["pourcentage_prix_total"]) / 100);
+					}
+				}
+			} else {
+				$commande->prix = $c["prix"] + $c["prix_livraison"];
+			}
 			$commande->heure_souhaite = $c["heure_souhaite"];
 			$commande->minute_souhaite = $c["minute_souhaite"];
 			$commande->livreur = $c["id_livreur"];
@@ -2485,10 +2519,12 @@ class Model_Commande extends Model_Template {
 		$sql = "SELECT com.id AS id_commande, client.uid AS id_client, client.nom AS nom_client, client.prenom AS prenom_client, 
 		livreur.uid AS id_livreur, livreur.prenom AS prenom_livreur, livreur.login, resto.id AS id_restaurant, resto.nom AS nom_restaurant, 
 		resto.code_postal AS cp_restaurant, resto.ville AS ville_restaurant, com.ville, com.code_postal, com.date_commande, com.heure_souhaite, 
-		com.minute_souhaite, com.prix, com.prix_livraison, com.etape, com.note, com.date_validation_livreur
+		com.minute_souhaite, com.prix, com.prix_livraison, com.etape, com.note, com.date_validation_livreur, promo.type_reduc, promo.sur_prix_livraison, 
+		promo.valeur_prix_livraison, promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM commande com
 		LEFT JOIN users client ON client.uid = com.uid
 		LEFT JOIN users livreur ON livreur.uid = com.id_livreur
+		LEFT JOIN code_promo promo ON promo.id = com.id_code_promo
 		JOIN restaurants resto ON resto.id = com.id_restaurant
 		ORDER BY com.date_commande ASC";
 		$stmt = $this->db->prepare($sql);
@@ -2506,7 +2542,25 @@ class Model_Commande extends Model_Template {
 			$commande->date_commande = $c["date_commande"];
 			$commande->heure_souhaite = $c["heure_souhaite"];
 			$commande->minute_souhaite = $c["minute_souhaite"];
-			$commande->prix = $c["prix"] + $c["prix_livraison"];
+			if ($c["type_reduc"] == 'GRATUIT') {
+				if ($c["sur_prix_livraison"]) {
+					$commande->prix = $c["prix"];
+				} else if ($c["sur_prix_total"]) {
+					$commande->prix = 0;
+				}
+			} else if ($c["type_reduc"] == 'REDUCTION') {
+				if ($c["sur_prix_livraison"]) {
+					$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_livraison"];
+				} else if ($c["sur_prix_total"]) {
+					if ($c["valeur_prix_total"] > 0) {
+						$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_total"];
+					} else if ($c["pourcentage_prix_total"] > 0) {
+						$commande->prix = ($c["prix"] + $c["prix_livraison"]) - ((($c["prix"] + $c["prix_livraison"]) * $c["pourcentage_prix_total"]) / 100);
+					}
+				}
+			} else {
+				$commande->prix = $c["prix"] + $c["prix_livraison"];
+			}
 			$commande->etape = $c["etape"];
 			$commande->note = $c["note"];
 			$commande->date_validation_livreur = $c["date_validation_livreur"];

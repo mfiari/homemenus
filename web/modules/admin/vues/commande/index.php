@@ -50,7 +50,7 @@
 									<?php echo ($commande->heure_souhaite); ?>h<?php echo ($commande->minute_souhaite); ?>
 								<?php endif; ?>
 							</td>
-							<td><?php echo $commande->prix; ?> €</td>
+							<td><?php echo formatPrix($commande->prix); ?></td>
 							<td><?php echo $commande->date_validation_livreur != '0000-00-00 00:00:00' ? $commande->date_validation_livreur : '<span style="color : red; ">Non</span>'; ?></td>
 							<td><?php echo $commande->getStatus(); ?></td>
 							<td><?php echo $commande->note; ?> / 5</td>
@@ -75,7 +75,7 @@
 				<tfoot>
 					<tr>
 						<th colspan="6">Total : </th>
-						<th><?php echo $total; ?> €</th>
+						<th><?php echo formatPrix($total); ?></th>
 						<th></th>
 						<th></th>
 						<th></th>

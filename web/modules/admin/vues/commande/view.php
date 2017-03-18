@@ -85,7 +85,7 @@
 						<?php $totalQte += $menu->quantite; ?>
 					</div>
 					<div class="col-md-6">
-						<?php echo $menu->prix; ?> €
+						<?php echo formatPrix($menu->prix); ?>
 						<?php $totalPrix += $menu->prix; ?>
 					</div>
 				</div>
@@ -151,7 +151,7 @@
 						<?php $totalQte += $carte->quantite; ?>
 					</div>
 					<div class="col-md-6">
-						<?php echo $carte->prix; ?> €
+						<?php echo formatPrix($carte->prix); ?>
 						<?php $totalPrix += $carte->prix; ?>
 					</div>
 				</div>
@@ -159,6 +159,12 @@
 		</div>
 		<hr />
 	<?php endforeach; ?>
+	<?php
+		$prix_livraison = $request->commande->prix_livraison;
+		if ($request->_auth && $request->_auth->is_premium) {
+			$prix_livraison -= $request->commande->reduction_premium;
+		}
+	?>
 	<div class="row">
 		<div class="col-md-8 col-sm-8">
 			<span>Prix de livraison : </span>
@@ -167,13 +173,36 @@
 			<div class="row">
 				<div class="col-md-6 col-sm-6"></div>
 				<div class="col-md-6 col-sm-6">
-					<?php echo $request->commande->prix_livraison; ?> €
+					<?php 
+						if ($request->commande->codePromo->surPrixLivraison()) {
+							if ($request->commande->codePromo->estGratuit()) {
+								echo "OFFERT";
+								$prix_livraison = 0;
+							} else {
+								$prix_livraison -= $request->commande->codePromo->valeur_prix_livraison;
+								echo formatPrix($prix_livraison);
+							}
+						} else {
+							echo formatPrix($prix_livraison);
+						}
+					?>
 				</div>
 			</div>
 		</div>
-		<?php $totalPrix += $request->commande->prix_livraison; ?>
+		<?php $totalPrix += $prix_livraison; ?>
 	</div>
 	<hr />
+	<?php if ($request->commande->codePromo->description != '') : ?>
+		<div class="row">
+			<div class="col-md-6">
+				<span>Promo : </span>
+			</div>
+			<div class="col-md-6">
+				<span><?php echo utf8_encode($request->commande->codePromo->description); ?></span>
+			</div>
+		</div>
+		<hr />
+	<?php endif; ?>
 	<div class="row">
 		<div class="col-md-8">
 			<span>Total : </span>
@@ -184,7 +213,24 @@
 					<?php echo $totalQte; ?>
 				</div>
 				<div class="col-md-6">
-					<?php echo $totalPrix; ?> €
+					<?php 
+						if ($request->commande->codePromo->surPrixTotal()) {
+							if ($request->commande->codePromo->estGratuit()) {
+								echo "OFFERT";
+							} else {
+								$prixReduc = $totalPrix;
+								if ($request->commande->codePromo->valeur_prix_total != -1) {
+									$prixReduc -= $request->commande->codePromo->valeur_prix_total;
+								}
+								if ($request->commande->codePromo->pourcentage_prix_total != -1) {
+									$prixReduc -= ($prixReduc * $request->commande->codePromo->pourcentage_prix_total) / 100;
+								}
+								echo formatPrix($prixReduc);
+							}
+						} else {
+							echo formatPrix($totalPrix);
+						}
+					?>
 				</div>
 			</div>
 		</div>
