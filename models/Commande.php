@@ -1079,11 +1079,15 @@ class Model_Commande extends Model_Template {
 	* Récupère les commandes utilisateur terminées
 	*/
 	public function loadFinishedCommande () {
-		$sql = "SELECT com.id AS id_commande, com.id_livreur, com.date_commande, com.heure_souhaite, com.minute_souhaite, 
-		com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.etape, resto.id AS id_restaurant, resto.nom
+		$sql = "SELECT com.id AS id_commande, com.date_commande, com.heure_souhaite, com.minute_souhaite, com.prix, com.prix_livraison,
+		com.date_validation_restaurant, com.date_fin_preparation_restaurant, com.date_recuperation_livreur, com.etape, resto.id AS id_restaurant, resto.nom,
+		com.last_view_user, livreur.uid AS id_livreur, livreur.nom AS nom_livreur, livreur.prenom AS prenom_livreur, promo.type_reduc, promo.sur_prix_livraison, 
+		promo.valeur_prix_livraison, promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM commande com
 		JOIN restaurants resto ON resto.id = com.id_restaurant
-		WHERE uid = :uid AND etape = 4";
+		LEFT JOIN users livreur ON livreur.uid = com.id_livreur
+		LEFT JOIN code_promo promo ON promo.id = com.id_code_promo
+		WHERE com.uid = :uid AND etape = 4";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->uid);
 		if (!$stmt->execute()) {
@@ -1096,11 +1100,36 @@ class Model_Commande extends Model_Template {
 			$commande = new Model_Commande(false);
 			$commande->id = $c["id_commande"];
 			$commande->date_commande = formatTimestampToDateHeure($c["date_commande"]);
-			$commande->etape = $c["etape"];
-			$restaurant = new Model_Restaurant();
+			if ($c["type_reduc"] == 'GRATUIT') {
+				if ($c["sur_prix_livraison"]) {
+					$commande->prix = $c["prix"];
+				} else if ($c["sur_prix_total"]) {
+					$commande->prix = 0;
+				}
+			} else if ($c["type_reduc"] == 'REDUCTION') {
+				if ($c["sur_prix_livraison"]) {
+					$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_livraison"];
+				} else if ($c["sur_prix_total"]) {
+					if ($c["valeur_prix_total"] > 0) {
+						$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_total"];
+					} else if ($c["pourcentage_prix_total"] > 0) {
+						$commande->prix = ($c["prix"] + $c["prix_livraison"]) - ((($c["prix"] + $c["prix_livraison"]) * $c["pourcentage_prix_total"]) / 100);
+					}
+				}
+			} else {
+				$commande->prix = $c["prix"] + $c["prix_livraison"];
+			}
+			$commande->heure_souhaite = $c["heure_souhaite"];
+			$commande->minute_souhaite = $c["minute_souhaite"];
+			$commande->livreur = $c["id_livreur"];
+			$restaurant = new Model_Restaurant(false);
 			$restaurant->id = $c["id_restaurant"];
 			$restaurant->nom = $c["nom"];
 			$commande->restaurant = $restaurant;
+			$commande->livreur = new Model_User(false);
+			$commande->livreur->id = $c['id_livreur'];
+			$commande->livreur->nom = $c['nom_livreur'];
+			$commande->livreur->prenom = $c['prenom_livreur'];
 			$listCommande[] = $commande;
 		}
 		return $listCommande;

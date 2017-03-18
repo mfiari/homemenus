@@ -142,6 +142,7 @@ class Controller_Commande extends Controller_Default_Template {
 		$commande = new Model_Commande(true, $request->dbConnector);
 		$commande->uid = $request->_auth->id;
 		$request->commandes = $commande->loadFinishedCommande();
+			$request->javascripts = array("res/js/bootstrap-star-rating.js");
 		$request->vue = $this->render("finishedCommandes");
 	}
 	
