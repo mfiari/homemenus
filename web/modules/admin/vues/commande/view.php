@@ -246,7 +246,7 @@
 	<div class="row">
 		<h3>Anomalie</h3>
 		<div class="row">
-			<p><b>Montant du remboursement : </b><?php echo $request->commande->annomalie_montant; ?> €</p>
+			<p><b>Montant du remboursement : </b><?php echo formatPrix($request->commande->annomalie_montant); ?></p>
 		</div>
 		<div class="row">
 			<p><b>Commentaire : </b><?php echo utf8_encode($request->commande->annomalie_commentaire); ?></p>

@@ -24,6 +24,7 @@ class Model_Commande_History extends Model_Template {
 	private $minute_souhaite;
 	private $livreur;
 	private $restaurant;
+	private $codePromo;
 	private $etape;
 	private $etapeLibelle;
 	private $is_modif;
@@ -358,8 +359,9 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getByUser () {
-		$sql = "SELECT id, id_commande, id_livreur, prenom_livreur, id_restaurant, nom_restaurant, 
-		code_postal_restaurant AS cp_restaurant, ville_restaurant, date_commande, prix, prix_livraison, note
+		$sql = "SELECT id, id_commande, id_livreur, prenom_livreur, id_restaurant, nom_restaurant, code_postal_restaurant AS cp_restaurant, ville_restaurant, 
+		date_commande, prix, prix_livraison, note, type_reduc_code_promo, sur_prix_livraison_code_promo, valeur_prix_livraison_code_promo, 
+		sur_prix_total_code_promo, valeur_prix_total_code_promo, pourcentage_prix_total_code_promo
 		FROM commande_history
 		WHERE id_user = :uid
 		ORDER BY date_commande ASC";
@@ -376,7 +378,25 @@ class Model_Commande_History extends Model_Template {
 			$commande->id = $c["id"];
 			$commande->id_commande = $c["id_commande"];
 			$commande->date_commande = $c["date_commande"];
-			$commande->prix = $c["prix"] + $c["prix_livraison"];
+			if ($c["type_reduc_code_promo"] == 'GRATUIT') {
+				if ($c["sur_prix_livraison_code_promo"]) {
+					$commande->prix = $c["prix"];
+				} else if ($c["sur_prix_total_code_promo"]) {
+					$commande->prix = 0;
+				}
+			} else if ($c["type_reduc_code_promo"] == 'REDUCTION') {
+				if ($c["sur_prix_livraison_code_promo"]) {
+					$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_livraison_code_promo"];
+				} else if ($c["sur_prix_total_code_promo"]) {
+					if ($c["valeur_prix_total_code_promo"] > 0) {
+						$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_total_code_promo"];
+					} else if ($c["pourcentage_prix_total_code_promo"] > 0) {
+						$commande->prix = ($c["prix"] + $c["prix_livraison"]) - ((($c["prix"] + $c["prix_livraison"]) * $c["pourcentage_prix_total_code_promo"]) / 100);
+					}
+				}
+			} else {
+				$commande->prix = $c["prix"] + $c["prix_livraison"];
+			}
 			$commande->note = $c["note"];
 			
 			$livreur = new Model_User(false);
@@ -417,8 +437,10 @@ class Model_Commande_History extends Model_Template {
 		}
 		$total_row = $value['nb_row'];
 		
-		$sql = "SELECT id, id_commande, id_user AS id_client, nom_user, prenom_user, id_livreur, login_livreur AS login, prenom_livreur, id_restaurant, nom_restaurant, 
-		code_postal_restaurant AS cp_restaurant, ville_restaurant, ville_commande, date_commande, date_validation_restaurant, date_livraison, prix, prix_livraison, note
+		$sql = "SELECT id, id_commande, id_user AS id_client, nom_user, prenom_user, id_livreur, login_livreur AS login, prenom_livreur, id_restaurant, 
+		nom_restaurant, code_postal_restaurant AS cp_restaurant, ville_restaurant, ville_commande, date_commande, date_validation_restaurant, date_livraison, 
+		prix, prix_livraison, note, type_reduc_code_promo, sur_prix_livraison_code_promo, valeur_prix_livraison_code_promo, 
+		sur_prix_total_code_promo, valeur_prix_total_code_promo, pourcentage_prix_total_code_promo
 		FROM commande_history
 		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		ORDER BY date_commande ASC
@@ -440,7 +462,25 @@ class Model_Commande_History extends Model_Template {
 			$commande->date_commande = $c["date_commande"];
 			$commande->date_validation_restaurant = $c["date_validation_restaurant"];
 			$commande->date_livraison = $c["date_livraison"];
-			$commande->prix = $c["prix"] + $c["prix_livraison"];
+			if ($c["type_reduc_code_promo"] == 'GRATUIT') {
+				if ($c["sur_prix_livraison_code_promo"]) {
+					$commande->prix = $c["prix"];
+				} else if ($c["sur_prix_total_code_promo"]) {
+					$commande->prix = 0;
+				}
+			} else if ($c["type_reduc_code_promo"] == 'REDUCTION') {
+				if ($c["sur_prix_livraison_code_promo"]) {
+					$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_livraison_code_promo"];
+				} else if ($c["sur_prix_total_code_promo"]) {
+					if ($c["valeur_prix_total_code_promo"] > 0) {
+						$commande->prix = $c["prix"] + $c["prix_livraison"] - $c["valeur_prix_total_code_promo"];
+					} else if ($c["pourcentage_prix_total_code_promo"] > 0) {
+						$commande->prix = ($c["prix"] + $c["prix_livraison"]) - ((($c["prix"] + $c["prix_livraison"]) * $c["pourcentage_prix_total_code_promo"]) / 100);
+					}
+				}
+			} else {
+				$commande->prix = $c["prix"] + $c["prix_livraison"];
+			}
 			$commande->note = $c["note"];
 			
 			$client = new Model_User(false);
@@ -476,7 +516,9 @@ class Model_Commande_History extends Model_Template {
 			id_commande, id_user AS uid, nom_user AS cnom, prenom_user AS cprenom, telephone_commande AS ctel, rue_commande AS com_rue, ville_commande AS com_ville, 
 			code_postal_commande AS com_cp, id_restaurant AS id_resto, nom_restaurant AS nom_resto, rue_restaurant AS rue_resto, ville_restaurant AS ville_resto, 
 			code_postal_restaurant AS cp_resto, telephone_restaurant, id_livreur, prenom_livreur, date_commande, heure_souhaite, minute_souhaite, 
-			date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, prix, prix_livraison, distance
+			date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, prix, prix_livraison, distance, 
+			description_code_promo, type_reduc_code_promo, sur_prix_livraison_code_promo, valeur_prix_livraison_code_promo, 
+			sur_prix_total_code_promo, valeur_prix_total_code_promo, pourcentage_prix_total_code_promo
 		FROM commande_history
 		WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
@@ -519,6 +561,16 @@ class Model_Commande_History extends Model_Template {
 		$this->prix = $value['prix'];
 		$this->prix_livraison = $value['prix_livraison'];
 		$this->distance = $value['distance'];
+		
+		$codePromo = new Model_CodePromo(false);
+		$codePromo->description = $value['description_code_promo'];
+		$codePromo->type_reduc = $value['type_reduc_code_promo'];
+		$codePromo->sur_prix_livraison = $value['sur_prix_livraison_code_promo'];
+		$codePromo->valeur_prix_livraison = $value['valeur_prix_livraison_code_promo'];
+		$codePromo->sur_prix_total = $value['sur_prix_total_code_promo'];
+		$codePromo->valeur_prix_total = $value['valeur_prix_total_code_promo'];
+		$codePromo->pourcentage_prix_total = $value['pourcentage_prix_total_code_promo'];
+		$this->codePromo = $codePromo;
 		
 		$this->cartes = array();
 		
