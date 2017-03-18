@@ -22,6 +22,8 @@ class Model_Commande_History extends Model_Template {
 	private $date_commande;
 	private $heure_souhaite;
 	private $minute_souhaite;
+	private $preparation_restaurant;
+	private $temps_livraison;
 	private $livreur;
 	private $restaurant;
 	private $codePromo;
@@ -33,6 +35,10 @@ class Model_Commande_History extends Model_Template {
 	private $date_fin_preparation_restaurant;
 	private $date_recuperation_livreur;
 	private $date_livraison;
+	private $paiement_method;
+	private $annulation_commentaire;
+	private $annomalie_montant;
+	private $annomalie_commentaire;
 	
 	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {
@@ -516,9 +522,10 @@ class Model_Commande_History extends Model_Template {
 			id_commande, id_user AS uid, nom_user AS cnom, prenom_user AS cprenom, telephone_commande AS ctel, rue_commande AS com_rue, ville_commande AS com_ville, 
 			code_postal_commande AS com_cp, id_restaurant AS id_resto, nom_restaurant AS nom_resto, rue_restaurant AS rue_resto, ville_restaurant AS ville_resto, 
 			code_postal_restaurant AS cp_resto, telephone_restaurant, id_livreur, prenom_livreur, date_commande, heure_souhaite, minute_souhaite, 
-			date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, prix, prix_livraison, distance, 
-			description_code_promo, type_reduc_code_promo, sur_prix_livraison_code_promo, valeur_prix_livraison_code_promo, 
-			sur_prix_total_code_promo, valeur_prix_total_code_promo, pourcentage_prix_total_code_promo
+			preparation_restaurant, temps_livraison, date_validation_restaurant, date_fin_preparation_restaurant, date_recuperation_livreur, date_livraison, prix, 
+			prix_livraison, distance, description_code_promo, type_reduc_code_promo, sur_prix_livraison_code_promo, valeur_prix_livraison_code_promo, 
+			sur_prix_total_code_promo, valeur_prix_total_code_promo, pourcentage_prix_total_code_promo, paiement_method, annulation_commentaire, 
+			annomalie_montant, annomalie_commentaire
 		FROM commande_history
 		WHERE id = :id";
 		$stmt = $this->db->prepare($sql);
@@ -554,6 +561,8 @@ class Model_Commande_History extends Model_Template {
 		$this->date_commande = $value['date_commande'];
 		$this->heure_souhaite = $value['heure_souhaite'];
 		$this->minute_souhaite = $value['minute_souhaite'];
+		$this->preparation_restaurant = $value['preparation_restaurant'];
+		$this->temps_livraison = $value['temps_livraison'];
 		$this->date_validation_restaurant = $value['date_validation_restaurant'];
 		$this->date_fin_preparation_restaurant = $value['date_fin_preparation_restaurant'];
 		$this->date_recuperation_livreur = $value['date_recuperation_livreur'];
@@ -561,6 +570,10 @@ class Model_Commande_History extends Model_Template {
 		$this->prix = $value['prix'];
 		$this->prix_livraison = $value['prix_livraison'];
 		$this->distance = $value['distance'];
+		$this->paiement_method = $value['paiement_method'];
+		$this->annulation_commentaire = $value['annulation_commentaire'];
+		$this->annomalie_montant = $value['annomalie_montant'];
+		$this->annomalie_commentaire = $value['annomalie_commentaire'];
 		
 		$codePromo = new Model_CodePromo(false);
 		$codePromo->description = $value['description_code_promo'];

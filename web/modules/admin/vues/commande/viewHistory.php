@@ -4,22 +4,18 @@
 </a>
 <div id="restaurant">
 	<h3><?php echo utf8_encode($request->commande->restaurant->nom); ?></h3>
-	<p><?php echo utf8_encode($request->commande->restaurant->rue); ?>, <?php echo $request->commande->restaurant->code_postal; ?> <?php echo utf8_encode($request->commande->restaurant->ville); ?></p>
-	<p>Téléphone : <?php echo $request->commande->restaurant->telephone; ?></p>
+	<p><b>Adresse : </b><?php echo utf8_encode($request->commande->restaurant->rue); ?>, <?php echo $request->commande->restaurant->code_postal; ?> <?php echo utf8_encode($request->commande->restaurant->ville); ?></p>
+	<p><b>Téléphone : </b><?php echo $request->commande->restaurant->telephone; ?></p>
 </div>
 <div id="client">
 	<h3>Client</h3>
-	<span><?php echo utf8_encode($request->commande->client->nom); ?> <?php echo utf8_encode($request->commande->client->prenom); ?></span>
-	<p><?php echo utf8_encode($request->commande->rue); ?>, <?php echo $request->commande->code_postal; ?> <?php echo utf8_encode($request->commande->ville); ?></p>
-	<p>Téléphone : <?php echo $request->commande->client->telephone; ?></p>
+	<p><b>Nom : </b><?php echo utf8_encode($request->commande->client->nom); ?> <?php echo utf8_encode($request->commande->client->prenom); ?></p>
+	<p><b>Adresse : </b><?php echo utf8_encode($request->commande->rue); ?>, <?php echo $request->commande->code_postal; ?> <?php echo utf8_encode($request->commande->ville); ?></p>
+	<p><b>Téléphone : </b><?php echo $request->commande->client->telephone; ?></p>
 </div>
 <div id="livreur">
 	<h3>Livreur</h3>
-	<?php if ($request->commande->livreur->prenom != '') : ?>
-		<div class="col-md-12">
-			<span><?php echo $request->commande->livreur->prenom; ?></span>
-		</div>
-	<?php endif; ?>
+	<p><b>Nom : </b><?php echo $request->commande->livreur->prenom; ?></p>
 </div>
 <div id="commande">
 	<h3>Commande</h3>
@@ -34,13 +30,19 @@
 		}
 	?>
 	<p><b>Date de commande : </b><?php echo $request->commande->date_commande; ?></p>
-	<p><b>Heure souhaité : </b><?php echo $request->commande->heure_souhaite == -1 ? 'Au plus tôt' : $request->commande->heure_souhaite.'h'.$request->commande->minute_souhaite; ?></p>
-	<p><b>Validation livreur : </b><?php echo $request->commande->date_validation_livreur; ?></p>
+	<p><b>Heure de livraison souhaité : </b><?php echo $request->commande->heure_souhaite == -1 ? 'Au plus tôt' : $request->commande->heure_souhaite.'h'.$request->commande->minute_souhaite; ?></p>
+	
+	<p><b>Temps de preparation estimé : </b><?php echo $request->commande->preparation_restaurant; ?> min</p>
+	<p><b>Temps de livraison estimé : </b><?php echo $request->commande->temps_livraison; ?> min</p>
+	
 	<p><b>Validation restaurant : </b><?php echo $request->commande->date_validation_restaurant; ?></p>
 	<p><b>Fin préparation restaurant : </b><?php echo $request->commande->date_fin_preparation_restaurant; ?></p>
 	<p><b>Récupération livreur : </b><?php echo $request->commande->date_recuperation_livreur; ?></p>
 	<p><b>Date de livraison : </b><?php echo $request->commande->date_livraison; ?></p>
+	
 	<p><b>Temps écoulé : </b><?php echo $temps == -1 ? 'NA' : $temps.' min'; ?></p>
+	
+	<p><b>Methode de paiement : </b><?php echo $request->commande->paiement_method; ?></p>
 	<?php $totalPrix = 0; ?>
 	<?php $totalQte = 0; ?>
 	<?php foreach ($request->commande->menus as $menu) : ?>
