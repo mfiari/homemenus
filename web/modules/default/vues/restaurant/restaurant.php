@@ -238,7 +238,7 @@
 											<span style="color: #000;position: relative;top: -7px;left: -45px;"><?php echo $contenu->supplement->commentaire; ?></span>
 										</a>
 									<?php endif; ?>
-									<span class="stars-default" data-rating="<?php echo $contenu->supplement->vote; ?>"></span>
+									<span class="stars-default" data-rating="<?php echo $contenu->supplement->note; ?>"></span>
 								</div>
 							</div>
 						<?php endif; ?>
