@@ -403,4 +403,9 @@ function isVilleAvailable ($ville) {
 	return in_array($ville, $cities);
 }
 
+function getMonthByIndex ($index) {
+	$array = array('Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre');
+	return $array[$index -1];
+}
+
 ?>

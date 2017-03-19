@@ -1169,10 +1169,10 @@ class Model_User extends Model_Template {
 	}
 	
 	public function getNouveauClientByMonth ($dateDebut, $dateFin) {
-		$sql = "SELECT MONTH(date_creation) AS month, COUNT(*) AS total
+		$sql = "SELECT YEAR(date_creation) AS year, MONTH(date_creation) AS month, COUNT(*) AS total
 		FROM users
 		WHERE deleted = 0 AND status = 'USER' AND date_creation BETWEEN :date_debut AND :date_fin
-		GROUP BY month";
+		GROUP BY year, month";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":date_debut", $dateDebut);
 		$stmt->bindValue(":date_fin", $dateFin);

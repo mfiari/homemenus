@@ -65,7 +65,7 @@
 							<tbody>
 								<?php foreach ($request->months as $month) : ?>
 									<tr>
-										<td><?php echo $month['month']; ?></td>
+										<td><?php echo getMonthByIndex($month['month']); ?></td>
 										<td><?php echo $month['total_commande']; ?></td>
 										<td><?php echo number_format($month['part_restaurant'], 2, ',', ' '); ?></td>
 										<td><?php echo number_format($month['part_livreur'], 2, ',', ' '); ?></td>
@@ -104,7 +104,7 @@
 								<?php $totalClient = $request->totalClients; ?>
 								<?php foreach ($request->nouveauClients as $nouveauClient) : ?>
 									<tr>
-										<td><?php echo $nouveauClient['month']; ?></td>
+										<td><?php echo getMonthByIndex($nouveauClient['month']); ?> <?php echo $nouveauClient['year']; ?></td>
 										<td><?php echo $nouveauClient['total']; ?></td>
 										<td>0</td>
 										<td><?php echo $totalClient; ?></td>
