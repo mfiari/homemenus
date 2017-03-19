@@ -1127,6 +1127,47 @@ class Model_User extends Model_Template {
 		return $list;
 	}
 	
+	public function countClients () {
+		$sql = "SELECT COUNT(*) AS total
+		FROM users
+		WHERE deleted = 0 AND status = 'USER' AND DATE(date_creation) < DATE(NOW())";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null ||$value == false) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return $value["total"];
+	}
+	
+	public function getClientBeforeDate ($dateDebut) {
+		$sql = "SELECT COUNT(*) AS total
+		FROM users
+		WHERE deleted = 0 AND status = 'USER' AND DATE(date_creation) < :date_debut";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null ||$value == false) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return $value["total"];
+	}
+	
 	public function getNouveauClientByMonth ($dateDebut, $dateFin) {
 		$sql = "SELECT MONTH(date_creation) AS month, COUNT(*) AS total
 		FROM users

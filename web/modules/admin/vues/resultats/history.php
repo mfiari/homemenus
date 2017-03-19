@@ -96,26 +96,23 @@
 									<th>Mois</th>
 									<th>Nouveau client</th>
 									<th>Nouveau client prenium</th>
+									<th>Total client</th>
+									<th>Total client prenium</th>
 								</tr>
 							</thead>
 							<tbody>
-								<?php $totalClient = 0; ?>
-								<?php foreach ($request->clients as $client) : ?>
+								<?php $totalClient = $request->totalClients; ?>
+								<?php foreach ($request->nouveauClients as $nouveauClient) : ?>
 									<tr>
-										<td><?php echo $client['month']; ?></td>
-										<td><?php echo $client['total']; ?></td>
+										<td><?php echo $nouveauClient['month']; ?></td>
+										<td><?php echo $nouveauClient['total']; ?></td>
+										<td>0</td>
+										<td><?php echo $totalClient; ?></td>
 										<td>0</td>
 									</tr>
-									<?php $totalClient += $client['total']; ?>
+									<?php $totalClient += $nouveauClient['total']; ?>
 								<?php endforeach; ?>
 							</tbody>
-							<tfoot>
-								<tr>
-									<th>Total</th>
-									<th><?php echo $totalClient; ?></th>
-									<th>0</th>
-								</tr>
-							</tfoot>
 						</table>
 					</div>
 				</div>

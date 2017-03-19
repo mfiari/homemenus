@@ -90,11 +90,15 @@
 								<tr>
 									<th>Nouveau client</th>
 									<th>Nouveau client prenium</th>
+									<th>Total client</th>
+									<th>Total client prenium</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
-									<td><?php echo count($request->clients); ?></td>
+									<td><?php echo count($request->nouveauClients); ?></td>
+									<td>0</td>
+									<td><?php echo $request->nbClients; ?></td>
 									<td>0</td>
 								</tr>
 							</tbody>

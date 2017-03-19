@@ -74,7 +74,8 @@ class Controller_Index extends Controller_Admin_Template {
 		$request->title = "Administration";
 		$modelUser = new Model_User(true, $request->dbConnector);
 		$request->livreursDispo = $modelUser->getLivreurAvailableToday();
-		$request->clients = $modelUser->getNouveauClient();
+		$request->nouveauClients = $modelUser->getNouveauClient();
+		$request->nbClients = $modelUser->countClients();
 		$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
 		$request->restaurants = $modelRestaurant->getRestaurantSansLivreur();
 		$modelCommande = new Model_Commande(true, $request->dbConnector);
@@ -128,7 +129,8 @@ class Controller_Index extends Controller_Admin_Template {
 		$dateFin = datepickerToDatetime($request->date_fin);
 		
 		$modelUser = new Model_User(true, $request->dbConnector);
-		$request->clients = $modelUser->getNouveauClientByMonth($dateDebut, $dateFin);
+		$request->nouveauClients = $modelUser->getNouveauClientByMonth($dateDebut, $dateFin);
+		$request->totalClients = $modelUser->getClientBeforeDate($dateDebut);
 		$modelCommande = new Model_Commande_History(true, $request->dbConnector);
 		$request->resultats = $modelCommande->getTotal($dateDebut, $dateFin);
 		$request->months = $modelCommande->getTotalByMonth($dateDebut, $dateFin);
