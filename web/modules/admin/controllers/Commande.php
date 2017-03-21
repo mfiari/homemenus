@@ -851,11 +851,13 @@ class Controller_Commande extends Controller_Admin_Template {
 			
 			$result = getDistance($adresseUser, $adresseResto);
 			$distance = 0;
+			$duration = 0;
 			if ($result['status'] == "OK") {
 				$distance = $result['distance'] / 1000;
+				$duration = ceil($result['duration'] / 60);
 			}
 			
-			$panier->validate($rue, $ville, $code_postal, $telephone, $heure_commande, $minute_commande, $distance);
+			$panier->validate($rue, '', $ville, $code_postal, $telephone, $heure_commande, $minute_commande, $distance, $duration);
 			
 			$result = array();
 			$result['distance'] = $distance;
