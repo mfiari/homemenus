@@ -1132,8 +1132,6 @@ class Model_User extends Model_Template {
 		FROM users
 		WHERE deleted = 0 AND status = 'USER' AND DATE(date_creation) < DATE(NOW())";
 		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":date_debut", $dateDebut);
-		$stmt->bindValue(":date_fin", $dateFin);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			$this->sqlHasFailed = true;
