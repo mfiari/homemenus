@@ -113,7 +113,7 @@
 	} else {
 		$commandeNonValideRestoTexte = '<ul>';
 		foreach ($commandeNonValideResto as $commande) {
-			$commandeNonValideRestoTexte .= '<li> commande #'.$commande->id.'</li>';
+			$commandeNonValideRestoTexte .= '<li> commande #'.$commande->id.' ('.utf8_encode($commande->restaurant->nom).')</li>';
 		}
 		$commandeNonValideRestoTexte .= '</ul>';
 	}
@@ -124,7 +124,7 @@
 	} else {
 		$commandeNonValideLivreurTexte = '<ul>';
 		foreach ($commandeNonValideLivreur as $commande) {
-			$commandeNonValideLivreurTexte .= '<li> commande #'.$commande->id.'</li>';
+			$commandeNonValideLivreurTexte .= '<li> commande #'.$commande->id.' ('.utf8_encode($commande->livreur->nom.' '.$commande->livreur->prenom).')</li>';
 		}
 		$commandeNonValideLivreurTexte .= '</ul>';
 	}
