@@ -828,7 +828,8 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTotal ($dateDebut, $dateFin) {
-		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, 
+		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, 
+		SUM(prix_livraison) AS part_livreur, SUM(annomalie_montant) AS anomalie, 
 		SUM(prix + prix_livraison) AS total_prix FROM commande_history
 		WHERE date_commande BETWEEN :date_debut AND :date_fin";
 		$stmt = $this->db->prepare($sql);
@@ -863,7 +864,8 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTotalByMonth ($dateDebut, $dateFin) {
-		$sql = "SELECT MONTH(date_commande) AS month, COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, 
+		$sql = "SELECT MONTH(date_commande) AS month, COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, 
+		SUM(prix_livraison) AS part_livreur,  SUM(annomalie_montant) AS anomalie, 
 		SUM(prix + prix_livraison) AS total_prix FROM commande_history
 		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		GROUP BY month";
@@ -894,8 +896,8 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTotalByRestaurant ($dateDebut, $dateFin) {
-		$sql = "SELECT id_restaurant, nom_restaurant AS nom, COUNT(*) AS total_commande, 
-		SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, SUM(prix + prix_livraison) AS total_prix 
+		$sql = "SELECT id_restaurant, nom_restaurant AS nom, COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, 
+		SUM(prix_livraison) AS part_livreur,  SUM(annomalie_montant) AS anomalie, SUM(prix + prix_livraison) AS total_prix 
 		FROM commande_history 
 		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		GROUP BY id_restaurant";

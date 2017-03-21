@@ -66,6 +66,7 @@
 									<th>Nb de commande</th>
 									<th>Total restaurant</th>
 									<th>Total Livreur</th>
+									<th>Total Anomalies</th>
 									<th>Total HoMe Menus</th>
 									<th>Total</th>
 								</tr>
@@ -73,8 +74,9 @@
 							<tbody>
 								<tr>
 									<td><?php echo $request->resultats['total_commande']; ?></td>
-									<td><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['part_restaurant'] - $request->resultats['anomalie'], 2, ',', ' '); ?></td>
 									<td><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['anomalie'], 2, ',', ' '); ?></td>
 									<td><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
 									<td><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></td>
 								</tr>

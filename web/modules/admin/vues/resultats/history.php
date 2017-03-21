@@ -32,6 +32,7 @@
 									<th>Nb de commande</th>
 									<th>Total restaurant</th>
 									<th>Total Livreur</th>
+									<th>Total Anomalies</th>
 									<th>Total HoMe Menus</th>
 									<th>Total</th>
 								</tr>
@@ -39,8 +40,9 @@
 							<tbody>
 								<tr>
 									<td><?php echo $request->resultats['total_commande']; ?></td>
-									<td><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['part_restaurant'] - $request->resultats['anomalie'], 2, ',', ' '); ?></td>
 									<td><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['anomalie'], 2, ',', ' '); ?></td>
 									<td><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
 									<td><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></td>
 								</tr>
@@ -58,6 +60,7 @@
 									<th>Nb de commande</th>
 									<th>Total restaurant</th>
 									<th>Total Livreur</th>
+									<th>Total Anomalies</th>
 									<th>Total HoMe Menus</th>
 									<th>Total</th>
 								</tr>
@@ -67,8 +70,9 @@
 									<tr>
 										<td><?php echo getMonthByIndex($month['month']); ?></td>
 										<td><?php echo $month['total_commande']; ?></td>
-										<td><?php echo number_format($month['part_restaurant'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['part_restaurant'] - $month['anomalie'], 2, ',', ' '); ?></td>
 										<td><?php echo number_format($month['part_livreur'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['anomalie'], 2, ',', ' '); ?></td>
 										<td><?php echo number_format($month['total_prix'] - $month['part_restaurant'] - $month['part_livreur'], 2, ',', ' '); ?></td>
 										<td><?php echo number_format($month['total_prix'], 2, ',', ' '); ?></td>
 									</tr>
@@ -78,8 +82,9 @@
 								<tr>
 									<th>Total</th>
 									<th><?php echo $request->resultats['total_commande']; ?></th>
-									<th><?php echo number_format($request->resultats['part_restaurant'], 2, ',', ' '); ?></th>
+									<th><?php echo number_format($request->resultats['part_restaurant'] - $request->resultats['anomalie'], 2, ',', ' '); ?></th>
 									<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
+									<td><?php echo number_format($request->resultats['anomalie'], 2, ',', ' '); ?></td>
 									<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
 									<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
 								</tr>

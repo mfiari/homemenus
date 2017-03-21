@@ -2623,7 +2623,7 @@ class Model_Commande extends Model_Template {
 	
 	public function getTotal () {
 		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, 
-		SUM(prix + prix_livraison) AS total_prix FROM commande";
+		SUM(annomalie_montant) AS anomalie, SUM(prix + prix_livraison) AS total_prix FROM commande";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
@@ -2654,7 +2654,7 @@ class Model_Commande extends Model_Template {
 	public function getTotalByRestaurant () {
 		$sql = "SELECT resto.id AS id_restaurant, resto.nom AS nom, COUNT(*) AS total_commande, 
 		SUM(commande.prix - ((commande.prix * commande.part_restaurant) / 100)) AS part_restaurant, SUM(commande.prix_livraison) AS part_livreur, 
-		SUM(commande.prix + commande.prix_livraison) AS total_prix
+		SUM(annomalie_montant) AS anomalie, SUM(commande.prix + commande.prix_livraison) AS total_prix
 		FROM commande 
 		JOIN restaurants resto ON resto.id = commande.id_restaurant
 		GROUP BY resto.id";

@@ -25,18 +25,20 @@
 									<th>Nb de commande</th>
 									<th>Total restaurant</th>
 									<th>Total Livreur</th>
+									<th>Total Anomalies</th>
 									<th>Total HoMe Menus</th>
 									<th>Total</th>
 								</tr>
 							</thead>
 							<tbody>
-								<?php $totalCommande = $partRestaurant = $partLivreur = $totalPrix = 0; ?>
+								<?php $totalCommande = $partRestaurant = $partLivreur = $anomalie = $totalPrix = 0; ?>
 								<?php foreach ($request->restaurants as $restaurant) : ?>
 									<tr>
 										<td><?php echo utf8_encode($restaurant['nom']); ?></td>
 										<td><?php echo $restaurant['total_commande']; ?></td>
-										<td><?php echo number_format($restaurant['part_restaurant'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($restaurant['part_restaurant'] - $restaurant['anomalie'], 2, ',', ' '); ?></td>
 										<td><?php echo number_format($restaurant['part_livreur'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($restaurant['anomalie'], 2, ',', ' '); ?></td>
 										<td><?php echo number_format($restaurant['total_prix'] - $restaurant['part_restaurant'] - $restaurant['part_livreur'], 2, ',', ' '); ?></td>
 										<td><?php echo number_format($restaurant['total_prix'], 2, ',', ' '); ?></td>
 									</tr>
@@ -44,6 +46,7 @@
 										$totalCommande += $restaurant['total_commande'];
 										$partRestaurant += $restaurant['part_restaurant'];
 										$partLivreur += $restaurant['part_livreur'];
+										$anomalie += $restaurant['anomalie'];
 										$totalPrix += $restaurant['total_prix'];
 									?>
 								<?php endforeach; ?>
@@ -52,8 +55,9 @@
 								<tr>
 									<th>Total</th>
 									<th><?php echo $totalCommande; ?></th>
-									<th><?php echo number_format($partRestaurant, 2, ',', ' '); ?></th>
+									<th><?php echo number_format($partRestaurant - $anomalie, 2, ',', ' '); ?></th>
 									<th><?php echo number_format($partLivreur, 2, ',', ' '); ?></th>
+									<th><?php echo number_format($anomalie, 2, ',', ' '); ?></th>
 									<th><?php echo number_format($totalPrix - $partRestaurant - $partLivreur, 2, ',', ' '); ?></th>
 									<th><?php echo number_format($totalPrix, 2, ',', ' '); ?></th>
 								</tr>
