@@ -45,6 +45,9 @@
 	
 	$totalNouveauClient = 0;
 	
+	$commandeNonValideResto = array();
+	$commandeNonValideLivreur = array();
+	
 	$modelCommandeHistory = new Model_Commande_History();
 	
 	$modelUser = new Model_User();
@@ -77,6 +80,14 @@
 				$montantTotalAnomalie += $commande->annomalie_montant;
 			}
 			
+			if ($commande->date_validation_restaurant == '0000-00-00 00:00' || $commande->date_fin_preparation_restaurant == '0000-00-00 00:00') {
+				$commandeNonValideResto[] = $commande;
+			}
+			
+			if ($commande->date_recuperation_livreur == '0000-00-00 00:00' || $commande->date_livraison == '0000-00-00 00:00') {
+				$commandeNonValideLivreur[] = $commande;
+			}
+			
 			$commande->remove();
 		} else {
 			$totalCommandeError++;
@@ -96,6 +107,28 @@
 	$messageContent = str_replace("[MONTANT_TOTAL_ERROR]", $montantTotalError, $messageContent);
 	$messageContent = str_replace("[NB_TOTAL_ANOMALIE]", $totalAnomalie, $messageContent);
 	$messageContent = str_replace("[MONTANT_TOTAL_ANOMALIE]", $montantTotalAnomalie, $messageContent);
+	
+	if (count($commandeNonValideResto) == 0) {
+		$commandeNonValideRestoTexte = '<span>Aucune</span><br />';
+	} else {
+		$commandeNonValideRestoTexte = '<ul>';
+		foreach ($commandeNonValideResto as $commande) {
+			$commandeNonValideRestoTexte .= '<li> commande #'.$commande->id.'</li>';
+		}
+		$commandeNonValideRestoTexte .= '</ul>';
+	}
+	$messageContent = str_replace("[COMMANDE_NON_VALIDE_RESTAURANT]", $commandeNonValideRestoTexte, $messageContent);
+	
+	if (count($commandeNonValideLivreur) == 0) {
+		$commandeNonValideLivreurTexte = '<span>Aucune</span><br />';
+	} else {
+		$commandeNonValideLivreurTexte = '<ul>';
+		foreach ($commandeNonValideLivreur as $commande) {
+			$commandeNonValideLivreurTexte .= '<li> commande #'.$commande->id.'</li>';
+		}
+		$commandeNonValideLivreurTexte .= '</ul>';
+	}
+	$messageContent = str_replace("[COMMANDE_NON_VALIDE_LIVREUR]", $commandeNonValideLivreurTexte, $messageContent);
 	
 	send_mail ("admin@homemenus.fr", "Bilan des commandes", $messageContent);
 	
