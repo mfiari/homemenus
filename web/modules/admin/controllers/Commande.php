@@ -951,7 +951,7 @@ class Controller_Commande extends Controller_Admin_Template {
 		$commande = new Model_Commande(true, $request->dbConnector);
 		if ($commande->create($panier)) {
 			$panier->remove();
-			$user = new Model_User();
+			$user = new Model_User(true, $request->dbConnector);
 			
 			$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
 			if (count($restaurantUsers) > 0) {
@@ -1003,6 +1003,9 @@ class Controller_Commande extends Controller_Admin_Template {
 			
 			send_mail (MAIL_ADMIN, "Nouvelle commande", $messageContentAdmin, MAIL_FROM_DEFAULT, $attachments);
 			
+			$user->id = $_POST['id_user'];
+			$user->getById();
+			
 			$messageContentClient =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_client.html');
 			
 			$messageContentClient = str_replace("[COMMANDE_ID]", $commande->id, $messageContentClient);
@@ -1010,7 +1013,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			$messageContentClient = str_replace("[TOTAL]", $commande->prix, $messageContentClient);
 			$messageContentClient = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentClient);
 			
-			send_mail ($request->_auth->login, "Nouvelle commande", $messageContentClient, MAIL_FROM_DEFAULT, $attachments);
+			send_mail ($user->email, "Nouvelle commande", $messageContentClient, MAIL_FROM_DEFAULT, $attachments);
 			
 			$restaurantDir = ROOT_PATH.'files/commandes/'.$today.'/restaurant/';
 			
