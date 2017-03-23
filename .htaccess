@@ -2,6 +2,9 @@
 Options +FollowSymlinks 
 # Activation du mod rewrite d'Apache 
 RewriteEngine On
+#Redirect all HTTP request to HTTPS. A désactiver en local
+RewriteCond %{HTTPS} !on
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 # Réécriture de index.html vers index.php 
 RewriteRule ^web/index\.html$ web/index.php [L]
 # Réécriture des URL des restaurants 
