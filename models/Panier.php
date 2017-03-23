@@ -26,6 +26,7 @@ class Model_Panier extends Model_Template {
 	private $id_restaurant;
 	private $carteList;
 	private $menuList;
+	private $paiements;
 	
 	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {

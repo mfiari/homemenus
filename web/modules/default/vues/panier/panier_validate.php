@@ -290,7 +290,7 @@
 				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
 			</div>
 		</div>-->
-		<div class="col-md-12">
+		<div class="col-md-6">
 			<form style="text-align : center;" id="payCard" action="?controler=panier&action=valideCarte" method="POST">
 			  <script
 				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
@@ -309,6 +309,16 @@
 			</form>
 			<div class="col-md-offset-2 col-md-10">
 				<img style="width : 60%; margin-top : 20px;" src="res/img/stripe-secure.png" title="HoMe Menus - paiement stripe secure" alt="HoMe Menus - paiement stripe secure">
+			</div>
+		</div>
+		<div class="col-md-6">
+			<form style="text-align : center;" id="" action="?controler=panier&action=multi_paiement" method="POST">
+				<input style="width : 200px;" class="validate-button" type="submit" value="Payer avec plusieurs carte">
+			</form>
+			<div class="col-md-offset-2 col-md-10">
+				<p><i>Régler votre panier en utilisant plusieurs carte de paiement</i></p>
+				<p><i>Idéal pour les repas à plusieurs</i></p>
+				<p><i>Le paiement se fait toujours de manière sécurisé</i></p>
 			</div>
 		</div>
 	</div>

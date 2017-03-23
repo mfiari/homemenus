@@ -21,6 +21,7 @@ include_once ROOT_PATH."models/PDF.php";
 include_once ROOT_PATH."models/Nexmo.php";
 include_once ROOT_PATH."models/SMS.php";
 include_once ROOT_PATH."models/Notification.php";
+include_once ROOT_PATH."models/Paiement.php";
 
 
 class Controller_Panier extends Controller_Default_Template {
@@ -62,6 +63,15 @@ class Controller_Panier extends Controller_Default_Template {
 					break;
 				case "valideCarte" :
 					$this->valideCarte($request);
+					break;
+				case "multi_paiement" :
+					$this->multi_paiement($request);
+					break;
+				case "valideCarteMultiPaiement" :
+					$this->valideCarteMultiPaiement($request);
+					break;
+				case "annuleCarteMultiPaiement" :
+					$this->annuleCarteMultiPaiement($request);
 					break;
 				case "addCodePromo" :
 					$this->addCodePromo($request);
@@ -706,13 +716,251 @@ class Controller_Panier extends Controller_Default_Template {
 					$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
 				}
 				$request->vue = $this->render("paypal_success");
-				
 			} catch(\Stripe\Error\Card $e) {
 				$stripeCode = $e->stripeCode;
 				$panier->setPaymentError("STRIPE", $stripeCode);
 				$this->redirect("finalisation", "panier", '', array('payment' => 'refused'));
 			}
 		}
+	}
+	
+	public function multi_paiement ($request) {
+		if (!$request->_auth) {
+			$this->redirect("finalisation_inscription", "panier");
+		}
+		$panier = new Model_Panier(true, $request->dbConnector);
+		$panier->uid = $request->_auth->id;
+		$request->panier = $panier->load();
+		$paiement = new Model_Paiement(true, $request->dbConnector);
+		$paiement->id_panier = $panier->id;
+		$request->panier->paiements = $paiement->getByPanier();
+		$request->vue = $this->render("multi_paiement");
+	}
+	
+	public function valideCarteMultiPaiement ($request) {
+		
+		$panier = new Model_Panier(true, $request->dbConnector);
+		$panier->uid = $request->_auth->id;
+		$panier = $panier->load();
+		
+		$paiementModel = new Model_Paiement(true, $request->dbConnector);
+		$paiementModel->id_panier = $panier->id;
+		$panier->paiements = $paiementModel->getByPanier();
+		
+		$montant = floatval(str_replace(',', '.', $_POST['montant']));
+		if (!is_float($montant) || $montant <= 0) {
+			$this->redirect("multi_paiement", "panier", '', array('payment' => 'refused'));
+		}
+		
+		$totalPrix = 0;
+		$totalPaiement = 0;
+		
+		foreach ($panier->carteList as $carte) {
+			$totalPrix += $carte->prix;
+		}
+		
+		foreach ($panier->menuList as $menu) {
+			$totalPrix += $menu->prix;
+		}
+		
+		if ($panier->code_promo && $panier->code_promo->surPrixLivraison()) {
+			if (!$panier->code_promo->estGratuit()) {
+				$totalPrix += ($panier->prix_livraison - $panier->code_promo->valeur_prix_livraison);
+			}
+		} else {
+			$totalPrix += $panier->prix_livraison;
+		}
+		
+		if ($panier->code_promo->surPrixTotal()) {
+			if ($panier->code_promo->estGratuit()) {
+				$totalPrix = 0;
+			} else {
+				if ($panier->code_promo->valeur_prix_total != -1) {
+					$totalPrix -= $panier->code_promo->valeur_prix_total;
+				}
+				if ($panier->code_promo->pourcentage_prix_total != -1) {
+					$totalPrix -= ($totalPrix * $panier->code_promo->pourcentage_prix_total) / 100;
+				}
+			}
+		}
+		
+		foreach ($panier->paiements as $paiement) {
+			$totalPaiement += $paiement->montant;
+		}
+		
+		if ($montant + $totalPaiement <= $totalPrix) {
+		
+			require_once WEBSITE_PATH.'res/lib/stripe/init.php';
+			if (isset($_POST['stripeToken'])) {
+				\Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
+
+				// Get the credit card details submitted by the form
+				$token = $_POST['stripeToken'];
+
+				// Create the charge on Stripe's servers - this will charge the user's card
+				try {
+					$charge = \Stripe\Charge::create(array(
+						"amount" => $montant * 100, // amount in cents, again
+						"currency" => "eur",
+						"source" => $token,
+						"description" => "validation commande user ".$request->_auth->id
+					));
+					
+					$paymentToken = $charge->id;
+					
+					$paiementModel->montant = $montant;
+					$paiementModel->method = 'STRIPE';
+					$paiementModel->token = $paymentToken;
+					$paiementModel->save();
+					
+					if ($montant + $totalPaiement == $totalPrix) {
+					
+						$commande = new Model_Commande(true, $request->dbConnector);
+						if ($commande->create($panier)) {
+							$commande->setPaiementMethod("MULTI-PAIEMENT", '');
+							foreach ($panier->paiements as $paiement) {
+								$paiement->remove();
+							}
+							$paiementModel->remove();
+							$panier->remove();
+							$user = new Model_User(true, $request->dbConnector);
+						
+							$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
+							if (count($restaurantUsers) > 0) {
+								$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+								$telephone = '';
+								$oldTelephone = '';
+								foreach ($restaurantUsers as $restaurantUser) {
+									if ($restaurantUser->gcm_token) {
+										$message = "Vous avez reçu une nouvelle commande";
+										// listre des utilisateurs à notifier
+										$gcm->setDevices(array($restaurantUser->gcm_token));
+								 
+										// Le titre de la notification
+										$data = array(
+											"title" => "Nouvelle commande",
+											"key" => "restaurant-new-commande",
+											"id_commande" => $commande->id
+										);
+									
+										// On notifie nos utilisateurs
+										$result = $gcm->send($message, $data);
+									
+										$notification = new Model_Notification();
+										$notification->id_user = $restaurantUser->id;
+										$notification->token = $restaurantUser->gcm_token;
+										$notification->message = $message;
+										$notification->datas = json_encode($data);
+										$notification->is_send = true;
+										$notification->save();
+									}
+								
+									$telephone = $restaurantUser->telephone;
+								
+									if ($telephone != '' && $telephone != $oldTelephone) {
+										$oldTelephone = $telephone;
+										$sms = new Nexmo();
+										$sms->message = "Vous avez recu une nouvelle commande";
+										$sms->addNumero($telephone);
+										$sms->sendMessage();
+									}
+								
+								}
+							} else {
+								writeLog(SERVER_LOG, "Auncun utilisateur restaurant trouvé pour la commande #".$commande->id, LOG_LEVEL_WARNING);
+							}
+						
+							$commande->load();
+						
+							$today = date('Y-m-d');
+						
+							$clientDir = ROOT_PATH.'files/commandes/'.$today.'/client/';
+						
+							if(!is_dir($clientDir)){
+								mkdir($clientDir, 0777, true);
+							}
+						
+							$pdf = new PDF();
+							$pdf->generateFactureClient($commande);
+							$pdf->render('F', $clientDir.'commande'.$commande->id.'.pdf');
+						
+							$attachments = array(
+								$clientDir.'commande'.$commande->id.'.pdf'
+							);
+						
+							$messageContentAdmin =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
+						
+							$messageContentAdmin = str_replace("[COMMANDE_ID]", $commande->id, $messageContentAdmin);
+							$messageContentAdmin = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentAdmin);
+							$messageContentAdmin = str_replace("[CLIENT]", $commande->client->nom.' '.$commande->client->prenom, $messageContentAdmin);
+							$messageContentAdmin = str_replace("[TOTAL]", $commande->prix, $messageContentAdmin);
+							$messageContentAdmin = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentAdmin);
+						
+							send_mail (MAIL_ADMIN, "Nouvelle commande", $messageContentAdmin, MAIL_FROM_DEFAULT, $attachments);
+						
+							$messageContentClient =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_client.html');
+						
+							$messageContentClient = str_replace("[COMMANDE_ID]", $commande->id, $messageContentClient);
+							$messageContentClient = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentClient);
+							$messageContentClient = str_replace("[TOTAL]", $commande->prix, $messageContentClient);
+							$messageContentClient = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentClient);
+						
+							send_mail ($request->_auth->login, "Nouvelle commande", $messageContentClient, MAIL_FROM_DEFAULT, $attachments);
+						
+							$restaurantDir = ROOT_PATH.'files/commandes/'.$today.'/restaurant/';
+						
+							if(!is_dir($restaurantDir)){
+								mkdir($restaurantDir, 0777, true);
+							}
+						
+							$pdf2 = new PDF();
+							$pdf2->generateFactureRestaurant($commande);
+							$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
+						}
+						$request->vue = $this->render("paypal_success");
+					} else {
+						$this->redirect("multi_paiement", "panier");
+					}
+					
+				} catch(\Stripe\Error\Card $e) {
+					$stripeCode = $e->stripeCode;
+					$paiementModel->montant = $montant;
+					$paiementModel->method = 'STRIPE';
+					$paiementModel->token = '';
+					$paiementModel->error_code = $stripeCode;
+					$paiementModel->save();
+					$this->redirect("multi_paiement", "panier", '', array('payment' => 'refused'));
+				}
+			} else {
+				$this->redirect("multi_paiement", "panier");
+			}
+		} else {
+			$this->redirect("multi_paiement", "panier", '', array('payment' => 'refused'));
+		}
+	}
+	
+	public function annuleCarteMultiPaiement ($request) {
+		if (isset($_GET["id_paiement"])) {
+			$paiementModel = new Model_Paiement(true, $request->dbConnector);
+			$paiementModel->id = $_GET["id_paiement"];
+			$paiementModel->load();
+			
+			if ($paiementModel->method == "STRIPE") {
+				require_once WEBSITE_PATH.'res/lib/stripe/init.php';
+				\Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
+
+				try {
+					$re = \Stripe\Refund::create(array(
+						"charge" => $paiementModel->token,
+						"amount" => $paiementModel->montant * 100
+					));
+					$paiementModel->remove();
+				} catch(Stripe\Error\InvalidRequest $e) {
+					var_dump($e); die();
+				}
+			}
+		}
+		$this->redirect("multi_paiement", "panier");
 	}
 	
 	public function addCodePromo ($request) {
