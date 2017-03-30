@@ -29,9 +29,11 @@
 				}
 			?>
 			<div id="main-content">
-				<div class="row">
-					<div class="col-md-12 col-xs-12" style="padding-top : 50px;">
-						<?php include($request->vue); ?>
+				<div class="col-md-12 col-xs-12">
+					<div class="row">
+						<div class="col-md-12 col-xs-12">
+							<?php include($request->vue); ?>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -76,17 +78,12 @@
 					} else if ($request->_auth->status == USER_ADMIN_RESTAURANT) {
 						include('footer_admin_restaurant.html');
 					} else {
-						include('footer.html');
+						include('footer-mobile.html');
 					}
 				} else {
-					include('footer.html');
+					include('footer-mobile.html');
 				}
 			?>
 		</div>
-		<script>
-			$(document).ready(function() {
-				$('#toggle-menu').sidr();
-			});
-		</script>
 	</body>
 </html>

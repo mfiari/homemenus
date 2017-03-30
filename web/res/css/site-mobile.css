@@ -2,8 +2,8 @@
 body  {
 	color: #000000;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 30px;
-	margin:auto;
+	font-size: 12px;
+	background-color: #cfd6da;
 }
 
 h1, h2, h3 {
@@ -20,49 +20,6 @@ div.center {
 
 #page-container {
 	width : 100%;
-}
-
-div.home-background {
-	background-image : url("../img/background-mobile.png");
-	background-repeat : no-repeat;
-	background-size : 100% 100%;
-	bottom : 0;
-	height : 1200px;
-	left : 0;
-	margin : 0 auto;
-	position : absolute;
-	right : 0;
-	top : 0;
-	width : 100%;
-	z-index : 0;
-}
-
-div.background {
-	background-image : url("../img/background3.png");
-	background-repeat : no-repeat;
-	background-size : 100% 100%;
-	bottom : 0;
-	height : 100px;
-	left : 0;
-	margin : 0 auto;
-	position : absolute;
-	right : 0;
-	top : 0;
-	width : 1170px;
-	z-index : 0;
-}
-
-div.gradient {
-	bottom : 0;
-	height : 1200px;
-	left : 0;
-	margin : 0 auto;
-	position : absolute;
-	right : 0;
-	top : 0;
-	width : 100%;
-	z-index : 1;
-	background : rgba(0, 0, 0, 0) linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2)) repeat scroll 0 0;
 }
 
 span.glyphicon-remove {
@@ -140,88 +97,26 @@ button.close-button span.glyphicon-remove {
 
 a.link {
 	color : #ff2a00;
-}
-
-a.link-livraison {
-	border: 1px solid;
-    border-radius: 15px;
-    color: #ffffff;
-    display: inline-block;
-    height: 30px;
-	margin-top: 20px;
-    padding-top: 5px;
-    width: 200px;
-}
-
-div.div-livreur {
-	background-image : url("../img/livreur.png");
-	background-repeat : no-repeat;
-	background-size : 100% 100%;
-	bottom : 0;
-	height : 500px;
-	left : 0;
-	position : absolute;
-	right : 0;
-	top : 0;
-	width : 100%;
-	z-index : -1;
-}
-
-div.gradient-livreur {
-	bottom : 0;
-	height : 500px;
-	left : 0;
-	position : absolute;
-	right : 0;
-	top : 0;
-	width : 100%;
-	z-index : 0;
-	background : rgba(0, 0, 0, 0) linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2)) repeat scroll 0 0;
-}
-
-div.div-restaurant {
-	background-image : url("../img/restaurant.png");
-	background-repeat : no-repeat;
-	background-size : 100% 100%;
-	bottom : 0;
-	height : 500px;
-	left : 0;
-	position : absolute;
-	right : 0;
-	top : 0;
-	width : 100%;
-	z-index : -1;
-}
-
-div.gradient-restaurant {
-	bottom : 0;
-	height : 500px;
-	left : 0;
-	position : absolute;
-	right : 0;
-	top : 0;
-	width : 100%;
-	z-index : 0;
-	background : rgba(0, 0, 0, 0) linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2)) repeat scroll 0 0;
+	cursor : pointer;
 }
 
 /* header */
 
 header {
 	height : 100px;
-	margin-top: 20px;
+	margin-top: 10px;
 	position : relative;
 	width : 100%;
 	z-index : 2;
 }
 
 header.home {
-	height : 1180px;
+	height : 450px;
 }
 
 header #logo {
     position: relative;
-    width: 120px;
+    width: 80px;
 }
 
 header a {
@@ -232,44 +127,52 @@ header a:hover {
 	color : #FFFFFF;
 }
 
-header div.container {
-	width : 100%;
-}
-
-#menu-link {
-	display: inline-block;
-    font-size: 16px;
-    margin-left: 100px;
-}
-
-#menu-link a {
-    margin-left: 20px;
-}
-
-header ul.menu {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-    float: right;
-    font-size: 17px;
-    margin-right: 20px;
-    margin-top: 15px;
-}
-
-header ul.menu li {
-	list-style: outside none none;
-	float: left;
-	margin-right : 20px;
-}
-
-header ul.menu li.user {
-	background-color: #2E0727;
-	border-radius: 50px;
-	padding : 5px;
-}
-
 header h1 {
 	color : #FFFFFF;
-	margin-top : 120px;
+	margin-top : 50px;
+}
+
+div.home-background {
+	background-image : url("../img/background-mobile.png");
+	background-repeat : no-repeat;
+	background-size : 100% 100%;
+	bottom : 0;
+	height : 450px;
+	left : 0;
+	margin : 0 auto;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 100%;
+	z-index : 0;
+}
+
+div.gradient {
+	bottom : 0;
+	height : 450px;
+	left : 0;
+	margin : 0 auto;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 100%;
+	z-index : 1;
+	background : rgba(0, 0, 0, 0) linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2)) repeat scroll 0 0;
+}
+
+div.background {
+	background-image : url("../img/background3.png");
+	background-repeat : no-repeat;
+	background-size : 100% 100%;
+	bottom : 0;
+	height : 80px;
+	left : 0;
+	margin : 0 auto;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 100%;
+	z-index : 0;
 }
 
 div.search-block {
@@ -278,28 +181,26 @@ div.search-block {
 }
 
 div.search-block input#full_address {
-	background-color: rgba(138, 138, 138, 0.5);
-	border-radius: 30px;
-	color : #FFFFFF;
-	height : 100px;
-	width: 95%;
+	border-radius: 15px;
+	width: 90%;
+	height : 40px;
 }
 
 div.search-block a.search-button{
-	background-color: #FF2A00;
-    border-radius: 100px;
+	background-color: #ff2a00;
+    border-radius: 30px;
     display: inline-block;
-    height: 80px;
+    height: 30px;
     left: 80%;
     position: relative;
-    top: 90px;
-    width: 80px;
+    top: 35px;
+    width: 30px;
 }
 
 div.search-block a.search-button span.glyphicon-search{
-	font-size : 40px;
-	top : 20px;
-	left : 20px;
+	font-size : 18px;
+	top : 5px;
+	left : 5px;
 }
 
 /* fin header */
@@ -493,7 +394,7 @@ table .glyphicon {
 	font-size: 20px;
     margin-left: 7px;
     margin-right: 5px;
-    width: 40px;
+    width: 15px;
 }
 
 .stepper-button {
@@ -514,15 +415,61 @@ table .glyphicon {
 	height: 40px;
 }
 
-.stepper-button:hover {
-	background-color:#286090;
-	color:#ffffff;
-	text-decoration:none;
-}
-
 .stepper-button:active {
 	position:relative;
 	top:1px;
+}
+
+div.div-livreur {
+	background-image : url("../img/livreur.png");
+	background-repeat : no-repeat;
+	background-size : 100% 100%;
+	bottom : 0;
+	height : 300px;
+	left : 0;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 100%;
+	z-index : 0;
+}
+
+div.gradient-livreur {
+	bottom : 0;
+	height : 300px;
+	left : 0;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 100%;
+	z-index : 1;
+	background : rgba(0, 0, 0, 0) linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2)) repeat scroll 0 0;
+}
+
+div.div-restaurant {
+	background-image : url("../img/restaurant.png");
+	background-repeat : no-repeat;
+	background-size : 100% 100%;
+	bottom : 0;
+	height : 300px;
+	left : 0;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 100%;
+	z-index : 0;
+}
+
+div.gradient-restaurant {
+	bottom : 0;
+	height : 300px;
+	left : 0;
+	position : absolute;
+	right : 0;
+	top : 0;
+	width : 100%;
+	z-index : 1;
+	background : rgba(0, 0, 0, 0) linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2)) repeat scroll 0 0;
 }
 
 /* fin Main content */

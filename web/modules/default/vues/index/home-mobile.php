@@ -1,51 +1,49 @@
-<div class="row background-violet">
-	<div class="col-md-12 col-md-offset-1">
-		<div class="row">
-			<h2>HoMe Menus, Livraison de repas à domicile</h2>
-		</div>
-		<div class="row center">
-			<div id="myCarousel" class="carousel slide" data-ride="carousel">
-				<!-- Indicators -->
-				<ol class="carousel-indicators">
-					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-					<li data-target="#myCarousel" data-slide-to="1"></li>
-					<li data-target="#myCarousel" data-slide-to="2"></li>
-				</ol>
+<div class="col-md-12 background-violet">
+	<div class="row">
+		<h2>HoMe Menus, Livraison de repas à domicile</h2>
+	</div>
+	<div class="row center">
+		<div id="myCarousel" class="carousel slide" data-ride="carousel">
+			<!-- Indicators -->
+			<ol class="carousel-indicators">
+				<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+				<li data-target="#myCarousel" data-slide-to="1"></li>
+				<li data-target="#myCarousel" data-slide-to="2"></li>
+			</ol>
 
-				<!-- Wrapper for slides -->
-				<div class="carousel-inner" role="listbox">
-					<div class="col-xs-12 item active">
-						<div class="row">
-							<img src="res/img/particulier.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers">
-						</div>
-						<div class="row">
-							<h3>Particuliers</h3>
-						</div>
-						<div class="row">
-							<p>Savourez et dégustez la cuisine des meilleurs restaurants aux environs de chez vous en vous les faisant livrer.</p>
-						</div>
+			<!-- Wrapper for slides -->
+			<div class="carousel-inner" role="listbox">
+				<div class="col-xs-12 item active">
+					<div class="row">
+						<img src="res/img/particulier.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers">
 					</div>
-					<div class="col-xs-12 item">
-						<div class="row">
-							<img src="res/img/entreprises.png" alt="HoMe Menus - Entreprises" Title="HoMe Menus - Entreprises">
-						</div>
-						<div class="row">
-							<h3>Entreprises</h3>
-						</div>
-						<div class="row">
-							<p>Bons repas au bureau ou déjeuners d'équipe ? HoMe Menus a prévu une gamme exceptionnelle de produits et services.</p>
-						</div>
+					<div class="row">
+						<h3>Particuliers</h3>
 					</div>
-					<div class="col-xs-12 item">
-						<div class="row">
-							<img src="res/img/evenement.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers">
-						</div>
-						<div class="row">
-							<h3>Evénement</h3>
-						</div>
-						<div class="row">
-							<p>Un repas d'anniversaire, une réunion, un événement, la commande spéciale est faite pour vous.</p>
-						</div>
+					<div class="row">
+						<p>Savourez et dégustez la cuisine des meilleurs restaurants aux environs de chez vous en vous les faisant livrer.</p>
+					</div>
+				</div>
+				<div class="col-xs-12 item">
+					<div class="row">
+						<img src="res/img/entreprises.png" alt="HoMe Menus - Entreprises" Title="HoMe Menus - Entreprises">
+					</div>
+					<div class="row">
+						<h3>Entreprises</h3>
+					</div>
+					<div class="row">
+						<p>Bons repas au bureau ou déjeuners d'équipe ? HoMe Menus a prévu une gamme exceptionnelle de produits et services.</p>
+					</div>
+				</div>
+				<div class="col-xs-12 item">
+					<div class="row">
+						<img src="res/img/evenement.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers">
+					</div>
+					<div class="row">
+						<h3>Evénement</h3>
+					</div>
+					<div class="row">
+						<p>Un repas d'anniversaire, une réunion, un événement, la commande spéciale est faite pour vous.</p>
 					</div>
 				</div>
 			</div>
@@ -114,69 +112,29 @@
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
 		<!-- Indicators -->
 		<ol class="carousel-indicators">
-			<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-			<li data-target="#myCarousel" data-slide-to="1"></li>
+			<?php $index = 0; ?>
+			<?php foreach ($request->news as $news) : ?>
+				<li data-target="#myCarousel" data-slide-to="<?php echo $index; ?>" class="<?php echo $index == 0 ? 'active' : ''; ?>"></li>
+				<?php $index++; ?>
+			<?php endforeach; ?>
 		</ol>
-		
+
 		<!-- Wrapper for slides -->
 		<div class="carousel-inner" role="listbox">
-			<div class="row item active">
-				<div class="col-md-12" style="background-color : #F4F4F4; color : #000000; padding : 100px;">
-					<h3>Ouverture du restaurant Comme à la maison à Mantes-la-jolie</h3>
-					<div class="col-md-12">
-						<img src="res/img/comme-a-la-maison.png" alt="HoMe Menus - Comme à la maison" Title="HoMe Menus - Comme à la maison">
+			<?php $index = 0; ?>
+			<?php foreach ($request->news as $news) : ?>
+				<div class="row item <?php echo $index == 0 ? 'active' : ''; ?>">
+					<div class="col-md-12" style="background-color : #F4F4F4; color : #000000; padding : 10px;">
+						<h3><?php echo utf8_encode($news->titre); ?></h3>
+						<div class="col-md-12">
+							<img style="width : 100%" src="<?php echo $news->image; ?>" alt="HoMe Menus - <?php echo utf8_encode($news->titre); ?>" Title="HoMe Menus - <?php echo utf8_encode($news->titre); ?>">
+						</div>
+						<p><?php echo utf8_encode($news->text); ?></p>
+						<a class="link" href="<?php echo $news->link_url; ?>"><?php echo $news->link_text; ?></a>
 					</div>
-					<p>Le restaurant Comme à la maison ouvre ses portes dans le centre de Mantes-la-jolie. 
-					Vous pouvez commander dès maintenant en ligne vos plats préférés et être livré en moins d'une heure.
-					Même plus besoin de sortir de chez vous, HoMe Menus s'occupe de tout !</p>
-					<a class="link" href="restaurant-15-Mantes-la-Jolie-Comme-a-la-maison.html"><b>Voir</b> la fiche restaurant</a>
 				</div>
-			</div>
-			<div class="row item">
-				<div class="col-md-12" style="background-color : #F4F4F4; color : #000000; padding : 100px;">
-					<h3>Ouverture du restaurant Le volonté à Mantes-la-jolie</h3>
-					<div class="col-md-12">
-						<img src="res/img/le-volonte.png" alt="HoMe Menus - Le Volonté" Title="HoMe Menus - Le Volonté">
-					</div>
-					<p>Le restaurant Le volonté ouvre ses portes dans le centre de Mantes-la-jolie. 
-					Vous pouvez commander dès maintenant en ligne vos plats préférés et être livré en moins d'une heure.
-					Même plus besoin de sortir de chez vous, HoMe Menus s'occupe de tout !</p>
-					<a class="link" href="restaurant-14-Mantes-la-Jolie-Le-volonte.html"><b>Voir</b> la fiche restaurant</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div style="position: relative; height: 500px;">
-	<div class="div-livreur"></div>
-	<div class="gradient-livreur"></div>
-	<div style="color: #FFFFFF; text-align: center; z-index : 5;">
-		<div>
-			<h3>Devenir livreur</h3>
-		</div>
-		<div>
-			<p>Vous êtes sportif, dynamique et avez envie de vous faire un extra, rejoignez l’aventure HoMe Menus.</p>
-		</div>
-		<div>
-			<a class="link-more" href="">Devenir livreur <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-		</div>
-	</div>
-</div>
-<div style="position: relative; height: 500px;">
-	<div class="div-restaurant"></div>
-	<div class="gradient-restaurant"></div>
-	<div style="color: #FFFFFF; text-align: center; z-index : 5;">
-		<div>
-			<h3>Devenir restaurant partenaire</h3>
-		</div>
-		<div>
-			<p>Besoin d’offrir une nouvelle dimension à votre restaurant. Envie de faire plus de commandes et d’avoir plus de couverts, 
-			sans faire d’effort, ni même faire d’investissement, avec HoMe Menus c’est garanti.</p>
-			<p>Faites nous confiance nous nous occupons de tout !</p>
-			<p>Contactez-nous dès maintenant</p>
-		</div>
-		<div>
-			<a class="link-more" href="">Devenir restaurant partenaire <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+				<?php $index++; ?>
+			<?php endforeach; ?>
 		</div>
 	</div>
 </div>
