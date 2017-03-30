@@ -79,15 +79,12 @@
 				$totalAnomalie++;
 				$montantTotalAnomalie += $commande->annomalie_montant;
 			}
-			
-			if ($commande->date_validation_restaurant == '0000-00-00 00:00' || $commande->date_fin_preparation_restaurant == '0000-00-00 00:00') {
+			if ($commande->date_validation_restaurant == '0000-00-00 00:00:00' || $commande->date_fin_preparation_restaurant == '0000-00-00 00:00:00') {
 				$commandeNonValideResto[] = $commande;
 			}
-			
-			if ($commande->date_recuperation_livreur == '0000-00-00 00:00' || $commande->date_livraison == '0000-00-00 00:00') {
+			if ($commande->date_recuperation_livreur == '0000-00-00 00:00:00' || $commande->date_livraison == '0000-00-00 00:00:00') {
 				$commandeNonValideLivreur[] = $commande;
 			}
-			
 			$commande->remove();
 		} else {
 			$totalCommandeError++;
