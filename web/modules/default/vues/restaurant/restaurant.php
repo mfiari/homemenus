@@ -117,7 +117,7 @@
 </div>
 <div id="restaurant-block" class="row" style="background-color : #F4F4F4;">
 	<div class="col-md-4 col-sm-4">
-		<img style="width : 100%" src="<?php echo getLogoRestaurant($restaurant->id); ?>" alt="HoMe Menus - Dalla Famiglia" Title="HoMe Menus - Dalla Famiglia">
+		<img style="width : 100%" src="<?php echo getLogoRestaurant($restaurant->id); ?>" alt="HoMe Menus - <?php echo utf8_encode($restaurant->nom); ?>" Title="HoMe Menus - <?php echo utf8_encode($restaurant->nom); ?>">
 	</div>
 	<div class="col-md-8 col-sm-8" style="font-size : 12px;">
 		<span><b style="font-size : 14px;"><?php echo utf8_encode($restaurant->rue); ?>, <?php echo $restaurant->code_postal; ?> <?php echo $restaurant->ville; ?></b></span><br /><br />

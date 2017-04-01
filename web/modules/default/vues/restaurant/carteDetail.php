@@ -77,7 +77,7 @@
 		Votre produit a bien été ajouté au panier
 	</div>
 	<div class="row">
-		<div class="col-md-6 col-sm-6 center">
+		<div class="col-md-6 col-sm-6 col-xs-12 center">
 			<?php if ($request->has_livreur_dispo === false) : ?>
 				<div class="alert alert-danger" role="alert" style="text-align: center;">
 					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -94,7 +94,7 @@
 				<button id="addtocard" class="validate-button" type="submit">Ajouter au panier</button>
 			<?php endif; ?>
 		</div>
-		<div class="col-md-6 col-sm-6 center">
+		<div class="col-md-6 col-sm-6 col-xs-12 center">
 			<button type="button" class="close-button" data-dismiss="modal">Fermer <span class="glyphicon glyphicon-remove" aria-hidden="true"></button>
 		</div>
 	</div>
