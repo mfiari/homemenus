@@ -1,5 +1,5 @@
-<?php include(WEBSITE_PATH.'layouts/panier_info.php'); ?>
 <?php 
+	include(WEBSITE_PATH.'layouts/panier_info.php');
 	$restaurant = $request->restaurant;
 	$livreurs = $request->livreurs;
 	$horaire = $restaurant->horaire;
@@ -83,7 +83,7 @@
 	<?php endforeach; ?>
 </script>
 <div id="panier-content">
-	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=restaurant&action=index&id=<?php echo $request->panier->restaurant->id; ?>">
+	<a style="margin-top: 10px;" class="close-button" href="?controler=restaurant&action=index&id=<?php echo $request->panier->restaurant->id; ?>">
 		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour à la carte du restaurant
 	</a>
 	<div>
@@ -214,20 +214,6 @@
 						</table>
 					</div>
 				</div>
-				<div id="codePromoBlock" style="margin-bottom : 20px;">
-					<span>Code promo</span><br />
-					<input id="code_promo" name="code_promo" type="text" maxlength="10">
-					<button id="codePromoButton" class="btn btn-primary" type="button">Valider</button>
-					<div style="display : none;" class="alert alert-success" role="alert">
-						<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-						Votre code promo a été validé.
-					</div>
-					<div style="display : none;" class="alert alert-danger" role="alert">
-						<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-						<span class="sr-only">Error:</span>
-						<span class="message"></span>
-					</div>
-				</div>
 				<?php if ($request->panier->prix_minimum > ($totalPrix - $prix_livraison)) : ?>
 					<div class="alert alert-danger" role="alert">
 						<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -236,9 +222,9 @@
 					</div>
 				<?php else : ?>
 					<?php if ($horaire->heure_debut > $current_heure || ($horaire->heure_debut == $current_heure && $horaire->minute_debut > $current_minute)) : ?>
-						<button id="command" class="btn btn-primary" type="submit">Précommander</button>
+						<button id="command" class="validate-button" type="submit">Précommander</button>
 					<?php else : ?>
-						<button id="command" class="btn btn-primary" type="submit">Commander</button>
+						<button id="command" class="validate-button" type="submit">Commander</button>
 					<?php endif; ?>
 				<?php endif; ?>
 			</form>
@@ -246,9 +232,6 @@
 			<span>(vide)</span>
 		<?php endif; ?>
 	</div>
-	<a style="margin-top: 10px;" class="btn btn-primary" href="?controler=restaurant&action=index&id=<?php echo $restaurant->id; ?>">
-		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour à la carte du restaurant
-	</a>
 </div>
 
 <script type="text/javascript">
@@ -378,7 +361,7 @@
 	function reloadPanier () {
 		$.ajax({
 			type: "GET",
-			url: '?controler=restaurant&action=panier&type=ajax',
+			url: 'index.php?controler=restaurant&action=panier&type=ajax',
 			dataType: "html"
 		}).done(function( msg ) {
 			$("#panier-content").html(msg);
@@ -391,9 +374,19 @@
 	}
 </script>
 <style>
+
+	#panier-content a.close-button {
+		width : 250px;
+	}
 	
 	#command {
-		font-size : 30px;
+		font-size : 20px;
+	}
+	
+	#panierForm .panel-heading {
+		background-color : #F4F4F4;
+		border-color : #F4F4F4;
+		color : #000000;
 	}
 	
 </style>
