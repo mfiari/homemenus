@@ -19,6 +19,7 @@
 						<li><a href="contact.html">Contact</a></li>
 						<li><a href="faq.html">FAQ</a></li>
 						<li><a href="index.php?action=login">Compte</a></li>
+						<li><a href="index.php?controler=restaurant&action=panier">Panier</a></li>
 					</ul>
 				</div><!--/.nav-collapse -->
 			</div>

@@ -20,6 +20,7 @@
 						<li><a href="contact.html">Contact</a></li>
 						<li><a href="faq.html">FAQ</a></li>
 						<li><a href="faq.html">Compte</a></li>
+						<li><a href="index.php?controler=restaurant&action=panier">Panier</a></li>
 					</ul>
 				</div><!--/.nav-collapse -->
 			</div>
@@ -31,7 +32,7 @@
 			<span style="background-color: rgba(255, 42, 0, 0.7); padding: 2px 10px;">région de Mantes-la-Jolie</span>
 		</div>
 		<div id="adress-search">
-			<form id="adress-form" action="?controler=restaurant&action=recherche" method="POST">
+			<form id="adress-form" action="restaurants.html" method="POST">
 				<div class="search-block">
 					<?php
 						$adresse = "";
