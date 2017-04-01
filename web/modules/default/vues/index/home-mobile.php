@@ -52,20 +52,18 @@
 </div>
 <div>
 	<h2>Les nouveaux restaurants</h2>
-	<div id="myCarousel" class="carousel slide" data-ride="carousel">
+	<div id="restaurants-carousel" class="carousel slide" data-ride="carousel">
 		<!-- Indicators -->
 		<ol class="carousel-indicators">
-			<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-			<li data-target="#myCarousel" data-slide-to="1"></li>
-			<li data-target="#myCarousel" data-slide-to="2"></li>
-			<li data-target="#myCarousel" data-slide-to="3"></li>
-			<li data-target="#myCarousel" data-slide-to="4"></li>
-			<li data-target="#myCarousel" data-slide-to="5"></li>
+			<li data-target="#restaurants-carousel" data-slide-to="0" class="active"></li>
+			<li data-target="#restaurants-carousel" data-slide-to="1"></li>
+			<li data-target="#restaurants-carousel" data-slide-to="2"></li>
+			<li data-target="#restaurants-carousel" data-slide-to="3"></li>
 		</ol>
 
 		<!-- Wrapper for slides -->
 		<div class="carousel-inner" role="listbox">
-			<div class="col-xs-12 item active" style="position: relative;">
+			<div class="item active" style="">
 				<div style="bottom : 0; color : #FFFFFF; left : 20px; position : absolute; z-index : 2;">
 					<h3>Comme à la maison</h3>
 					<p>Restaurant Hispano italien</p>
@@ -74,7 +72,7 @@
 					<img style="width : 100%;" src="res/img/comme-a-la-maison.png" alt="HoMe Menus - Comme à la maison" Title="HoMe Menus - Comme à la maison">
 				</a>
 			</div>
-			<div class="col-xs-12 item" style="position: relative;">
+			<div class="item" style="">
 				<div style="bottom : 0; color : #FFFFFF; left : 20px; position : absolute; z-index : 2;">
 					<h3>Le volonté</h3>
 					<p>Restaurant chinois</p>
@@ -83,7 +81,7 @@
 					<img style="width : 100%;" src="res/img/le-volonte.png" alt="HoMe Menus - Le volonté" Title="HoMe Menus - Le volonté">
 				</a>
 			</div>
-			<div class="col-xs-12 item" style="position: relative;">
+			<div class="item" style="">
 				<div style="bottom : 0; color : #FFFFFF; left : 20px; position : absolute; z-index : 2;">
 					<h3>La Villa Mantes</h3>
 					<p>Restaurant franco asiatique</p>
@@ -92,7 +90,7 @@
 					<img style="width : 100%;" src="res/img/la-villa-mantes.png" alt="HoMe Menus - La villa mantes" Title="HoMe Menus - La villa mantes">
 				</a>
 			</div>
-			<div class="col-xs-12 item" style="position: relative;">
+			<div class="item" style="">
 				<div style="bottom : 0; color : #FFFFFF; left : 20px; position : absolute; z-index : 2;">
 					<h3>Taj Mahal</h3>
 					<p>Restaurant indien</p>
@@ -102,6 +100,16 @@
 				</a>
 			</div>
 		</div>
+		
+		<!-- Left and right controls -->
+		<a class="left carousel-control" href="#restaurants-carousel" role="button" data-slide="prev">
+			<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+			<span class="sr-only">Previous</span>
+		</a>
+		<a class="right carousel-control" href="#restaurants-carousel" role="button" data-slide="next">
+			<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+			<span class="sr-only">Next</span>
+		</a>
 	</div>
 	<div class="center">
 		<a class="link" href="restaurants-partenaire.html"><b>Voir</b> tous les restaurants</a>
