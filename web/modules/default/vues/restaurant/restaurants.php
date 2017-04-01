@@ -2,7 +2,7 @@
 	<h1>Liste des restaurants</h1>
 </div>
 <div class="row">
-	<form id="restaurant-filter-form" class="form-inline" action="?controler=restaurant&action=recherche" method="POST">
+	<form id="restaurant-filter-form" class="form-inline" action="restaurants.html" method="POST">
 		<div class="row">
 			<div class="col-md-5 col-sm-5">
 				<div class="form-group">
@@ -57,7 +57,7 @@
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 				<span class="sr-only">Error:</span>
 				Votre recherche n'a retourné aucun résultat. Peut-être devriez-vous augmenter la distance de recherche.
-				<p>Rendez-vous sur notre page <a href="?action=restaurants_partenaire">restaurants partenaires</a> afin de voir les restaurants avec lesquels nous travaillons</p>
+				<p>Rendez-vous sur notre page <a href="restaurants-partenaire.html">restaurants partenaires</a> afin de voir les restaurants avec lesquels nous travaillons</p>
 				
 			</div>
 		<?php else : ?>
