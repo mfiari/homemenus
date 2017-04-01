@@ -78,6 +78,16 @@ button.send-button span.glyphicon-chevron-right {
     width: 150px;
 }
 
+a.close-button {
+	background-color: rgba(138, 138, 138, 0.3);
+    border-radius: 12px;
+    color: #ffffff;
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 150px;
+}
+
 button.close-button {
 	background-color: rgba(138, 138, 138, 0.3);
     border-radius: 12px;
@@ -99,11 +109,25 @@ a.link {
 	color : #ff2a00;
 	cursor : pointer;
 }
+	
+@media (orientation : portrait) {
+	div.modal-content {
+		max-height : 450px;
+		overflow : auto;
+	}
+}
+
+@media (orientation : landscape) {
+	div.modal-content {
+		max-height : 300px;
+		overflow : auto;
+	}
+}
 
 /* header */
 
 header {
-	height : 100px;
+	height : 70px;
 	margin-top: 10px;
 	position : relative;
 	width : 100%;
@@ -112,6 +136,10 @@ header {
 
 header.home {
 	height : 450px;
+}
+
+header a.logo {
+    padding-top: 0px;
 }
 
 header #logo {
@@ -165,7 +193,7 @@ div.background {
 	background-repeat : no-repeat;
 	background-size : 100% 100%;
 	bottom : 0;
-	height : 80px;
+	height : 70px;
 	left : 0;
 	margin : 0 auto;
 	position : absolute;
@@ -260,28 +288,6 @@ div.even {
 
 .badge.coming{
     background-color: #0000FF;
-}
-
-#myCarousel .item {
-    border: none;
-}
-
-.item {
-    border: 1px solid black;
-    border-radius: 5px;
-}
-
-.item .title {
-	text-align : center;
-}
-
-.item .vignette {
-    text-align: center;
-}
-
-.item .vignette img {
-	height: 200px;
-    width: 200px;
 }
 
 input.error {
@@ -394,7 +400,7 @@ table .glyphicon {
 	font-size: 20px;
     margin-left: 7px;
     margin-right: 5px;
-    width: 15px;
+    width: 50px;
 }
 
 .stepper-button {
