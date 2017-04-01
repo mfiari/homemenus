@@ -828,9 +828,75 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTotal ($dateDebut, $dateFin) {
-		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, 
-		SUM(prix_livraison) AS part_livreur, SUM(annomalie_montant) AS anomalie, 
-		SUM(prix + prix_livraison) AS total_prix FROM commande_history
+		$sql = "SELECT 
+			COUNT(*) AS total_commande, 
+			SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(table1.montant) AS anomalie_restaurant, 
+			SUM(CASE 
+				WHEN id_code_promo IS NULL THEN (prix_livraison)
+				WHEN id_code_promo = '' THEN (prix_livraison)
+				ELSE
+					CASE 
+						WHEN type_reduc_code_promo = 'GRATUIT' THEN 0
+						WHEN type_reduc_code_promo = 'REDUCTION' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN prix_livraison - valeur_prix_livraison_code_promo
+								WHEN sur_prix_total_code_promo THEN
+									CASE 
+										WHEN valeur_prix_total_code_promo > 0 THEN prix_livraison
+										WHEN pourcentage_prix_total_code_promo > 0 THEN prix_livraison
+									END
+							END
+					END
+			END) AS part_livreur,
+			SUM(CASE 
+				WHEN id_code_promo IS NULL THEN (prix + prix_livraison)
+				WHEN id_code_promo = '' THEN (prix + prix_livraison)
+				ELSE
+					CASE 
+						WHEN type_reduc_code_promo = 'GRATUIT' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN prix
+								WHEN sur_prix_total_code_promo THEN 0
+							END
+						WHEN type_reduc_code_promo = 'REDUCTION' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN prix + (prix_livraison - valeur_prix_livraison_code_promo)
+								WHEN sur_prix_total_code_promo THEN
+									CASE 
+										WHEN valeur_prix_total_code_promo > 0 THEN prix + prix_livraison - valeur_prix_total_code_promo
+										WHEN pourcentage_prix_total_code_promo > 0 THEN (prix + prix_livraison) - (((prix + prix_livraison) * pourcentage_prix_total_code_promo) / 100)
+									END
+							END
+					END
+			END) AS total_prix,
+			SUM(table2.montant) AS anomalie_commande,
+			SUM(CASE 
+				WHEN prix_livraison = 0 THEN 
+					CASE WHEN distance < 6 THEN 2.5 ELSE 5 END
+				WHEN id_code_promo IS NOT NULL THEN
+					CASE 
+						WHEN type_reduc_code_promo = 'GRATUIT' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN prix_livraison
+								WHEN sur_prix_total_code_promo THEN prix + prix_livraison
+							END
+						WHEN type_reduc_code_promo = 'REDUCTION' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN valeur_prix_livraison_code_promo
+								WHEN sur_prix_total_code_promo THEN 
+									CASE 
+										WHEN valeur_prix_total_code_promo > 0 THEN valeur_prix_total_code_promo
+										WHEN pourcentage_prix_total_code_promo > 0 THEN (((prix + prix_livraison) * pourcentage_prix_total_code_promo) / 100)
+									END
+							END
+					END
+				ELSE 0
+			END) AS promotion
+		FROM commande_history com
+		LEFT JOIN (SELECT id_commande, SUM(annomalie_montant) AS montant FROM anomalie_commande_history WHERE sur_restaurant = 1) AS table1
+			ON table1.id_commande = com.id
+		LEFT JOIN (SELECT id_commande, SUM(annomalie_montant) AS montant FROM anomalie_commande_history WHERE sur_restaurant = 0) AS table2
+			ON  table2.id_commande = com.id 
 		WHERE date_commande BETWEEN :date_debut AND :date_fin";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":date_debut", $dateDebut);
@@ -863,12 +929,94 @@ class Model_Commande_History extends Model_Template {
 		return $stmt->fetchAll();
 	}
 	
-	public function getTotalByMonth ($dateDebut, $dateFin) {
+	/*public function getTotalByMonth ($dateDebut, $dateFin) {
 		$sql = "SELECT MONTH(date_commande) AS month, COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, 
 		SUM(prix_livraison) AS part_livreur,  SUM(annomalie_montant) AS anomalie, 
 		SUM(prix + prix_livraison) AS total_prix FROM commande_history
 		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		GROUP BY month";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return $stmt->fetchAll();
+	}*/
+	
+	public function getTotalByMonth ($dateDebut, $dateFin) {
+		$sql = "SELECT 
+			YEAR(date_commande) AS year, MONTH(date_commande) AS month, COUNT(*) AS total_commande, 
+			SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(table1.montant) AS anomalie_restaurant, 
+			SUM(CASE 
+				WHEN id_code_promo IS NULL THEN (prix_livraison)
+				WHEN id_code_promo = '' THEN (prix_livraison)
+				ELSE
+					CASE 
+						WHEN type_reduc_code_promo = 'GRATUIT' THEN 0
+						WHEN type_reduc_code_promo = 'REDUCTION' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN prix_livraison - valeur_prix_livraison_code_promo
+								WHEN sur_prix_total_code_promo THEN
+									CASE 
+										WHEN valeur_prix_total_code_promo > 0 THEN prix_livraison
+										WHEN pourcentage_prix_total_code_promo > 0 THEN prix_livraison
+									END
+							END
+					END
+			END) AS part_livreur,
+			SUM(CASE 
+				WHEN id_code_promo IS NULL THEN (prix + prix_livraison)
+				WHEN id_code_promo = '' THEN (prix + prix_livraison)
+				ELSE
+					CASE 
+						WHEN type_reduc_code_promo = 'GRATUIT' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN prix
+								WHEN sur_prix_total_code_promo THEN 0
+							END
+						WHEN type_reduc_code_promo = 'REDUCTION' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN prix + (prix_livraison - valeur_prix_livraison_code_promo)
+								WHEN sur_prix_total_code_promo THEN
+									CASE 
+										WHEN valeur_prix_total_code_promo > 0 THEN prix + prix_livraison - valeur_prix_total_code_promo
+										WHEN pourcentage_prix_total_code_promo > 0 THEN (prix + prix_livraison) - (((prix + prix_livraison) * pourcentage_prix_total_code_promo) / 100)
+									END
+							END
+					END
+			END) AS total_prix,
+			SUM(table2.montant) AS anomalie_commande,
+			SUM(CASE 
+				WHEN prix_livraison = 0 THEN 
+					CASE WHEN distance < 6 THEN 2.5 ELSE 5 END
+				WHEN id_code_promo IS NOT NULL THEN
+					CASE 
+						WHEN type_reduc_code_promo = 'GRATUIT' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN prix_livraison
+								WHEN sur_prix_total_code_promo THEN prix + prix_livraison
+							END
+						WHEN type_reduc_code_promo = 'REDUCTION' THEN
+							CASE 
+								WHEN sur_prix_livraison_code_promo THEN valeur_prix_livraison_code_promo
+								WHEN sur_prix_total_code_promo THEN 
+									CASE 
+										WHEN valeur_prix_total_code_promo > 0 THEN valeur_prix_total_code_promo
+										WHEN pourcentage_prix_total_code_promo > 0 THEN (((prix + prix_livraison) * pourcentage_prix_total_code_promo) / 100)
+									END
+							END
+					END
+				ELSE 0
+			END) AS promotion
+		FROM commande_history com
+		LEFT JOIN (SELECT id_commande, SUM(annomalie_montant) AS montant FROM anomalie_commande_history WHERE sur_restaurant = 1) AS table1
+			ON table1.id_commande = com.id
+		LEFT JOIN (SELECT id_commande, SUM(annomalie_montant) AS montant FROM anomalie_commande_history WHERE sur_restaurant = 0) AS table2
+			ON  table2.id_commande = com.id 
+		WHERE date_commande BETWEEN :date_debut AND :date_fin
+		GROUP BY year, month";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":date_debut", $dateDebut);
 		$stmt->bindValue(":date_fin", $dateFin);

@@ -2622,8 +2622,77 @@ class Model_Commande extends Model_Template {
 	}
 	
 	public function getTotal () {
-		$sql = "SELECT COUNT(*) AS total_commande, SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(prix_livraison) AS part_livreur, 
-		SUM(annomalie_montant) AS anomalie, SUM(prix + prix_livraison) AS total_prix FROM commande";
+		$sql = "SELECT 
+			COUNT(*) AS total_commande, 
+			SUM(prix - ((prix * part_restaurant) / 100)) AS part_restaurant, SUM(table1.montant) AS anomalie_restaurant, 
+			SUM(CASE 
+				WHEN id_code_promo IS NULL THEN (prix_livraison)
+				WHEN id_code_promo = '' THEN (prix_livraison)
+				ELSE
+					CASE 
+						WHEN promo.type_reduc = 'GRATUIT' THEN 0
+						WHEN promo.type_reduc = 'REDUCTION' THEN
+							CASE 
+								WHEN promo.sur_prix_livraison THEN prix_livraison - promo.valeur_prix_livraison
+								WHEN promo.sur_prix_total THEN
+									CASE 
+										WHEN promo.valeur_prix_total > 0 THEN prix_livraison
+										WHEN promo.pourcentage_prix_total > 0 THEN prix_livraison
+									END
+							END
+					END
+			END) AS part_livreur,
+			SUM(CASE 
+				WHEN id_code_promo IS NULL THEN (prix + prix_livraison)
+				WHEN id_code_promo = '' THEN (prix + prix_livraison)
+				ELSE
+					CASE 
+						WHEN promo.type_reduc = 'GRATUIT' THEN
+							CASE 
+								WHEN promo.sur_prix_livraison THEN prix
+								WHEN promo.sur_prix_total THEN 0
+							END
+						WHEN promo.type_reduc = 'REDUCTION' THEN
+							CASE 
+								WHEN promo.sur_prix_livraison THEN prix + (prix_livraison - promo.valeur_prix_livraison)
+								WHEN promo.sur_prix_total THEN
+									CASE 
+										WHEN promo.valeur_prix_total > 0 THEN prix + prix_livraison - promo.valeur_prix_total
+										WHEN promo.pourcentage_prix_total > 0 THEN (prix + prix_livraison) - (((prix + prix_livraison) * promo.pourcentage_prix_total) / 100)
+									END
+							END
+					END
+			END) AS total_prix,
+			SUM(table2.montant) AS anomalie_commande,
+			SUM(CASE 
+				WHEN prix_livraison = 0 THEN 
+					CASE WHEN distance < 6 THEN 2.5 ELSE 5 END
+				WHEN id_code_promo IS NOT NULL THEN
+					CASE 
+						WHEN promo.type_reduc = 'GRATUIT' THEN
+							CASE 
+								WHEN promo.sur_prix_livraison THEN prix_livraison
+								WHEN promo.sur_prix_total THEN prix + prix_livraison
+							END
+						WHEN promo.type_reduc = 'REDUCTION' THEN
+							CASE 
+								WHEN promo.sur_prix_livraison THEN promo.valeur_prix_livraison
+								WHEN promo.sur_prix_total THEN 
+									CASE 
+										WHEN promo.valeur_prix_total > 0 THEN promo.valeur_prix_total
+										WHEN promo.pourcentage_prix_total > 0 THEN (((prix + prix_livraison) * promo.pourcentage_prix_total) / 100)
+									END
+							END
+					END
+				ELSE 0
+			END) AS promotion
+		FROM commande com
+		LEFT JOIN code_promo promo ON promo.id = com.id_code_promo
+		LEFT JOIN (SELECT id_commande, SUM(annomalie_montant) AS montant FROM anomalie_commande WHERE sur_restaurant = 1) AS table1
+			ON table1.id_commande = com.id
+		LEFT JOIN (SELECT id_commande, SUM(annomalie_montant) AS montant FROM anomalie_commande WHERE sur_restaurant = 0) AS table2
+			ON  table2.id_commande = com.id
+		";
 		$stmt = $this->db->prepare($sql);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);

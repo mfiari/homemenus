@@ -31,20 +31,24 @@
 								<tr>
 									<th>Nb de commande</th>
 									<th>Total restaurant</th>
+									<th>Anomalies restaurant</th>
 									<th>Total Livreur</th>
-									<th>Total Anomalies</th>
 									<th>Total HoMe Menus</th>
+									<th>Anomalies HoMe Menus</th>
 									<th>Total</th>
+									<th>Promotions</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr>
 									<td><?php echo $request->resultats['total_commande']; ?></td>
-									<td><?php echo number_format($request->resultats['part_restaurant'] - $request->resultats['anomalie'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['part_restaurant'] - $request->resultats['anomalie_restaurant'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['anomalie_restaurant'], 2, ',', ' '); ?></td>
 									<td><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></td>
-									<td><?php echo number_format($request->resultats['anomalie'], 2, ',', ' '); ?></td>
-									<td><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'] - $request->resultats['anomalie_commande'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['anomalie_commande'], 2, ',', ' '); ?></td>
 									<td><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></td>
+									<td><?php echo number_format($request->resultats['promotion'], 2, ',', ' '); ?></td>
 								</tr>
 							</tbody>
 						</table>
@@ -59,22 +63,26 @@
 									<th>Mois</th>
 									<th>Nb de commande</th>
 									<th>Total restaurant</th>
+									<th>Anomalies restaurant</th>
 									<th>Total Livreur</th>
-									<th>Total Anomalies</th>
 									<th>Total HoMe Menus</th>
+									<th>Anomalies HoMe Menus</th>
 									<th>Total</th>
+									<th>Promotions</th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php foreach ($request->months as $month) : ?>
 									<tr>
-										<td><?php echo getMonthByIndex($month['month']); ?></td>
+										<td><?php echo getMonthByIndex($month['month']); ?> <?php echo $month['year']; ?></td>
 										<td><?php echo $month['total_commande']; ?></td>
-										<td><?php echo number_format($month['part_restaurant'] - $month['anomalie'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['part_restaurant'] - $month['anomalie_restaurant'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['anomalie_restaurant'], 2, ',', ' '); ?></td>
 										<td><?php echo number_format($month['part_livreur'], 2, ',', ' '); ?></td>
-										<td><?php echo number_format($month['anomalie'], 2, ',', ' '); ?></td>
-										<td><?php echo number_format($month['total_prix'] - $month['part_restaurant'] - $month['part_livreur'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['total_prix'] - $month['part_restaurant'] - $month['part_livreur'] - $month['anomalie_commande'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['anomalie_commande'], 2, ',', ' '); ?></td>
 										<td><?php echo number_format($month['total_prix'], 2, ',', ' '); ?></td>
+										<td><?php echo number_format($month['promotion'], 2, ',', ' '); ?></td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -82,11 +90,13 @@
 								<tr>
 									<th>Total</th>
 									<th><?php echo $request->resultats['total_commande']; ?></th>
-									<th><?php echo number_format($request->resultats['part_restaurant'] - $request->resultats['anomalie'], 2, ',', ' '); ?></th>
+									<th><?php echo number_format($request->resultats['part_restaurant'] - $request->resultats['anomalie_restaurant'], 2, ',', ' '); ?></th>
+									<th><?php echo number_format($request->resultats['anomalie_restaurant'], 2, ',', ' '); ?></th>
 									<th><?php echo number_format($request->resultats['part_livreur'], 2, ',', ' '); ?></th>
-									<td><?php echo number_format($request->resultats['anomalie'], 2, ',', ' '); ?></td>
-									<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'], 2, ',', ' '); ?></td>
+									<th><?php echo number_format($request->resultats['total_prix'] - $request->resultats['part_restaurant'] - $request->resultats['part_livreur'] - $request->resultats['anomalie_commande'], 2, ',', ' '); ?></th>
+									<th><?php echo number_format($request->resultats['anomalie_commande'], 2, ',', ' '); ?></th>
 									<th><?php echo number_format($request->resultats['total_prix'], 2, ',', ' '); ?></th>
+									<th><?php echo number_format($request->resultats['promotion'], 2, ',', ' '); ?></th>
 								</tr>
 							</tfoot>
 						</table>
