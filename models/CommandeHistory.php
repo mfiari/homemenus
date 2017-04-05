@@ -1011,9 +1011,9 @@ class Model_Commande_History extends Model_Template {
 				ELSE 0
 			END) AS promotion
 		FROM commande_history com
-		LEFT JOIN (SELECT id_commande, SUM(annomalie_montant) AS montant FROM anomalie_commande_history WHERE sur_restaurant = 1) AS table1
+		LEFT JOIN (SELECT id_commande, (annomalie_montant) AS montant FROM anomalie_commande_history WHERE sur_restaurant = 1) AS table1
 			ON table1.id_commande = com.id
-		LEFT JOIN (SELECT id_commande, SUM(annomalie_montant) AS montant FROM anomalie_commande_history WHERE sur_restaurant = 0) AS table2
+		LEFT JOIN (SELECT id_commande, (annomalie_montant) AS montant FROM anomalie_commande_history WHERE sur_restaurant = 0) AS table2
 			ON  table2.id_commande = com.id 
 		WHERE date_commande BETWEEN :date_debut AND :date_fin
 		GROUP BY year, month";
