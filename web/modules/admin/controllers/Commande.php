@@ -1024,6 +1024,7 @@ class Controller_Commande extends Controller_Admin_Template {
 			$pdf2 = new PDF();
 			$pdf2->generateFactureRestaurant($commande);
 			$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
+			carteDeFidelite($request, $commande);
 		}
 		$this->redirect('index', 'commande');
 	}

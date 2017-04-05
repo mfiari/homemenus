@@ -662,7 +662,6 @@ class Controller_Panier extends Controller_Default_Template {
 								$sms->addNumero($telephone);
 								$sms->sendMessage();
 							}
-							
 						}
 					} else {
 						writeLog(SERVER_LOG, "Auncun utilisateur restaurant trouvé pour la commande #".$commande->id, LOG_LEVEL_WARNING);
@@ -714,6 +713,9 @@ class Controller_Panier extends Controller_Default_Template {
 					$pdf2 = new PDF();
 					$pdf2->generateFactureRestaurant($commande);
 					$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
+					
+					carteDeFidelite($request, $commande);
+					
 				}
 				$request->vue = $this->render("paypal_success");
 			} catch(\Stripe\Error\Card $e) {
@@ -916,6 +918,7 @@ class Controller_Panier extends Controller_Default_Template {
 							$pdf2 = new PDF();
 							$pdf2->generateFactureRestaurant($commande);
 							$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
+							carteDeFidelite($request, $commande);
 						}
 						$request->vue = $this->render("paypal_success");
 					} else {
