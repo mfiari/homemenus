@@ -12,7 +12,9 @@
 	writeLog (CRON_LOG, "copy database recette ".MYSQL_RECETTE_DBNAME);
 	
 	$modelDatabase = new Model_Database();
-	$modelDatabase->copy_database(MYSQL_RECETTE_DBNAME);
+	if (!$modelDatabase->copy_database(MYSQL_RECETTE_DBNAME)) {
+		writeLog (CRON_LOG, "Echec copy database recette", LOG_LEVEL_ERROR);
+	}
 	
 	
 	writeLog (CRON_LOG, "fin copy database recette ".MYSQL_RECETTE_DBNAME);

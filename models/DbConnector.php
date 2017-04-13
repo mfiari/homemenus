@@ -16,8 +16,16 @@ class DbConnector {
 		return $this->db;
 	}
 	
+	public function failed () {
+		$this->sqlHasFailed = true;
+	}
+	
 	public function beginTransaction () {
 		$this->db->beginTransaction();
+	}
+	
+	public function errorInfo () {
+		return $this->db->errorInfo();
 	}
 	
 	public function endTransaction () {

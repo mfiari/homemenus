@@ -9,7 +9,7 @@ class Model_Database extends Model_Template {
 	}
 	
 	private function getTables () {
-		return array (
+		/*return array (
 			"days",
 			"tags",
 			"certificats",
@@ -94,7 +94,113 @@ class Model_Database extends Model_Template {
 			"mails",
 			"recherches",
 			"recherche_detail"
+		);*/
+		$tables = array(
+			"days",
+			"tags",
+			"certificats",
+			"folio_num_commande",
+			"news",
+			"restaurants",
+			"restaurant_virement",
+			"restaurant_tag",
+			"restaurant_certificat",
+			"restaurant_horaires",
+			"restaurant_format",
+			"restaurant_formule",
+			"restaurant_categorie",
+			"restaurant_option",
+			"restaurant_option_value",
+			"supplements",
+			"carte",
+			"carte_format",
+			"carte_disponibilite",
+			"carte_option",
+			"carte_supplement",
+			"carte_accompagnement",
+			"carte_accompagnement_contenu",
+			"menus",
+			"menu_format",
+			"menu_disponibilite",
+			"menu_formule",
+			"menu_categorie",
+			"menu_contenu",
+			"users",
+			"user_session",
+			"user_client",
+			"user_client_information",
+			"user_client_premium",
+			"user_livreur",
+			"user_livreur_dispo",
+			"user_livreur_position",
+			"user_livreur_virement",
+			"user_restaurant",
+			"user_parametre",
+			"commentaire_carte",
+			"commentaire_menu",
+			"commentaire_restaurant",
+			"distance_livreur_resto",
+			"update_distance_dispo",
+			"update_distance_restaurant",
+			"historique_dispo_livreur",
+			"code_promo",
+			"code_promo_restaurant",
+			"code_promo_user",
+			"panier",
+			"panier_menu",
+			"panier_menu_contenu",
+			"panier_menu_supplement",
+			"panier_menu_accompagnement",
+			"panier_carte",
+			"panier_carte_option",
+			"panier_carte_supplement",
+			"panier_carte_accompagnement",
+			"panier_paiement",
+			"prix_livraison",
+			"pre_commande",
+			"pre_commande_menu",
+			"pre_commande_menu_contenu",
+			"pre_commande_menu_supplement",
+			"pre_commande_menu_accompagnement",
+			"pre_commande_carte",
+			"pre_commande_carte_supplement",
+			"pre_commande_carte_option",
+			"pre_commande_carte_accompagnement",
+			"commande",
+			"commande_menu",
+			"commande_menu_contenu",
+			"commande_menu_supplement",
+			"commande_menu_accompagnement",
+			"commande_carte",
+			"commande_carte_supplement",
+			"commande_carte_option",
+			"commande_carte_accompagnement",
+			"anomalie_commande",
+			"chat_commande",
+			"commande_paiement",
+			"commande_history",
+			"commande_menu_history",
+			"commande_menu_contenu_history",
+			"commande_menu_supplement_history",
+			"commande_menu_accompagnement_history",
+			"commande_carte_history",
+			"commande_carte_supplement_history",
+			"commande_carte_option_history",
+			"commande_carte_accompagnement_history",
+			"anomalie_commande_history",
+			"commande_paiement_history",
+			"modifications",
+			"modifications_history",
+			"mails",
+			"sms",
+			"recherches",
+			"recherche_detail"
 		);
+	}
+	
+	private function getRemovableTables () {
+		$tables = $this->getTables();
+		return array_reverse($tables);
 	}
 	
 	public function dump ($tables = false, $tableStructure = true, $tableData = true) {
@@ -105,7 +211,9 @@ class Model_Database extends Model_Template {
 		$output .= "SET SQL_MODE=\"NO_AUTO_VALUE_ON_ZERO\";\n\n";
 		$output .= "--\n-- Database: ".MYSQL_DBNAME."\n--\n";
 		// get all table names in db and stuff them into an array
-		if ($tables === false) {
+		if ($tables === true) {
+			$tables = $this->getTables();
+		} else if ($tables === false || !is_array($tables)) {
 			$tables = array();
 			$stmt = $this->db->query("SHOW TABLES");
 			while($row = $stmt->fetch(PDO::FETCH_NUM)){
@@ -178,13 +286,33 @@ class Model_Database extends Model_Template {
 	}
 	
 	public function copy_database ($database) {
-		$stmt = $this->db->query("SHOW TABLES");
-		while($row = $stmt->fetch(PDO::FETCH_NUM)){
-			$table = $row[0];
-			$this->db->query("DROP TABLE IF EXISTS ".$database.".$table");
-			$this->db->query("CREATE TABLE ".$database.".$table LIKE $table");
-			$this->db->query("INSERT INTO ".$database.".$table SELECT * FROM $table");
+		$removableTables = $this->getRemovableTables();
+		$tables = $this->getTables();
+		$this->db->beginTransaction();
+		foreach ($removableTables as $table) {
+			if (!$this->db->query("DROP TABLE IF EXISTS ".$database.".$table")) {
+				writeLog(SQL_LOG, $this->db->errorInfo(), LOG_LEVEL_ERROR, "DROP TABLE IF EXISTS ".$database.".$table");
+				$this->db->failed();
+				$this->db->endTransaction();
+				return false;
+			}
 		}
+		foreach ($tables as $table) {
+			if (!$this->db->query("CREATE TABLE ".$database.".$table LIKE $table")) {
+				writeLog(SQL_LOG, $this->db->errorInfo(), LOG_LEVEL_ERROR, "CREATE TABLE ".$database.".$table LIKE $table");
+				$this->db->failed();
+				$this->db->endTransaction();
+				return false;
+			}
+			if (!$this->db->query("INSERT INTO ".$database.".$table SELECT * FROM $table")) {
+				writeLog(SQL_LOG, $this->db->errorInfo(), LOG_LEVEL_ERROR, "INSERT INTO ".$database.".$table SELECT * FROM $table");
+				$this->db->failed();
+				$this->db->endTransaction();
+				return false;
+			}
+		}
+		$this->db->endTransaction();
+		return true;
 	}
 	
 	public function changePassword ($database, $newPassword) {
