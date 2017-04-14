@@ -6,6 +6,8 @@
 
 	DEFINE ("MAX_KM", 10);
 
+	DEFINE ("SESSION_MAX_TIME", 30);
+
 	DEFINE ("MAINTENANCE", true);
 	DEFINE ("ALLOWED_IP", "::1");
 

@@ -38,14 +38,30 @@ if (isset($_SESSION["uid"]) && isset($_SESSION["session"])) {
 	include_once ROOT_PATH."models/User.php";
 	include_once ROOT_PATH."models/Parametre.php";
 	$user = new Model_User(true, $request->dbConnector);
-	if ($user->getBySession($_SESSION["uid"], $_SESSION["session"])) {
+	if ($user->getBySession($_SESSION["session"])) {
 		$request->_auth = $user;
 	} else {
 		session_destroy();
+		if (isset($_COOKIE["SESSION_KEY"])) {
+			unset($_COOKIE["SESSION_KEY"]);
+			setcookie("SESSION_KEY", "", time()-3600);
+		}
+	}
+} else if (isset($_COOKIE["SESSION_KEY"])) {
+	include_once ROOT_PATH."models/User.php";
+	include_once ROOT_PATH."models/Parametre.php";
+	$user = new Model_User(true, $request->dbConnector);
+	if ($user->getBySession($_COOKIE["SESSION_KEY"])) {
+		$request->_auth = $user;
+	} else {
+		session_destroy();
+		unset($_COOKIE["SESSION_KEY"]);
+		setcookie("SESSION_KEY", "", time()-3600);
 	}
 }
 
 if ($request->_auth) {
+	$request->_auth->updateSession();
 	if ($request->_auth->status == USER_CLIENT) {
 		include_once ROOT_PATH."models/Panier.php";
 		include_once ROOT_PATH."models/Commande.php";

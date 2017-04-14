@@ -248,6 +248,7 @@ class Controller_Index extends Controller_Default_Template {
 			}
 			$login = trim($_POST['login']);
 			$password = trim($_POST['password']);
+			$session = (isset($_POST['session']) && $_POST['session'] == 'on') ? '-1' : SESSION_MAX_TIME;
 			if ($login == '') {
 				$this->error(400, "bad request");
 			}
@@ -255,7 +256,7 @@ class Controller_Index extends Controller_Default_Template {
 				$this->error(400, "bad request");
 			}
 			$user = new Model_User(true, $request->dbConnector);
-			if (!$user->login($login, $password)) {
+			if (!$user->login($login, $password, $session)) {
 				$this->error(404, "Not found");
 			}
 			if (!$user->is_enable) {
@@ -263,6 +264,7 @@ class Controller_Index extends Controller_Default_Template {
 			}
 			$_SESSION["uid"] = $user->id;
 			$_SESSION["session"] = $user->session;
+			setcookie("SESSION_KEY", $user->session, time()+(3600*24*30));
 		} else {
 			$request->title = "Connexion";
 			$request->vue = $this->render("connexion");

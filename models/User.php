@@ -133,16 +133,15 @@ class Model_User extends Model_Template {
 		return $this;
 	}
 	
-	public function getBySession ($uid, $session) {
-		$sql = "SELECT user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone, user.is_premium, 
+	public function getBySession ($session) {
+		$sql = "SELECT user.uid, user.nom, user.prenom, user.status, user.login, uc.rue, uc.ville, uc.code_postal, uc.telephone, user.is_premium, 
 		up.default_adresse_search, up.send_mail_commande, up.send_sms_commande
 		FROM users user
 		JOIN user_session us ON us.uid = user.uid
 		LEFT JOIN user_client uc ON uc.uid = user.uid
 		LEFT JOIN user_parametre up ON up.uid = user.uid
-		WHERE user.uid = :uid AND us.session_key = :session AND user.is_login = true";
+		WHERE us.session_key = :session AND user.is_login = true AND us.date_logout IS NULL AND user.is_enable = true AND user.deleted = false";
 		$stmt = $this->db->prepare($sql);
-		$stmt->bindValue(":uid", $uid);
 		$stmt->bindValue(":session", $session);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
@@ -155,7 +154,7 @@ class Model_User extends Model_Template {
 			$this->sqlHasFailed = true;
 			return false;
 		}
-		$this->id = $uid;
+		$this->id = $value["uid"];
 		$this->nom = $value["nom"];
 		$this->prenom = $value["prenom"];
 		$this->login = $value["login"];
@@ -175,6 +174,19 @@ class Model_User extends Model_Template {
 		$this->parametre = $parameter;
 		
 		return $this;
+	}
+	
+	public function updateSession () {
+		$sql = "UPDATE user_session SET date_last_modification = NOW() WHERE uid = :uid AND session_key = :key";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		$stmt->bindValue(":key", $this->session);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
 	}
 	
 	public function getByLoginAndPassword($login, $password) {
@@ -450,7 +462,7 @@ class Model_User extends Model_Template {
 		return true;
 	}
 	
-	public function login($login, $password) {
+	public function login($login, $password, $session = SESSION_MAX_TIME) {
 		$sql = "SELECT uid, nom, prenom, status, is_enable FROM users WHERE login = :login AND password = sha1(:password)";
 		
 		$params = array (
@@ -467,10 +479,11 @@ class Model_User extends Model_Template {
 		if ($this->is_enable) {
 			$token = generateToken();
 		
-			$sql = "INSERT INTO user_session (uid, session_key, date_login) VALUES(:uid, :key, NOW())";
+			$sql = "INSERT INTO user_session (uid, session_key, date_login, date_last_modification, session_max_time) VALUES(:uid, :key, NOW(), NOW(), :session)";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":uid", $value["uid"]);
 			$stmt->bindValue(":key", $token);
+			$stmt->bindValue(":session", $session);
 			if (!$stmt->execute()) {
 				writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 				$this->sqlHasFailed = true;
@@ -1347,7 +1360,7 @@ class Model_User extends Model_Template {
 	}
 	
 	public function closeSessionBeforeDate ($date) {
-		$sql = "UPDATE user_session SET date_logout = NOW() WHERE date_login < :date AND date_logout IS NULL";
+		$sql = "UPDATE user_session SET date_logout = NOW() WHERE date_last_modification < :date AND date_logout IS NULL AND session_max_time != -1";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":date", $date);
 		if (!$stmt->execute()) {

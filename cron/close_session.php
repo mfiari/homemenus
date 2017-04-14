@@ -11,7 +11,8 @@
 	
 	writeLog (CRON_LOG, "début close session");
 	
-	$dateFin = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y')));
+	/*$dateFin = date('Y-m-d', mktime(0, 0, 0, date('m'), date('d'), date('Y')));*/
+	$dateFin = date('Y-m-d h:i:s', strtotime("-".SESSION_MAX_TIME." minutes"));
 	
 	$modelUser = new Model_User();
 	
