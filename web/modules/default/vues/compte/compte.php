@@ -94,19 +94,19 @@
 						<button class="validate-button" type="submit">Modifier</button>
 					</fieldset>
 				</form>
-				<!--<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=paypal&action=premium_subscribe">
+				<form method="post" enctype="x-www-form-urlencoded" id="subscribeForm" action="?controler=paypal&action=premium_subscribe">
 					<h3>Souscrire au compte premium</h3>
 					<fieldset>
-						<a href="?controler=paypal&action=premium_subscribe" id="subscribe-button" class="btn btn-primary" type="button">Souscrire</a>
+						<button class="validate-button" type="submit">Souscrire</button>
 					</fieldset>
-				</form>-->
+				</form>
 			</div>
 			<div class="col-md-3">
 				<ul>
-					<!--<li>Mon solde</li>
-					<li><a href="index.html?controler=compte&action=calendrier">Mon calendrier</a></li>-->
 					<li><a href="index.html?controler=commande">Mes commandes</a></li>
 					<li><a href="index.html?controler=notes">Mes notes</a></li>
+					<li><a href="index.html?controler=compte&action=solde">Mon solde</a></li>
+					<li><a href="index.html?controler=compte&action=calendrier">Mon calendrier</a></li>
 				</ul>
 			</div>
 		</div>

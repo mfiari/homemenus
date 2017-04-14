@@ -16,6 +16,7 @@ include_once ROOT_PATH."models/OptionValue.php";
 include_once ROOT_PATH."models/Accompagnement.php";
 include_once ROOT_PATH."models/PreCommande.php";
 include_once ROOT_PATH."models/Parametre.php";
+include_once ROOT_PATH."models/TransfertPaiement.php";
 
 class Controller_Compte extends Controller_Default_Template {
 	
@@ -44,6 +45,9 @@ class Controller_Compte extends Controller_Default_Template {
 					break;
 				case "solde" :
 					$this->solde($request);
+					break;
+				case "paiementSolde" :
+					$this->paiementSolde($request);
 					break;
 				case "calendrier" :
 					$this->calendrier($request);
@@ -154,6 +158,59 @@ class Controller_Compte extends Controller_Default_Template {
 		}
 		$request->user = $modelUser->getById();
 		$request->vue = $this->render("compte");
+	}
+	
+	public function solde ($request) {
+		$request->title = "Compte";
+		$modelUser = new Model_User(true, $request->dbConnector);
+		$modelUser->id = $request->_auth->id;
+		$request->user = $modelUser->getById();
+		$request->javascripts = array("res/js/calendar.js");
+		$request->vue = $this->render("solde");
+	}
+	
+	public function paiementSolde ($request) {
+		$transfertPaiement = new Model_TransfertPaiement();
+		if ($_POST['paiement_method'] == 'cb') {
+			/* paiment stripe */
+			require_once WEBSITE_PATH.'res/lib/stripe/init.php';
+			if (isset($_POST['stripeToken'])) {
+				\Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
+
+				// Get the credit card details submitted by the form
+				$token = $_POST['stripeToken'];
+
+				// Create the charge on Stripe's servers - this will charge the user's card
+				try {
+					$charge = \Stripe\Charge::create(array(
+						"amount" => $_POST['montant'] * 100, // amount in cents, again
+						"currency" => "eur",
+						"source" => $token,
+						"description" => "Recharge solde user ".$request->_auth->id
+					));
+					$transfertPaiement->method = "CB";
+					$transfertPaiement->quantite = 0;
+					$transfertPaiement->montant = $_POST['montant'];
+				} catch(\Stripe\Error\Card $e) {
+					$stripeCode = $e->stripeCode;
+					$this->redirect("solde", "compte", '', array('payment' => 'refused'));
+				}
+			}
+		} else if ($_POST['paiement_method'] == 'espece') {
+			/* paiment par espèce ou chèque */
+			$transfertPaiement->method = "ESPECE";
+			$transfertPaiement->quantite = 0;
+			$transfertPaiement->montant = $_POST['montant'];
+			$transfertPaiement->envoi = $_POST['envoi'];
+		} else if ($_POST['paiement_method'] == 'ticket') {
+			/* paiment par ticket restaurant */
+			$transfertPaiement->method = "TICKET RESTAURANT";
+			$transfertPaiement->quantite = $_POST['quantite'];
+			$transfertPaiement->montant = $_POST['montant'];
+			$transfertPaiement->envoi = $_POST['envoi'];
+		}
+		$transfertPaiement->save();
+		$this->redirect('solde', 'compte');
 	}
 	
 	public function calendrier ($request) {
