@@ -2153,7 +2153,7 @@ class Model_Commande extends Model_Template {
 	
 	public function getCommandeTerminer () {
 		$sql = "SELECT com.id AS id_commande, user.uid AS id_client, user.nom AS nom_client, user.prenom AS prenom_client, user.login AS login_user, 
-		user.email AS email_client, uc.rue AS rue_client, uc.ville AS ville_client, uc.code_postal AS cp_client, com.rue AS rue_commande, 
+		user.email AS email_client, uc.rue AS rue_client, uc.ville AS ville_client, uc.code_postal AS cp_client, uc.send_questionnaire, com.rue AS rue_commande, 
 		com.ville AS ville_commande, com.code_postal AS cp_commande, com.latitude AS latitude_commande, com.longitude AS longitude_commande, 
 		com.telephone AS tel_commande, livreur.uid AS id_livreur, livreur.nom AS nom_livreur, livreur.prenom AS prenom_livreur, livreur.login AS login_livreur, 
 		resto.id AS id_restaurant, resto.nom AS nom_restaurant, resto.rue AS rue_restaurant, resto.ville AS ville_restaurant, 
@@ -2210,6 +2210,7 @@ class Model_Commande extends Model_Template {
 			$user->rue = $c["rue_client"];
 			$user->ville = $c["ville_client"];
 			$user->code_postal = $c["cp_client"];
+			$user->send_questionnaire = $c["send_questionnaire"];
 			
 			$commande->client = $user;
 			

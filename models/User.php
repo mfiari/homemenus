@@ -27,6 +27,7 @@ class Model_User extends Model_Template {
 	private $horaires;
 	private $id_restaurant;
 	private $parametre;
+	private $send_questionnaire;
 	
 	public function __construct($callParent = true, $db = null) {
 		if ($callParent) {

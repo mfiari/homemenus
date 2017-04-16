@@ -71,6 +71,10 @@
 		} else if ($modelCommandeHistory->saveCommande($commande)) {
 			$messageContent =  file_get_contents (ROOT_PATH.'mails/fin_commande.html');
 			send_mail ($commande->client->email, "Merci de votre commande", $messageContent);
+			if (!$commande->client->send_questionnaire) {
+				$messageContent =  file_get_contents (ROOT_PATH.'mails/questionnaire_fin_commande.html');
+				send_mail ($commande->client->email, "Questionnaire de satisfaction HoMe Menus", $messageContent);
+			}
 			
 			$totalCommande++;
 			$montantTotal += $commande->prix + $commande->prix_livraison;
