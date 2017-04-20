@@ -43,6 +43,6 @@
 		</div>
 	</div>
 	<div class="col-md-12">
-		<a href="?controler=news&action=add" class="btn btn-primary">Ajouter une news</a>
+		<a href="?controler=news&action=edit" class="btn btn-primary">Ajouter une news</a>
 	</div>
 </div>

@@ -77,6 +77,102 @@ class Model_News extends Model_Template {
 		return $listNews;
 	}
 	
+	public function get () {
+		$sql = "SELECT titre, text, image, link_text, link_url FROM news WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null ||$value == false) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$this->titre = $value["titre"];
+		$this->text = $value["text"];
+		$this->image = $value["image"];
+		$this->link_text = $value["link_text"];
+		$this->link_url = $value["link_url"];
+		return $this;
+	}
+	
 	public function save () {
+		if ($this->id == -1) {
+			return $this->insert();
+		} else {
+			return $this->update();
+		}
+		return false;
+	}
+	
+	public function insert() {
+		$sql = "INSERT INTO news (titre, text, link_text, link_url, date_debut, date_fin) VALUES (:titre, :text, :link_text, :link_url, :date_debut, :date_fin)";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":titre", $this->titre);
+		$stmt->bindValue(":text", $this->text);
+		$stmt->bindValue(":link_text", $this->link_text);
+		$stmt->bindValue(":link_url", $this->link_url);
+		$stmt->bindValue(":date_debut", $this->date_debut);
+		$stmt->bindValue(":date_fin", $this->date_fin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$this->id = $this->db->lastInsertId();
+		return true;
+	}
+	
+	public function setImage ($img) {
+		$sql = "UPDATE news SET image = :image WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":image", $img);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
+	public function enable () {
+		$sql = "UPDATE news SET actif = true WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
+	public function disable () {
+		$sql = "UPDATE news SET actif = false WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
+	}
+	
+	public function deleted () {
+		$sql = "UPDATE users SET deleted = true, date_suppression = NOW() WHERE uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		return true;
 	}
 }

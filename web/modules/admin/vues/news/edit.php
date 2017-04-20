@@ -1,33 +1,48 @@
-<?php $edit = $request->hasProperty("restaurant"); ?>
+<?php $edit = $request->hasProperty("news"); ?>
 <div class="row">
 	<div class="col-md-12">
-		<form method="post" id="add_livreur" class="col-md-offset-1 col-md-10" action="" enctype="multipart/form-data">
+		<form method="post" class="col-md-offset-1 col-md-10" action="" enctype="multipart/form-data">
 			<fieldset>
 				<?php if ($edit) : ?>
 					<legend>Modification</legend>
 				<?php else : ?>
-					<legend>Ajouter un livreur</legend>
+					<legend>Ajouter une news</legend>
 				<?php endif; ?>
-				<input type="text" hidden="hidden" value="<?php echo $edit ? $request->restaurant->id : 0; ?>">
+				<input type="text" name="id" hidden="hidden" value="<?php echo $edit ? $request->news->id : -1; ?>">
 				<div class="form-group">
-					<label for="nom">Nom<span class="required">*</span> : </label>
-					<input class="form-control" name="nom" type="text" value="<?php echo $request->fieldNom !== false ? $request->fieldNom : ''; ?>" maxlength="32" required>
+					<label for="titre">Titre<span class="required">*</span> : </label>
+					<input class="form-control" name="titre" type="text" value="<?php echo $request->fieldTitre !== false ? $request->fieldTitre : ''; ?>" maxlength="100" required>
 				</div>
 				<div class="form-group">
-					<label for="prenom">Prénom<span class="required">*</span> : </label>
-					<input class="form-control" name="prenom" type="text" value="<?php echo $request->fieldPrenom !== false ? $request->fieldPrenom : ''; ?>" maxlength="32" required>
+					<label for="texte">Texte<span class="required">*</span> : </label>
+					<textarea class="form-control" name="texte" rows="8" cols="45" required><?php echo $request->fieldTexte !== false ? $request->fieldTexte : ''; ?></textarea>
 				</div>
 				<div class="form-group">
-					<label for="login">Identifiant<span class="required">*</span> : </label>
-					<input class="form-control" name="login" type="text" value="<?php echo $request->fieldPrenom !== false ? $request->fieldPrenom : ''; ?>" maxlength="32" required>
+					<div class="row">
+						<div class="col-md-6">
+							<img style="width : 50px" src="">
+						</div>
+						<div class="col-md-6">
+							<label for="image">Logo : </label>
+							<input type="file" name="image" />
+						</div>
+					</div>
 				</div>
 				<div class="form-group">
-					<label for="email">email<span class="required">*</span> : </label>
-					<input class="form-control" name="email" type="email" value="<?php echo $request->fieldEmail !== false ? $request->fieldEmail : ''; ?>" maxlength="32" required>
+					<label for="link_text">Texte du lien<span class="required">*</span> : </label>
+					<input class="form-control" name="link_text" type="text" value="<?php echo $request->fieldLinkText !== false ? $request->fieldLinkText : ''; ?>" maxlength="100" required>
 				</div>
 				<div class="form-group">
-					<label for="telephone">Téléphone : </label>
-					<input class="form-control" name="telephone" type="text" value="<?php echo $request->fieldTel !== false ? $request->fieldTel : ''; ?>" maxlength="10" >
+					<label for="link_url">Url du lien<span class="required">*</span> : </label>
+					<input class="form-control" name="link_url" type="text" value="<?php echo $request->fieldLinkUrl !== false ? $request->fieldLinkUrl : ''; ?>" maxlength="100" required>
+				</div>
+				<div class="form-group">
+					<label for="date_debut">Date début : </label>
+					<input class="form-control datepicker" type="text" name="date_debut" value="<?php echo $edit ? $request->news->date_debut : ""; ?>">
+				</div>
+				<div class="form-group">
+					<label for="date_fin">Date fin : </label>
+					<input class="form-control datepicker" type="text" name="date_fin" value="<?php echo $edit ? $request->news->date_fin : ""; ?>">
 				</div>
 				<button class="btn btn-primary" type="submit">Valider</button>
 			</fieldset>
