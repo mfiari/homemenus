@@ -21,7 +21,7 @@
 								<a href="">
 									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 								</a>
-								<a href="?controler=restaurant&action=deleteOptionValue&id=<?php echo $value->id; ?>">
+								<a href="?controler=restaurant&action=deleteOptionValue&id=<?php echo $value->id; ?>&id_restaurant=<?php echo $request->restaurant->id; ?>&id_option=<?php echo $request->option->id; ?>">
 									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 								</a>
 							</td>

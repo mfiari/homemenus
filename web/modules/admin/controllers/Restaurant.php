@@ -135,6 +135,9 @@ class Controller_Restaurant extends Controller_Admin_Template {
 				case "addOptionValue" :
 					$this->addOptionValue($request);
 					break;
+				case "deleteOptionValue" :
+					$this->deleteOptionValue($request);
+					break;
 			}
 		} else {
 			$this->index($request);
@@ -862,5 +865,15 @@ class Controller_Restaurant extends Controller_Admin_Template {
 			$modelOption->saveValue($modelOptionValue);
 			$this->redirect('viewOption', 'restaurant', '', array ('id_restaurant' => $id_restaurant, 'id_option' => $id_option));
 		}
+	}
+	
+	public function deleteOptionValue ($request) {
+		$id_option_value = $_GET['id'];
+		$id_restaurant = $_GET['id_restaurant'];
+		$id_option = $_GET['id_option'];
+		$modelOption = new Model_Option(true, $request->dbConnector);
+		$modelOption->id = $id_option_value;
+		$modelOption->removeValue();
+		$this->redirect('viewOption', 'restaurant', '', array ('id_restaurant' => $id_restaurant, 'id_option' => $id_option));
 	}
 }

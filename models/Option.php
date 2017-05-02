@@ -110,4 +110,15 @@ class Model_Option extends Model_Template {
 		}
 		return true;
 	}
+	
+	public function removeValue () {
+		$sql = "DELETE FROM restaurant_option_value WHERE id = :id";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":id", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return true;
+	}
 }
