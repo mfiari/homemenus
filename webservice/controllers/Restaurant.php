@@ -8,6 +8,7 @@ include_once MODEL_PATH.'Horaire.php';
 include_once MODEL_PATH.'Carte.php';
 include_once MODEL_PATH.'Categorie.php';
 include_once MODEL_PATH.'Certificat.php';
+include_once MODEL_PATH.'Commentaire.php';
 
 class Controller_Restaurant extends Controller_Template {
 	
@@ -66,7 +67,7 @@ class Controller_Restaurant extends Controller_Template {
 			}
 			$distanceKm = $filter["distanceKm"];
 			$modelRestaurant = new Model_Restaurant();
-			$restaurants = $modelRestaurant->filter($filter);
+			$restaurants = $modelRestaurant->filter($filter, 'r.ville');
 			if (isset($_POST['adresse']) && trim($_POST['adresse']) != "") {
 				$geocoder = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false";
 				$localisation = urlencode($_POST['adresse']);

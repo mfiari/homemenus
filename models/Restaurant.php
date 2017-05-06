@@ -426,7 +426,7 @@ class Model_Restaurant extends Model_Template {
 		return $prixLivraison;
 	}
 	
-	public function filter ($filters) {
+	public function filter ($filters, $order = false) {
 		$sql = "SELECT r.id, r.nom, r.rue, r.code_postal, r.ville, r.short_desc, r.latitude, r.longitude, rh.id_jour, rh.heure_debut, rh.minute_debut, 
 		rh.heure_fin, rh.minute_fin
 		FROM restaurants r 
@@ -451,7 +451,20 @@ class Model_Restaurant extends Model_Template {
 			|| $key == "search_hour" || $key == "search_minute") continue;
 			$sql .= " ".$link." $key = :$key";
 		}
-		$sql .= " GROUP BY r.id Order by r.score, r.nom";
+		$sql .= " GROUP BY r.id";
+		if ($order !== false) {
+			if (is_array($order)) {
+				$sql .= " Order by ";
+				foreach ($order as $value) {
+					$sql .= " $value,";
+				}
+				$sql .= " r.score, r.nom";
+			} else {
+				$sql .= " Order by $order, r.score, r.nom";
+			}
+		} else {
+			$sql .= " Order by r.score, r.nom";
+		}
 		$stmt = $this->db->prepare($sql);
 		foreach ($filters as $key => $filter) {
 			if ($key == "distanceKm" || $key == "search_adresse" || $key == "tags" || $key == "tagsFilter") continue;
