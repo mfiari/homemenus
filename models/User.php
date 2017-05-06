@@ -141,7 +141,8 @@ class Model_User extends Model_Template {
 		JOIN user_session us ON us.uid = user.uid
 		LEFT JOIN user_client uc ON uc.uid = user.uid
 		LEFT JOIN user_parametre up ON up.uid = user.uid
-		WHERE us.session_key = :session AND user.is_login = true AND (us.date_logout IS NULL OR us.date_logout = '0000-00-00 00:00:00') AND user.is_enable = true AND user.deleted = false";
+		WHERE us.session_key = :session AND user.is_login = true AND (us.date_logout IS NULL OR us.date_logout = '0000-00-00 00:00:00') 
+		AND user.is_enable = true AND user.deleted = false";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":session", $session);
 		if (!$stmt->execute()) {
@@ -545,7 +546,7 @@ class Model_User extends Model_Template {
 			$this->sqlHasFailed = true;
 			return false;
 		}
-		$sql = "UPDATE user_session SET date_logout = NOW() WHERE uid = :id AND date_logout IS NULL";
+		$sql = "UPDATE user_session SET date_logout = NOW() WHERE uid = :id AND (date_logout IS NULL OR date_logout = '0000-00-00 00:00:00')";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
