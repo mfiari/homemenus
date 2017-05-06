@@ -132,7 +132,7 @@
 			<?php $index = 0; ?>
 			<?php foreach ($request->news as $news) : ?>
 				<div class="row item <?php echo $index == 0 ? 'active' : ''; ?>">
-					<div class="col-md-12" style="background-color : #F4F4F4; color : #000000; padding : 10px;">
+					<div class="col-md-12" style="background-color : #F4F4F4; color : #000000; padding : 30px;">
 						<h3><?php echo utf8_encode($news->titre); ?></h3>
 						<div class="col-md-12">
 							<img style="width : 100%" src="<?php echo $news->image; ?>" alt="HoMe Menus - <?php echo utf8_encode($news->titre); ?>" Title="HoMe Menus - <?php echo utf8_encode($news->titre); ?>">
