@@ -3,7 +3,7 @@
 	<div class="col-md-12">
 		<form method="post" class="col-md-offset-1 col-md-10" action="?controler=restaurant&action=editMenu" enctype="multipart/form-data">
 			<input name="id_restaurant" type="text" value="<?php echo $request->restaurant->id; ?>" hidden="hidden">
-			<input name="id_menu" type="text" value="<?php echo $edit ? $request->menu->id : 0; ?>" hidden="hidden">
+			<input name="id_menu" type="text" value="<?php echo $edit ? $request->menu->id : -1; ?>" hidden="hidden">
 			<fieldset>
 				<?php if ($edit) : ?>
 					<legend>Modification</legend>

@@ -21,6 +21,7 @@ class Model_Menu extends Model_Template {
 		if ($callParent) {
 			parent::__construct($db);
 		}
+		$this->id = -1;
 		$this->formats = array();
 		$this->formules = array();
 		$this->contenus = array();
@@ -63,6 +64,14 @@ class Model_Menu extends Model_Template {
 	
 	public function addHoraire ($horaire) {
 		$this->horaires[] = $horaire;
+	}
+	
+	public function save () {
+		if ($this->id == -1) {
+			$this->insert();
+		} else {
+			$this->update();
+		}
 	}
 	
 	public function insert () {

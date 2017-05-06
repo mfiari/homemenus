@@ -301,7 +301,7 @@ function resume () {
 				
 				$.ajax({
 					type: "POST",
-					url: '?controler='+formContent.controllerMenu+'&action='+formContent.actionMenu,
+					url: 'index.php?controler='+formContent.controllerMenu+'&action='+formContent.actionMenu,
 					dataType: "html",
 					data: sendData
 				}).done(function( msg ) {
@@ -312,7 +312,7 @@ function resume () {
 					$("#menu-modal .modal-footer div.alert-success").css('display', 'inline-block');
 					$.ajax({
 						type: "GET",
-						url: '?controler='+formContent.controllerPanier+'&action='+formContent.actionPanier,
+						url: 'index.php?controler='+formContent.controllerPanier+'&action='+formContent.actionPanier,
 						dataType: "html"
 					}).done(function( msg ) {
 						$("#panier-content").html(msg);
