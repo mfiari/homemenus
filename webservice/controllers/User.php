@@ -69,12 +69,12 @@ class Controller_User extends Controller_Template {
 	
 	private function getUserBySession () {
 		if (!isset($_POST["session"])) {
-			die();
+			$this->error(401, "Not authorized.");
 		}
 		$ext = $this->getExtension();
 		$session = $_POST["session"];
 		$model = new Model_User();
-		$result = $model->getUserBySession($session);
+		$user = $model->getBySession($session);
 		require 'vue/inscription.'.$ext.'.php';
 	}
 	
@@ -88,8 +88,9 @@ class Controller_User extends Controller_Template {
 		$ext = $this->getExtension();
 		$login = $_POST["login"];
 		$password = $_POST["password"];
+		$session = (isset($_POST['session']) && $_POST['session'] == '1') ? '-1' : SESSION_MAX_TIME;
 		$model = new Model_User();
-		$user = $model->login($login, $password);
+		$user = $model->login($login, $password, $session);
 		if (!$user) {
 			$this->error(404, "Login ou mot de passe incorrect");
 		}

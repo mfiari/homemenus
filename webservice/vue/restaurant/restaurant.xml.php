@@ -15,7 +15,7 @@
 		$nodeCategorie = $dom->createElement("categorie");
 		$nodeCategorie->setAttribute("id", $categorie->id);
 		$nodeNom = $dom->createElement("nom");
-		$texteCategorie = $dom->createTextNode($categorie->nom);
+		$texteCategorie = $dom->createTextNode(utf8_encode($categorie->nom));
 		$nodeNom->appendChild($texteCategorie);
 		$nodeCategorie->appendChild($nodeNom);
 		$nodeLogo = $dom->createElement("logo");
