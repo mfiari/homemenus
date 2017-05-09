@@ -569,6 +569,9 @@ class Controller_Panier extends Controller_Default_Template {
 		
 		foreach ($panier->carteList as $carte) {
 			$totalPrix += $carte->prix;
+			foreach ($carte->supplements as $supplement) {
+				$totalPrix += $supplement->prix;
+			}
 		}
 		
 		foreach ($panier->menuList as $menu) {

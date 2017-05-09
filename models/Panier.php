@@ -601,7 +601,7 @@ class Model_Panier extends Model_Template {
 			
 			$carte->addFormat($format);
 			
-			$sql = "SELECT pcs.id AS id, supp.id AS id_supplement, supp.nom AS nom_supplement
+			$sql = "SELECT pcs.id AS id, supp.id AS id_supplement, supp.nom AS nom_supplement, supp.prix AS prix
 			FROM panier_carte_supplement pcs 
 			JOIN supplements supp ON supp.id = pcs.id_supplement
 			WHERE pcs.id_panier_carte = :id";
@@ -616,6 +616,7 @@ class Model_Panier extends Model_Template {
 				$supplement = new Model_Supplement(false);
 				$supplement->id = $panierCarteSupplement['id_supplement'];
 				$supplement->nom = $panierCarteSupplement['nom_supplement'];
+				$supplement->prix = $panierCarteSupplement['prix'];
 				
 				$carte->addSupplement($supplement);
 			}
