@@ -12,6 +12,7 @@ class Model_User extends Model_Template {
 	private $rue;
 	private $ville;
 	private $code_postal;
+	private $complement;
 	private $telephone;
 	private $session;
 	private $gcm_token;
@@ -283,12 +284,13 @@ class Model_User extends Model_Template {
 	}
 	
 	public function insertUser() {
-		$sql = "INSERT INTO user_client (uid, rue, ville, code_postal, telephone) VALUES (:uid, :rue, :ville, :code_postal, :telephone)";
+		$sql = "INSERT INTO user_client (uid, rue, ville, code_postal, complement, telephone) VALUES (:uid, :rue, :ville, :code_postal, :complement, :telephone)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);
 		$stmt->bindValue(":rue", $this->rue);
 		$stmt->bindValue(":ville", $this->ville);
 		$stmt->bindValue(":code_postal", $this->code_postal);
+		$stmt->bindValue(":complement", $this->complement);
 		$stmt->bindValue(":telephone", $this->telephone);
 		if (!$stmt->execute()) {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
