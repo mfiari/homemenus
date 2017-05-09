@@ -10,10 +10,10 @@
 				<label for="password">Mot de passe<span class="required">*</span> : </label>
 				<input id="password_field" class="form-control" name="password" type="password" required>
 			</div>
-			<button id="loginButton" class="btn btn-primary" type="submit">Connexion</button>
+			<button id="loginButton" class="validate-button" type="submit">Connexion</button>
 		</form>
 	</div>
-	<div>
+	<div style="margin-top : 10px; margin-bottom : 10px;">
 		<span>Vous n'avez pas de compte ? <a href="?action=inscription">Inscrivez-vous</a>.</span><br />
 		<div style="display : none; text-align: center;" class="alert alert-danger" role="alert">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
