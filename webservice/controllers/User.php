@@ -97,7 +97,8 @@ class Controller_User extends Controller_Template {
 		if (!$user->is_enable) {
 			$this->error(403, "Not authorized");
 		}
-		require 'vue/inscription.'.$ext.'.php';
+		$user->getById();
+		require 'vue/login.'.$ext.'.php';
 	}
 	
 	private function logout () {
@@ -130,8 +131,21 @@ class Controller_User extends Controller_Template {
 				$this->error(400, "Le mot de passe ne peut être vide");
 			}
 			$rue = null;
-			$ville = null;
+			if (isset($_POST["rue"]) || trim($_POST["rue"]) == "") {
+				$rue = trim($_POST["rue"]);
+			}
+			$complement = null;
+			if (isset($_POST["complement"]) || trim($_POST["complement"]) == "") {
+				$complement = trim($_POST["complement"]);
+			}
 			$code_postal = null;
+			if (isset($_POST["code_postal"]) || trim($_POST["code_postal"]) == "") {
+				$code_postal = trim($_POST["code_postal"]);
+			}
+			$ville = null;
+			if (isset($_POST["ville"]) || trim($_POST["ville"]) == "") {
+				$ville = trim($_POST["ville"]);
+			}
 			$telephone = null;
 			if (isset($_POST["telephone"]) && trim($_POST["telephone"]) != '') {
 				$telephone = trim($_POST["telephone"]);
@@ -144,6 +158,7 @@ class Controller_User extends Controller_Template {
 			$model->password = trim($_POST["password"]);
 			$model->status = USER_CLIENT;
 			$model->rue = $rue;
+			$model->complement = $complement;
 			$model->ville = $ville;
 			$model->code_postal = $code_postal;
 			$model->inscription_token = generateToken();
