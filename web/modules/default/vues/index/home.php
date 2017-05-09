@@ -69,7 +69,7 @@
 			<a href="restaurant-15-Mantes-la-Jolie-Comme-a-la-maison.html" style="margin-right : 20px;">
 				<img style="height : 360px;" src="res/img/comme-a-la-maison.png" alt="HoMe Menus - Comme à la maison" Title="HoMe Menus - Comme à la maison">
 			</a>
-			<div style="bottom : 0; color : #FFFFFF; left : 550px; position : absolute; z-index : 2;">
+			<div style="bottom : 0; color : #FFFFFF; left : 645px; position : absolute; z-index : 2;">
 				<h3>La brasserie des halles</h3>
 				<p>Brasserie</p>
 			</div>
