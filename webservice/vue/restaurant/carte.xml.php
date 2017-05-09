@@ -45,6 +45,25 @@
 	}
 	$nodeCarte->appendChild($nodeSupplements);
 	
+	$nodeOptions = $dom->createElement("options");
+	foreach ($carte->options as $option) {
+		$nodeOption = $dom->createElement("option");
+		$nodeOption->setAttribute("id", $option->id);
+		addTextNode ($dom, $nodeOption, "nom", utf8_encode($option->nom));
+	
+		$nodeOptionValues = $dom->createElement("values");
+		foreach ($option->values as $value) {
+			$nodeOptionValue = $dom->createElement("value");
+			$nodeOptionValue->setAttribute("id", $value->id);
+			addTextNode ($dom, $nodeOptionValue, "nom", utf8_encode($value->nom));
+			$nodeOptionValues->appendChild($nodeOptionValue);
+		}
+		$nodeOption->appendChild($nodeOptionValues);
+		
+		$nodeOptions->appendChild($nodeOption);
+	}
+	$nodeCarte->appendChild($nodeOptions);
+	
 	header("Content-type: text/xml; charset=utf-8");
 	print $dom->saveXML();
 	
