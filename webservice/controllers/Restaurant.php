@@ -63,7 +63,7 @@ class Controller_Restaurant extends Controller_Template {
 			if (isset($_POST["distance"]) && $_POST["distance"] != "") {
 				$filter["distanceKm"] = $_POST["distance"];
 			} else {
-				$filter["distanceKm"] = 15;
+				$filter["distanceKm"] = MAX_KM;
 			}
 			$distanceKm = $filter["distanceKm"];
 			$modelRestaurant = new Model_Restaurant();
@@ -109,7 +109,7 @@ class Controller_Restaurant extends Controller_Template {
 				$result = getDistance($adresseUser, $adresseResto);
 				if ($result['status'] == "OK") {
 					$distanceRestoKm = $result['distance'] / 1000;
-					if ($distanceRestoKm < $distanceKm) {
+					if ($distanceRestoKm < $distanceKm +1) {
 						$restaurant->distance = $distanceRestoKm;
 						$availableRestaurant[] = $restaurant;
 					}
