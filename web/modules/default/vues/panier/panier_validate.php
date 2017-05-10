@@ -152,10 +152,18 @@
 								</div>
 							</td>
 							<td><?php echo $carte->quantite; ?></td>
-							<td><?php echo formatPrix($carte->prix); ?></td>
+							<td>
+								<?php 
+									$prix = $carte->prix;
+									foreach ($carte->supplements as $supplement) {
+										$prix += $supplement->prix * $carte->quantite;
+									}
+									echo formatPrix($prix);
+								?>
+							</td>
 						</tr>
 						<?php $totalQte += $carte->quantite; ?>
-						<?php $totalPrix += $carte->prix; ?>
+						<?php $totalPrix += $prix; ?>
 					<?php endforeach; ?>
 					<?php foreach ($request->panier->menuList as $menu) : ?>
 						<tr>
@@ -290,7 +298,7 @@
 				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
 			</div>
 		</div>-->
-		<div class="col-md-6">
+		<div class="col-md-12">
 			<form style="text-align : center;" id="payCard" action="?controler=panier&action=valideCarte" method="POST">
 			  <script
 				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
@@ -311,7 +319,7 @@
 				<img style="width : 60%; margin-top : 20px;" src="res/img/stripe-secure.png" title="HoMe Menus - paiement stripe secure" alt="HoMe Menus - paiement stripe secure">
 			</div>
 		</div>
-		<div class="col-md-6">
+		<!--<div class="col-md-4">
 			<form style="text-align : center;" id="" action="?controler=panier&action=multi_paiement" method="POST">
 				<input style="width : 200px;" class="validate-button" type="submit" value="Payer avec plusieurs carte">
 			</form>
@@ -321,6 +329,11 @@
 				<p><i>Le paiement se fait toujours de manière sécurisé</i></p>
 			</div>
 		</div>
+		<div class="col-md-4">
+			<div class="col-md-offset-2 col-md-10">
+				<p>Le paiement se fait uniquement en carte bleu.</p>
+			</div>
+		</div>-->
 	</div>
 </div>
 <script type="text/javascript">
