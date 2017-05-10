@@ -151,8 +151,14 @@
 						<?php $totalQte += $carte->quantite; ?>
 					</div>
 					<div class="col-md-6">
-						<?php echo formatPrix($carte->prix); ?>
-						<?php $totalPrix += $carte->prix; ?>
+						<?php 
+							$prix = $carte->prix;
+							foreach ($carte->supplements as $supplement) {
+								$prix += $supplement->prix * $carte->quantite;
+							}
+							echo formatPrix($prix);
+							$totalPrix += $prix;
+						?>
 					</div>
 				</div>
 			</div>
