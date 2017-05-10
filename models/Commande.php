@@ -196,8 +196,9 @@ class Model_Commande extends Model_Template {
 				}
 			}
 			
-			$sql = "SELECT pcs.id_supplement, supp.prix FROM panier_carte_supplement pcs
+			$sql = "SELECT pcs.id_supplement, supp.prix, pc.quantite FROM panier_carte_supplement pcs
 			JOIN supplements supp ON supp.id = pcs.id_supplement
+			JOIN panier_carte pc ON pc.id = pcs.id_panier_carte
 			WHERE id_panier_carte = :id";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id", $panierCarte['id']);
@@ -207,7 +208,7 @@ class Model_Commande extends Model_Template {
 			}
 			$listPanierSupplement = $stmt->fetchAll();
 			foreach ($listPanierSupplement as $panierSupplement) {
-				$total += $panierSupplement['prix'];
+				$total += $panierSupplement['prix'] * $panierSupplement['quantite'];
 				$sql = "INSERT INTO commande_carte_supplement (id_commande_carte, id_supplement) VALUES (:id, :id_supplement)";
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id", $id_commande_carte);
