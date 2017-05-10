@@ -1410,8 +1410,8 @@ class Model_User extends Model_Template {
 	public function getTotalCommande () {
 		$sql = "SELECT com.total + hcom.total AS total
 		FROM users 
-		LEFT JOIN (SELECT COUNT(*) AS total FROM commande WHERE uid = :uid) AS com ON com.total > 0
-		LEFT JOIN (SELECT COUNT(*) AS total FROM commande_history WHERE id_user = :uid) AS hcom ON hcom.total > 0
+		LEFT JOIN (SELECT COUNT(*) AS total FROM commande WHERE uid = :uid) AS com ON com.total >= 0
+		LEFT JOIN (SELECT COUNT(*) AS total FROM commande_history WHERE id_user = :uid) AS hcom ON hcom.total >= 0
 		WHERE users.uid = :uid";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":uid", $this->id);

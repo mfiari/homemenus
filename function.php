@@ -412,6 +412,7 @@ function carteDeFidelite ($request, $commande) {
 	$user = new Model_User(true, $request->dbConnector);
 	$user->id = $request->_auth->id;
 	$totalCommande = $user->getTotalCommande();
+	$user->getClient();
 	if ($totalCommande % 10 == 0) {
 		$codePromo = new Model_CodePromo(true, $request->dbConnector);
 		$codePromo->code = "CP".$commande->id.$user->id;
@@ -443,9 +444,8 @@ function carteDeFidelite ($request, $commande) {
 		}
 		$messageContent = str_replace("[RESTAURANTS]", $restaurants, $messageContent);
 		$messageContent = str_replace("[CODE_PROMO]", $codePromo->code, $messageContent);
-		send_mail ($modelUser->email, "Carte de fidélité", $messageContent);
-	} else 
-	if ($totalCommande % 5 == 0) {
+		send_mail ($user->email, "Carte de fidélité", $messageContent);
+	} else if ($totalCommande % 5 == 0) {
 		$codePromo = new Model_CodePromo(true, $request->dbConnector);
 		$codePromo->code = "CP".$commande->id.$user->id;
 		$codePromo->description = "Livraison offerte";
@@ -476,7 +476,7 @@ function carteDeFidelite ($request, $commande) {
 		}
 		$messageContent = str_replace("[RESTAURANTS]", $restaurants, $messageContent);
 		$messageContent = str_replace("[CODE_PROMO]", $codePromo->code, $messageContent);
-		send_mail ($modelUser->email, "Carte de fidélité", $messageContent);
+		send_mail ($user->email, "Carte de fidélité", $messageContent);
 	}
 }
 
