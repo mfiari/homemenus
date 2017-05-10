@@ -412,20 +412,20 @@ function carteDeFidelite ($request, $commande) {
 	$user = new Model_User(true, $request->dbConnector);
 	$user->id = $request->_auth->id;
 	$totalCommande = $user->getTotalCommande();
-	if ($totalCommande == 5 || $totalCommande == 15) {
+	if ($totalCommande % 10 == 0) {
 		$codePromo = new Model_CodePromo(true, $request->dbConnector);
 		$codePromo->code = "CP".$commande->id.$user->id;
-		$codePromo->description = "Livraison offerte";
+		$codePromo->description = "-10% sur le prix total de la commande";
 		$codePromo->date_debut = date('Y-m-d');
 		$codePromo->date_fin = "2018-12-31 23:59:59";
 		$codePromo->publique = false;
 		$codePromo->sur_restaurant = false;
-		$codePromo->type_reduc = 'GRATUIT';
-		$codePromo->sur_prix_livraison = true;
+		$codePromo->type_reduc = 'REDUCTION';
+		$codePromo->sur_prix_livraison = false;
 		$codePromo->valeur_prix_livraison = 0;
-		$codePromo->sur_prix_total = false;
+		$codePromo->sur_prix_total = true;
 		$codePromo->valeur_prix_total = 0;
-		$codePromo->pourcentage_prix_total = 0;
+		$codePromo->pourcentage_prix_total = 10;
 		$codePromo->save();
 		$codePromo->addClient($user->id);
 
@@ -444,20 +444,21 @@ function carteDeFidelite ($request, $commande) {
 		$messageContent = str_replace("[RESTAURANTS]", $restaurants, $messageContent);
 		$messageContent = str_replace("[CODE_PROMO]", $codePromo->code, $messageContent);
 		send_mail ($modelUser->email, "Carte de fidélité", $messageContent);
-	} else if ($totalCommande == 10 || $totalCommande == 20) {
+	} else 
+	if ($totalCommande % 5 == 0) {
 		$codePromo = new Model_CodePromo(true, $request->dbConnector);
 		$codePromo->code = "CP".$commande->id.$user->id;
-		$codePromo->description = "-10% sur le prix total de la commande";
+		$codePromo->description = "Livraison offerte";
 		$codePromo->date_debut = date('Y-m-d');
 		$codePromo->date_fin = "2018-12-31 23:59:59";
 		$codePromo->publique = false;
 		$codePromo->sur_restaurant = false;
-		$codePromo->type_reduc = 'REDUCTION';
-		$codePromo->sur_prix_livraison = false;
+		$codePromo->type_reduc = 'GRATUIT';
+		$codePromo->sur_prix_livraison = true;
 		$codePromo->valeur_prix_livraison = 0;
-		$codePromo->sur_prix_total = true;
+		$codePromo->sur_prix_total = false;
 		$codePromo->valeur_prix_total = 0;
-		$codePromo->pourcentage_prix_total = 10;
+		$codePromo->pourcentage_prix_total = 0;
 		$codePromo->save();
 		$codePromo->addClient($user->id);
 
