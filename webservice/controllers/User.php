@@ -186,12 +186,12 @@ class Controller_User extends Controller_Template {
 	
 	private function livreurReady () {
 		if (!isset($_POST["id"])) {
-			die();
+			$this->error(403, "Not authorized");
 		}
 		$uid = $_POST["id"];
 		$model = new Model_User();
 		if (!$model->livreurReady($uid)) {
-			return;
+			$this->error(500, "Une erreur s'est produite, veuillez réessayé ultérieurement.");
 		}
 	}
 	
@@ -207,25 +207,18 @@ class Controller_User extends Controller_Template {
 	}
 	
 	private function registerToGcm () {
-		var_dump($_POST);
-		echo "id : ";
 		if (!isset($_POST["id"])) {
-			$this->error(404, "Login ou mot de passe incorrect");
-			return;
+			$this->error(403, "Not authorized");
 		}
-		echo $_POST["id"];
-		echo "gcm_token : ";
 		if (!isset($_POST["gcm_token"])) {
-			$this->error(404, "Login ou mot de passe incorrect");
-			return;
+			$this->error(400, "Token missing");
 		}
-		echo $_POST["gcm_token"];
 		$model = new Model_User();
 		$model->id = $_POST["id"];
 		$model->gcm_token = $_POST["gcm_token"];
 		$model->session = $_POST["session"];
 		if (!$model->registerToGcm()) {
-			return;
+			$this->error(500, "Une erreur s'est produite, veuillez réessayé ultérieurement.");
 		}
 	}
 	
