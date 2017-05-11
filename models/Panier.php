@@ -20,6 +20,8 @@ class Model_Panier extends Model_Template {
 	private $minute_souhaite;
 	private $preparation_restaurant;
 	private $temps_livraison;
+	private $paiement_method;
+	private $paiement_erreur_code;
 	private $restaurant;
 	private $user;
 	private $code_promo;
@@ -674,9 +676,10 @@ class Model_Panier extends Model_Template {
 	
 	public function loadById () {
 		$sql = "SELECT panier.id, panier.rue, panier.ville, panier.code_postal, panier.telephone, panier.heure_souhaite, panier.minute_souhaite, panier.distance,
-			resto.id AS id_restaurant, resto.nom AS nom_resto, resto.rue AS rue_restaurant, resto.ville AS ville_restaurant, resto.code_postal AS cp_restaurant, 
-			pl.prix, pl.montant_min, pl.reduction_premium, promo.description, user.uid AS uid, user.nom AS nom, user.prenom AS prenom, user.email, 
-			promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
+			panier.paiement_method, panier.paiement_erreur_code, resto.id AS id_restaurant, resto.nom AS nom_resto, resto.rue AS rue_restaurant, 
+			resto.ville AS ville_restaurant, resto.code_postal AS cp_restaurant, pl.prix, pl.montant_min, pl.reduction_premium, promo.description, 
+			user.uid AS uid, user.nom AS nom, user.prenom AS prenom, user.email, promo.type_reduc, promo.sur_prix_livraison, promo.valeur_prix_livraison, 
+			promo.sur_prix_total, promo.valeur_prix_total, promo.pourcentage_prix_total
 		FROM panier 
 		JOIN prix_livraison pl ON ((panier.distance BETWEEN pl.distance_min AND pl.distance_max) OR pl.distance_max = -1)
 		JOIN restaurants resto ON resto.id = panier.id_restaurant
@@ -705,6 +708,8 @@ class Model_Panier extends Model_Template {
 		$this->prix_livraison = $value['prix'];
 		$this->prix_minimum = $value['montant_min'];
 		$this->reduction_premium = $value['reduction_premium'];
+		$this->paiement_method = $value['paiement_method'];
+		$this->paiement_erreur_code = $value['paiement_erreur_code'];
 		
 		$user = new Model_User(false);
 		$user->id = $value['uid'];

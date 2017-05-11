@@ -58,7 +58,16 @@
 	</div>
 </div>
 <div id="commande">
-	<h3>Votre commande</h3>
+	<h3>La commande</h3>
+	<?php if ($request->panier->paiement_erreur_code != "") : ?>
+		<div class="row">
+			<div class="alert alert-danger" role="alert">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				<span class="sr-only">Error:</span>
+				Le paiement par <?php echo $request->panier->paiement_method; ?> a été refusée pour motif : <?php echo $request->panier->paiement_erreur_code; ?>
+			</div>
+		</div>
+	<?php endif; ?>
 	<div class="row">
 		<?php if ($request->panier->heure_souhaite == -1) : ?>
 			<span>Heure souhaitée : Au plus tôt</span>
