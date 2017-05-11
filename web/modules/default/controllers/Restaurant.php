@@ -399,17 +399,19 @@ class Controller_Restaurant extends Controller_Default_Template {
 			$request->disableLayout = true;
 		} else if ($this->request->mobileDetect && $this->request->mobileDetect->isMobile() && !$this->request->mobileDetect->isTablet()) {
 			$request->disableLayout = false;
-			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
-			$modelRestaurant->id = $request->panier->restaurant->id;
-			$request->restaurant = $modelRestaurant->loadAll();
-			
-			$modelUser = new Model_User(true, $request->dbConnector);
-			$livreurs = $modelUser->getLivreurAvailableForRestaurant($request->restaurant);
-			$request->restaurant->has_livreur_dispo = count($livreurs) > 0;
-			foreach ($livreurs as $livreur) {
-				$livreur->getLivreurDispo();
+			if ($request->panier) {
+				$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
+				$modelRestaurant->id = $request->panier->restaurant->id;
+				$request->restaurant = $modelRestaurant->loadAll();
+				
+				$modelUser = new Model_User(true, $request->dbConnector);
+				$livreurs = $modelUser->getLivreurAvailableForRestaurant($request->restaurant);
+				$request->restaurant->has_livreur_dispo = count($livreurs) > 0;
+				foreach ($livreurs as $livreur) {
+					$livreur->getLivreurDispo();
+				}
+				$request->livreurs = $livreurs;
 			}
-			$request->livreurs = $livreurs;
 		} else {
 			$request->disableLayout = true;
 		}
