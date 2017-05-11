@@ -1,9 +1,9 @@
 <?php 
 	include(WEBSITE_PATH.'layouts/panier_info.php');
 	$restaurant = $request->restaurant;
-	$livreurs = $request->livreurs;
-	$horaire = $restaurant->horaire;
-	$horaires = $restaurant->horaires;
+	$livreurs = $request->livreurs ? $request->livreurs : array();
+	$horaire = $request->restaurant ? $restaurant->horaire : false;
+	$horaires = $request->restaurant ? $restaurant->horaires : array();
 	$current_heure = date('G')+GTM_INTERVAL;
 	$current_minute = date('i');
 	
@@ -83,9 +83,15 @@
 	<?php endforeach; ?>
 </script>
 <div id="panier-content">
-	<a style="margin-top: 10px;" class="close-button" href="?controler=restaurant&action=index&id=<?php echo $request->panier->restaurant->id; ?>">
-		<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour à la carte du restaurant
-	</a>
+	<?php if ($request->panier) : ?>
+		<a style="margin-top: 10px;" class="close-button" href="?controler=restaurant&action=index&id=<?php echo $request->panier->restaurant->id; ?>">
+			<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour à la carte du restaurant
+		</a>
+	<?php else : ?>
+		<a style="margin-top: 10px;" class="close-button" href="javascript:history.back()">
+			<span style="margin-right: 10px;" class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>retour
+		</a>
+	<?php endif; ?>
 	<div>
 		<?php if ($request->panier) : ?>
 			<form method="post" enctype="x-www-form-urlencoded" id="panierForm" action="">
