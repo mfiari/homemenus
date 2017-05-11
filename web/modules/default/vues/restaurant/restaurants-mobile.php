@@ -16,7 +16,11 @@
 			Votre suggestion a bien été transmise aux équipes d'HoMe Menus
 		</div>
 	<?php endif; ?>
-	<?php $restaurantIds = array(); ?>
+	<?php 
+		$restaurantIds = array();
+		$totalRestaurantOuvert = 0;
+		$totalRestaurant = count($request->restaurants);
+	?>
 	<?php if ($request->adressError) : ?>
 		<div class="alert alert-danger" role="alert">
 			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -34,8 +38,6 @@
 		<?php
 			$current_heure = date('H');
 			$current_minute = date('i');
-			$totalRestaurant = count($request->restaurants);
-			$totalRestaurantOuvert = 0;
 		?>
 		<?php foreach ($request->restaurants as $restaurant) : ?>
 			<?php $horaire = $restaurant->horaire; ?>
