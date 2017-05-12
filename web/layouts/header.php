@@ -17,6 +17,7 @@
 	<script type="text/javascript" src="res/jquery-ui/jquery-ui.js"></script>
 	<script type="text/javascript" src="res/js/site.js"></script>
 	<script type="text/javascript" src="res/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="res/js/bootstrap-star-rating.js"></script>
 	<?php 
 		if ($request->hasProperty('javascripts')) {
 			foreach ($request->javascripts as $js) {
