@@ -98,7 +98,7 @@
 				($horaire->heure_debut < $current_heure && $horaire->heure_fin < $current_heure) ||
 				($horaire->heure_fin == $current_heure && $horaire->minute_fin < $current_minute)
 		) : ?>
-			<span style="color : #FF0000;">Restaurant fermé</span>
+			<span style="color : #337AB7;">Ouverture à <?php echo formatHeureMinute($horaire->heure_debut,$horaire->minute_debut); ?>, précommande disponible dès maintenant</span>
 		<?php elseif (!$horaires) : ?>
 			<span style="color : #FF0000;">Restaurant fermé</span>
 		<?php else : ?>
