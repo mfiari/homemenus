@@ -556,6 +556,7 @@ class Controller_Panier extends Controller_Default_Template {
 		$panier = new Model_Panier(true, $request->dbConnector);
 		$panier->uid = $request->_auth->id;
 		$request->panier = $panier->load();
+		$request->javascripts = array("https://www.paypalobjects.com/api/checkout.js");
 		$request->vue = $this->render("panier_validate");
 	}
 	

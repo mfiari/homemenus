@@ -298,7 +298,8 @@
 				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
 			</div>
 		</div>-->
-		<div class="col-md-12">
+		<?php $divClass = $request->_auth->is_premium ? 'col-md-3' : 'col-md-4'; ?>
+		<div class="<?php echo $divClass; ?>">
 			<form style="text-align : center;" id="payCard" action="?controler=panier&action=valideCarte" method="POST">
 			  <script
 				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
@@ -319,7 +320,13 @@
 				<img style="width : 60%; margin-top : 20px;" src="res/img/stripe-secure.png" title="HoMe Menus - paiement stripe secure" alt="HoMe Menus - paiement stripe secure">
 			</div>
 		</div>
-		<!--<div class="col-md-4">
+		<div class="<?php echo $divClass; ?>">
+			<div id="paypal-button"></div>
+			<div class="col-md-offset-2 col-md-10">
+				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
+			</div>
+		</div>
+		<div class="<?php echo $divClass; ?>">
 			<form style="text-align : center;" id="" action="?controler=panier&action=multi_paiement" method="POST">
 				<input style="width : 200px;" class="validate-button" type="submit" value="Payer avec plusieurs carte">
 			</form>
@@ -329,14 +336,52 @@
 				<p><i>Le paiement se fait toujours de manière sécurisé</i></p>
 			</div>
 		</div>
-		<div class="col-md-4">
-			<div class="col-md-offset-2 col-md-10">
-				<p>Le paiement se fait uniquement en carte bleu.</p>
+		<?php if ($request->_auth->is_premium) : ?>
+			<div class="<?php echo $divClass; ?>">
+				<button id="loginButton" class="validate-button" type="submit">Payer avec votre solde</button>
 			</div>
-		</div>-->
+		<?php endif; ?>
+		<div class="row">
+			Le paiement se fait directement sur le site et uniquement en carte bleu ou via Paypal. Pour toute information complémentaire sur les moyens de paiement, 
+			merci de lire la FAQ ou de nous contacter via le formulaire de contact ou de nous téléphoner au 06 61 45 97 33
+		</div>
 	</div>
 </div>
 <script type="text/javascript">
+	
+	$(document).ready(function(){
+    	paypal.Button.render({
+            // Set your environment
+            env: 'production', // sandbox | production
+            // PayPal Client IDs - replace with your own
+            // Create a PayPal app: https://developer.paypal.com/developer/applications/create
+            client: {
+                sandbox:    'AQjwhzgr6OwgbQ5mYBIB_y5wiUHw8vWc8ivkj6QyGXcZ6IQcp3bPjJsfFPVaDDNj3V_3mtSXuyOEf86F',
+                production: 'AVQVfVS9SBDFw69fnO4C8N9vxctoXtJAHFbr7kQiiykYzQAkLTEpUf0jnwnBF_rBZPtF3aJe2IkyXquN'
+            },
+            // Set to 'Pay Now'
+            commit: true,
+            // Wait for the PayPal button to be clicked
+            payment: function() {
+                // Make a client-side call to the REST api to create the payment
+                return paypal.rest.payment.create(this.props.env, this.props.client, {
+                    transactions: [
+                        {
+                            amount: { total: '<?php echo $totalPrix; ?>', currency: 'EUR' }
+                        }
+                    ]
+                });
+            },
+            // Wait for the payment to be authorized by the customer
+            onAuthorize: function(data, actions) {
+                // Execute the payment
+                return actions.payment.execute().then(function() {
+                    document.querySelector('#paypal-button-container').innerText = 'Payment Complete!';
+                });
+            }
+        }, '#paypal-button');
+    });
+
 	$("#accept_cgv").click(function () {
 		if ($("#accept_cgv").is(":checked")) {
 			$("#accept_cgv_error_message").hide();
