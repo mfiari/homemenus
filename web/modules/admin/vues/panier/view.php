@@ -190,7 +190,7 @@
 						<td></td>
 						<td>
 							<?php 
-								if ($request->panier->code_promo->surPrixLivraison()) {
+								if ($request->panier->code_promo && $request->panier->code_promo->surPrixLivraison()) {
 									if ($request->panier->code_promo->estGratuit()) {
 										echo "OFFERT";
 										$prix_livraison = 0;
@@ -208,7 +208,7 @@
 					</tr>
 				</tbody>
 				<tfoot>
-					<?php if ($request->panier->code_promo->description != '') : ?>
+					<?php if ($request->panier->code_promo && $request->panier->code_promo->description != '') : ?>
 						<tr>
 							<th>Promo :</th>
 							<td colspan="3"><?php echo utf8_encode($request->panier->code_promo->description); ?></td>
@@ -219,7 +219,7 @@
 						<th><?php echo $totalQte; ?></th>
 						<th>
 							<?php 
-								if ($request->panier->code_promo->surPrixTotal()) {
+								if ($request->panier->code_promo && $request->panier->code_promo->surPrixTotal()) {
 									if ($request->panier->code_promo->estGratuit()) {
 										echo "OFFERT";
 										$totalPrix = 0;
