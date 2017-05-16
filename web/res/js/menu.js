@@ -44,7 +44,7 @@ function initMenu (data, controllerMenu, actionMenu, controllerPanier, actionPan
 	$("#menu-modal .modal-content").html('');
 	
 	/* Setting header */
-	var modalHeader = $('<div />').addClass('modal-header').append('<button type="button" class="close" data-dismiss="modal">&times;</button>');
+	var modalHeader = $('<div />').addClass('modal-header center').append('<button type="button" class="close" data-dismiss="modal">&times;</button>');
 	var modalHeaderTitle = $('<h2 />').addClass('modal-title').html(menu.nom);
 	modalHeader.append(modalHeaderTitle);
 	if (menu.commentaire != "") {
@@ -58,7 +58,7 @@ function initMenu (data, controllerMenu, actionMenu, controllerPanier, actionPan
 	$("#menu-modal .modal-content").append(
 		$('<div />').addClass('modal-body').append(
 			$('<div />').addClass('row').append(
-				$('<div />').attr('id', 'menu-resume').addClass('col-md-4').append(
+				$('<div />').attr('id', 'menu-resume').css('max-height', '450px').css('overflow-y', 'auto').addClass('col-md-4').append(
 					$('<h3>Votre séléction</h3>')
 				)
 			).append(
@@ -97,7 +97,7 @@ function initFormat (menu) {
 			);
 		}
 		formatDiv.append(
-			$('<button />').addClass('btn btn-primary').html('Suivant').click(function () {
+			$('<button />').addClass('validate-button').html('Suivant').click(function () {
 				if (!formContent.format) {
 					alert('format non choisit');
 				} else {
@@ -132,7 +132,7 @@ function validateFormat (menu) {
 
 function initFormule (menu) {
 	if (menu.formules.length > 1) {
-		var formuleDiv = $('<div />').css('max-height', '500px').css('overflow-y', 'auto').attr('id', 'step-').append('<h3>Choisissez votre formule</h3>');
+		var formuleDiv = $('<div />').css('max-height', '450px').css('overflow-y', 'auto').attr('id', 'step-').append('<h3>Choisissez votre formule</h3>');
 		for (var i = 0 ; i < menu.formules.length ; i++) {
 			formuleDiv.append(
 				$('<div />').addClass('col-md-12').append(
@@ -149,9 +149,9 @@ function initFormule (menu) {
 				)
 			);
 		}
-		formuleDiv.append('<button class="btn btn-primary">Précédent</button>');
+		formuleDiv.append('<button class="btn btn-default">Précédent</button>');
 		formuleDiv.append(
-			$('<button />').addClass('btn btn-primary').html('Suivant').click(
+			$('<button />').addClass('validate-button').html('Suivant').click(
 				function (event) {
 					if (!formContent.formule) {
 						alert('contenu non choisit');
@@ -192,7 +192,7 @@ function validateFormule () {
 function initCategorie (formule, index) {
 	if (formule.categories.length > index) {
 		var categorie = formule.categories[index];
-		var categorieDiv = $('<div />').css('max-height', '500px').css('overflow-y', 'auto').attr('id', 'step-').append('<h3>Choisissez votre ' + categorie.nom + '</h3>');
+		var categorieDiv = $('<div />').css('max-height', '450px').css('overflow-y', 'auto').attr('id', 'step-').append('<h3>Choisissez votre ' + categorie.nom + '</h3>');
 		for (var j = 0 ; j < categorie.contenus.length ; j++) {
 			categorieDiv.append(
 				$('<div />').addClass('col-md-12').append(
@@ -204,7 +204,7 @@ function initCategorie (formule, index) {
 							}
 						)
 					).append(
-						$('<span />').html(categorie.contenus[j].carte.nom).css('margin-left', '10px')
+						$('<span />').html(categorie.contenus[j].carte.nom + (categorie.contenus[j].supplement > 0 ? '(+ '+categorie.contenus[j].supplement+' €)' : '')).css('margin-left', '10px')
 					).append(
 						$('<img />').attr('src', categorie.contenus[j].carte.logo).css('width', '80px')
 					)
@@ -212,27 +212,32 @@ function initCategorie (formule, index) {
 			);
 		}
 		categorieDiv.append(
-			$('<button />').addClass('btn btn-primary').html('Précédent').click(
-				{formule : formule, index : index},
-				function (event) {
-					if (index == 0) {
-						
-					} else {
-						initCategorie (event.data.formule, event.data.index -1);
-					}
-				}
-			)
-		);
-		categorieDiv.append(
-			$('<button />').addClass('btn btn-primary').html('Suivant').click(
-				{formule : formule, index : index},
-				function (event) {
-					if (!formContent.categorie[event.data.index]) {
-						alert('contenu non choisit');
-					} else {
-						validateCategorie (event.data.formule, event.data.index);
-					}
-				}
+			$('<div />').addClass('row').append(
+				$('<div />').addClass('col-md-6').append(
+					$('<button />').addClass('btn btn-default').html('Précédent').click(
+						{formule : formule, index : index},
+						function (event) {
+							if (index == 0) {
+								
+							} else {
+								initCategorie (event.data.formule, event.data.index -1);
+							}
+						}
+					)
+				)
+			).append(
+				$('<div />').addClass('col-md-6').append(
+					$('<button />').addClass('validate-button').html('Suivant').click(
+						{formule : formule, index : index},
+						function (event) {
+							if (!formContent.categorie[event.data.index]) {
+								alert('contenu non choisit');
+							} else {
+								validateCategorie (event.data.formule, event.data.index);
+							}
+						}
+					)
+				)
 			)
 		);
 		$('#menu-content').html('');
@@ -253,6 +258,7 @@ function chooseCategorie (categorie, contenu, index) {
 	formContent.categorie[index].contenu.id = contenu.id;
 	formContent.categorie[index].contenu.id_carte = contenu.carte.id;
 	formContent.categorie[index].contenu.nom = contenu.carte.nom;
+	formContent.categorie[index].contenu.supplement = contenu.supplement;
 	console.log(formContent.categorie[index]);
 }
 
@@ -262,7 +268,7 @@ function validateCategorie (formule, index) {
 	).append(
 		$('<h4 />').html(formContent.categorie[index].nom)
 	).append(
-		$('<span />').html(formContent.categorie[index].contenu.nom)
+		$('<span />').html(formContent.categorie[index].contenu.nom + (formContent.categorie[index].contenu.supplement > 0 ? '(+ '+formContent.categorie[index].contenu.supplement+' €)' : ''))
 	);
 	initCategorie (formule, index+1);
 }
@@ -280,54 +286,58 @@ function resume () {
 	$('#menu-resume').removeClass('col-md-4').addClass('col-md-12');
 	
 	$('#menu-resume').after(
-		$('<div />').addClass('col-md-12').append(
-			$('<button />').addClass('btn btn-primary').html('Précédent').click(function () {
-			})
+		$('<div />').addClass('row').append(
+			$('<div />').addClass('col-md-6').append(
+				$('<button />').addClass('btn btn-default').html('Précédent').click(function () {
+				})
+			)
 		).append(
-			$('<button />').addClass('btn btn-primary').html('Valider').click(function () {
-				var validationButton = this;
-				var loadingGlyphicon = $('<span />').addClass('glyphicon glyphicon-refresh glyphicon-refresh-animate');
-				$(validationButton).css('display', 'none');
-				$("#menu-resume div").append(loadingGlyphicon);
-				var sendData = {};
-				sendData.id_menu = formContent.id_menu;
-				sendData.id_restaurant = formContent.id_restaurant;
-				sendData.quantite = 1;
-				sendData.id_format = formContent.format.id;
-				sendData.id_formule = formContent.formule.id;
-				for (var i = 0 ; i < formContent.categorie.length ; i++) {
-					sendData['contenu_'+formContent.categorie[i].id] = formContent.categorie[i].contenu.id;
-				}
-				
-				$.ajax({
-					type: "POST",
-					url: 'index.php?controler='+formContent.controllerMenu+'&action='+formContent.actionMenu,
-					dataType: "html",
-					data: sendData
-				}).done(function( msg ) {
-					$("#menu-resume").html('<div class="alert alert-success" role="alert">'
-						+'<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>'
-						+'Votre menu a bien été ajouté au panier'
-						+'</div>');
-					$("#menu-modal .modal-footer div.alert-success").css('display', 'inline-block');
+			$('<div />').addClass('col-md-6').append(
+				$('<button />').addClass('validate-button').html('Valider').click(function () {
+					var validationButton = this;
+					var loadingGlyphicon = $('<span />').addClass('glyphicon glyphicon-refresh glyphicon-refresh-animate');
+					$(validationButton).css('display', 'none');
+					$("#menu-resume div").append(loadingGlyphicon);
+					var sendData = {};
+					sendData.id_menu = formContent.id_menu;
+					sendData.id_restaurant = formContent.id_restaurant;
+					sendData.quantite = 1;
+					sendData.id_format = formContent.format.id;
+					sendData.id_formule = formContent.formule.id;
+					for (var i = 0 ; i < formContent.categorie.length ; i++) {
+						sendData['contenu_'+formContent.categorie[i].id] = formContent.categorie[i].contenu.id;
+					}
+					
 					$.ajax({
-						type: "GET",
-						url: 'index.php?controler='+formContent.controllerPanier+'&action='+formContent.actionPanier,
-						dataType: "html"
+						type: "POST",
+						url: 'index.php?controler='+formContent.controllerMenu+'&action='+formContent.actionMenu,
+						dataType: "html",
+						data: sendData
 					}).done(function( msg ) {
-						$("#panier-content").html(msg);
-						initDeleteCarteItem ();
-						initDeleteMenuItem ();
-						initPanierCommande();
+						$("#menu-resume").html('<div class="alert alert-success" role="alert">'
+							+'<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>'
+							+'Votre menu a bien été ajouté au panier'
+							+'</div>');
+						$("#menu-modal .modal-footer div.alert-success").css('display', 'inline-block');
+						$.ajax({
+							type: "GET",
+							url: 'index.php?controler='+formContent.controllerPanier+'&action='+formContent.actionPanier,
+							dataType: "html"
+						}).done(function( msg ) {
+							$("#panier-content").html(msg);
+							initDeleteCarteItem ();
+							initDeleteMenuItem ();
+							initPanierCommande();
+						});
+						setTimeout(function(){ 
+							$("#menu-modal").modal('hide');
+						}, 2000);
+					}).error(function(msg) {
+						validationButton.css('display', 'inline-block');
+						loadingGlyphicon.css('display', 'none');
 					});
-					setTimeout(function(){ 
-						$("#menu-modal").modal('hide');
-					}, 2000);
-				}).error(function(msg) {
-					validationButton.css('display', 'inline-block');
-					loadingGlyphicon.css('display', 'none');
-				});
-			})
+				})
+			)
 		)
 	).before(stepper);
 	

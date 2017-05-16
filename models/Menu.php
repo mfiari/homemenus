@@ -185,7 +185,8 @@ class Model_Menu extends Model_Template {
 			
 			$sql = "SELECT id, nom, quantite
 			FROM menu_categorie
-			WHERE id_formule = :id_formule AND id_menu = :id_menu";
+			WHERE id_formule = :id_formule AND id_menu = :id_menu
+			ORDER BY ordre ASC";
 			$stmt = $this->db->prepare($sql);
 			$stmt->bindValue(":id_formule", $formule->id);
 			$stmt->bindValue(":id_menu", $this->id);
@@ -200,9 +201,9 @@ class Model_Menu extends Model_Template {
 				$categorie->nom = $cat["nom"];
 				$categorie->quantite = $cat["quantite"];
 				
-				$sql = "SELECT id, id_carte, obligatoire, limite_supplement, limite_accompagnement, commentaire
+				$sql = "SELECT id, id_carte, obligatoire, limite_supplement, limite_accompagnement, commentaire, supplement
 					FROM menu_contenu
-					WHERE id_menu_categorie = :id";
+					WHERE id_menu_categorie = :id ORDER BY ordre ASC";
 				$stmt = $this->db->prepare($sql);
 				$stmt->bindValue(":id", $categorie->id);
 				if (!$stmt->execute()) {
@@ -216,6 +217,7 @@ class Model_Menu extends Model_Template {
 					$contenu->obligatoire = $cont['obligatoire'];
 					$contenu->limite_supplement = $cont['limite_supplement'];
 					$contenu->commentaire = $cont['commentaire'];
+					$contenu->supplement = $cont['supplement'];
 					
 					$modelCarte = new Model_Carte(true, $this->db);
 					$modelCarte->id = $cont['id_carte'];

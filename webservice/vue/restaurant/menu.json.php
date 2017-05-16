@@ -50,6 +50,7 @@
 				$contenuData['obligatoire'] = $contenu->obligatoire;
 				$contenuData['limite_supplement'] = $contenu->limite_supplement;
 				$contenuData['commentaire'] = utf8_encode($contenu->commentaire);
+				$contenuData['supplement'] = $contenu->supplement;
 				$contenuData['carte'] = array();
 				
 				$contenuData['carte']['id'] = $contenu->carte->id;

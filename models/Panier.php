@@ -418,11 +418,14 @@ class Model_Panier extends Model_Template {
 			$carte->quantite = $c["quantite"];
 			$this->carteList[] = $carte;
 		}
-		$sql = "SELECT pm.id, menus.nom, mf.prix, pm.quantite
+		$sql = "SELECT pm.id, menus.nom, mf.prix, pm.quantite, SUM(mc.supplement) AS supp
 		FROM panier_menu pm
 		JOIN menus ON menus.id = pm.id_menu
 		JOIN menu_format mf ON mf.id_format = pm.id_format AND mf.id_menu = menus.id
-		WHERE pm.id_panier = :id";
+		LEFT JOIN panier_menu_contenu pmc ON pmc.id_panier_menu = pm.id
+		LEFT JOIN menu_contenu mc ON mc.id = pmc.id_contenu
+		WHERE pm.id_panier = :id
+		GROUP BY pm.id";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindValue(":id", $this->id);
 		if (!$stmt->execute()) {
@@ -434,7 +437,7 @@ class Model_Panier extends Model_Template {
 			$menu = new Model_Menu(false);
 			$menu->id = $m["id"];
 			$menu->nom = $m["nom"];
-			$menu->prix = $m["prix"] * $m["quantite"];
+			$menu->prix = ($m["prix"] + $m["supp"]) * $m["quantite"];
 			$menu->quantite = $m["quantite"];
 			$this->menuList[] = $menu;
 		}

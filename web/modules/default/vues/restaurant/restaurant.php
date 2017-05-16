@@ -512,8 +512,10 @@
 		for (var i = 0 ; i < horaires_final.length ; i++) {
 			$("select#heure_commande").append($('<option />').html(horaires_final[i].heure));
 		}
-		for (var j = horaires_final[0].minute_debut ; j <= horaires_final[0].minute_fin ; j++) {
-			$("select#minute_commande").append($('<option />').html(j));
+		if (horaires_final.length > 0) {
+			for (var j = horaires_final[0].minute_debut ; j <= horaires_final[0].minute_fin ; j++) {
+				$("select#minute_commande").append($('<option />').html(j));
+			}
 		}
 		$("select#heure_commande").change(function() {
 			var heure = $(this).val();
