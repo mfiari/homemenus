@@ -689,13 +689,39 @@ class Controller_Panier extends Controller_Default_Template {
 						$clientDir.'commande'.$commande->id.'.pdf'
 					);
 					
+					$prixLivraison = $commande->prix_livraison;
+					
+					if ($commande->codePromo && $commande->codePromo->surPrixLivraison()) {
+						if ($commande->codePromo->estGratuit()) {
+							$prixLivraison = 0;
+						} else {
+							$prixLivraison -= $commande->codePromo->valeur_prix_livraison;
+						}
+					}
+					
+					$prixTotal = $commande->prix;
+					
+					if ($commande->codePromo && $commande->codePromo->surPrixTotal()) {
+						if ($commande->codePromo->estGratuit()) {
+							$prixTotal = 0;
+							$prixLivraison = 0;
+						} else {
+							if ($commande->codePromo->valeur_prix_total != -1) {
+								$prixTotal -= $commande->codePromo->valeur_prix_total;
+							}
+							if ($commande->codePromo->pourcentage_prix_total != -1) {
+								$prixTotal -= ($prixTotal * $commande->codePromo->pourcentage_prix_total) / 100;
+							}
+						}
+					}
+					
 					$messageContentAdmin =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
 					
 					$messageContentAdmin = str_replace("[COMMANDE_ID]", $commande->id, $messageContentAdmin);
 					$messageContentAdmin = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentAdmin);
 					$messageContentAdmin = str_replace("[CLIENT]", $commande->client->nom.' '.$commande->client->prenom, $messageContentAdmin);
-					$messageContentAdmin = str_replace("[TOTAL]", $commande->prix, $messageContentAdmin);
-					$messageContentAdmin = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentAdmin);
+					$messageContentAdmin = str_replace("[TOTAL]", $prixTotal, $messageContentAdmin);
+					$messageContentAdmin = str_replace("[PRIX_LIVRAISON]", $prixLivraison, $messageContentAdmin);
 					
 					send_mail (MAIL_ADMIN, "Nouvelle commande", $messageContentAdmin, MAIL_FROM_DEFAULT, $attachments);
 					
@@ -703,8 +729,8 @@ class Controller_Panier extends Controller_Default_Template {
 					
 					$messageContentClient = str_replace("[COMMANDE_ID]", $commande->id, $messageContentClient);
 					$messageContentClient = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentClient);
-					$messageContentClient = str_replace("[TOTAL]", $commande->prix, $messageContentClient);
-					$messageContentClient = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentClient);
+					$messageContentClient = str_replace("[TOTAL]", $prixTotal, $messageContentClient);
+					$messageContentClient = str_replace("[PRIX_LIVRAISON]", $prixLivraison, $messageContentClient);
 					
 					send_mail ($request->_auth->login, "Nouvelle commande", $messageContentClient, MAIL_FROM_DEFAULT, $attachments);
 					
