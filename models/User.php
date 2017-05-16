@@ -1427,6 +1427,27 @@ class Model_User extends Model_Template {
 		return $value["total"];
 	}
 	
+	public function getTotalCommandeMonth () {
+		$sql = "SELECT com.total + hcom.total AS total
+		FROM users 
+		LEFT JOIN (SELECT COUNT(*) AS total FROM commande WHERE uid = :uid) AS com ON com.total >= 0
+		LEFT JOIN (SELECT COUNT(*) AS total FROM commande_history WHERE id_user = :uid AND MONTH(date_commande) = MONTH(NOW()) 
+		AND YEAR(date_commande) = YEAR(NOW()) ) AS hcom ON hcom.total >= 0
+		WHERE users.uid = :uid";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":uid", $this->id);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			$this->sqlHasFailed = true;
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null ||$value == false) {
+			return 0;
+		}
+		return $value["total"];
+	}
+	
 	public function isAdmin () {
 		return $this->status == USER_ADMIN || $this->status == USER_ADMIN_INFO || $this->status == USER_ADMIN_CLIENT;
 	}

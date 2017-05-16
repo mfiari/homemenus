@@ -478,6 +478,40 @@ function carteDeFidelite ($request, $commande) {
 		$messageContent = str_replace("[CODE_PROMO]", $codePromo->code, $messageContent);
 		send_mail ($user->email, "Carte de fidélité", $messageContent);
 	}
+	$totalCommandeMonth = $user->getTotalCommandeMonth();
+	if ($totalCommande == 5) {
+		$codePromo = new Model_CodePromo(true, $request->dbConnector);
+		$codePromo->code = "CPM".$commande->id.$user->id;
+		$codePromo->description = "-10 € de réduction sur la commande";
+		$codePromo->date_debut = date('Y-m-d');
+		$codePromo->date_fin = "2018-12-31 23:59:59";
+		$codePromo->publique = false;
+		$codePromo->sur_restaurant = false;
+		$codePromo->type_reduc = 'REDUCTION';
+		$codePromo->sur_prix_livraison = false;
+		$codePromo->valeur_prix_livraison = 0;
+		$codePromo->sur_prix_total = true;
+		$codePromo->valeur_prix_total = 10;
+		$codePromo->pourcentage_prix_total = 0;
+		$codePromo->save();
+		$codePromo->addClient($user->id);
+
+		$messageContent =  file_get_contents (ROOT_PATH.'mails/carte_fidelite.html');
+	
+		$messageContent = str_replace("[WEBSITE_URL]", WEBSITE_URL, $messageContent);
+		$messageContent = str_replace("[DATE_DEBUT]", formatTimestampToDateHeure($codePromo->date_debut), $messageContent);
+		$messageContent = str_replace("[DATE_FIN]", formatTimestampToDateHeure($codePromo->date_fin), $messageContent);
+		$messageContent = str_replace("[DESCRIPTION]", $codePromo->description, $messageContent);
+		$restaurants = "";
+		if ($codePromo->surRestaurant()) {
+			
+		} else {
+			$restaurants = "Tous les restaurants";
+		}
+		$messageContent = str_replace("[RESTAURANTS]", $restaurants, $messageContent);
+		$messageContent = str_replace("[CODE_PROMO]", $codePromo->code, $messageContent);
+		send_mail ($user->email, "Carte de fidélité", $messageContent);
+	}
 }
 
 ?>
