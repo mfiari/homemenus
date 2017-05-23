@@ -55,5 +55,24 @@ class Model_TransfertPaiement extends Model_Template {
 		return true;
 	}
 	
+	public function getTitreRestaurant ($dateDebut, $dateFin) {
+		$sql = "SELECT YEAR(date_paiement) AS year, MONTH(date_paiement) AS month, SUM(quantite) as quantite, SUM(montant) AS montant
+		FROM transfert_paiement
+		WHERE paiement_method = 'TICKET RESTAURANT' AND date_paiement BETWEEN :date_debut AND :date_fin
+		GROUP BY year, month";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		$value = $stmt->fetch(PDO::FETCH_ASSOC);
+		if ($value == null) {
+			return false;
+		}
+		return $value;
+	}
+	
 	
 }

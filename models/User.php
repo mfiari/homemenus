@@ -345,6 +345,8 @@ class Model_User extends Model_Template {
 			return $this->updateUser();
 		} else if ($this->status == USER_RESTAURANT || $this->status == USER_ADMIN_RESTAURANT) {
 			return $this->updateRestaurant();
+		} else if ($this->status == USER_TICKET_RESTO) {
+			return true;
 		}
 		return false;
 	}

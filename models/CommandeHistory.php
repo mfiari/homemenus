@@ -1056,7 +1056,7 @@ class Model_Commande_History extends Model_Template {
 			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
 			return false;
 		}
-		return $stmt->fetchAll();;
+		return $stmt->fetchAll();
 	}
 	
 	public function getTotalByClient ($dateDebut, $dateFin) {
@@ -1123,6 +1123,23 @@ class Model_Commande_History extends Model_Template {
 			return false;
 		}
 		return $stmt->fetchAll();;
+	}
+	
+	public function getTitreRestaurant ($dateDebut, $dateFin) {
+		$sql = "SELECT YEAR(date_commande) AS year, MONTH(date_commande) AS month, resto.id, resto.nom, 0 AS quantite_total, 0 AS prix_total 
+		FROM restaurants resto 
+		LEFT JOIN commande_history histo ON histo.id_restaurant = resto.id AND histo.date_commande BETWEEN :date_debut AND :date_fin
+		WHERE resto.enabled = 1 AND resto.deleted = 0
+		GROUP BY  year, month, resto.id
+		ORDER BY year, month, resto.nom";
+		$stmt = $this->db->prepare($sql);
+		$stmt->bindValue(":date_debut", $dateDebut);
+		$stmt->bindValue(":date_fin", $dateFin);
+		if (!$stmt->execute()) {
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			return false;
+		}
+		return $stmt->fetchAll();
 	}
 	
 	public function noter () {

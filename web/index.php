@@ -34,7 +34,6 @@ if (MAINTENANCE) {
 }
 
 if (isset($_SESSION["uid"]) && isset($_SESSION["session"])) {
-	
 	include_once ROOT_PATH."models/User.php";
 	include_once ROOT_PATH."models/Parametre.php";
 	$user = new Model_User(true, $request->dbConnector);
@@ -131,6 +130,9 @@ if (isset($_GET["module"])) {
 			$manager = new Default_Manager();
 		} else if ($request->_auth->status == USER_ADMIN_ENTREPRISE) {
 			include_once WEBSITE_PATH."modules/entreprise/Manager.php";
+			$manager = new Default_Manager();
+		} else if ($request->_auth->status == USER_TICKET_RESTO) {
+			include_once WEBSITE_PATH."modules/ticket_resto/Manager.php";
 			$manager = new Default_Manager();
 		} else {
 			include_once WEBSITE_PATH."modules/default/Manager.php";

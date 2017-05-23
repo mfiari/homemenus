@@ -28,6 +28,8 @@
 							include('top_restaurant.php');
 						} else if ($request->_auth->status == USER_ADMIN_RESTAURANT) {
 							include('top_admin_restaurant.php');
+						} else if ($request->_auth->status == USER_TICKET_RESTO) {
+							include('top_ticket_restaurant.php');
 						} else {
 							include('top.php');
 						}
