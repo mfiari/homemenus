@@ -39,7 +39,8 @@
 			toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | template',
 			content_css: '//www.tinymce.com/css/codepen.min.css',
 			templates: [
-				{title: 'Template 1', description: 'template', url: '../mails/avis.html'}
+				{title: 'Template 1', description: 'template', url: '../mails/avis.html'},
+				{title: 'Template 2', description: 'template', url: '../mails/template.html'}
 			],
 			setup : function (editor) {
 				editor.on('change', function () {
