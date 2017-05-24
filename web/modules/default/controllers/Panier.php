@@ -64,6 +64,9 @@ class Controller_Panier extends Controller_Default_Template {
 				case "valideCarte" :
 					$this->valideCarte($request);
 					break;
+				case "validePaypal" :
+					$this->validePaypal($request);
+					break;
 				case "multi_paiement" :
 					$this->multi_paiement($request);
 					break;
@@ -344,7 +347,7 @@ class Controller_Panier extends Controller_Default_Template {
 		$adresseResto = $restaurant->latitude.','.$restaurant->longitude;
 		
 		$adresse = $rue.', '.$code_postal.' '.$ville;
-		$geocoder = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false";
+		$geocoder = "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCfYBzV2jwX5l1gPJ2W4FeCfzJGIRQ37BQ&address=%s&sensor=false";
 		$localisation = urlencode($adresse);
 		$query = sprintf($geocoder,$localisation);
 		$rd = json_decode(file_get_contents($query));
@@ -756,6 +759,178 @@ class Controller_Panier extends Controller_Default_Template {
 		}
 	}
 	
+	public function validePaypal ($request) {
+		
+		$panier = new Model_Panier(true, $request->dbConnector);
+		$panier->uid = $request->_auth->id;
+		$panier = $panier->load();
+		
+		$totalPrix = 0;
+		
+		foreach ($panier->carteList as $carte) {
+			$totalPrix += $carte->prix;
+			foreach ($carte->supplements as $supplement) {
+				$totalPrix += $supplement->prix * $carte->quantite;
+			}
+		}
+		
+		foreach ($panier->menuList as $menu) {
+			$totalPrix += $menu->prix;
+		}
+		
+		if ($panier->code_promo && $panier->code_promo->surPrixLivraison()) {
+			if (!$panier->code_promo->estGratuit()) {
+				$totalPrix += ($panier->prix_livraison - $panier->code_promo->valeur_prix_livraison);
+			}
+		} else {
+			$totalPrix += $panier->prix_livraison;
+		}
+		
+		if ($panier->code_promo->surPrixTotal()) {
+			if ($panier->code_promo->estGratuit()) {
+				$totalPrix = 0;
+			} else {
+				if ($panier->code_promo->valeur_prix_total != -1) {
+					$totalPrix -= $panier->code_promo->valeur_prix_total;
+				}
+				if ($panier->code_promo->pourcentage_prix_total != -1) {
+					$totalPrix -= ($totalPrix * $panier->code_promo->pourcentage_prix_total) / 100;
+				}
+			}
+		}
+				
+		$panier = new Model_Panier(true, $request->dbConnector);
+		$panier->uid = $request->_auth->id;
+		$panier->init();
+		$commande = new Model_Commande(true, $request->dbConnector);
+		if ($commande->create($panier)) {
+			$commande->setPaiementMethod("PAYPAL", "");
+			$panier->remove();
+			$user = new Model_User(true, $request->dbConnector);
+			
+			$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
+			if (count($restaurantUsers) > 0) {
+				$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+				$telephone = '';
+				$oldTelephone = '';
+				foreach ($restaurantUsers as $restaurantUser) {
+					if ($restaurantUser->gcm_token) {
+						$message = "Vous avez reçu une nouvelle commande";
+						// listre des utilisateurs à notifier
+						$gcm->setDevices(array($restaurantUser->gcm_token));
+					 
+						// Le titre de la notification
+						$data = array(
+							"title" => "Nouvelle commande",
+							"key" => "restaurant-new-commande",
+							"id_commande" => $commande->id
+						);
+					 
+						// On notifie nos utilisateurs
+						$result = $gcm->send($message, $data);
+						
+						$notification = new Model_Notification();
+						$notification->id_user = $restaurantUser->id;
+						$notification->token = $restaurantUser->gcm_token;
+						$notification->message = $message;
+						$notification->datas = json_encode($data);
+						$notification->is_send = true;
+						$notification->save();
+					}
+					
+					$telephone = $restaurantUser->telephone;
+					
+					if ($telephone != '' && $telephone != $oldTelephone) {
+						$oldTelephone = $telephone;
+						$sms = new Nexmo();
+						$sms->message = "Vous avez recu une nouvelle commande";
+						$sms->addNumero($telephone);
+						$sms->sendMessage();
+					}
+				}
+			} else {
+				writeLog(SERVER_LOG, "Auncun utilisateur restaurant trouvé pour la commande #".$commande->id, LOG_LEVEL_WARNING);
+			}
+			
+			$commande->load();
+			
+			$today = date('Y-m-d');
+			
+			$clientDir = ROOT_PATH.'files/commandes/'.$today.'/client/';
+			
+			if(!is_dir($clientDir)){
+			   mkdir($clientDir, 0777, true);
+			}
+			
+			$pdf = new PDF();
+			$pdf->generateFactureClient($commande);
+			$pdf->render('F', $clientDir.'commande'.$commande->id.'.pdf');
+			
+			$attachments = array(
+				$clientDir.'commande'.$commande->id.'.pdf'
+			);
+			
+			$prixLivraison = $commande->prix_livraison;
+			
+			if ($commande->codePromo && $commande->codePromo->surPrixLivraison()) {
+				if ($commande->codePromo->estGratuit()) {
+					$prixLivraison = 0;
+				} else {
+					$prixLivraison -= $commande->codePromo->valeur_prix_livraison;
+				}
+			}
+			
+			$prixTotal = $commande->prix;
+			
+			if ($commande->codePromo && $commande->codePromo->surPrixTotal()) {
+				if ($commande->codePromo->estGratuit()) {
+					$prixTotal = 0;
+					$prixLivraison = 0;
+				} else {
+					if ($commande->codePromo->valeur_prix_total != -1) {
+						$prixTotal -= $commande->codePromo->valeur_prix_total;
+					}
+					if ($commande->codePromo->pourcentage_prix_total != -1) {
+						$prixTotal -= ($prixTotal * $commande->codePromo->pourcentage_prix_total) / 100;
+					}
+				}
+			}
+			
+			$messageContentAdmin =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
+			
+			$messageContentAdmin = str_replace("[COMMANDE_ID]", $commande->id, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[CLIENT]", $commande->client->nom.' '.$commande->client->prenom, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[TOTAL]", $prixTotal, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[PRIX_LIVRAISON]", $prixLivraison, $messageContentAdmin);
+			
+			send_mail (MAIL_ADMIN, "Nouvelle commande", $messageContentAdmin, MAIL_FROM_DEFAULT, $attachments);
+			
+			$messageContentClient =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_client.html');
+			
+			$messageContentClient = str_replace("[COMMANDE_ID]", $commande->id, $messageContentClient);
+			$messageContentClient = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentClient);
+			$messageContentClient = str_replace("[TOTAL]", $prixTotal, $messageContentClient);
+			$messageContentClient = str_replace("[PRIX_LIVRAISON]", $prixLivraison, $messageContentClient);
+			
+			send_mail ($request->_auth->login, "Nouvelle commande", $messageContentClient, MAIL_FROM_DEFAULT, $attachments);
+			
+			$restaurantDir = ROOT_PATH.'files/commandes/'.$today.'/restaurant/';
+			
+			if(!is_dir($restaurantDir)){
+			   mkdir($restaurantDir, 0777, true);
+			}
+			
+			$pdf2 = new PDF();
+			$pdf2->generateFactureRestaurant($commande);
+			$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
+			
+			carteDeFidelite($request, $commande);
+			
+		}
+		$request->vue = $this->render("paypal_success");
+	}
+	
 	public function multi_paiement ($request) {
 		if (!$request->_auth) {
 			$this->redirect("finalisation_inscription", "panier");
@@ -780,7 +955,7 @@ class Controller_Panier extends Controller_Default_Template {
 		$panier->paiements = $paiementModel->getByPanier();
 		
 		$montant = floatval(str_replace(',', '.', $_POST['montant']));
-		if (!is_float($montant) || $montant <= 0) {
+		if (!is_float($montant) || $montant <= 1) {
 			$this->redirect("multi_paiement", "panier", '', array('payment' => 'refused'));
 		}
 		
@@ -800,7 +975,11 @@ class Controller_Panier extends Controller_Default_Template {
 				$totalPrix += ($panier->prix_livraison - $panier->code_promo->valeur_prix_livraison);
 			}
 		} else {
-			$totalPrix += $panier->prix_livraison;
+			$prix_livraison = $panier->prix_livraison;
+		    if ($request->_auth->is_premium) {
+				$prix_livraison -= $panier->reduction_premium;
+			}
+			$totalPrix += $prix_livraison;
 		}
 		
 		if ($panier->code_promo->surPrixTotal()) {
@@ -845,7 +1024,7 @@ class Controller_Panier extends Controller_Default_Template {
 					$paiementModel->token = $paymentToken;
 					$paiementModel->save();
 					
-					if ($montant + $totalPaiement == $totalPrix) {
+					if ($totalPrix - ($montant + $totalPaiement) < 1) {
 					
 						$commande = new Model_Commande(true, $request->dbConnector);
 						if ($commande->create($panier)) {
