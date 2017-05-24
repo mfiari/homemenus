@@ -508,7 +508,11 @@ class Controller_Commande extends Controller_Template {
 	public function send () {
 		$id_commande = $_POST['id_commande'];
 		$message = $_POST['message'];
-		$sender = "LIVREUR";
+		if (isset($_POST['sender'])) {
+			$sender = $_POST['sender'];
+		} else {
+			$sender = "LIVREUR";
+		}
 		$chat = new Model_Chat();
 		$chat->id_commande = $id_commande;
 		$chat->sender = $sender;
