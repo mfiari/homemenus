@@ -261,7 +261,7 @@
 		<div class="col-md-6">
 			<div id="codePromoPanierBlock" style="margin-bottom : 20px;">
 				<span>Code promo : </span>
-				<input id="code_promo" name="code_promo" type="text" maxlength="10">
+				<input id="code_promo" name="code_promo" type="text" maxlength="12">
 				<button id="codePromoPanierButton" class="validate-button" type="button">Valider</button>
 				<div style="display : none;" class="alert alert-success" role="alert">
 					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
@@ -290,60 +290,57 @@
 </div>
 <div style="margin-top : 20px;">
 	<div id="paiementsForm" class="row" style="display : none;">
-		<!--<div class="col-md-6">
-			<form style="text-align : center;" id="payPaypal" action="?controler=paypal" method="POST">
-				<input id="command" class="validate-button" type="submit" value="Payer avec paypal">
-			</form>
-			<div class="col-md-offset-2 col-md-10">
-				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
-			</div>
-		</div>-->
 		<?php $divClass = $request->_auth->is_premium ? 'col-md-3' : 'col-md-4'; ?>
-		<div class="<?php echo $divClass; ?>">
-			<form style="text-align : center;" id="payCard" action="?controler=panier&action=valideCarte" method="POST">
-			  <script
-				src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-				data-email="<?php echo $request->_auth->login; ?>"
-				data-allow-remember-me="false"
-				data-label="Payer par carte"
-				data-key="<?php echo STRIPE_PUBLIC_KEY; ?>"
-				data-amount="<?php echo ($totalPrix * 100); ?>"
-				data-name="HoMe Menus"
-				data-description="Paiement de la commande"
-				data-image="/web/res/img/logo_mail.png"
-				data-locale="auto"
-				data-zip-code="true"
-				data-currency="eur">
-			  </script>
-			</form>
-			<div class="col-md-offset-2 col-md-10">
-				<img style="width : 60%; margin-top : 20px;" src="res/img/stripe-secure.png" title="HoMe Menus - paiement stripe secure" alt="HoMe Menus - paiement stripe secure">
-			</div>
-		</div>
-		<div class="<?php echo $divClass; ?>">
-			<div id="paypal-button"></div>
-			<div class="col-md-offset-2 col-md-10">
-				<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
-			</div>
-		</div>
-		<div class="<?php echo $divClass; ?>">
-			<form style="text-align : center;" id="" action="?controler=panier&action=multi_paiement" method="POST">
-				<input style="width : 200px;" class="validate-button" type="submit" value="Payer avec plusieurs carte">
-			</form>
-			<div class="col-md-offset-2 col-md-10">
-				<p><i>Régler votre panier en utilisant plusieurs carte de paiement</i></p>
-				<p><i>Idéal pour les repas à plusieurs</i></p>
-				<p><i>Le paiement se fait toujours de manière sécurisé</i></p>
-			</div>
-		</div>
-		<?php if ($request->_auth->is_premium) : ?>
-			<div class="<?php echo $divClass; ?>">
-				<button id="loginButton" class="validate-button" type="submit">Payer avec votre solde</button>
-			</div>
-		<?php endif; ?>
 		<div class="row">
-			Le paiement se fait directement sur le site et uniquement en carte bleu ou via Paypal. Pour toute information complémentaire sur les moyens de paiement, 
-			merci de lire la FAQ ou de nous contacter via le formulaire de contact ou de nous téléphoner au 06 61 45 97 33
+			<div class="<?php echo $divClass; ?>">
+				<form style="text-align : center;" id="payCard" action="?controler=panier&action=valideCarte" method="POST">
+				  <script
+					src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+					data-email="<?php echo $request->_auth->login; ?>"
+					data-allow-remember-me="false"
+					data-label="Payer par carte"
+					data-key="<?php echo STRIPE_PUBLIC_KEY; ?>"
+					data-amount="<?php echo ($totalPrix * 100); ?>"
+					data-name="HoMe Menus"
+					data-description="Paiement de la commande"
+					data-image="/web/res/img/logo_mail.png"
+					data-locale="auto"
+					data-zip-code="true"
+					data-currency="eur">
+				  </script>
+				</form>
+				<div class="col-md-offset-2 col-md-10">
+					<img style="width : 60%; margin-top : 20px;" src="res/img/stripe-secure.png" title="HoMe Menus - paiement stripe secure" alt="HoMe Menus - paiement stripe secure">
+				</div>
+			</div>
+			<div class="<?php echo $divClass; ?>">
+				<div id="paypal-button"></div>
+				<div class="col-md-offset-2 col-md-10">
+					<img style="width : 80%; margin-top : 20px;" src="res/img/paiement-paypal.jpg" title="HoMe Menus - paiement paypal secure" alt="HoMe Menus - paiement paypal secure">
+				</div>
+			</div>
+			<div class="<?php echo $divClass; ?>">
+				<form style="text-align : center;" id="" action="?controler=panier&action=multi_paiement" method="POST">
+					<input style="width : 200px;" class="validate-button" type="submit" value="Payer avec plusieurs carte">
+				</form>
+				<div class="col-md-offset-2 col-md-10">
+					<p><i>Régler votre panier en utilisant plusieurs carte de paiement</i></p>
+					<p><i>Idéal pour les repas à plusieurs</i></p>
+					<p><i>Le paiement se fait toujours de manière sécurisé</i></p>
+				</div>
+			</div>
+			<?php if ($request->_auth->is_premium) : ?>
+				<div class="<?php echo $divClass; ?>">
+					<button id="loginButton" class="validate-button" type="submit">Payer avec votre solde</button>
+				</div>
+			<?php endif; ?>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				Le paiement se fait directement sur le site et uniquement en carte bleu ou via Paypal. Pour toutes informations complémentaire 
+				sur les moyens de paiement, merci de lire la <a href="faq.html">FAQ</a> ou de nous contacter 
+				via notre <a href="contact.html">formulaire de contact</a> ou par téléphone au 06 61 45 97 33
+			</div>
 		</div>
 	</div>
 </div>
@@ -376,7 +373,7 @@
             onAuthorize: function(data, actions) {
                 // Execute the payment
                 return actions.payment.execute().then(function() {
-                    document.querySelector('#paypal-button-container').innerText = 'Payment Complete!';
+                    document.location.href="?controler=panier&action=validePaypal"
                 });
             }
         }, '#paypal-button');
