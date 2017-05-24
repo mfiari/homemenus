@@ -54,10 +54,13 @@ class Controller_Panier extends Controller_Template {
 					$this->addCarte();
 					break;
 				case "validate" :
-					$this->validate($request);
+					$this->validate();
+					break;
+				case "finalisation_inscription" :
+					$this->finalisation_inscription();
 					break;
 				case "valideCarte" :
-					$this->valideCarte($request);
+					$this->valideCarte();
 					break;
 			}
 		} else {
@@ -235,7 +238,6 @@ class Controller_Panier extends Controller_Template {
 		}
 		$carte = $modelCarte->getSupplements();
 		foreach ($carte->supplements as $supplement) {
-			var_dump($supplement);
 			if (isset($_POST['check_supplement_'.$supplement->id])) {
 				$panier->addCarteSupplement($id_panier_carte, $supplement->id);
 			}
@@ -327,12 +329,112 @@ class Controller_Panier extends Controller_Template {
 		}
 	}
 	
+	public function finalisation_inscription ($request) {
+		if ($request->request_method == "POST") {
+			if (isset($_POST['subscribe'])) {
+				if (!isset($_POST["nom"]) || trim($_POST["nom"]) == "") {
+					$this->error(400, "Le nom ne peut être vide");
+				}
+				if (!isset($_POST["prenom"]) || trim($_POST["prenom"]) == "") {
+					$this->error(400, "Le prénom ne peut être vide");
+				}
+				if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
+					$this->error(400, "Le login ne peut être vide");
+				}
+				if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
+					$this->error(400, "Le mot de passe ne peut être vide");
+				}
+				$panier = new Model_Panier();
+				$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+				$panier->get();
+				$model = new Model_User();
+				$model->nom = trim($_POST["nom"]);
+				$model->prenom = trim($_POST["prenom"]);
+				$model->login = trim($_POST["login"]);
+				$model->email = trim($_POST["login"]);
+				$model->password = trim($_POST["password"]);
+				$model->status = USER_CLIENT;
+				$model->rue = utf8_encode($panier->rue);
+				$model->ville = utf8_encode($panier->ville);
+				$model->code_postal = $panier->code_postal;
+				$model->inscription_token = generateToken();
+				$model->telephone = $panier->telephone;
+				if ($model->isLoginAvailable()) {
+					$model->beginTransaction();
+					if ($model->save()) {
+						
+						$panier->associate($model);
+						
+						$model->enable();
+						$model->login($model->login, $model->password);
+						
+						$messageContent =  file_get_contents (ROOT_PATH.'mails/create_compte.html');
+						$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
+						$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
+						$messageContent = str_replace("[LOGIN]", $model->login, $messageContent);
+						
+						send_mail ($model->email, "Création de votre compte", $messageContent);
+						
+						
+						$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription_admin.html');
+						$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
+						$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
+						if ($model->ville != '') {
+							$messageContent = str_replace("[ADRESSE]", $model->ville.' ('.$model->code_postal.')', $messageContent);
+						} else {
+							$messageContent = str_replace("[ADRESSE]", "(adresse non renseignée)", $messageContent);
+						}
+						send_mail (MAIL_ADMIN, "création de compte", $messageContent);
+					} else {
+						$this->error(500, "Une erreur s'est produite, veuillez réessayé ultérieurement.");
+					}
+					$model->endTransaction();
+					
+					$user = $model->getById();
+					require 'vue/login.'.$ext.'.php';
+				} else {
+					$this->error(400, "Cet email existe déjà");
+				}
+			} else if (isset($_POST['login'])) {
+				if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
+					$this->error(400, "Le login ne peut être vide");
+				}
+				if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
+					$this->error(400, "Le mot de passe ne peut être vide");
+				}
+				$login = trim($_POST["login"]);
+				$password = trim($_POST["password"]);
+				$session = (isset($_POST['session']) && $_POST['session'] == '1') ? '-1' : SESSION_MAX_TIME;
+				$user = new Model_User();
+				if (!$user->login($login, $password, $session)) {
+					$this->error(400, "Le login ou le mot de passe est incorrecte");
+				} else if (!$user->is_enable) {
+					$this->error(400, "Votre compte est désactivé");
+				} else {
+					$panier = new Model_Panier();
+					$panier->uid = $user->id;
+					if ($panier->init() !== false) {
+						$panier->remove();
+					}
+					$panier = new Model_Panier();
+					$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+					$panier->get();
+					
+					$panier->associate($user);
+					
+					$user->getById();
+					require 'vue/login.'.$ext.'.php';
+				}
+			}
+		}
+	}
+	
 	public function valideCarte () {
 		
 		$panier = new Model_Panier();
 		$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
 		$panier->init();
-		$panier->uid = 3;
+		$panier->uid = $_POST['id_user'];
 		$panier->associateUserToPanier();
 		$panier = $panier->load();
 		//var_dump($panier); die();
