@@ -195,7 +195,7 @@ class Controller_Restaurant extends Controller_Default_Template {
 		$restaurants = $modelRestaurant->filter($filter);
 		
 		$request->search_adresse = $filter["search_adresse"];
-		$geocoder = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false";
+		$geocoder = "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCfYBzV2jwX5l1gPJ2W4FeCfzJGIRQ37BQ&address=%s&sensor=false";
 		$localisation = urlencode($filter["search_adresse"]);
 		$query = sprintf($geocoder,$localisation);
 		$rd = json_decode(file_get_contents($query));
