@@ -62,6 +62,9 @@ class Controller_Panier extends Controller_Template {
 				case "valideCarte" :
 					$this->valideCarte();
 					break;
+				case "validePanier" :
+					$this->validePanier();
+					break;
 			}
 		} else {
 			$this->getAll();
@@ -330,101 +333,102 @@ class Controller_Panier extends Controller_Template {
 	}
 	
 	public function finalisation_inscription ($request) {
-		if ($request->request_method == "POST") {
-			if (isset($_POST['subscribe'])) {
-				if (!isset($_POST["nom"]) || trim($_POST["nom"]) == "") {
-					$this->error(400, "Le nom ne peut être vide");
+		if ($_SERVER['REQUEST_METHOD'] != "POST") {
+			$this->error(405, "Method not allowed");
+		}
+		if (isset($_POST['subscribe'])) {
+			if (!isset($_POST["nom"]) || trim($_POST["nom"]) == "") {
+				$this->error(400, "Le nom ne peut être vide");
+			}
+			if (!isset($_POST["prenom"]) || trim($_POST["prenom"]) == "") {
+				$this->error(400, "Le prénom ne peut être vide");
+			}
+			if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
+				$this->error(400, "Le login ne peut être vide");
+			}
+			if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
+				$this->error(400, "Le mot de passe ne peut être vide");
+			}
+			$panier = new Model_Panier();
+			$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
+			$panier->get();
+			$model = new Model_User();
+			$model->nom = trim($_POST["nom"]);
+			$model->prenom = trim($_POST["prenom"]);
+			$model->login = trim($_POST["login"]);
+			$model->email = trim($_POST["login"]);
+			$model->password = trim($_POST["password"]);
+			$model->status = USER_CLIENT;
+			$model->rue = utf8_encode($panier->rue);
+			$model->ville = utf8_encode($panier->ville);
+			$model->code_postal = $panier->code_postal;
+			$model->inscription_token = generateToken();
+			$model->telephone = $panier->telephone;
+			if ($model->isLoginAvailable()) {
+				$model->beginTransaction();
+				if ($model->save()) {
+					
+					$panier->associate($model);
+					
+					$model->enable();
+					$model->login($model->login, $model->password);
+					
+					$messageContent =  file_get_contents (ROOT_PATH.'mails/create_compte.html');
+					$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
+					$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
+					$messageContent = str_replace("[LOGIN]", $model->login, $messageContent);
+					
+					send_mail ($model->email, "Création de votre compte", $messageContent);
+					
+					
+					$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription_admin.html');
+					$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
+					$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
+					if ($model->ville != '') {
+						$messageContent = str_replace("[ADRESSE]", $model->ville.' ('.$model->code_postal.')', $messageContent);
+					} else {
+						$messageContent = str_replace("[ADRESSE]", "(adresse non renseignée)", $messageContent);
+					}
+					send_mail (MAIL_ADMIN, "création de compte", $messageContent);
+				} else {
+					$this->error(500, "Une erreur s'est produite, veuillez réessayé ultérieurement.");
 				}
-				if (!isset($_POST["prenom"]) || trim($_POST["prenom"]) == "") {
-					$this->error(400, "Le prénom ne peut être vide");
-				}
-				if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
-					$this->error(400, "Le login ne peut être vide");
-				}
-				if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
-					$this->error(400, "Le mot de passe ne peut être vide");
+				$model->endTransaction();
+				
+				$user = $model->getById();
+				require 'vue/login.'.$this->ext.'.php';
+			} else {
+				$this->error(400, "Cet email existe déjà");
+			}
+		} else if (isset($_POST['connexion'])) {
+			if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
+				$this->error(400, "Le login ne peut être vide");
+			}
+			if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
+				$this->error(400, "Le mot de passe ne peut être vide");
+			}
+			$login = trim($_POST["login"]);
+			$password = trim($_POST["password"]);
+			$session = (isset($_POST['session']) && $_POST['session'] == '1') ? '-1' : SESSION_MAX_TIME;
+			$user = new Model_User();
+			if (!$user->login($login, $password, $session)) {
+				$this->error(400, "Le login ou le mot de passe est incorrecte");
+			} else if (!$user->is_enable) {
+				$this->error(400, "Votre compte est désactivé");
+			} else {
+				$panier = new Model_Panier();
+				$panier->uid = $user->id;
+				if ($panier->init() !== false) {
+					$panier->remove();
 				}
 				$panier = new Model_Panier();
 				$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
 				$panier->get();
-				$model = new Model_User();
-				$model->nom = trim($_POST["nom"]);
-				$model->prenom = trim($_POST["prenom"]);
-				$model->login = trim($_POST["login"]);
-				$model->email = trim($_POST["login"]);
-				$model->password = trim($_POST["password"]);
-				$model->status = USER_CLIENT;
-				$model->rue = utf8_encode($panier->rue);
-				$model->ville = utf8_encode($panier->ville);
-				$model->code_postal = $panier->code_postal;
-				$model->inscription_token = generateToken();
-				$model->telephone = $panier->telephone;
-				if ($model->isLoginAvailable()) {
-					$model->beginTransaction();
-					if ($model->save()) {
-						
-						$panier->associate($model);
-						
-						$model->enable();
-						$model->login($model->login, $model->password);
-						
-						$messageContent =  file_get_contents (ROOT_PATH.'mails/create_compte.html');
-						$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
-						$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
-						$messageContent = str_replace("[LOGIN]", $model->login, $messageContent);
-						
-						send_mail ($model->email, "Création de votre compte", $messageContent);
-						
-						
-						$messageContent =  file_get_contents (ROOT_PATH.'mails/inscription_admin.html');
-						$messageContent = str_replace("[PRENOM]", $model->prenom, $messageContent);
-						$messageContent = str_replace("[NOM]", $model->nom, $messageContent);
-						if ($model->ville != '') {
-							$messageContent = str_replace("[ADRESSE]", $model->ville.' ('.$model->code_postal.')', $messageContent);
-						} else {
-							$messageContent = str_replace("[ADRESSE]", "(adresse non renseignée)", $messageContent);
-						}
-						send_mail (MAIL_ADMIN, "création de compte", $messageContent);
-					} else {
-						$this->error(500, "Une erreur s'est produite, veuillez réessayé ultérieurement.");
-					}
-					$model->endTransaction();
-					
-					$user = $model->getById();
-					require 'vue/login.'.$ext.'.php';
-				} else {
-					$this->error(400, "Cet email existe déjà");
-				}
-			} else if (isset($_POST['login'])) {
-				if (!isset($_POST["login"]) || trim($_POST["login"]) == "") {
-					$this->error(400, "Le login ne peut être vide");
-				}
-				if (!isset($_POST["password"]) || trim($_POST["password"]) == "") {
-					$this->error(400, "Le mot de passe ne peut être vide");
-				}
-				$login = trim($_POST["login"]);
-				$password = trim($_POST["password"]);
-				$session = (isset($_POST['session']) && $_POST['session'] == '1') ? '-1' : SESSION_MAX_TIME;
-				$user = new Model_User();
-				if (!$user->login($login, $password, $session)) {
-					$this->error(400, "Le login ou le mot de passe est incorrecte");
-				} else if (!$user->is_enable) {
-					$this->error(400, "Votre compte est désactivé");
-				} else {
-					$panier = new Model_Panier();
-					$panier->uid = $user->id;
-					if ($panier->init() !== false) {
-						$panier->remove();
-					}
-					$panier = new Model_Panier();
-					$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
-					$panier->get();
-					
-					$panier->associate($user);
-					
-					$user->getById();
-					require 'vue/login.'.$ext.'.php';
-				}
+				
+				$panier->associate($user);
+				
+				$user->getById();
+				require 'vue/login.'.$this->ext.'.php';
 			}
 		}
 	}
@@ -432,10 +436,7 @@ class Controller_Panier extends Controller_Template {
 	public function valideCarte () {
 		
 		$panier = new Model_Panier();
-		$panier->adresse_ip = $_SERVER['REMOTE_ADDR'];
-		$panier->init();
 		$panier->uid = $_POST['id_user'];
-		$panier->associateUserToPanier();
 		$panier = $panier->load();
 		//var_dump($panier); die();
 		
@@ -489,7 +490,7 @@ class Controller_Panier extends Controller_Template {
 				$paymentToken = $charge->id;
 				
 				$panier = new Model_Panier();
-				$panier->uid = 3;
+				$panier->uid = $_POST['id_user'];
 				$panier->init();
 				$commande = new Model_Commande();
 				if ($commande->create($panier)) {
@@ -599,6 +600,149 @@ class Controller_Panier extends Controller_Template {
 		} else {
 			var_dump("no token given");
 			$this->error(400, "No token");
+		}
+	}
+	
+	public function validePanier () {
+		
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		$panier = $panier->load();
+		//var_dump($panier); die();
+		
+		$totalPrix = 0;
+		
+		foreach ($panier->carteList as $carte) {
+			$totalPrix += $carte->prix;
+		}
+		
+		foreach ($panier->menuList as $menu) {
+			$totalPrix += $menu->prix;
+		}
+		
+		if ($panier->code_promo && $panier->code_promo->surPrixLivraison()) {
+			if (!$panier->code_promo->estGratuit()) {
+				$totalPrix += ($panier->prix_livraison - $panier->code_promo->valeur_prix_livraison);
+			}
+		} else {
+			$totalPrix += $panier->prix_livraison;
+		}
+		
+		if ($panier->code_promo->surPrixTotal()) {
+			if ($panier->code_promo->estGratuit()) {
+				$totalPrix = 0;
+			} else {
+				if ($panier->code_promo->valeur_prix_total != -1) {
+					$totalPrix -= $panier->code_promo->valeur_prix_total;
+				}
+				if ($panier->code_promo->pourcentage_prix_total != -1) {
+					$totalPrix -= ($totalPrix * $panier->code_promo->pourcentage_prix_total) / 100;
+				}
+			}
+		}
+				
+		$panier = new Model_Panier();
+		$panier->uid = $_POST['id_user'];
+		$panier->init();
+		$commande = new Model_Commande();
+		if ($commande->create($panier)) {
+			$commande->setPaiementMethod("STRIPE", "");
+			$panier->remove();
+			$user = new Model_User();
+			
+			$restaurantUsers = $user->getRestaurantUsers($panier->id_restaurant);
+			if (count($restaurantUsers) > 0) {
+				$gcm = new GCMPushMessage(GOOGLE_API_KEY);
+				$telephone = '';
+				$oldTelephone = '';
+				foreach ($restaurantUsers as $restaurantUser) {
+					if ($restaurantUser->gcm_token) {
+						$message = "Vous avez reçu une nouvelle commande";
+						// listre des utilisateurs à notifier
+						$gcm->setDevices(array($restaurantUser->gcm_token));
+					 
+						// Le titre de la notification
+						$data = array(
+							"title" => "Nouvelle commande",
+							"key" => "restaurant-new-commande",
+							"id_commande" => $commande->id
+						);
+					 
+						// On notifie nos utilisateurs
+						$result = $gcm->send($message, $data);
+						
+						$notification = new Model_Notification();
+						$notification->id_user = $restaurantUser->id;
+						$notification->token = $restaurantUser->gcm_token;
+						$notification->message = $message;
+						$notification->datas = json_encode($data);
+						$notification->is_send = true;
+						$notification->save();
+					}
+					
+					$telephone = $restaurantUser->telephone;
+					
+					if ($telephone != '' && $telephone != $oldTelephone) {
+						$oldTelephone = $telephone;
+						$sms = new Nexmo();
+						$sms->message = "Vous avez recu une nouvelle commande";
+						$sms->addNumero($telephone);
+						$sms->sendMessage();
+					}
+				}
+			} else {
+				writeLog(SERVER_LOG, "Auncun utilisateur restaurant trouvé pour la commande #".$commande->id, LOG_LEVEL_WARNING);
+			}
+			
+			$commande->load();
+			
+			$today = date('Y-m-d');
+			
+			$clientDir = ROOT_PATH.'files/commandes/'.$today.'/client/';
+			
+			if(!is_dir($clientDir)){
+			   mkdir($clientDir, 0777, true);
+			}
+			
+			$pdf = new PDF();
+			$pdf->generateFactureClient($commande);
+			$pdf->render('F', $clientDir.'commande'.$commande->id.'.pdf');
+			
+			$attachments = array(
+				$clientDir.'commande'.$commande->id.'.pdf'
+			);
+			
+			$messageContentAdmin =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_admin.html');
+			
+			$messageContentAdmin = str_replace("[COMMANDE_ID]", $commande->id, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[CLIENT]", $commande->client->nom.' '.$commande->client->prenom, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[TOTAL]", $commande->prix, $messageContentAdmin);
+			$messageContentAdmin = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentAdmin);
+			
+			send_mail (MAIL_ADMIN, "Nouvelle commande", $messageContentAdmin, MAIL_FROM_DEFAULT, $attachments);
+			
+			$messageContentClient =  file_get_contents (ROOT_PATH.'mails/nouvelle_commande_client.html');
+			
+			$messageContentClient = str_replace("[COMMANDE_ID]", $commande->id, $messageContentClient);
+			$messageContentClient = str_replace("[RESTAURANT]", $commande->restaurant->nom, $messageContentClient);
+			$messageContentClient = str_replace("[TOTAL]", $commande->prix, $messageContentClient);
+			$messageContentClient = str_replace("[PRIX_LIVRAISON]", $commande->prix_livraison, $messageContentClient);
+			
+			send_mail ("fiarimike@yahoo.fr", "Nouvelle commande", $messageContentClient, MAIL_FROM_DEFAULT, $attachments);
+			
+			$restaurantDir = ROOT_PATH.'files/commandes/'.$today.'/restaurant/';
+			
+			if(!is_dir($restaurantDir)){
+			   mkdir($restaurantDir, 0777, true);
+			}
+			
+			$pdf2 = new PDF();
+			$pdf2->generateFactureRestaurant($commande);
+			$pdf2->render('F', $restaurantDir.'commande'.$commande->id.'.pdf');
+			
+			carteDeFidelite($request, $commande);
+			
 		}
 	}
 }
