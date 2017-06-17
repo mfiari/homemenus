@@ -54,11 +54,11 @@
 				<img style="height : 450px;" src="res/img/le-volonte.png" alt="HoMe Menus - Le volonté" Title="HoMe Menus - Le volonté">
 			</a>
 			<div style="bottom : 50px; color : #FFFFFF; left : 650px; position : absolute; z-index : 2;">
-				<h3>La Villa Mantes</h3>
-				<p>Restaurant franco asiatique</p>
+				<h3>Dalla Famiglia</h3>
+				<p>Restaurant Italien traditionnel</p>
 			</div>
-			<a href="restaurant-10-Mantes-la-Ville-La-Villa-Mantes.html" style="margin-right : 20px;">
-				<img style="height : 360px;" src="res/img/la-villa-mantes.png" alt="HoMe Menus - La villa mantes" Title="HoMe Menus - La villa mantes">
+			<a href="restaurant-8-Mantes-la-Jolie-Dalla-Famiglia.html" style="margin-right : 20px;">
+				<img style="height : 360px;" src="res/img/dalla-famiglia.jpg" alt="HoMe Menus - Dalla Famiglia" Title="HoMe Menus - Dalla Famiglia">
 			</a>
 		</div>
 		<div class="row" style="margin-bottom : 20px; position: relative; width : 200%;">
