@@ -85,12 +85,22 @@ class Controller_Restaurant extends Controller_Default_Template {
 			}
 			$request->livreurs = $livreurs;
 			
+			$saveSearch = false;
+			$recherche = new Model_Recherche(true, $request->dbConnector);
+			
 			if (!isset($_SESSION['search_adresse'])) {
 				$_SESSION['search_latitude'] = 48.989323;
 				$_SESSION['search_longitude'] = 1.714958;
 				$_SESSION['search_adresse'] = "Mantes la jolie";
 				$_SESSION['search_ville'] = "Mantes la jolie";
 				$_SESSION['search_cp'] = "78200";
+				
+				$recherche->recherche = "Mantes la jolie";
+				$recherche->distance = MAX_KM;
+				if ($request->_auth) {
+					$recherche->user = $request->_auth;
+				}
+				$saveSearch = true;
 			}
 			
 			$adresseUser = $_SESSION['search_latitude'].','.$_SESSION['search_longitude'];
@@ -100,6 +110,11 @@ class Controller_Restaurant extends Controller_Default_Template {
 				$distanceRestoKm = $result['distance'] / 1000;
 				$restaurant->distance = $distanceRestoKm;
 				$request->prix_livraison = $restaurant->getPrixLivraison();
+			}
+			
+			if ($saveSearch) {
+				$recherche->addRestaurant($restaurant);
+				$recherche->save();
 			}
 			
 			$panier = new Model_Panier(true, $request->dbConnector);
