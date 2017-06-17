@@ -1,8 +1,9 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="HoMe Menus, livraison à domicile de plats de restaurants dans les Yvelines 78 à Mantes la jolie. 
-	Restaurants japonais, Italien, Indien, provençale."/>
+	<meta name="description" content="HoMe Menus, site de livraison à domicile de plats de restaurants dans les Yvelines 78 à Mantes la jolie. 
+	Restaurants japonais, Italien, Indien, provençale, Hispano italien, Italien traditionnel, Brasserie, Chinois, franco asiatique, coréen.
+	Chez Antoine, Comme a la maison , Dalla Famiglia , La brasserie des halles , Le volonte , Taj Mahal , La Villa Mantes , Okinawa"/>
 	<meta name="viewport" content="width=device-width"/>
 	<link rel="icon" href="res/img/favicon.ico" />
 	<title><?php echo $request->title; ?></title>
