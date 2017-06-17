@@ -2,6 +2,8 @@
 
 include_once MODEL_PATH."TransfertPaiement.php";
 include_once MODEL_PATH."CommandeHistory.php";
+include_once MODEL_PATH."Restaurant.php";
+include_once MODEL_PATH."Horaire.php";
 
 class Controller_Index extends Controller_TicketResto_Template {
 	
@@ -11,6 +13,12 @@ class Controller_Index extends Controller_TicketResto_Template {
 			switch ($action) {
 				case "index" :
 					$this->index($request);
+					break;
+				case "exportExcel" :
+					$this->exportExcel($request);
+					break;
+				case "exportContrat" :
+					$this->exportContrat($request);
 					break;
 				case "compte" :
 					$this->compte($request);
@@ -50,6 +58,102 @@ class Controller_Index extends Controller_TicketResto_Template {
 		
 		$request->title = "Ticket restaurant";
 		$request->vue = $this->render("index.php");
+	}
+	
+	public function exportExcel ($request) {
+		if (isset($_GET['date_debut'])) {
+			$request->date_debut = $_GET['date_debut'];
+		} else {
+			$request->date_debut = '01/'.date('m').'/'.date('Y');
+		}
+		$dateDebut = datepickerToDatetime($request->date_debut);
+		
+		if (isset($_GET['date_fin'])) {
+			$request->date_fin = $_GET['date_fin'];
+		} else {
+			$request->date_fin = date('d').'/'.date('m').'/'.date('Y');
+		}
+		$dateFin = datepickerToDatetime($request->date_fin);
+		
+		$modelTransfertPaiement = new Model_TransfertPaiement(true, $request->dbConnector);
+		$result = $modelTransfertPaiement->getTitreRestaurant($dateDebut, $dateFin);
+		
+		$modelCommandeHistory = new Model_Commande_History(true, $request->dbConnector);
+		$restaurants = $modelCommandeHistory->getTitreRestaurant($dateDebut, $dateFin);
+		
+		require_once WEBSITE_PATH.'/res/lib/PHPExcel/PHPExcel.php';
+		
+		$objPHPExcel = new PHPExcel();
+		$objPHPExcel->getProperties()
+			->setCreator("HoMe Menus")
+			->setLastModifiedBy("HoMe Menus")
+			->setTitle("Export titre restaurant HoMr Menus du ".$request->date_debut." au ".$request->date_fin)
+			->setSubject("Export titre restaurant HoMr Menus")
+			->setDescription("Export titre restaurant HoMr Menus");
+			
+		$activeSheet = $objPHPExcel->setActiveSheetIndex(0);
+			
+		
+		$activeSheet->setCellValue('B2', 'Nombre de ticket restaurant :')
+            ->setCellValue('C2', $result["quantite"] == '' ? '0' : $result["quantite"])
+            ->setCellValue('B3', 'Montant total :')
+            ->setCellValue('C3', $result["montant"] == '' ? '0,00 €' : $result["montant"]);
+			
+		$activeSheet->setCellValue('B5', 'Mois :')
+            ->setCellValue('C5', 'Restaurant')
+            ->setCellValue('D5', 'Quantité')
+            ->setCellValue('E5', 'Montant');
+		
+		$quantiteTotal = 0; $prixTotal = 0;
+		$ligne = 6;
+		foreach ($restaurants as $restaurant) {
+			if ($restaurant['month'] == '' || $restaurant['year'] == '') {
+				$activeSheet->setCellValue('B'.$ligne, getMonthByIndex(date('m')).' '.date('Y'));
+			} else {
+				$activeSheet->setCellValue('B'.$ligne, getMonthByIndex($restaurant['month']).' '.$restaurant['year']);
+			}
+			$activeSheet->setCellValue('C'.$ligne, utf8_encode($restaurant['nom']).' ('.$restaurant['siret'].')');
+			$activeSheet->setCellValue('D'.$ligne, $restaurant['quantite_total']);
+			$activeSheet->setCellValue('E'.$ligne, number_format($restaurant['prix_total'], 2, ',', ' ').' €');
+			$quantiteTotal += $restaurant['quantite_total'];
+			$prixTotal += $restaurant['prix_total'];
+			$ligne++;
+		}
+		$activeSheet->setCellValue('D'.$ligne, $quantiteTotal);
+		$activeSheet->setCellValue('E'.$ligne, number_format($prixTotal, 2, ',', ' ').' €');
+		
+		$filename = 'titre_restaurant_home_menus_'.date('Y').date('m').date('d').date('H').date('i').date('s').'.xlsx';
+		
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save(ROOT_PATH.'files/titre_resto/'.$filename);
+		
+		// Redirect output to a client’s web browser (Excel2007)
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="'.$filename.'"');
+		header('Cache-Control: max-age=0');
+		// If you're serving to IE 9, then the following may be needed
+		header('Cache-Control: max-age=1');
+
+		// If you're serving to IE over SSL, then the following may be needed
+		header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+		header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+		header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+		header ('Pragma: public'); // HTTP/1.0
+
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');
+			
+	}
+	
+	public function exportContrat ($request) {
+		if (isset($_GET['id_restaurant'])) {
+			$modelRestaurant = new Model_Restaurant(true, $request->dbConnector);
+			$modelRestaurant->id = $_GET['id_restaurant'];
+			$modelRestaurant->getOne();
+			getContratRestaurant($modelRestaurant);
+		} else {
+			$this->redirect();
+		}
 	}
 	
 	public function compte ($request) {

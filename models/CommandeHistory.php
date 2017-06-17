@@ -1126,7 +1126,7 @@ class Model_Commande_History extends Model_Template {
 	}
 	
 	public function getTitreRestaurant ($dateDebut, $dateFin) {
-		$sql = "SELECT YEAR(date_commande) AS year, MONTH(date_commande) AS month, resto.id, resto.nom, 0 AS quantite_total, 0 AS prix_total 
+		$sql = "SELECT YEAR(date_commande) AS year, MONTH(date_commande) AS month, resto.id, resto.nom, resto.siret, 0 AS quantite_total, 0 AS prix_total 
 		FROM restaurants resto 
 		LEFT JOIN commande_history histo ON histo.id_restaurant = resto.id AND histo.date_commande BETWEEN :date_debut AND :date_fin
 		WHERE resto.enabled = 1 AND resto.deleted = 0
