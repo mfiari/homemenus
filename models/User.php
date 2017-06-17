@@ -153,7 +153,7 @@ class Model_User extends Model_Template {
 		}
 		$value = $stmt->fetch(PDO::FETCH_ASSOC);
 		if ($value == null ||$value == false) {
-			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_ERROR, $sql);
+			writeLog(SQL_LOG, $stmt->errorInfo(), LOG_LEVEL_WARNING, $sql);
 			$this->sqlHasFailed = true;
 			return false;
 		}
