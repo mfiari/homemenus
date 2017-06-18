@@ -7,7 +7,7 @@
 			<span class="icon-bar"></span>
 		</button>
 		<a href="?action=index" class="logo">
-			<img id="logo" src="res/img/logo.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
+			<img id="logo" src="res/img/logo-min.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
 		</a>
 	</div>
 	<div id="sidr">

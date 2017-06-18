@@ -3,7 +3,7 @@
 	<div class="container">
 		<div>
 			<a href="index.html" class="logo">
-				<img id="logo" src="res/img/logo.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
+				<img id="logo" src="res/img/logo-min.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
 			</a>
 			<ul class="menu">
 				<li><a href="index.html">Accueil</a></li>

@@ -8,7 +8,7 @@
 				<span class="icon-bar"></span>
 			</button>
 			<a href="?action=index" class="logo">
-				<img id="logo" src="res/img/logo.png">
+				<img id="logo" src="res/img/logo-min.png">
 			</a>
 		</div>
 		<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">

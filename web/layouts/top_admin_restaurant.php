@@ -8,7 +8,7 @@
 				<span class="icon-bar"></span>
 			</button>
 			<a href="?action=index" class="logo">
-				<img id="logo" src="res/img/logo.png">
+				<img id="logo" src="res/img/logo-min.png">
 			</a>
 			<img style="height : 50px;" src="<?php echo getLogoRestaurant ($request->_restaurant->id); ?>">
 		</div>

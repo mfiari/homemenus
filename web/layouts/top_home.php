@@ -4,7 +4,7 @@
 	<div class="container">
 		<div>
 			<a href="index.html" class="logo">
-				<img id="logo" src="res/img/logo.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
+				<img id="logo" src="res/img/logo-min.png" alt="HoMe Menus - livraison - logo" title="logo HoMe Menus">
 			</a>
 			<div id="menu-link">
 				<a href="contact-livreur.html">Devenir livreur</a>

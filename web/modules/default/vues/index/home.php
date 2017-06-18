@@ -6,7 +6,7 @@
 		<div class="col-md-12 col-sm-12">
 			<div class="col-lg-3 col-lg-offset-1 col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-12 col-xs-offset-0">
 				<div class="row">
-					<a href="particuliers.html"><img src="res/img/particulier.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
+					<a href="particuliers.html"><img src="res/img/particulier-min.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
 				</div>
 				<div class="row">
 					<h3><a href="particuliers.html" style="color : #FFFFFF;">Particuliers</a></h3>
@@ -17,7 +17,7 @@
 			</div>
 			<div class="col-lg-3 col-lg-offset-1 col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-12 col-xs-offset-0">
 				<div class="row">
-					<a href="contact-entreprise.html"><img src="res/img/entreprises.png" alt="HoMe Menus - Entreprises" Title="HoMe Menus - Entreprises"></a>
+					<a href="contact-entreprise.html"><img src="res/img/entreprises-min.png" alt="HoMe Menus - Entreprises" Title="HoMe Menus - Entreprises"></a>
 				</div>
 				<div class="row">
 					<h3><a href="entreprises.html" style="color : #FFFFFF;">Entreprises</a></h3>
@@ -28,7 +28,7 @@
 			</div>
 			<div class="col-lg-3 col-lg-offset-1 col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-12 col-xs-offset-0">
 				<div class="row">
-					<a href="evenement.html"><img src="res/img/evenement.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
+					<a href="evenement.html"><img src="res/img/evenement-min.png" alt="HoMe Menus - particuliers" Title="HoMe Menus - particuliers"></a>
 				</div>
 				<div class="row">
 					<h3><a href="evenement.html" style="color : #FFFFFF;">Evénement</a></h3>
@@ -51,14 +51,14 @@
 				<p>Restaurant chinois</p>
 			</div>
 			<a href="restaurant-14-Mantes-la-Jolie-Le-volonte.html" style="margin-right : 20px;">
-				<img style="height : 450px;" src="res/img/le-volonte.png" alt="HoMe Menus - Le volonté" Title="HoMe Menus - Le volonté">
+				<img style="height : 450px;" src="res/img/le-volonte-min.png" alt="HoMe Menus - Le volonté" Title="HoMe Menus - Le volonté">
 			</a>
 			<div style="bottom : 50px; color : #FFFFFF; left : 650px; position : absolute; z-index : 2;">
 				<h3>Dalla Famiglia</h3>
 				<p>Restaurant Italien traditionnel</p>
 			</div>
 			<a href="restaurant-8-Mantes-la-Jolie-Dalla-Famiglia.html" style="margin-right : 20px;">
-				<img style="height : 360px;" src="res/img/dalla-famiglia.jpg" alt="HoMe Menus - Dalla Famiglia" Title="HoMe Menus - Dalla Famiglia">
+				<img style="height : 360px;" src="res/img/dalla-famiglia-min.jpg" alt="HoMe Menus - Dalla Famiglia" Title="HoMe Menus - Dalla Famiglia">
 			</a>
 		</div>
 		<div class="row" style="margin-bottom : 20px; position: relative; width : 200%;">
@@ -67,14 +67,14 @@
 				<p>Restaurant Hispano italien</p>
 			</div>
 			<a href="restaurant-15-Mantes-la-Jolie-Comme-a-la-maison.html" style="margin-right : 20px;">
-				<img style="height : 360px;" src="res/img/comme-a-la-maison.png" alt="HoMe Menus - Comme à la maison" Title="HoMe Menus - Comme à la maison">
+				<img style="height : 360px;" src="res/img/comme-a-la-maison-min.png" alt="HoMe Menus - Comme à la maison" Title="HoMe Menus - Comme à la maison">
 			</a>
 			<div style="bottom : 0; color : #FFFFFF; left : 645px; position : absolute; z-index : 2;">
 				<h3>La brasserie des halles</h3>
 				<p>Brasserie</p>
 			</div>
 			<a href="restaurant-16-Mantes-la-Jolie-La-brasserie-des-halles.html" style="margin-right : 20px;">
-				<img style="height : 450px;" src="res/img/brasserie.png" alt="HoMe Menus - Brasserie des halles" Title="HoMe Menus - Brasserie des halles">
+				<img style="height : 450px;" src="res/img/brasserie-min.png" alt="HoMe Menus - Brasserie des halles" Title="HoMe Menus - Brasserie des halles">
 			</a>
 		</div>
 	</div>

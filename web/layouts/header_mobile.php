@@ -7,10 +7,16 @@
 	<meta name="viewport" content="width=device-width"/>
 	<link rel="icon" href="res/img/favicon.ico" />
 	<title><?php echo $request->title; ?></title>
-	<script type="text/javascript" src="res/js/jquery-2.1.1.js"></script>
-	<script type="text/javascript" src="res/jquery-ui/jquery-ui.js"></script>
+	<?php if (ENVIRONNEMENT == "DEV" || ENVIRONNEMENT == "TEST") : ?>
+		<script type="text/javascript" src="res/js/jquery-2.1.1.js"></script>
+		<script type="text/javascript" src="res/jquery-ui/jquery-ui.js"></script>
+		<script type="text/javascript" src="res/bootstrap/js/bootstrap.js"></script>
+	<?php else : ?>
+		<script type="text/javascript" src="res/js/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript" src="res/jquery-ui/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="res/bootstrap/js/bootstrap.min.js"></script>
+	<?php endif; ?>
 	<script type="text/javascript" src="res/js/site.js"></script>
-	<script type="text/javascript" src="res/bootstrap/js/bootstrap.js"></script>
 	<script type="text/javascript" src="res/js/bootstrap-star-rating.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 	<?php 
@@ -20,8 +26,11 @@
 			}
 		}
 	?>
-		
-	<link rel="stylesheet" href="res/jquery-ui/jquery-ui.css" type="text/css"/>
+	<?php if (ENVIRONNEMENT == "DEV" || ENVIRONNEMENT == "TEST") : ?>
+		<link rel="stylesheet" href="res/jquery-ui/jquery-ui.css" type="text/css"/>
+	<?php else : ?>
+		<link rel="stylesheet" href="res/jquery-ui/jquery-ui.min.css" type="text/css"/>
+	<?php endif; ?>
 	<link rel="stylesheet" href="res/bootstrap/css/bootstrap.min.css" type="text/css"/>
 	<link rel="stylesheet" href="res/css/site-mobile.css" type="text/css"/>
 	<?php
